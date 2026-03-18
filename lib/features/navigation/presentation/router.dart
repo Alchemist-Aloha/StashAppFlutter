@@ -1,14 +1,12 @@
-import "../../scenes/presentation/pages/scene_details_page.dart";
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:go_router/go_router.dart';
 import '../../scenes/presentation/pages/scenes_page.dart';
 import 'shell_page.dart';
 
 part 'router.g.dart';
 
 @riverpod
-GoRouter router(RouterRef ref) {
+GoRouter router(Ref ref) {
   return GoRouter(
     initialLocation: '/scenes',
     routes: [

@@ -45,6 +45,10 @@ dependencies:
   path_provider: ^2.1.5
   path: ^1.9.1
   gql: ^1.0.1
+  json_annotation: ^4.11.0
+  freezed_annotation: ^3.1.0
+  riverpod_annotation: ^4.0.2
+  graphql: ^5.2.4
 
 dev_dependencies:
   flutter_test:
@@ -58,11 +62,8 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   build_runner: ^2.13.0
   freezed: ^3.2.5
-  freezed_annotation: ^3.1.0
-  json_annotation: ^4.11.0
   json_serializable: ^6.13.0
   riverpod_generator: ^4.0.3
-  riverpod_annotation: ^4.0.2
   graphql_codegen: ^3.0.1
 
 # For information on the generic Dart part of this file, see the

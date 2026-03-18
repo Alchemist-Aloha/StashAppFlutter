@@ -1,10 +1,10 @@
-import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 
 part 'graphql_client.g.dart';
 
 @riverpod
-GraphQLClient graphqlClient(GraphqlClientRef ref) {
+GraphQLClient graphqlClient(Ref ref) {
   // TODO: Fetch from shared preferences (later)
   // Hardcoded for development
   const serverUrl = 'http://localhost:9999/graphql';

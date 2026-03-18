@@ -1,4 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/performer.dart';
 import '../../domain/repositories/performer_repository.dart';
 import '../../data/repositories/graphql_performer_repository.dart';

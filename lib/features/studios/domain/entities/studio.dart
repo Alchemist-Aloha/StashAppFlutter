@@ -4,7 +4,7 @@ part 'studio.freezed.dart';
 part 'studio.g.dart';
 
 @freezed
-class Studio with _$Studio {
+abstract class Studio with _$Studio {
   const factory Studio({
     required String id,
     required String name,

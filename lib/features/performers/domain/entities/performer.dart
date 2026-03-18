@@ -4,7 +4,7 @@ part 'performer.freezed.dart';
 part 'performer.g.dart';
 
 @freezed
-class Performer with _$Performer {
+abstract class Performer with _$Performer {
   const factory Performer({
     required String id,
     required String name,

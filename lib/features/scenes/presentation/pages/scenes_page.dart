@@ -44,7 +44,7 @@ class ScenesPage extends ConsumerWidget {
               children: [
                 const Icon(Icons.error_outline, size: 48, color: Colors.red),
                 const SizedBox(height: 16),
-                Text('Error: $err', textAlign: Center,),
+                Text('Error: $err', textAlign: TextAlign.center,),
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () => ref.refresh(sceneListProvider),
