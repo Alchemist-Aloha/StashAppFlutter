@@ -1,4 +1,5 @@
-# StashAppFlutter Navigation & Initial UI Todo
+# StashAppFlutter GraphQL API Integration Todo
 
-- [ ] Task 1: Set Up GoRouter
-- [ ] Task 2: Create YouTube-style Shell Page
+- [ ] Task 1: Setup GraphQL Client & Configuration
+- [ ] Task 2: Create GraphQL Query Files
+- [ ] Task 3: Implement GraphQL Repositories

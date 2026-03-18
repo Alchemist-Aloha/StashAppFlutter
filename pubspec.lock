@@ -345,7 +345,7 @@ packages:
     source: hosted
     version: "17.1.0"
   gql:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: gql
       sha256: "67c32325eb55c15f526f0f5e7d8b38a463dbff2ec3c2e046be4a1a95f0dc93d1"

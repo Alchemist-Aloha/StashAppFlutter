@@ -1,0 +1,11 @@
+query FindScenes($filter: SceneFilterType) {
+  findScenes(filter: $filter) {
+    count
+    scenes {
+      id
+      title
+      date
+      rating
+    }
+  }
+}

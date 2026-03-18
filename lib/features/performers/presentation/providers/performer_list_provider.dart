@@ -1,12 +1,15 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../domain/entities/performer.dart';
 import '../../domain/repositories/performer_repository.dart';
+import '../../data/repositories/graphql_performer_repository.dart';
+import '../../../../core/data/graphql/graphql_client.dart';
 
 part 'performer_list_provider.g.dart';
 
-// Provider for Repository interface (implemented by data layer later)
+// Provider for Repository interface
 final performerRepositoryProvider = Provider<PerformerRepository>((ref) {
-  throw UnimplementedError();
+  final client = ref.watch(graphqlClientProvider);
+  return GraphQLPerformerRepository(client);
 });
 
 @riverpod
