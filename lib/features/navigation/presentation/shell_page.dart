@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'widgets/mini_player.dart';
 
 class ShellPage extends StatelessWidget {
   final Widget child;
@@ -7,7 +8,12 @@ class ShellPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: child,
+      body: Column(
+        children: [
+          Expanded(child: child),
+          const MiniPlayer(),
+        ],
+      ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: 0,
         destinations: const [
@@ -16,6 +22,9 @@ class ShellPage extends StatelessWidget {
           NavigationDestination(icon: Icon(Icons.subscriptions), label: 'Subscriptions'),
           NavigationDestination(icon: Icon(Icons.video_library), label: 'Library'),
         ],
+        onDestinationSelected: (index) {
+          // TODO: Implement navigation to other routes
+        },
       ),
     );
   }
