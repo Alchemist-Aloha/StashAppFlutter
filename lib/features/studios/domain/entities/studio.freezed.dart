@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Studio {
 
- String get id; String get name; String? get details; String? get imagePath;
+ String get id; String get name; String? get details; String? get imagePath; String? get parentId; String? get parentName;
 /// Create a copy of Studio
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $StudioCopyWith<Studio> get copyWith => _$StudioCopyWithImpl<Studio>(this as Stu
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Studio&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.details, details) || other.details == details)&&(identical(other.imagePath, imagePath) || other.imagePath == imagePath));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Studio&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.details, details) || other.details == details)&&(identical(other.imagePath, imagePath) || other.imagePath == imagePath)&&(identical(other.parentId, parentId) || other.parentId == parentId)&&(identical(other.parentName, parentName) || other.parentName == parentName));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,details,imagePath);
+int get hashCode => Object.hash(runtimeType,id,name,details,imagePath,parentId,parentName);
 
 @override
 String toString() {
-  return 'Studio(id: $id, name: $name, details: $details, imagePath: $imagePath)';
+  return 'Studio(id: $id, name: $name, details: $details, imagePath: $imagePath, parentId: $parentId, parentName: $parentName)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $StudioCopyWith<$Res>  {
   factory $StudioCopyWith(Studio value, $Res Function(Studio) _then) = _$StudioCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, String? details, String? imagePath
+ String id, String name, String? details, String? imagePath, String? parentId, String? parentName
 });
 
 
@@ -65,12 +65,14 @@ class _$StudioCopyWithImpl<$Res>
 
 /// Create a copy of Studio
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? details = freezed,Object? imagePath = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? details = freezed,Object? imagePath = freezed,Object? parentId = freezed,Object? parentName = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,details: freezed == details ? _self.details : details // ignore: cast_nullable_to_non_nullable
 as String?,imagePath: freezed == imagePath ? _self.imagePath : imagePath // ignore: cast_nullable_to_non_nullable
+as String?,parentId: freezed == parentId ? _self.parentId : parentId // ignore: cast_nullable_to_non_nullable
+as String?,parentName: freezed == parentName ? _self.parentName : parentName // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -156,10 +158,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String? details,  String? imagePath)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String? details,  String? imagePath,  String? parentId,  String? parentName)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Studio() when $default != null:
-return $default(_that.id,_that.name,_that.details,_that.imagePath);case _:
+return $default(_that.id,_that.name,_that.details,_that.imagePath,_that.parentId,_that.parentName);case _:
   return orElse();
 
 }
@@ -177,10 +179,10 @@ return $default(_that.id,_that.name,_that.details,_that.imagePath);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String? details,  String? imagePath)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String? details,  String? imagePath,  String? parentId,  String? parentName)  $default,) {final _that = this;
 switch (_that) {
 case _Studio():
-return $default(_that.id,_that.name,_that.details,_that.imagePath);case _:
+return $default(_that.id,_that.name,_that.details,_that.imagePath,_that.parentId,_that.parentName);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -197,10 +199,10 @@ return $default(_that.id,_that.name,_that.details,_that.imagePath);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String? details,  String? imagePath)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String? details,  String? imagePath,  String? parentId,  String? parentName)?  $default,) {final _that = this;
 switch (_that) {
 case _Studio() when $default != null:
-return $default(_that.id,_that.name,_that.details,_that.imagePath);case _:
+return $default(_that.id,_that.name,_that.details,_that.imagePath,_that.parentId,_that.parentName);case _:
   return null;
 
 }
@@ -212,13 +214,15 @@ return $default(_that.id,_that.name,_that.details,_that.imagePath);case _:
 @JsonSerializable()
 
 class _Studio implements Studio {
-  const _Studio({required this.id, required this.name, this.details, required this.imagePath});
+  const _Studio({required this.id, required this.name, this.details, required this.imagePath, this.parentId, this.parentName});
   factory _Studio.fromJson(Map<String, dynamic> json) => _$StudioFromJson(json);
 
 @override final  String id;
 @override final  String name;
 @override final  String? details;
 @override final  String? imagePath;
+@override final  String? parentId;
+@override final  String? parentName;
 
 /// Create a copy of Studio
 /// with the given fields replaced by the non-null parameter values.
@@ -233,16 +237,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Studio&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.details, details) || other.details == details)&&(identical(other.imagePath, imagePath) || other.imagePath == imagePath));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Studio&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.details, details) || other.details == details)&&(identical(other.imagePath, imagePath) || other.imagePath == imagePath)&&(identical(other.parentId, parentId) || other.parentId == parentId)&&(identical(other.parentName, parentName) || other.parentName == parentName));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,details,imagePath);
+int get hashCode => Object.hash(runtimeType,id,name,details,imagePath,parentId,parentName);
 
 @override
 String toString() {
-  return 'Studio(id: $id, name: $name, details: $details, imagePath: $imagePath)';
+  return 'Studio(id: $id, name: $name, details: $details, imagePath: $imagePath, parentId: $parentId, parentName: $parentName)';
 }
 
 
@@ -253,7 +257,7 @@ abstract mixin class _$StudioCopyWith<$Res> implements $StudioCopyWith<$Res> {
   factory _$StudioCopyWith(_Studio value, $Res Function(_Studio) _then) = __$StudioCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, String? details, String? imagePath
+ String id, String name, String? details, String? imagePath, String? parentId, String? parentName
 });
 
 
@@ -270,12 +274,14 @@ class __$StudioCopyWithImpl<$Res>
 
 /// Create a copy of Studio
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? details = freezed,Object? imagePath = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? details = freezed,Object? imagePath = freezed,Object? parentId = freezed,Object? parentName = freezed,}) {
   return _then(_Studio(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,details: freezed == details ? _self.details : details // ignore: cast_nullable_to_non_nullable
 as String?,imagePath: freezed == imagePath ? _self.imagePath : imagePath // ignore: cast_nullable_to_non_nullable
+as String?,parentId: freezed == parentId ? _self.parentId : parentId // ignore: cast_nullable_to_non_nullable
+as String?,parentName: freezed == parentName ? _self.parentName : parentName // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }

@@ -11,6 +11,8 @@ _Studio _$StudioFromJson(Map<String, dynamic> json) => _Studio(
   name: json['name'] as String,
   details: json['details'] as String?,
   imagePath: json['imagePath'] as String?,
+  parentId: json['parentId'] as String?,
+  parentName: json['parentName'] as String?,
 );
 
 Map<String, dynamic> _$StudioToJson(_Studio instance) => <String, dynamic>{
@@ -18,4 +20,6 @@ Map<String, dynamic> _$StudioToJson(_Studio instance) => <String, dynamic>{
   'name': instance.name,
   'details': instance.details,
   'imagePath': instance.imagePath,
+  'parentId': instance.parentId,
+  'parentName': instance.parentName,
 };

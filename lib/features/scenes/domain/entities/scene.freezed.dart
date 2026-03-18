@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Scene {
 
- String get id; String get title; String? get details; String? get path; DateTime get date; double get rating; List<String> get tags; List<String> get performers; String? get studio; String? get streamUrl; String? get thumbUrl;
+ String get id; String get title; String? get details; String? get path; DateTime get date; int? get rating100; int get oCounter; bool get organized; bool get interactive; double? get resumeTime; int get playCount; List<SceneFile> get files; ScenePaths get paths; String? get studioId; String? get studioName; List<String> get performerIds; List<String> get performerNames; List<String> get tagIds; List<String> get tagNames;
 /// Create a copy of Scene
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $SceneCopyWith<Scene> get copyWith => _$SceneCopyWithImpl<Scene>(this as Scene, 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Scene&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.details, details) || other.details == details)&&(identical(other.path, path) || other.path == path)&&(identical(other.date, date) || other.date == date)&&(identical(other.rating, rating) || other.rating == rating)&&const DeepCollectionEquality().equals(other.tags, tags)&&const DeepCollectionEquality().equals(other.performers, performers)&&(identical(other.studio, studio) || other.studio == studio)&&(identical(other.streamUrl, streamUrl) || other.streamUrl == streamUrl)&&(identical(other.thumbUrl, thumbUrl) || other.thumbUrl == thumbUrl));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Scene&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.details, details) || other.details == details)&&(identical(other.path, path) || other.path == path)&&(identical(other.date, date) || other.date == date)&&(identical(other.rating100, rating100) || other.rating100 == rating100)&&(identical(other.oCounter, oCounter) || other.oCounter == oCounter)&&(identical(other.organized, organized) || other.organized == organized)&&(identical(other.interactive, interactive) || other.interactive == interactive)&&(identical(other.resumeTime, resumeTime) || other.resumeTime == resumeTime)&&(identical(other.playCount, playCount) || other.playCount == playCount)&&const DeepCollectionEquality().equals(other.files, files)&&(identical(other.paths, paths) || other.paths == paths)&&(identical(other.studioId, studioId) || other.studioId == studioId)&&(identical(other.studioName, studioName) || other.studioName == studioName)&&const DeepCollectionEquality().equals(other.performerIds, performerIds)&&const DeepCollectionEquality().equals(other.performerNames, performerNames)&&const DeepCollectionEquality().equals(other.tagIds, tagIds)&&const DeepCollectionEquality().equals(other.tagNames, tagNames));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,details,path,date,rating,const DeepCollectionEquality().hash(tags),const DeepCollectionEquality().hash(performers),studio,streamUrl,thumbUrl);
+int get hashCode => Object.hashAll([runtimeType,id,title,details,path,date,rating100,oCounter,organized,interactive,resumeTime,playCount,const DeepCollectionEquality().hash(files),paths,studioId,studioName,const DeepCollectionEquality().hash(performerIds),const DeepCollectionEquality().hash(performerNames),const DeepCollectionEquality().hash(tagIds),const DeepCollectionEquality().hash(tagNames)]);
 
 @override
 String toString() {
-  return 'Scene(id: $id, title: $title, details: $details, path: $path, date: $date, rating: $rating, tags: $tags, performers: $performers, studio: $studio, streamUrl: $streamUrl, thumbUrl: $thumbUrl)';
+  return 'Scene(id: $id, title: $title, details: $details, path: $path, date: $date, rating100: $rating100, oCounter: $oCounter, organized: $organized, interactive: $interactive, resumeTime: $resumeTime, playCount: $playCount, files: $files, paths: $paths, studioId: $studioId, studioName: $studioName, performerIds: $performerIds, performerNames: $performerNames, tagIds: $tagIds, tagNames: $tagNames)';
 }
 
 
@@ -48,11 +48,11 @@ abstract mixin class $SceneCopyWith<$Res>  {
   factory $SceneCopyWith(Scene value, $Res Function(Scene) _then) = _$SceneCopyWithImpl;
 @useResult
 $Res call({
- String id, String title, String? details, String? path, DateTime date, double rating, List<String> tags, List<String> performers, String? studio, String? streamUrl, String? thumbUrl
+ String id, String title, String? details, String? path, DateTime date, int? rating100, int oCounter, bool organized, bool interactive, double? resumeTime, int playCount, List<SceneFile> files, ScenePaths paths, String? studioId, String? studioName, List<String> performerIds, List<String> performerNames, List<String> tagIds, List<String> tagNames
 });
 
 
-
+$ScenePathsCopyWith<$Res> get paths;
 
 }
 /// @nodoc
@@ -65,23 +65,40 @@ class _$SceneCopyWithImpl<$Res>
 
 /// Create a copy of Scene
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? details = freezed,Object? path = freezed,Object? date = null,Object? rating = null,Object? tags = null,Object? performers = null,Object? studio = freezed,Object? streamUrl = freezed,Object? thumbUrl = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? details = freezed,Object? path = freezed,Object? date = null,Object? rating100 = freezed,Object? oCounter = null,Object? organized = null,Object? interactive = null,Object? resumeTime = freezed,Object? playCount = null,Object? files = null,Object? paths = null,Object? studioId = freezed,Object? studioName = freezed,Object? performerIds = null,Object? performerNames = null,Object? tagIds = null,Object? tagNames = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,details: freezed == details ? _self.details : details // ignore: cast_nullable_to_non_nullable
 as String?,path: freezed == path ? _self.path : path // ignore: cast_nullable_to_non_nullable
 as String?,date: null == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
-as DateTime,rating: null == rating ? _self.rating : rating // ignore: cast_nullable_to_non_nullable
-as double,tags: null == tags ? _self.tags : tags // ignore: cast_nullable_to_non_nullable
-as List<String>,performers: null == performers ? _self.performers : performers // ignore: cast_nullable_to_non_nullable
-as List<String>,studio: freezed == studio ? _self.studio : studio // ignore: cast_nullable_to_non_nullable
-as String?,streamUrl: freezed == streamUrl ? _self.streamUrl : streamUrl // ignore: cast_nullable_to_non_nullable
-as String?,thumbUrl: freezed == thumbUrl ? _self.thumbUrl : thumbUrl // ignore: cast_nullable_to_non_nullable
-as String?,
+as DateTime,rating100: freezed == rating100 ? _self.rating100 : rating100 // ignore: cast_nullable_to_non_nullable
+as int?,oCounter: null == oCounter ? _self.oCounter : oCounter // ignore: cast_nullable_to_non_nullable
+as int,organized: null == organized ? _self.organized : organized // ignore: cast_nullable_to_non_nullable
+as bool,interactive: null == interactive ? _self.interactive : interactive // ignore: cast_nullable_to_non_nullable
+as bool,resumeTime: freezed == resumeTime ? _self.resumeTime : resumeTime // ignore: cast_nullable_to_non_nullable
+as double?,playCount: null == playCount ? _self.playCount : playCount // ignore: cast_nullable_to_non_nullable
+as int,files: null == files ? _self.files : files // ignore: cast_nullable_to_non_nullable
+as List<SceneFile>,paths: null == paths ? _self.paths : paths // ignore: cast_nullable_to_non_nullable
+as ScenePaths,studioId: freezed == studioId ? _self.studioId : studioId // ignore: cast_nullable_to_non_nullable
+as String?,studioName: freezed == studioName ? _self.studioName : studioName // ignore: cast_nullable_to_non_nullable
+as String?,performerIds: null == performerIds ? _self.performerIds : performerIds // ignore: cast_nullable_to_non_nullable
+as List<String>,performerNames: null == performerNames ? _self.performerNames : performerNames // ignore: cast_nullable_to_non_nullable
+as List<String>,tagIds: null == tagIds ? _self.tagIds : tagIds // ignore: cast_nullable_to_non_nullable
+as List<String>,tagNames: null == tagNames ? _self.tagNames : tagNames // ignore: cast_nullable_to_non_nullable
+as List<String>,
   ));
 }
-
+/// Create a copy of Scene
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ScenePathsCopyWith<$Res> get paths {
+  
+  return $ScenePathsCopyWith<$Res>(_self.paths, (value) {
+    return _then(_self.copyWith(paths: value));
+  });
+}
 }
 
 
@@ -163,10 +180,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String? details,  String? path,  DateTime date,  double rating,  List<String> tags,  List<String> performers,  String? studio,  String? streamUrl,  String? thumbUrl)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String? details,  String? path,  DateTime date,  int? rating100,  int oCounter,  bool organized,  bool interactive,  double? resumeTime,  int playCount,  List<SceneFile> files,  ScenePaths paths,  String? studioId,  String? studioName,  List<String> performerIds,  List<String> performerNames,  List<String> tagIds,  List<String> tagNames)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Scene() when $default != null:
-return $default(_that.id,_that.title,_that.details,_that.path,_that.date,_that.rating,_that.tags,_that.performers,_that.studio,_that.streamUrl,_that.thumbUrl);case _:
+return $default(_that.id,_that.title,_that.details,_that.path,_that.date,_that.rating100,_that.oCounter,_that.organized,_that.interactive,_that.resumeTime,_that.playCount,_that.files,_that.paths,_that.studioId,_that.studioName,_that.performerIds,_that.performerNames,_that.tagIds,_that.tagNames);case _:
   return orElse();
 
 }
@@ -184,10 +201,10 @@ return $default(_that.id,_that.title,_that.details,_that.path,_that.date,_that.r
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String? details,  String? path,  DateTime date,  double rating,  List<String> tags,  List<String> performers,  String? studio,  String? streamUrl,  String? thumbUrl)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String? details,  String? path,  DateTime date,  int? rating100,  int oCounter,  bool organized,  bool interactive,  double? resumeTime,  int playCount,  List<SceneFile> files,  ScenePaths paths,  String? studioId,  String? studioName,  List<String> performerIds,  List<String> performerNames,  List<String> tagIds,  List<String> tagNames)  $default,) {final _that = this;
 switch (_that) {
 case _Scene():
-return $default(_that.id,_that.title,_that.details,_that.path,_that.date,_that.rating,_that.tags,_that.performers,_that.studio,_that.streamUrl,_that.thumbUrl);case _:
+return $default(_that.id,_that.title,_that.details,_that.path,_that.date,_that.rating100,_that.oCounter,_that.organized,_that.interactive,_that.resumeTime,_that.playCount,_that.files,_that.paths,_that.studioId,_that.studioName,_that.performerIds,_that.performerNames,_that.tagIds,_that.tagNames);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -204,10 +221,10 @@ return $default(_that.id,_that.title,_that.details,_that.path,_that.date,_that.r
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String? details,  String? path,  DateTime date,  double rating,  List<String> tags,  List<String> performers,  String? studio,  String? streamUrl,  String? thumbUrl)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String? details,  String? path,  DateTime date,  int? rating100,  int oCounter,  bool organized,  bool interactive,  double? resumeTime,  int playCount,  List<SceneFile> files,  ScenePaths paths,  String? studioId,  String? studioName,  List<String> performerIds,  List<String> performerNames,  List<String> tagIds,  List<String> tagNames)?  $default,) {final _that = this;
 switch (_that) {
 case _Scene() when $default != null:
-return $default(_that.id,_that.title,_that.details,_that.path,_that.date,_that.rating,_that.tags,_that.performers,_that.studio,_that.streamUrl,_that.thumbUrl);case _:
+return $default(_that.id,_that.title,_that.details,_that.path,_that.date,_that.rating100,_that.oCounter,_that.organized,_that.interactive,_that.resumeTime,_that.playCount,_that.files,_that.paths,_that.studioId,_that.studioName,_that.performerIds,_that.performerNames,_that.tagIds,_that.tagNames);case _:
   return null;
 
 }
@@ -219,7 +236,7 @@ return $default(_that.id,_that.title,_that.details,_that.path,_that.date,_that.r
 @JsonSerializable()
 
 class _Scene implements Scene {
-  const _Scene({required this.id, required this.title, this.details, this.path, required this.date, required this.rating, required final  List<String> tags, required final  List<String> performers, required this.studio, required this.streamUrl, required this.thumbUrl}): _tags = tags,_performers = performers;
+  const _Scene({required this.id, required this.title, this.details, this.path, required this.date, required this.rating100, required this.oCounter, required this.organized, required this.interactive, required this.resumeTime, required this.playCount, required final  List<SceneFile> files, required this.paths, required this.studioId, required this.studioName, required final  List<String> performerIds, required final  List<String> performerNames, required final  List<String> tagIds, required final  List<String> tagNames}): _files = files,_performerIds = performerIds,_performerNames = performerNames,_tagIds = tagIds,_tagNames = tagNames;
   factory _Scene.fromJson(Map<String, dynamic> json) => _$SceneFromJson(json);
 
 @override final  String id;
@@ -227,24 +244,50 @@ class _Scene implements Scene {
 @override final  String? details;
 @override final  String? path;
 @override final  DateTime date;
-@override final  double rating;
- final  List<String> _tags;
-@override List<String> get tags {
-  if (_tags is EqualUnmodifiableListView) return _tags;
+@override final  int? rating100;
+@override final  int oCounter;
+@override final  bool organized;
+@override final  bool interactive;
+@override final  double? resumeTime;
+@override final  int playCount;
+ final  List<SceneFile> _files;
+@override List<SceneFile> get files {
+  if (_files is EqualUnmodifiableListView) return _files;
   // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_tags);
+  return EqualUnmodifiableListView(_files);
 }
 
- final  List<String> _performers;
-@override List<String> get performers {
-  if (_performers is EqualUnmodifiableListView) return _performers;
+@override final  ScenePaths paths;
+@override final  String? studioId;
+@override final  String? studioName;
+ final  List<String> _performerIds;
+@override List<String> get performerIds {
+  if (_performerIds is EqualUnmodifiableListView) return _performerIds;
   // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_performers);
+  return EqualUnmodifiableListView(_performerIds);
 }
 
-@override final  String? studio;
-@override final  String? streamUrl;
-@override final  String? thumbUrl;
+ final  List<String> _performerNames;
+@override List<String> get performerNames {
+  if (_performerNames is EqualUnmodifiableListView) return _performerNames;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_performerNames);
+}
+
+ final  List<String> _tagIds;
+@override List<String> get tagIds {
+  if (_tagIds is EqualUnmodifiableListView) return _tagIds;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_tagIds);
+}
+
+ final  List<String> _tagNames;
+@override List<String> get tagNames {
+  if (_tagNames is EqualUnmodifiableListView) return _tagNames;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_tagNames);
+}
+
 
 /// Create a copy of Scene
 /// with the given fields replaced by the non-null parameter values.
@@ -259,16 +302,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Scene&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.details, details) || other.details == details)&&(identical(other.path, path) || other.path == path)&&(identical(other.date, date) || other.date == date)&&(identical(other.rating, rating) || other.rating == rating)&&const DeepCollectionEquality().equals(other._tags, _tags)&&const DeepCollectionEquality().equals(other._performers, _performers)&&(identical(other.studio, studio) || other.studio == studio)&&(identical(other.streamUrl, streamUrl) || other.streamUrl == streamUrl)&&(identical(other.thumbUrl, thumbUrl) || other.thumbUrl == thumbUrl));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Scene&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.details, details) || other.details == details)&&(identical(other.path, path) || other.path == path)&&(identical(other.date, date) || other.date == date)&&(identical(other.rating100, rating100) || other.rating100 == rating100)&&(identical(other.oCounter, oCounter) || other.oCounter == oCounter)&&(identical(other.organized, organized) || other.organized == organized)&&(identical(other.interactive, interactive) || other.interactive == interactive)&&(identical(other.resumeTime, resumeTime) || other.resumeTime == resumeTime)&&(identical(other.playCount, playCount) || other.playCount == playCount)&&const DeepCollectionEquality().equals(other._files, _files)&&(identical(other.paths, paths) || other.paths == paths)&&(identical(other.studioId, studioId) || other.studioId == studioId)&&(identical(other.studioName, studioName) || other.studioName == studioName)&&const DeepCollectionEquality().equals(other._performerIds, _performerIds)&&const DeepCollectionEquality().equals(other._performerNames, _performerNames)&&const DeepCollectionEquality().equals(other._tagIds, _tagIds)&&const DeepCollectionEquality().equals(other._tagNames, _tagNames));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,details,path,date,rating,const DeepCollectionEquality().hash(_tags),const DeepCollectionEquality().hash(_performers),studio,streamUrl,thumbUrl);
+int get hashCode => Object.hashAll([runtimeType,id,title,details,path,date,rating100,oCounter,organized,interactive,resumeTime,playCount,const DeepCollectionEquality().hash(_files),paths,studioId,studioName,const DeepCollectionEquality().hash(_performerIds),const DeepCollectionEquality().hash(_performerNames),const DeepCollectionEquality().hash(_tagIds),const DeepCollectionEquality().hash(_tagNames)]);
 
 @override
 String toString() {
-  return 'Scene(id: $id, title: $title, details: $details, path: $path, date: $date, rating: $rating, tags: $tags, performers: $performers, studio: $studio, streamUrl: $streamUrl, thumbUrl: $thumbUrl)';
+  return 'Scene(id: $id, title: $title, details: $details, path: $path, date: $date, rating100: $rating100, oCounter: $oCounter, organized: $organized, interactive: $interactive, resumeTime: $resumeTime, playCount: $playCount, files: $files, paths: $paths, studioId: $studioId, studioName: $studioName, performerIds: $performerIds, performerNames: $performerNames, tagIds: $tagIds, tagNames: $tagNames)';
 }
 
 
@@ -279,11 +322,11 @@ abstract mixin class _$SceneCopyWith<$Res> implements $SceneCopyWith<$Res> {
   factory _$SceneCopyWith(_Scene value, $Res Function(_Scene) _then) = __$SceneCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String title, String? details, String? path, DateTime date, double rating, List<String> tags, List<String> performers, String? studio, String? streamUrl, String? thumbUrl
+ String id, String title, String? details, String? path, DateTime date, int? rating100, int oCounter, bool organized, bool interactive, double? resumeTime, int playCount, List<SceneFile> files, ScenePaths paths, String? studioId, String? studioName, List<String> performerIds, List<String> performerNames, List<String> tagIds, List<String> tagNames
 });
 
 
-
+@override $ScenePathsCopyWith<$Res> get paths;
 
 }
 /// @nodoc
@@ -296,19 +339,583 @@ class __$SceneCopyWithImpl<$Res>
 
 /// Create a copy of Scene
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? details = freezed,Object? path = freezed,Object? date = null,Object? rating = null,Object? tags = null,Object? performers = null,Object? studio = freezed,Object? streamUrl = freezed,Object? thumbUrl = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? details = freezed,Object? path = freezed,Object? date = null,Object? rating100 = freezed,Object? oCounter = null,Object? organized = null,Object? interactive = null,Object? resumeTime = freezed,Object? playCount = null,Object? files = null,Object? paths = null,Object? studioId = freezed,Object? studioName = freezed,Object? performerIds = null,Object? performerNames = null,Object? tagIds = null,Object? tagNames = null,}) {
   return _then(_Scene(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,details: freezed == details ? _self.details : details // ignore: cast_nullable_to_non_nullable
 as String?,path: freezed == path ? _self.path : path // ignore: cast_nullable_to_non_nullable
 as String?,date: null == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
-as DateTime,rating: null == rating ? _self.rating : rating // ignore: cast_nullable_to_non_nullable
-as double,tags: null == tags ? _self._tags : tags // ignore: cast_nullable_to_non_nullable
-as List<String>,performers: null == performers ? _self._performers : performers // ignore: cast_nullable_to_non_nullable
-as List<String>,studio: freezed == studio ? _self.studio : studio // ignore: cast_nullable_to_non_nullable
-as String?,streamUrl: freezed == streamUrl ? _self.streamUrl : streamUrl // ignore: cast_nullable_to_non_nullable
-as String?,thumbUrl: freezed == thumbUrl ? _self.thumbUrl : thumbUrl // ignore: cast_nullable_to_non_nullable
+as DateTime,rating100: freezed == rating100 ? _self.rating100 : rating100 // ignore: cast_nullable_to_non_nullable
+as int?,oCounter: null == oCounter ? _self.oCounter : oCounter // ignore: cast_nullable_to_non_nullable
+as int,organized: null == organized ? _self.organized : organized // ignore: cast_nullable_to_non_nullable
+as bool,interactive: null == interactive ? _self.interactive : interactive // ignore: cast_nullable_to_non_nullable
+as bool,resumeTime: freezed == resumeTime ? _self.resumeTime : resumeTime // ignore: cast_nullable_to_non_nullable
+as double?,playCount: null == playCount ? _self.playCount : playCount // ignore: cast_nullable_to_non_nullable
+as int,files: null == files ? _self._files : files // ignore: cast_nullable_to_non_nullable
+as List<SceneFile>,paths: null == paths ? _self.paths : paths // ignore: cast_nullable_to_non_nullable
+as ScenePaths,studioId: freezed == studioId ? _self.studioId : studioId // ignore: cast_nullable_to_non_nullable
+as String?,studioName: freezed == studioName ? _self.studioName : studioName // ignore: cast_nullable_to_non_nullable
+as String?,performerIds: null == performerIds ? _self._performerIds : performerIds // ignore: cast_nullable_to_non_nullable
+as List<String>,performerNames: null == performerNames ? _self._performerNames : performerNames // ignore: cast_nullable_to_non_nullable
+as List<String>,tagIds: null == tagIds ? _self._tagIds : tagIds // ignore: cast_nullable_to_non_nullable
+as List<String>,tagNames: null == tagNames ? _self._tagNames : tagNames // ignore: cast_nullable_to_non_nullable
+as List<String>,
+  ));
+}
+
+/// Create a copy of Scene
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ScenePathsCopyWith<$Res> get paths {
+  
+  return $ScenePathsCopyWith<$Res>(_self.paths, (value) {
+    return _then(_self.copyWith(paths: value));
+  });
+}
+}
+
+
+/// @nodoc
+mixin _$SceneFile {
+
+ String? get format; int? get width; int? get height; String? get videoCodec; String? get audioCodec; int? get bitRate;
+/// Create a copy of SceneFile
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$SceneFileCopyWith<SceneFile> get copyWith => _$SceneFileCopyWithImpl<SceneFile>(this as SceneFile, _$identity);
+
+  /// Serializes this SceneFile to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SceneFile&&(identical(other.format, format) || other.format == format)&&(identical(other.width, width) || other.width == width)&&(identical(other.height, height) || other.height == height)&&(identical(other.videoCodec, videoCodec) || other.videoCodec == videoCodec)&&(identical(other.audioCodec, audioCodec) || other.audioCodec == audioCodec)&&(identical(other.bitRate, bitRate) || other.bitRate == bitRate));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,format,width,height,videoCodec,audioCodec,bitRate);
+
+@override
+String toString() {
+  return 'SceneFile(format: $format, width: $width, height: $height, videoCodec: $videoCodec, audioCodec: $audioCodec, bitRate: $bitRate)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $SceneFileCopyWith<$Res>  {
+  factory $SceneFileCopyWith(SceneFile value, $Res Function(SceneFile) _then) = _$SceneFileCopyWithImpl;
+@useResult
+$Res call({
+ String? format, int? width, int? height, String? videoCodec, String? audioCodec, int? bitRate
+});
+
+
+
+
+}
+/// @nodoc
+class _$SceneFileCopyWithImpl<$Res>
+    implements $SceneFileCopyWith<$Res> {
+  _$SceneFileCopyWithImpl(this._self, this._then);
+
+  final SceneFile _self;
+  final $Res Function(SceneFile) _then;
+
+/// Create a copy of SceneFile
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? format = freezed,Object? width = freezed,Object? height = freezed,Object? videoCodec = freezed,Object? audioCodec = freezed,Object? bitRate = freezed,}) {
+  return _then(_self.copyWith(
+format: freezed == format ? _self.format : format // ignore: cast_nullable_to_non_nullable
+as String?,width: freezed == width ? _self.width : width // ignore: cast_nullable_to_non_nullable
+as int?,height: freezed == height ? _self.height : height // ignore: cast_nullable_to_non_nullable
+as int?,videoCodec: freezed == videoCodec ? _self.videoCodec : videoCodec // ignore: cast_nullable_to_non_nullable
+as String?,audioCodec: freezed == audioCodec ? _self.audioCodec : audioCodec // ignore: cast_nullable_to_non_nullable
+as String?,bitRate: freezed == bitRate ? _self.bitRate : bitRate // ignore: cast_nullable_to_non_nullable
+as int?,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [SceneFile].
+extension SceneFilePatterns on SceneFile {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _SceneFile value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _SceneFile() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _SceneFile value)  $default,){
+final _that = this;
+switch (_that) {
+case _SceneFile():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _SceneFile value)?  $default,){
+final _that = this;
+switch (_that) {
+case _SceneFile() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? format,  int? width,  int? height,  String? videoCodec,  String? audioCodec,  int? bitRate)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _SceneFile() when $default != null:
+return $default(_that.format,_that.width,_that.height,_that.videoCodec,_that.audioCodec,_that.bitRate);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? format,  int? width,  int? height,  String? videoCodec,  String? audioCodec,  int? bitRate)  $default,) {final _that = this;
+switch (_that) {
+case _SceneFile():
+return $default(_that.format,_that.width,_that.height,_that.videoCodec,_that.audioCodec,_that.bitRate);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? format,  int? width,  int? height,  String? videoCodec,  String? audioCodec,  int? bitRate)?  $default,) {final _that = this;
+switch (_that) {
+case _SceneFile() when $default != null:
+return $default(_that.format,_that.width,_that.height,_that.videoCodec,_that.audioCodec,_that.bitRate);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _SceneFile implements SceneFile {
+  const _SceneFile({required this.format, required this.width, required this.height, required this.videoCodec, required this.audioCodec, required this.bitRate});
+  factory _SceneFile.fromJson(Map<String, dynamic> json) => _$SceneFileFromJson(json);
+
+@override final  String? format;
+@override final  int? width;
+@override final  int? height;
+@override final  String? videoCodec;
+@override final  String? audioCodec;
+@override final  int? bitRate;
+
+/// Create a copy of SceneFile
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$SceneFileCopyWith<_SceneFile> get copyWith => __$SceneFileCopyWithImpl<_SceneFile>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$SceneFileToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SceneFile&&(identical(other.format, format) || other.format == format)&&(identical(other.width, width) || other.width == width)&&(identical(other.height, height) || other.height == height)&&(identical(other.videoCodec, videoCodec) || other.videoCodec == videoCodec)&&(identical(other.audioCodec, audioCodec) || other.audioCodec == audioCodec)&&(identical(other.bitRate, bitRate) || other.bitRate == bitRate));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,format,width,height,videoCodec,audioCodec,bitRate);
+
+@override
+String toString() {
+  return 'SceneFile(format: $format, width: $width, height: $height, videoCodec: $videoCodec, audioCodec: $audioCodec, bitRate: $bitRate)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$SceneFileCopyWith<$Res> implements $SceneFileCopyWith<$Res> {
+  factory _$SceneFileCopyWith(_SceneFile value, $Res Function(_SceneFile) _then) = __$SceneFileCopyWithImpl;
+@override @useResult
+$Res call({
+ String? format, int? width, int? height, String? videoCodec, String? audioCodec, int? bitRate
+});
+
+
+
+
+}
+/// @nodoc
+class __$SceneFileCopyWithImpl<$Res>
+    implements _$SceneFileCopyWith<$Res> {
+  __$SceneFileCopyWithImpl(this._self, this._then);
+
+  final _SceneFile _self;
+  final $Res Function(_SceneFile) _then;
+
+/// Create a copy of SceneFile
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? format = freezed,Object? width = freezed,Object? height = freezed,Object? videoCodec = freezed,Object? audioCodec = freezed,Object? bitRate = freezed,}) {
+  return _then(_SceneFile(
+format: freezed == format ? _self.format : format // ignore: cast_nullable_to_non_nullable
+as String?,width: freezed == width ? _self.width : width // ignore: cast_nullable_to_non_nullable
+as int?,height: freezed == height ? _self.height : height // ignore: cast_nullable_to_non_nullable
+as int?,videoCodec: freezed == videoCodec ? _self.videoCodec : videoCodec // ignore: cast_nullable_to_non_nullable
+as String?,audioCodec: freezed == audioCodec ? _self.audioCodec : audioCodec // ignore: cast_nullable_to_non_nullable
+as String?,bitRate: freezed == bitRate ? _self.bitRate : bitRate // ignore: cast_nullable_to_non_nullable
+as int?,
+  ));
+}
+
+
+}
+
+
+/// @nodoc
+mixin _$ScenePaths {
+
+ String? get screenshot; String? get preview; String? get stream;
+/// Create a copy of ScenePaths
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ScenePathsCopyWith<ScenePaths> get copyWith => _$ScenePathsCopyWithImpl<ScenePaths>(this as ScenePaths, _$identity);
+
+  /// Serializes this ScenePaths to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ScenePaths&&(identical(other.screenshot, screenshot) || other.screenshot == screenshot)&&(identical(other.preview, preview) || other.preview == preview)&&(identical(other.stream, stream) || other.stream == stream));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,screenshot,preview,stream);
+
+@override
+String toString() {
+  return 'ScenePaths(screenshot: $screenshot, preview: $preview, stream: $stream)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ScenePathsCopyWith<$Res>  {
+  factory $ScenePathsCopyWith(ScenePaths value, $Res Function(ScenePaths) _then) = _$ScenePathsCopyWithImpl;
+@useResult
+$Res call({
+ String? screenshot, String? preview, String? stream
+});
+
+
+
+
+}
+/// @nodoc
+class _$ScenePathsCopyWithImpl<$Res>
+    implements $ScenePathsCopyWith<$Res> {
+  _$ScenePathsCopyWithImpl(this._self, this._then);
+
+  final ScenePaths _self;
+  final $Res Function(ScenePaths) _then;
+
+/// Create a copy of ScenePaths
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? screenshot = freezed,Object? preview = freezed,Object? stream = freezed,}) {
+  return _then(_self.copyWith(
+screenshot: freezed == screenshot ? _self.screenshot : screenshot // ignore: cast_nullable_to_non_nullable
+as String?,preview: freezed == preview ? _self.preview : preview // ignore: cast_nullable_to_non_nullable
+as String?,stream: freezed == stream ? _self.stream : stream // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [ScenePaths].
+extension ScenePathsPatterns on ScenePaths {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ScenePaths value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _ScenePaths() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ScenePaths value)  $default,){
+final _that = this;
+switch (_that) {
+case _ScenePaths():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ScenePaths value)?  $default,){
+final _that = this;
+switch (_that) {
+case _ScenePaths() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? screenshot,  String? preview,  String? stream)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _ScenePaths() when $default != null:
+return $default(_that.screenshot,_that.preview,_that.stream);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? screenshot,  String? preview,  String? stream)  $default,) {final _that = this;
+switch (_that) {
+case _ScenePaths():
+return $default(_that.screenshot,_that.preview,_that.stream);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? screenshot,  String? preview,  String? stream)?  $default,) {final _that = this;
+switch (_that) {
+case _ScenePaths() when $default != null:
+return $default(_that.screenshot,_that.preview,_that.stream);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _ScenePaths implements ScenePaths {
+  const _ScenePaths({required this.screenshot, required this.preview, required this.stream});
+  factory _ScenePaths.fromJson(Map<String, dynamic> json) => _$ScenePathsFromJson(json);
+
+@override final  String? screenshot;
+@override final  String? preview;
+@override final  String? stream;
+
+/// Create a copy of ScenePaths
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ScenePathsCopyWith<_ScenePaths> get copyWith => __$ScenePathsCopyWithImpl<_ScenePaths>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$ScenePathsToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ScenePaths&&(identical(other.screenshot, screenshot) || other.screenshot == screenshot)&&(identical(other.preview, preview) || other.preview == preview)&&(identical(other.stream, stream) || other.stream == stream));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,screenshot,preview,stream);
+
+@override
+String toString() {
+  return 'ScenePaths(screenshot: $screenshot, preview: $preview, stream: $stream)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$ScenePathsCopyWith<$Res> implements $ScenePathsCopyWith<$Res> {
+  factory _$ScenePathsCopyWith(_ScenePaths value, $Res Function(_ScenePaths) _then) = __$ScenePathsCopyWithImpl;
+@override @useResult
+$Res call({
+ String? screenshot, String? preview, String? stream
+});
+
+
+
+
+}
+/// @nodoc
+class __$ScenePathsCopyWithImpl<$Res>
+    implements _$ScenePathsCopyWith<$Res> {
+  __$ScenePathsCopyWithImpl(this._self, this._then);
+
+  final _ScenePaths _self;
+  final $Res Function(_ScenePaths) _then;
+
+/// Create a copy of ScenePaths
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? screenshot = freezed,Object? preview = freezed,Object? stream = freezed,}) {
+  return _then(_ScenePaths(
+screenshot: freezed == screenshot ? _self.screenshot : screenshot // ignore: cast_nullable_to_non_nullable
+as String?,preview: freezed == preview ? _self.preview : preview // ignore: cast_nullable_to_non_nullable
+as String?,stream: freezed == stream ? _self.stream : stream // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
