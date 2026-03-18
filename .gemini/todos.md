@@ -1,5 +1,5 @@
-# StashAppFlutter Initial Setup Todo
+# StashAppFlutter Domain Layer Todo
 
-- [ ] Task 1: Scaffold Flutter Project
-- [ ] Task 2: Configure GraphQL Codegen
-- [ ] Task 3: Define Initial Directory Structure
+- [ ] Task 1: Define Core Domain Entities (Scene, Performer, Studio)
+- [ ] Task 2: Define Repository Interfaces
+- [ ] Task 3: Set Up Riverpod Notifiers (AsyncNotifier)
