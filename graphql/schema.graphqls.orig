@@ -4653,3 +4653,9 @@ type LatestVersion {
   release_date: String!
   url: String!
 }
+
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
