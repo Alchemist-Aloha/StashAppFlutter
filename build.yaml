@@ -9,3 +9,9 @@ targets:
         enabled: true
       build_web_compilers|entrypoint:
         enabled: false
+      graphql_codegen:
+        options:
+          schema_mapping:
+            - schema: graphql/schema.graphql
+              queries_glob: lib/**/*.graphql
+              output_directory: lib/core/data/graphql/__generated__

@@ -10,6 +10,8 @@ abstract class Studio with _$Studio {
     required String name,
     String? details,
     required String? imagePath,
+    String? parentId,
+    String? parentName,
   }) = _Studio;
 
   factory Studio.fromJson(Map<String, dynamic> json) => _$StudioFromJson(json);
