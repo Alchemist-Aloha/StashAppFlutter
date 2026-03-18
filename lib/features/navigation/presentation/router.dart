@@ -1,3 +1,4 @@
+import "../../scenes/presentation/pages/scene_details_page.dart";
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
