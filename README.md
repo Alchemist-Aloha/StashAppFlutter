@@ -1,6 +1,10 @@
-# StashAppFlutter
+# 📱 StashAppFlutter
+### Your Stash library, everywhere.
 
-Mobile-first Flutter client for a Stash server, with GraphQL-backed browsing and playback.
+A mobile-first Flutter client for your **Stash** server. Designed for seamless browsing, effortless discovery, and high-quality playback on the go.
+
+![StashAppFlutter Showcase](docs/assets/showcase.png)
+*(Screenshot coming soon)*
 
 ## Current Highlights
 
