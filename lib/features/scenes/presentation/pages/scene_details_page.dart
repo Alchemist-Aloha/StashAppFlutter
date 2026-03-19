@@ -15,6 +15,41 @@ class SceneDetailsPage extends ConsumerWidget {
   final String sceneId;
   const SceneDetailsPage({required this.sceneId, super.key});
 
+  String _displayTitle({
+    required String title,
+    String? filePath,
+    String? streamPath,
+  }) {
+    final trimmed = title.trim();
+    if (trimmed.isNotEmpty) return trimmed;
+
+    final fromPath = _nameFromPath(filePath) ?? _nameFromPath(streamPath);
+    return (fromPath == null || fromPath.isEmpty) ? 'Untitled Scene' : fromPath;
+  }
+
+  String? _nameFromPath(String? rawPath) {
+    if (rawPath == null || rawPath.trim().isEmpty) return null;
+
+    final normalized = rawPath.replaceAll('\\', '/');
+    final parsed = Uri.tryParse(normalized);
+    final pathPart = (parsed?.hasScheme ?? false)
+        ? (parsed?.path ?? normalized)
+        : normalized;
+
+    final segments = pathPart
+        .split('/')
+        .where((part) => part.isNotEmpty)
+        .toList();
+    final lastSegment = segments.isEmpty ? '' : segments.last;
+    if (lastSegment.isEmpty) return null;
+
+    final decoded = Uri.decodeComponent(lastSegment);
+    final dotIndex = decoded.lastIndexOf('.');
+    final withoutExt = dotIndex > 0 ? decoded.substring(0, dotIndex) : decoded;
+    final cleaned = withoutExt.replaceAll(RegExp(r'[_\.]+'), ' ').trim();
+    return cleaned.isEmpty ? null : cleaned;
+  }
+
   Future<void> _openRandomScene(BuildContext context, WidgetRef ref) async {
     final randomScene = await ref
         .read(sceneListProvider.notifier)
@@ -77,6 +112,11 @@ class SceneDetailsPage extends ConsumerWidget {
       body: sceneAsync.when(
         data: (scene) {
           final primaryFile = scene.files.isNotEmpty ? scene.files.first : null;
+          final displayTitle = _displayTitle(
+            title: scene.title,
+            filePath: scene.path,
+            streamPath: scene.paths.stream,
+          );
           return SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -88,7 +128,7 @@ class SceneDetailsPage extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        scene.title,
+                        displayTitle,
                         style: context.textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: context.colors.onSurface,
@@ -121,15 +161,17 @@ class SceneDetailsPage extends ConsumerWidget {
                             Text(
                               ' • ',
                               style: TextStyle(
-                                color: context.colors.onSurface.withOpacity(
-                                  0.5,
+                                color: context.colors.onSurface.withValues(
+                                  alpha: 0.5,
                                 ),
                               ),
                             ),
                           Text(
                             scene.date.year.toString(),
                             style: context.textTheme.titleMedium?.copyWith(
-                              color: context.colors.onSurface.withOpacity(0.6),
+                              color: context.colors.onSurface.withValues(
+                                alpha: 0.6,
+                              ),
                             ),
                           ),
                         ],
@@ -189,7 +231,9 @@ class SceneDetailsPage extends ConsumerWidget {
                         Text(
                           scene.details!,
                           style: context.textTheme.bodyMedium?.copyWith(
-                            color: context.colors.onSurface.withOpacity(0.8),
+                            color: context.colors.onSurface.withValues(
+                              alpha: 0.8,
+                            ),
                           ),
                         ),
                         const Divider(height: 32, color: Colors.grey),

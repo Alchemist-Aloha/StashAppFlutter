@@ -18,7 +18,9 @@ class StudioDetailsPage extends ConsumerWidget {
   const StudioDetailsPage({required this.studioId, super.key});
 
   Future<void> _openRandomScene(BuildContext context, WidgetRef ref) async {
-    final randomScene = await ref.read(sceneListProvider.notifier).getRandomScene(studioId: studioId);
+    final randomScene = await ref
+        .read(sceneListProvider.notifier)
+        .getRandomScene(studioId: studioId);
     if (!context.mounted) return;
 
     if (randomScene == null) {
@@ -66,7 +68,9 @@ class StudioDetailsPage extends ConsumerWidget {
                           child: Icon(
                             Icons.apartment,
                             size: 72,
-                            color: context.colors.onSurfaceVariant.withOpacity(0.5),
+                            color: context.colors.onSurfaceVariant.withValues(
+                              alpha: 0.5,
+                            ),
                           ),
                         ),
                       )
@@ -74,7 +78,9 @@ class StudioDetailsPage extends ConsumerWidget {
                         child: Icon(
                           Icons.apartment,
                           size: 72,
-                          color: context.colors.onSurfaceVariant.withOpacity(0.5),
+                          color: context.colors.onSurfaceVariant.withValues(
+                            alpha: 0.5,
+                          ),
                         ),
                       ),
               ),
@@ -96,27 +102,37 @@ class StudioDetailsPage extends ConsumerWidget {
                       runSpacing: AppTheme.spacingSmall,
                       children: [
                         _buildChip(context, '${studio.sceneCount} scenes'),
-                        _buildChip(context, '${studio.performerCount} performers'),
+                        _buildChip(
+                          context,
+                          '${studio.performerCount} performers',
+                        ),
                         _buildChip(context, '${studio.imageCount} images'),
                         _buildChip(context, '${studio.galleryCount} galleries'),
                         if (studio.rating100 != null)
-                          _buildChip(context, 'Rating: ${(studio.rating100! / 20).toStringAsFixed(1)}'),
+                          _buildChip(
+                            context,
+                            'Rating: ${(studio.rating100! / 20).toStringAsFixed(1)}',
+                          ),
                       ],
                     ),
                     const Divider(height: 32, color: Colors.grey),
                     SectionHeader(
                       title: 'Media',
-                      onViewAll: () => context.push('/studio/${studio.id}/media'),
+                      onViewAll: () =>
+                          context.push('/studio/${studio.id}/media'),
                     ),
                     mediaAsync.when(
                       data: (mediaItems) => MediaStrip(
                         items: mediaItems
-                            .map((item) => MediaStripItem(
-                                  id: item.sceneId,
-                                  title: item.title,
-                                  thumbnailUrl: item.thumbnailUrl,
-                                  onTap: () => context.push('/scene/${item.sceneId}'),
-                                ))
+                            .map(
+                              (item) => MediaStripItem(
+                                id: item.sceneId,
+                                title: item.title,
+                                thumbnailUrl: item.thumbnailUrl,
+                                onTap: () =>
+                                    context.push('/scene/${item.sceneId}'),
+                              ),
+                            )
                             .toList(),
                         headers: mediaHeaders,
                       ),
@@ -126,16 +142,23 @@ class StudioDetailsPage extends ConsumerWidget {
                       ),
                       error: (err, stack) => Text(
                         'Failed to load media: $err',
-                        style: TextStyle(color: context.colors.onSurface.withOpacity(0.7)),
+                        style: TextStyle(
+                          color: context.colors.onSurface.withValues(
+                            alpha: 0.7,
+                          ),
+                        ),
                       ),
                     ),
-                    if (studio.details != null && studio.details!.isNotEmpty) ...[
+                    if (studio.details != null &&
+                        studio.details!.isNotEmpty) ...[
                       const Divider(height: 32, color: Colors.grey),
                       const SectionHeader(title: 'Details'),
                       Text(
                         studio.details!,
                         style: context.textTheme.bodyMedium?.copyWith(
-                          color: context.colors.onSurface.withOpacity(0.8),
+                          color: context.colors.onSurface.withValues(
+                            alpha: 0.8,
+                          ),
                         ),
                       ),
                     ],

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../scenes/presentation/providers/scene_list_provider.dart';
 import 'widgets/mini_player.dart';
 
-class ShellPage extends ConsumerWidget {
+class ShellPage extends StatelessWidget {
   final Widget child;
   const ShellPage({required this.child, super.key});
 
@@ -33,26 +31,8 @@ class ShellPage extends ConsumerWidget {
     }
   }
 
-  Future<void> _surpriseMe(BuildContext context, WidgetRef ref) async {
-    final randomScene = await ref
-        .read(sceneListProvider.notifier)
-        .getRandomScene();
-    if (!context.mounted) return;
-
-    if (randomScene == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('No scenes available for Surprise Me yet'),
-        ),
-      );
-      return;
-    }
-
-    context.push('/scene/${randomScene.id}');
-  }
-
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final currentPath = GoRouterState.of(context).uri.path;
     return Scaffold(
       body: Column(
@@ -90,28 +70,6 @@ class ShellPage extends ConsumerWidget {
                 onDestinationSelected: (index) {
                   context.go(_routeForIndex(index));
                 },
-              ),
-            ),
-            PopupMenuButton<String>(
-              tooltip: 'More',
-              onSelected: (value) {
-                if (value == 'surprise') {
-                  _surpriseMe(context, ref);
-                }
-              },
-              itemBuilder: (context) => const [
-                PopupMenuItem<String>(
-                  value: 'surprise',
-                  child: ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: Icon(Icons.casino_outlined),
-                    title: Text('Surprise Me'),
-                  ),
-                ),
-              ],
-              child: const Padding(
-                padding: EdgeInsets.only(right: 12),
-                child: Icon(Icons.more_vert),
               ),
             ),
           ],

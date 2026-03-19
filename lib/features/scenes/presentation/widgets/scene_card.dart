@@ -19,11 +19,15 @@ class SceneCard extends ConsumerWidget {
 
   void _showMenu(BuildContext context, WidgetRef ref) {
     final RenderBox button = context.findRenderObject() as RenderBox;
-    final RenderBox overlay = Navigator.of(context).overlay!.context.findRenderObject() as RenderBox;
+    final RenderBox overlay =
+        Navigator.of(context).overlay!.context.findRenderObject() as RenderBox;
     final RelativeRect position = RelativeRect.fromRect(
       Rect.fromPoints(
         button.localToGlobal(Offset.zero, ancestor: overlay),
-        button.localToGlobal(button.size.bottomRight(Offset.zero), ancestor: overlay),
+        button.localToGlobal(
+          button.size.bottomRight(Offset.zero),
+          ancestor: overlay,
+        ),
       ),
       Offset.zero & overlay.size,
     );
@@ -43,6 +47,7 @@ class SceneCard extends ConsumerWidget {
         ),
       ],
     ).then((value) {
+      if (!context.mounted) return;
       if (value == 'add_to_queue') {
         ref.read(playbackQueueProvider.notifier).add(scene);
         ScaffoldMessenger.of(context).showSnackBar(
@@ -62,7 +67,11 @@ class SceneCard extends ConsumerWidget {
     return _buildListCard(context, ref, mediaHeaders);
   }
 
-  Widget _buildListCard(BuildContext context, WidgetRef ref, Map<String, String> mediaHeaders) {
+  Widget _buildListCard(
+    BuildContext context,
+    WidgetRef ref,
+    Map<String, String> mediaHeaders,
+  ) {
     return InkWell(
       onTap: onTap,
       onLongPress: () => _showMenu(context, ref),
@@ -151,7 +160,11 @@ class SceneCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildGridCard(BuildContext context, WidgetRef ref, Map<String, String> mediaHeaders) {
+  Widget _buildGridCard(
+    BuildContext context,
+    WidgetRef ref,
+    Map<String, String> mediaHeaders,
+  ) {
     return InkWell(
       onTap: onTap,
       onLongPress: () => _showMenu(context, ref),

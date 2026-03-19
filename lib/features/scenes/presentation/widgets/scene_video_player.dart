@@ -8,7 +8,6 @@ import '../../../../core/data/graphql/graphql_client.dart';
 import '../../../../core/data/graphql/media_headers_provider.dart';
 import '../../../../core/data/graphql/url_resolver.dart';
 import '../../../../core/data/preferences/shared_preferences_provider.dart';
-import '../../../../core/presentation/theme/app_theme.dart';
 import '../providers/video_player_provider.dart';
 import '../../domain/entities/scene.dart';
 import '../providers/playback_queue_provider.dart';
@@ -64,7 +63,7 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
       final choice = preferSceneStreams
           ? await resolver.resolvePreferredStream(widget.scene)
           : null;
-      
+
       final streamUrl = choice?.url ?? widget.scene.paths.stream ?? '';
       var mimeType = choice?.mimeType ?? resolver.guessMimeType(streamUrl);
       final streamLabel = choice?.label;
@@ -232,31 +231,33 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
       child: Stack(
         children: [
           Positioned.fill(child: Chewie(controller: chewieController)),
-          Positioned(
-            top: 8,
-            left: 8,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: Colors.black.withAlpha(180),
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Text(
-                'mime: ${playerState.streamMimeType ?? 'unknown'}'
-                '${playerState.streamLabel == null || playerState.streamLabel!.isEmpty ? '' : '  label: ${playerState.streamLabel}'}'
-                '${playerState.streamSource == null || playerState.streamSource!.isEmpty ? '' : '  src: ${playerState.streamSource}'}'
-                '${playerState.prewarmAttempted != true ? '' : '  prewarm: ${playerState.prewarmSucceeded == true ? 'ok' : 'fail'}${playerState.prewarmLatencyMs == null ? '' : '/${playerState.prewarmLatencyMs}ms'}'}'
-                '${playerState.startupLatencyMs == null ? '' : '  start: ${playerState.startupLatencyMs}ms'}',
-                style: const TextStyle(color: Colors.white70, fontSize: 11),
+          if (playerState.showVideoDebugInfo)
+            Positioned(
+              top: 8,
+              left: 8,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.black.withAlpha(180),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  'mime: ${playerState.streamMimeType ?? 'unknown'}'
+                  '${playerState.streamLabel == null || playerState.streamLabel!.isEmpty ? '' : '  label: ${playerState.streamLabel}'}'
+                  '${playerState.streamSource == null || playerState.streamSource!.isEmpty ? '' : '  src: ${playerState.streamSource}'}'
+                  '${playerState.prewarmAttempted != true ? '' : '  prewarm: ${playerState.prewarmSucceeded == true ? 'ok' : 'fail'}${playerState.prewarmLatencyMs == null ? '' : '/${playerState.prewarmLatencyMs}ms'}'}'
+                  '${playerState.startupLatencyMs == null ? '' : '  start: ${playerState.startupLatencyMs}ms'}',
+                  style: const TextStyle(color: Colors.white70, fontSize: 11),
+                ),
               ),
             ),
-          ),
           if (nextScene != null)
             Positioned(
               bottom: 50,
               right: 16,
               child: ElevatedButton.icon(
-                onPressed: () => ref.read(playerStateProvider.notifier).playNext(),
+                onPressed: () =>
+                    ref.read(playerStateProvider.notifier).playNext(),
                 icon: const Icon(Icons.skip_next),
                 label: Text('Next: ${nextScene.title}'),
                 style: ElevatedButton.styleFrom(
@@ -265,20 +266,6 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
                 ),
               ),
             ),
-          Positioned(
-            top: 8,
-            right: 8,
-            child: Row(
-              children: [
-                const Text('Autoplay Next', style: TextStyle(color: Colors.white70, fontSize: 10)),
-                Switch.adaptive(
-                  value: playerState.autoplayNext,
-                  onChanged: (val) => ref.read(playerStateProvider.notifier).setAutoplayNext(val),
-                  activeColor: context.colors.secondary,
-                ),
-              ],
-            ),
-          ),
         ],
       ),
     );

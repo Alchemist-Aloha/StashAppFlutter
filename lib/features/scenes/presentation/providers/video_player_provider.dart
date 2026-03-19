@@ -6,6 +6,7 @@ import '../../domain/entities/scene.dart';
 import 'playback_queue_provider.dart';
 import '../../data/repositories/stream_resolver.dart';
 import '../../../../core/data/graphql/media_headers_provider.dart';
+import '../../../../core/data/preferences/shared_preferences_provider.dart';
 
 part 'video_player_provider.g.dart';
 
@@ -22,6 +23,7 @@ class GlobalPlayerState {
   final bool? prewarmSucceeded;
   final int? prewarmLatencyMs;
   final bool autoplayNext;
+  final bool showVideoDebugInfo;
 
   GlobalPlayerState({
     this.activeScene,
@@ -36,6 +38,7 @@ class GlobalPlayerState {
     this.prewarmSucceeded,
     this.prewarmLatencyMs,
     this.autoplayNext = false,
+    this.showVideoDebugInfo = false,
   });
 
   GlobalPlayerState copyWith({
@@ -51,6 +54,7 @@ class GlobalPlayerState {
     bool? prewarmSucceeded,
     int? prewarmLatencyMs,
     bool? autoplayNext,
+    bool? showVideoDebugInfo,
     bool clearActive = false,
   }) {
     return GlobalPlayerState(
@@ -80,22 +84,39 @@ class GlobalPlayerState {
           ? null
           : (prewarmLatencyMs ?? this.prewarmLatencyMs),
       autoplayNext: autoplayNext ?? this.autoplayNext,
+      showVideoDebugInfo: showVideoDebugInfo ?? this.showVideoDebugInfo,
     );
   }
 }
 
 @riverpod
 class PlayerState extends _$PlayerState {
+  static const _autoplayNextKey = 'autoplay_next';
+  static const _showVideoDebugInfoKey = 'show_video_debug_info';
+
   @override
   GlobalPlayerState build() {
     ref.onDispose(() {
       _disposeControllers();
     });
-    return GlobalPlayerState();
+
+    final prefs = ref.read(sharedPreferencesProvider);
+    return GlobalPlayerState(
+      autoplayNext: prefs.getBool(_autoplayNextKey) ?? false,
+      showVideoDebugInfo: prefs.getBool(_showVideoDebugInfoKey) ?? false,
+    );
   }
 
   void setAutoplayNext(bool value) {
     state = state.copyWith(autoplayNext: value);
+    final prefs = ref.read(sharedPreferencesProvider);
+    prefs.setBool(_autoplayNextKey, value);
+  }
+
+  void setShowVideoDebugInfo(bool value) {
+    state = state.copyWith(showVideoDebugInfo: value);
+    final prefs = ref.read(sharedPreferencesProvider);
+    prefs.setBool(_showVideoDebugInfoKey, value);
   }
 
   Future<void> playScene(
@@ -187,7 +208,10 @@ class PlayerState extends _$PlayerState {
 
   void stop() {
     _disposeControllers();
-    state = GlobalPlayerState(autoplayNext: state.autoplayNext);
+    state = GlobalPlayerState(
+      autoplayNext: state.autoplayNext,
+      showVideoDebugInfo: state.showVideoDebugInfo,
+    );
   }
 
   Future<void> _disposeControllers() async {
@@ -204,7 +228,7 @@ class PlayerState extends _$PlayerState {
       }
 
       // Check if finished
-      if (controller.value.position >= controller.value.duration && 
+      if (controller.value.position >= controller.value.duration &&
           controller.value.duration > Duration.zero &&
           !controller.value.isPlaying) {
         _handleVideoFinished();

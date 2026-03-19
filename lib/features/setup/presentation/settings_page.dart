@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/data/graphql/graphql_client.dart';
 import '../../../../core/data/preferences/shared_preferences_provider.dart';
+import '../../scenes/presentation/providers/video_player_provider.dart';
 import 'providers/connection_provider.dart';
 
 class SettingsPage extends ConsumerStatefulWidget {
@@ -16,9 +17,13 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   final _apiKeyController = TextEditingController();
   static const _preferSceneStreamsKey = 'prefer_scene_streams';
   static const _sceneGridLayoutKey = 'scene_grid_layout';
+  static const _autoplayNextKey = 'autoplay_next';
+  static const _showVideoDebugInfoKey = 'show_video_debug_info';
 
   bool _preferSceneStreams = true;
   bool _sceneGridLayout = false;
+  bool _autoplayNext = false;
+  bool _showVideoDebugInfo = false;
   bool _loading = true;
 
   @override
@@ -33,10 +38,14 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     final apiKey = prefs.getString('server_api_key') ?? '';
     final preferSceneStreams = prefs.getBool(_preferSceneStreamsKey) ?? true;
     final sceneGridLayout = prefs.getBool(_sceneGridLayoutKey) ?? false;
+    final autoplayNext = prefs.getBool(_autoplayNextKey) ?? false;
+    final showVideoDebugInfo = prefs.getBool(_showVideoDebugInfoKey) ?? false;
     _baseUrlController.text = url;
     _apiKeyController.text = apiKey;
     _preferSceneStreams = preferSceneStreams;
     _sceneGridLayout = sceneGridLayout;
+    _autoplayNext = autoplayNext;
+    _showVideoDebugInfo = showVideoDebugInfo;
     setState(() => _loading = false);
   }
 
@@ -55,6 +64,13 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     await prefs.setString('server_api_key', _apiKeyController.text.trim());
     await prefs.setBool(_preferSceneStreamsKey, _preferSceneStreams);
     await prefs.setBool(_sceneGridLayoutKey, _sceneGridLayout);
+    await prefs.setBool(_autoplayNextKey, _autoplayNext);
+    await prefs.setBool(_showVideoDebugInfoKey, _showVideoDebugInfo);
+
+    // Keep in-memory player state synchronized with persisted settings.
+    final playerStateNotifier = ref.read(playerStateProvider.notifier);
+    playerStateNotifier.setAutoplayNext(_autoplayNext);
+    playerStateNotifier.setShowVideoDebugInfo(_showVideoDebugInfo);
 
     _baseUrlController.text = normalizedUrl;
 
@@ -129,6 +145,28 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                     value: _sceneGridLayout,
                     onChanged: (value) {
                       setState(() => _sceneGridLayout = value);
+                    },
+                  ),
+                  SwitchListTile.adaptive(
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text('Autoplay Next Scene'),
+                    subtitle: const Text(
+                      'Automatically play the next scene when current playback ends',
+                    ),
+                    value: _autoplayNext,
+                    onChanged: (value) {
+                      setState(() => _autoplayNext = value);
+                    },
+                  ),
+                  SwitchListTile.adaptive(
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text('Show Video Debug Info'),
+                    subtitle: const Text(
+                      'Display stream source and startup timing overlay on player',
+                    ),
+                    value: _showVideoDebugInfo,
+                    onChanged: (value) {
+                      setState(() => _showVideoDebugInfo = value);
                     },
                   ),
                   const SizedBox(height: 12),

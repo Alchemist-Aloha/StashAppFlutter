@@ -18,7 +18,9 @@ class TagDetailsPage extends ConsumerWidget {
   const TagDetailsPage({required this.tagId, super.key});
 
   Future<void> _openRandomScene(BuildContext context, WidgetRef ref) async {
-    final randomScene = await ref.read(sceneListProvider.notifier).getRandomScene(tagId: tagId);
+    final randomScene = await ref
+        .read(sceneListProvider.notifier)
+        .getRandomScene(tagId: tagId);
     if (!context.mounted) return;
 
     if (randomScene == null) {
@@ -66,7 +68,9 @@ class TagDetailsPage extends ConsumerWidget {
                           child: Icon(
                             Icons.local_offer,
                             size: 72,
-                            color: context.colors.onSurfaceVariant.withOpacity(0.5),
+                            color: context.colors.onSurfaceVariant.withValues(
+                              alpha: 0.5,
+                            ),
                           ),
                         ),
                       )
@@ -74,7 +78,9 @@ class TagDetailsPage extends ConsumerWidget {
                         child: Icon(
                           Icons.local_offer,
                           size: 72,
-                          color: context.colors.onSurfaceVariant.withOpacity(0.5),
+                          color: context.colors.onSurfaceVariant.withValues(
+                            alpha: 0.5,
+                          ),
                         ),
                       ),
               ),
@@ -109,12 +115,15 @@ class TagDetailsPage extends ConsumerWidget {
                     mediaAsync.when(
                       data: (mediaItems) => MediaStrip(
                         items: mediaItems
-                            .map((item) => MediaStripItem(
-                                  id: item.sceneId,
-                                  title: item.title,
-                                  thumbnailUrl: item.thumbnailUrl,
-                                  onTap: () => context.push('/scene/${item.sceneId}'),
-                                ))
+                            .map(
+                              (item) => MediaStripItem(
+                                id: item.sceneId,
+                                title: item.title,
+                                thumbnailUrl: item.thumbnailUrl,
+                                onTap: () =>
+                                    context.push('/scene/${item.sceneId}'),
+                              ),
+                            )
                             .toList(),
                         headers: mediaHeaders,
                       ),
@@ -124,16 +133,23 @@ class TagDetailsPage extends ConsumerWidget {
                       ),
                       error: (err, stack) => Text(
                         'Failed to load media: $err',
-                        style: TextStyle(color: context.colors.onSurface.withOpacity(0.7)),
+                        style: TextStyle(
+                          color: context.colors.onSurface.withValues(
+                            alpha: 0.7,
+                          ),
+                        ),
                       ),
                     ),
-                    if (tag.description != null && tag.description!.trim().isNotEmpty) ...[
+                    if (tag.description != null &&
+                        tag.description!.trim().isNotEmpty) ...[
                       const Divider(height: 32, color: Colors.grey),
                       const SectionHeader(title: 'Description'),
                       Text(
                         tag.description!,
                         style: context.textTheme.bodyMedium?.copyWith(
-                          color: context.colors.onSurface.withOpacity(0.8),
+                          color: context.colors.onSurface.withValues(
+                            alpha: 0.8,
+                          ),
                         ),
                       ),
                     ],

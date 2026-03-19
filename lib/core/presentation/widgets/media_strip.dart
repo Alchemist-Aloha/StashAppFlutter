@@ -44,7 +44,8 @@ class MediaStrip extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingMedium),
         scrollDirection: Axis.horizontal,
         itemCount: items.length,
-        separatorBuilder: (_, _) => const SizedBox(width: AppTheme.spacingSmall),
+        separatorBuilder: (_, _) =>
+            const SizedBox(width: AppTheme.spacingSmall),
         itemBuilder: (context, index) {
           final item = items[index];
           return InkWell(
@@ -69,7 +70,9 @@ class MediaStrip extends StatelessWidget {
                         color: context.colors.surfaceVariant,
                         child: Icon(
                           Icons.movie,
-                          color: context.colors.onSurfaceVariant.withOpacity(0.5),
+                          color: context.colors.onSurfaceVariant.withValues(
+                            alpha: 0.5,
+                          ),
                         ),
                       ),
                     ),

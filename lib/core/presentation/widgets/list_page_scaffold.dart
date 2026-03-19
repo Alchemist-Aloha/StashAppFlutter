@@ -37,7 +37,8 @@ class ListPageScaffold<T> extends ConsumerStatefulWidget {
   final EdgeInsetsGeometry padding;
 
   @override
-  ConsumerState<ListPageScaffold<T>> createState() => _ListPageScaffoldState<T>();
+  ConsumerState<ListPageScaffold<T>> createState() =>
+      _ListPageScaffoldState<T>();
 }
 
 class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
@@ -61,7 +62,9 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
                 decoration: InputDecoration(
                   hintText: widget.searchHint,
                   border: InputBorder.none,
-                  hintStyle: TextStyle(color: context.colors.onSurface.withOpacity(0.5)),
+                  hintStyle: TextStyle(
+                    color: context.colors.onSurface.withValues(alpha: 0.5),
+                  ),
                 ),
                 style: TextStyle(color: context.colors.onSurface),
                 onChanged: widget.onSearchChanged,
@@ -103,7 +106,11 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
                     return Center(
                       child: Text(
                         widget.emptyMessage,
-                        style: TextStyle(color: context.colors.onSurface.withOpacity(0.7)),
+                        style: TextStyle(
+                          color: context.colors.onSurface.withValues(
+                            alpha: 0.7,
+                          ),
+                        ),
                       ),
                     );
                   }
@@ -120,12 +127,14 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
                             padding: widget.padding,
                             gridDelegate: widget.gridDelegate!,
                             itemCount: items.length,
-                            itemBuilder: (context, index) => widget.itemBuilder(context, items[index]),
+                            itemBuilder: (context, index) =>
+                                widget.itemBuilder(context, items[index]),
                           )
                         : ListView.builder(
                             padding: widget.padding,
                             itemCount: items.length,
-                            itemBuilder: (context, index) => widget.itemBuilder(context, items[index]),
+                            itemBuilder: (context, index) =>
+                                widget.itemBuilder(context, items[index]),
                           ),
                   );
                 },
