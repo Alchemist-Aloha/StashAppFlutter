@@ -308,8 +308,9 @@ class PlayerState extends _$PlayerState {
         return;
       }
       stopwatch.stop();
+      final initializeElapsedMs = stopwatch.elapsedMilliseconds;
       AppLogStore.instance.add(
-        'provider initialize done scene=${scene.id} elapsed=${stopwatch.elapsedMilliseconds}ms duration=${videoController.value.duration.inMilliseconds}ms size=${videoController.value.size.width.toStringAsFixed(0)}x${videoController.value.size.height.toStringAsFixed(0)}',
+        'provider initialize done scene=${scene.id} elapsed=${initializeElapsedMs}ms duration=${videoController.value.duration.inMilliseconds}ms size=${videoController.value.size.width.toStringAsFixed(0)}x${videoController.value.size.height.toStringAsFixed(0)}',
         source: 'player_provider',
       );
 
@@ -320,6 +321,7 @@ class PlayerState extends _$PlayerState {
           ? initializedAspectRatio
           : (metadataAspectRatio ?? (16 / 9));
 
+      final chewieBuildStopwatch = Stopwatch()..start();
       final chewieController = ChewieController(
         videoPlayerController: videoController,
         autoPlay: true,
@@ -333,11 +335,17 @@ class PlayerState extends _$PlayerState {
         placeholder: Container(color: Colors.black),
       );
       _chewieControllerRef = chewieController;
+      chewieBuildStopwatch.stop();
 
       state = state.copyWith(
         chewieController: chewieController,
         isPlaying: true,
-        startupLatencyMs: stopwatch.elapsedMilliseconds,
+        startupLatencyMs: initializeElapsedMs,
+      );
+
+      AppLogStore.instance.add(
+        'provider chewie ready scene=${scene.id} chewieBuild=${chewieBuildStopwatch.elapsedMilliseconds}ms startup=${initializeElapsedMs}ms',
+        source: 'player_provider',
       );
 
       unawaited(WakelockPlus.enable());

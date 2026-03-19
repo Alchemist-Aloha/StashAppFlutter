@@ -31,6 +31,9 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
 
   bool _isStarting = false;
   String? _autoStartedSceneId;
+  String? _chewieWaitSceneId;
+  Stopwatch? _chewieWaitStopwatch;
+  String? _chewieReadyLoggedSceneId;
 
   double _effectiveAspectRatio(VideoPlayerController? controller) {
     final controllerRatio = controller?.value.aspectRatio;
@@ -65,6 +68,9 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.scene.id != widget.scene.id) {
       _autoStartedSceneId = null;
+      _chewieWaitSceneId = null;
+      _chewieWaitStopwatch = null;
+      _chewieReadyLoggedSceneId = null;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _startPlaybackIfNeeded();
       });
@@ -316,9 +322,28 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
     final chewieController = playerState.chewieController;
 
     if (chewieController == null) {
+      if (_chewieWaitSceneId != widget.scene.id) {
+        _chewieWaitSceneId = widget.scene.id;
+        _chewieWaitStopwatch = Stopwatch()..start();
+        AppLogStore.instance.add(
+          'startup chewie-wait-start scene=${widget.scene.id}',
+          source: 'player_startup',
+        );
+      }
       return AspectRatio(
         aspectRatio: aspectRatio,
         child: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (_chewieWaitSceneId == widget.scene.id &&
+        _chewieReadyLoggedSceneId != widget.scene.id) {
+      _chewieReadyLoggedSceneId = widget.scene.id;
+      final elapsed = _chewieWaitStopwatch?.elapsedMilliseconds ?? 0;
+      _chewieWaitStopwatch?.stop();
+      AppLogStore.instance.add(
+        'startup chewie-wait-done scene=${widget.scene.id} elapsed=${elapsed}ms',
+        source: 'player_startup',
       );
     }
 
