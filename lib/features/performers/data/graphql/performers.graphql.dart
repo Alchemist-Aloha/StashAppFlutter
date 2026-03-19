@@ -20,8 +20,6 @@ class Fragment$PerformerData {
     this.fake_tits,
     this.penis_length,
     this.circumcised,
-    this.career_start,
-    this.career_end,
     this.tattoos,
     this.piercings,
     required this.alias_list,
@@ -56,8 +54,6 @@ class Fragment$PerformerData {
     final l$fake_tits = json['fake_tits'];
     final l$penis_length = json['penis_length'];
     final l$circumcised = json['circumcised'];
-    final l$career_start = json['career_start'];
-    final l$career_end = json['career_end'];
     final l$tattoos = json['tattoos'];
     final l$piercings = json['piercings'];
     final l$alias_list = json['alias_list'];
@@ -94,8 +90,6 @@ class Fragment$PerformerData {
       circumcised: l$circumcised == null
           ? null
           : fromJson$Enum$CircumcisedEnum((l$circumcised as String)),
-      career_start: (l$career_start as String?),
-      career_end: (l$career_end as String?),
       tattoos: (l$tattoos as String?),
       piercings: (l$piercings as String?),
       alias_list: (l$alias_list as List<dynamic>)
@@ -153,10 +147,6 @@ class Fragment$PerformerData {
   final double? penis_length;
 
   final Enum$CircumcisedEnum? circumcised;
-
-  final String? career_start;
-
-  final String? career_end;
 
   final String? tattoos;
 
@@ -226,10 +216,6 @@ class Fragment$PerformerData {
     _resultData['circumcised'] = l$circumcised == null
         ? null
         : toJson$Enum$CircumcisedEnum(l$circumcised);
-    final l$career_start = career_start;
-    _resultData['career_start'] = l$career_start;
-    final l$career_end = career_end;
-    _resultData['career_end'] = l$career_end;
     final l$tattoos = tattoos;
     _resultData['tattoos'] = l$tattoos;
     final l$piercings = piercings;
@@ -282,8 +268,6 @@ class Fragment$PerformerData {
     final l$fake_tits = fake_tits;
     final l$penis_length = penis_length;
     final l$circumcised = circumcised;
-    final l$career_start = career_start;
-    final l$career_end = career_end;
     final l$tattoos = tattoos;
     final l$piercings = piercings;
     final l$alias_list = alias_list;
@@ -316,8 +300,6 @@ class Fragment$PerformerData {
       l$fake_tits,
       l$penis_length,
       l$circumcised,
-      l$career_start,
-      l$career_end,
       l$tattoos,
       l$piercings,
       Object.hashAll(l$alias_list.map((v) => v)),
@@ -429,16 +411,6 @@ class Fragment$PerformerData {
     final l$circumcised = circumcised;
     final lOther$circumcised = other.circumcised;
     if (l$circumcised != lOther$circumcised) {
-      return false;
-    }
-    final l$career_start = career_start;
-    final lOther$career_start = other.career_start;
-    if (l$career_start != lOther$career_start) {
-      return false;
-    }
-    final l$career_end = career_end;
-    final lOther$career_end = other.career_end;
-    if (l$career_end != lOther$career_end) {
       return false;
     }
     final l$tattoos = tattoos;
@@ -569,8 +541,6 @@ abstract class CopyWith$Fragment$PerformerData<TRes> {
     String? fake_tits,
     double? penis_length,
     Enum$CircumcisedEnum? circumcised,
-    String? career_start,
-    String? career_end,
     String? tattoos,
     String? piercings,
     List<String>? alias_list,
@@ -624,8 +594,6 @@ class _CopyWithImpl$Fragment$PerformerData<TRes>
     Object? fake_tits = _undefined,
     Object? penis_length = _undefined,
     Object? circumcised = _undefined,
-    Object? career_start = _undefined,
-    Object? career_end = _undefined,
     Object? tattoos = _undefined,
     Object? piercings = _undefined,
     Object? alias_list = _undefined,
@@ -681,12 +649,6 @@ class _CopyWithImpl$Fragment$PerformerData<TRes>
       circumcised: circumcised == _undefined
           ? _instance.circumcised
           : (circumcised as Enum$CircumcisedEnum?),
-      career_start: career_start == _undefined
-          ? _instance.career_start
-          : (career_start as String?),
-      career_end: career_end == _undefined
-          ? _instance.career_end
-          : (career_end as String?),
       tattoos: tattoos == _undefined ? _instance.tattoos : (tattoos as String?),
       piercings: piercings == _undefined
           ? _instance.piercings
@@ -770,8 +732,6 @@ class _CopyWithStubImpl$Fragment$PerformerData<TRes>
     String? fake_tits,
     double? penis_length,
     Enum$CircumcisedEnum? circumcised,
-    String? career_start,
-    String? career_end,
     String? tattoos,
     String? piercings,
     List<String>? alias_list,
@@ -901,20 +861,6 @@ const fragmentDefinitionPerformerData = FragmentDefinitionNode(
       ),
       FieldNode(
         name: NameNode(value: 'circumcised'),
-        alias: null,
-        arguments: [],
-        directives: [],
-        selectionSet: null,
-      ),
-      FieldNode(
-        name: NameNode(value: 'career_start'),
-        alias: null,
-        arguments: [],
-        directives: [],
-        selectionSet: null,
-      ),
-      FieldNode(
-        name: NameNode(value: 'career_end'),
         alias: null,
         arguments: [],
         directives: [],

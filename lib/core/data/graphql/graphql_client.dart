@@ -4,20 +4,38 @@ import '../preferences/shared_preferences_provider.dart';
 
 part 'graphql_client.g.dart';
 
+String normalizeGraphqlServerUrl(String url) {
+  final trimmed = url.trim();
+  if (trimmed.isEmpty) return '';
+
+  final direct = Uri.tryParse(trimmed);
+  if (direct != null && direct.hasScheme && direct.host.isNotEmpty) {
+    return direct.toString();
+  }
+
+  final withHttps = Uri.tryParse('https://$trimmed');
+  if (withHttps != null && withHttps.host.isNotEmpty) {
+    return withHttps.toString();
+  }
+
+  return '';
+}
+
 @riverpod
 GraphQLClient graphqlClient(Ref ref) {
   // Default settings for development/testing. Remove or override in production.
-  const defaultServerUrl = 'https://stash.cai.co.im/graphql';
+  const defaultServerUrl = 'http://localhost:9999/graphql';
   const defaultApiKey =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiJxbWtreGNsayIsInN1YiI6IkFQSUtleSIsImlhdCI6MTc3Mzc5MjkyNX0.611H2b2FvizfvU7ooAPW7H6b-u7SU0lI2hvZ34u78t0';
+      '';
 
   final prefs = ref.watch(sharedPreferencesProvider);
   final storedServerUrl = prefs.getString('server_base_url')?.trim() ?? '';
   final storedApiKey = prefs.getString('server_api_key')?.trim() ?? '';
+  final normalizedServerUrl = normalizeGraphqlServerUrl(storedServerUrl);
 
-  final serverUrl = storedServerUrl.isEmpty
+  final serverUrl = normalizedServerUrl.isEmpty
       ? defaultServerUrl
-      : storedServerUrl;
+      : normalizedServerUrl;
   final apiKey = storedApiKey.isEmpty ? defaultApiKey : storedApiKey;
 
   final HttpLink httpLink = HttpLink(

@@ -31,9 +31,20 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   }
 
   Future<void> _save() async {
+    final normalizedUrl = normalizeGraphqlServerUrl(_baseUrlController.text);
+    if (_baseUrlController.text.trim().isNotEmpty && normalizedUrl.isEmpty) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Invalid server URL')));
+      return;
+    }
+
     final prefs = ref.read(sharedPreferencesProvider);
-    await prefs.setString('server_base_url', _baseUrlController.text.trim());
+    await prefs.setString('server_base_url', normalizedUrl);
     await prefs.setString('server_api_key', _apiKeyController.text.trim());
+
+    _baseUrlController.text = normalizedUrl;
 
     ref.invalidate(graphqlClientProvider);
 

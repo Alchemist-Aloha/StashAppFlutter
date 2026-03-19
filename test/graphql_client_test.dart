@@ -32,4 +32,25 @@ void main() {
       expect(httpLink.defaultHeaders['ApiKey'], expectedDefaultApiKey);
     },
   );
+
+  test('normalizes stored server url without scheme to https', () async {
+    SharedPreferences.setMockInitialValues(<String, Object>{
+      'server_base_url': 'stash.cai.co.im/graphql',
+      'server_api_key': 'custom-key',
+    });
+    final prefs = await SharedPreferences.getInstance();
+
+    final container = ProviderContainer(
+      overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
+    );
+    addTearDown(container.dispose);
+
+    final client = container.read(graphqlClientProvider);
+
+    expect(client.link, isA<HttpLink>());
+    final httpLink = client.link as HttpLink;
+
+    expect(httpLink.uri.toString(), 'https://stash.cai.co.im/graphql');
+    expect(httpLink.defaultHeaders['ApiKey'], 'custom-key');
+  });
 }
