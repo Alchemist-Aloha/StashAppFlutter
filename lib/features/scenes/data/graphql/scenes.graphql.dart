@@ -1701,6 +1701,20 @@ const fragmentDefinitionSceneData = FragmentDefinitionNode(
         selectionSet: SelectionSetNode(
           selections: [
             FieldNode(
+              name: NameNode(value: 'path'),
+              alias: null,
+              arguments: [],
+              directives: [],
+              selectionSet: null,
+            ),
+            FieldNode(
+              name: NameNode(value: 'basename'),
+              alias: null,
+              arguments: [],
+              directives: [],
+              selectionSet: null,
+            ),
+            FieldNode(
               name: NameNode(value: 'format'),
               alias: null,
               arguments: [],
@@ -2295,6 +2309,8 @@ class _CopyWithStubImpl$Fragment$SceneData$performers<TRes>
 
 class Fragment$SceneData$files {
   Fragment$SceneData$files({
+    required this.path,
+    required this.basename,
     required this.format,
     required this.width,
     required this.height,
@@ -2307,6 +2323,8 @@ class Fragment$SceneData$files {
   });
 
   factory Fragment$SceneData$files.fromJson(Map<String, dynamic> json) {
+    final l$path = json['path'];
+    final l$basename = json['basename'];
     final l$format = json['format'];
     final l$width = json['width'];
     final l$height = json['height'];
@@ -2317,6 +2335,8 @@ class Fragment$SceneData$files {
     final l$frame_rate = json['frame_rate'];
     final l$$__typename = json['__typename'];
     return Fragment$SceneData$files(
+      path: (l$path as String),
+      basename: (l$basename as String),
       format: (l$format as String),
       width: (l$width as int),
       height: (l$height as int),
@@ -2328,6 +2348,10 @@ class Fragment$SceneData$files {
       $__typename: (l$$__typename as String),
     );
   }
+
+  final String path;
+
+  final String basename;
 
   final String format;
 
@@ -2349,6 +2373,10 @@ class Fragment$SceneData$files {
 
   Map<String, dynamic> toJson() {
     final _resultData = <String, dynamic>{};
+    final l$path = path;
+    _resultData['path'] = l$path;
+    final l$basename = basename;
+    _resultData['basename'] = l$basename;
     final l$format = format;
     _resultData['format'] = l$format;
     final l$width = width;
@@ -2372,6 +2400,8 @@ class Fragment$SceneData$files {
 
   @override
   int get hashCode {
+    final l$path = path;
+    final l$basename = basename;
     final l$format = format;
     final l$width = width;
     final l$height = height;
@@ -2382,6 +2412,8 @@ class Fragment$SceneData$files {
     final l$frame_rate = frame_rate;
     final l$$__typename = $__typename;
     return Object.hashAll([
+      l$path,
+      l$basename,
       l$format,
       l$width,
       l$height,
@@ -2401,6 +2433,16 @@ class Fragment$SceneData$files {
     }
     if (other is! Fragment$SceneData$files ||
         runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$path = path;
+    final lOther$path = other.path;
+    if (l$path != lOther$path) {
+      return false;
+    }
+    final l$basename = basename;
+    final lOther$basename = other.basename;
+    if (l$basename != lOther$basename) {
       return false;
     }
     final l$format = format;
@@ -2468,6 +2510,8 @@ abstract class CopyWith$Fragment$SceneData$files<TRes> {
       _CopyWithStubImpl$Fragment$SceneData$files;
 
   TRes call({
+    String? path,
+    String? basename,
     String? format,
     int? width,
     int? height,
@@ -2491,6 +2535,8 @@ class _CopyWithImpl$Fragment$SceneData$files<TRes>
   static const _undefined = <dynamic, dynamic>{};
 
   TRes call({
+    Object? path = _undefined,
+    Object? basename = _undefined,
     Object? format = _undefined,
     Object? width = _undefined,
     Object? height = _undefined,
@@ -2502,6 +2548,12 @@ class _CopyWithImpl$Fragment$SceneData$files<TRes>
     Object? $__typename = _undefined,
   }) => _then(
     Fragment$SceneData$files(
+      path: path == _undefined || path == null
+          ? _instance.path
+          : (path as String),
+      basename: basename == _undefined || basename == null
+          ? _instance.basename
+          : (basename as String),
       format: format == _undefined || format == null
           ? _instance.format
           : (format as String),
@@ -2540,6 +2592,8 @@ class _CopyWithStubImpl$Fragment$SceneData$files<TRes>
   TRes _res;
 
   call({
+    String? path,
+    String? basename,
     String? format,
     int? width,
     int? height,

@@ -15,6 +15,15 @@ class SceneDetailsPage extends ConsumerWidget {
   final String sceneId;
   const SceneDetailsPage({required this.sceneId, super.key});
 
+  static const Set<String> _genericFallbackNames = {
+    'stream',
+    'preview',
+    'screenshot',
+    'video',
+    'play',
+    'media',
+  };
+
   String _displayTitle({
     required String title,
     String? filePath,
@@ -47,7 +56,11 @@ class SceneDetailsPage extends ConsumerWidget {
     final dotIndex = decoded.lastIndexOf('.');
     final withoutExt = dotIndex > 0 ? decoded.substring(0, dotIndex) : decoded;
     final cleaned = withoutExt.replaceAll(RegExp(r'[_\.]+'), ' ').trim();
-    return cleaned.isEmpty ? null : cleaned;
+    if (cleaned.isEmpty) return null;
+
+    final lower = cleaned.toLowerCase();
+    if (_genericFallbackNames.contains(lower)) return null;
+    return cleaned;
   }
 
   Future<void> _openRandomScene(BuildContext context, WidgetRef ref) async {

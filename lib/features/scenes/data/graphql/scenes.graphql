@@ -31,6 +31,8 @@ fragment SceneData on Scene {
   urls
   director
   files {
+    path
+    basename
     format
     width
     height

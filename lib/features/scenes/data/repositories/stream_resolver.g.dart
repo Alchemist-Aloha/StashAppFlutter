@@ -41,7 +41,7 @@ final class StreamResolverProvider
   }
 }
 
-String _$streamResolverHash() => r'9732deecc69071acd869906c3b26b9b3ada99fce';
+String _$streamResolverHash() => r'd825428e0253f3987bba3b3fd6879d94c48524ba';
 
 abstract class _$StreamResolver extends $Notifier<void> {
   void build();

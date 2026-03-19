@@ -3,8 +3,24 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:graphql/client.dart';
 import '../../../../core/data/graphql/graphql_client.dart';
 import '../../../../core/data/preferences/shared_preferences_provider.dart';
+import '../../galleries/presentation/providers/gallery_details_provider.dart';
+import '../../galleries/presentation/providers/gallery_list_provider.dart';
+import '../../groups/presentation/providers/group_details_provider.dart';
+import '../../groups/presentation/providers/group_list_provider.dart';
+import '../../performers/presentation/providers/performer_details_provider.dart';
+import '../../performers/presentation/providers/performer_list_provider.dart';
+import '../../performers/presentation/providers/performer_media_provider.dart';
+import '../../scenes/data/repositories/stream_resolver.dart';
+import '../../scenes/presentation/providers/scene_details_provider.dart';
+import '../../scenes/presentation/providers/scene_list_provider.dart';
 import '../data/graphql/version.graphql.dart';
 import '../../scenes/presentation/providers/video_player_provider.dart';
+import '../../studios/presentation/providers/studio_details_provider.dart';
+import '../../studios/presentation/providers/studio_list_provider.dart';
+import '../../studios/presentation/providers/studio_media_provider.dart';
+import '../../tags/presentation/providers/tag_details_provider.dart';
+import '../../tags/presentation/providers/tag_list_provider.dart';
+import '../../tags/presentation/providers/tag_media_provider.dart';
 import 'providers/connection_provider.dart';
 
 class SettingsPage extends ConsumerStatefulWidget {
@@ -134,13 +150,56 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     }
 
     final prefs = ref.read(sharedPreferencesProvider);
+    final previousUrl = prefs.getString('server_base_url')?.trim() ?? '';
+    final previousApiKey = prefs.getString('server_api_key')?.trim() ?? '';
+    final newApiKey = _apiKeyController.text.trim();
+
     await prefs.setString('server_base_url', normalizedUrl);
-    await prefs.setString('server_api_key', _apiKeyController.text.trim());
+    await prefs.setString('server_api_key', newApiKey);
 
     _baseUrlController.text = normalizedUrl;
 
+    final endpointChanged =
+        previousUrl != normalizedUrl || previousApiKey != newApiKey;
+    if (endpointChanged) {
+      await _flushRuntimeCachesAfterServerChange();
+    } else {
+      ref.invalidate(connectionStatusProvider);
+    }
+  }
+
+  Future<void> _flushRuntimeCachesAfterServerChange() async {
+    final currentClient = ref.read(graphqlClientProvider);
+    currentClient.cache.store.reset();
+
+    ref.read(playerStateProvider.notifier).stop();
+
     ref.invalidate(graphqlClientProvider);
     ref.invalidate(connectionStatusProvider);
+
+    ref.invalidate(sceneListProvider);
+    ref.invalidate(sceneDetailsProvider);
+    ref.invalidate(streamResolverProvider);
+
+    ref.invalidate(performerListProvider);
+    ref.invalidate(performerDetailsProvider);
+    ref.invalidate(performerMediaProvider);
+    ref.invalidate(performerMediaGridProvider);
+
+    ref.invalidate(studioListProvider);
+    ref.invalidate(studioDetailsProvider);
+    ref.invalidate(studioMediaProvider);
+    ref.invalidate(studioMediaGridProvider);
+
+    ref.invalidate(tagListProvider);
+    ref.invalidate(tagDetailsProvider);
+    ref.invalidate(tagMediaProvider);
+    ref.invalidate(tagMediaGridProvider);
+
+    ref.invalidate(galleryListProvider);
+    ref.invalidate(galleryDetailsProvider);
+    ref.invalidate(groupListProvider);
+    ref.invalidate(groupDetailsProvider);
   }
 
   Future<void> _saveToggleSettings() async {

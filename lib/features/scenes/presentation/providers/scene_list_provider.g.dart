@@ -200,7 +200,7 @@ final class SceneListProvider
   SceneList create() => SceneList();
 }
 
-String _$sceneListHash() => r'88754d804bf42d690cd52987f08eb20fa95a5d22';
+String _$sceneListHash() => r'a0ad23a95bef6d27d7d031f163cf635694db6db1';
 
 abstract class _$SceneList extends $AsyncNotifier<List<Scene>> {
   FutureOr<List<Scene>> build();
