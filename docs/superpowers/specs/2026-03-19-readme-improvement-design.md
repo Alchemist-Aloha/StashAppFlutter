@@ -11,7 +11,7 @@ Improve the project's `README.md` to be more appealing to end-users by focusing 
 ## Section 1: Hero & Vision
 -   **Title:** StashAppFlutter - Your Stash library, everywhere.
 -   **Pitch:** A mobile-first Flutter client for your Stash server, designed for seamless browsing and high-quality playback on the go.
--   **Visuals:** Placeholder for a "Feature Showcase" screenshot.
+-   **Visuals:** Use a Markdown image tag placeholder for a "Feature Showcase" screenshot (e.g., `![StashAppFlutter Showcase](docs/assets/showcase.png)`).
 
 ## Section 2: Key Features (The "Why")
 -   🎬 **Seamless Playback:** Integrated video player with support for multiple streaming strategies and startup diagnostics.
@@ -24,6 +24,11 @@ Improve the project's `README.md` to be more appealing to end-users by focusing 
 -   **Step 1: Download:** Point to the GitHub Releases page for APK/IPA downloads.
 -   **Step 2: Connect:** Open the app, go to Settings, and enter your `Server URL` and `API Key`.
 -   **Step 3: Browse:** Your library will automatically sync and be ready for browsing.
+-   **Runtime Settings:** Clearly list the available settings in the app:
+    -   `server_base_url`
+    -   `server_api_key`
+    -   `prefer_scene_streams`
+    -   `scene_grid_layout`
 
 ## Section 4: Advanced/Technical (The "For Nerds")
 -   **Tech Stack:** Flutter, Riverpod, GraphQL (Codegen), GoRouter.
@@ -33,6 +38,14 @@ Improve the project's `README.md` to be more appealing to end-users by focusing 
     -   `flutter run`
 -   **Build:** `flutter build apk`
 -   **Project Structure:** Brief overview of `lib/core`, `lib/features`, and `graphql/`.
+
+## Section 5: Project Documentation
+-   Maintain links to detailed internal documentation:
+    -   `docs/README.md`
+    -   `docs/AGENT_START_HERE.md`
+    -   `docs/ARCHITECTURE_MAP.md`
+    -   `docs/DEBUGGING_PLAYBOOK.md`
+    -   `docs/KNOWNISSUES.md`
 
 ## Success Criteria
 -   The README leads with a high-impact value proposition.
