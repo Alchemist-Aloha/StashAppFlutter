@@ -98,7 +98,8 @@ class PerformerDetailsPage extends ConsumerWidget {
                             itemBuilder: (context, index) {
                               final item = mediaItems[index];
                               return InkWell(
-                                onTap: () => context.push('/scene/${item.sceneId}'),
+                                onTap: () =>
+                                    context.push('/scene/${item.sceneId}'),
                                 borderRadius: BorderRadius.circular(10),
                                 child: SizedBox(
                                   width: 200,

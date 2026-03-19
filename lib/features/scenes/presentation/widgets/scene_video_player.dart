@@ -1,41 +1,180 @@
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
+import '../../../../core/data/graphql/graphql_client.dart';
+import '../../../../core/data/graphql/url_resolver.dart';
 import '../providers/video_player_provider.dart';
 import '../../domain/entities/scene.dart';
 
-class SceneVideoPlayer extends ConsumerWidget {
+class SceneVideoPlayer extends ConsumerStatefulWidget {
   final Scene scene;
   const SceneVideoPlayer({required this.scene, super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SceneVideoPlayer> createState() => _SceneVideoPlayerState();
+}
+
+class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
+  bool _isStarting = false;
+  String? _autoStartedSceneId;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _startPlaybackIfNeeded();
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant SceneVideoPlayer oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.scene.id != widget.scene.id) {
+      _autoStartedSceneId = null;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _startPlaybackIfNeeded();
+      });
+    }
+  }
+
+  Future<void> _startPlaybackIfNeeded({bool force = false}) async {
+    if (!mounted || _isStarting) return;
+
+    final playerState = ref.read(playerStateProvider);
+    if (!force && _autoStartedSceneId == widget.scene.id) return;
+    if (!force && playerState.activeScene?.id == widget.scene.id) return;
+
+    setState(() => _isStarting = true);
+    try {
+      final choice = await _resolvePreferredStream();
+      final streamUrl = choice?.url ?? widget.scene.paths.stream ?? '';
+      final mimeType = choice?.mimeType ?? _guessMimeType(streamUrl);
+      final streamLabel = choice?.label;
+
+      if (streamUrl.isEmpty) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No stream URL available')),
+        );
+        return;
+      }
+
+      _autoStartedSceneId = widget.scene.id;
+      await ref
+          .read(playerStateProvider.notifier)
+          .playScene(
+            widget.scene,
+            streamUrl,
+            mimeType: mimeType,
+            streamLabel: streamLabel,
+          );
+    } finally {
+      if (mounted) {
+        setState(() => _isStarting = false);
+      }
+    }
+  }
+
+  Future<_StreamChoice?> _resolvePreferredStream() async {
+    final client = ref.read(graphqlClientProvider);
+    final result = await client.query(
+      QueryOptions(
+        document: gql('''
+          query SceneStreamsForPlayer(\$id: ID!) {
+            findScene(id: \$id) {
+              sceneStreams {
+                url
+                mime_type
+                label
+              }
+            }
+          }
+        '''),
+        variables: <String, dynamic>{'id': widget.scene.id},
+        fetchPolicy: FetchPolicy.networkOnly,
+      ),
+    );
+
+    if (result.hasException) {
+      return null;
+    }
+
+    final streams = ((result.data?['findScene']?['sceneStreams']) as List?)
+            ?.whereType<Map<String, dynamic>>()
+            .toList() ??
+        const <Map<String, dynamic>>[];
+    if (streams.isEmpty) return null;
+
+    final graphqlEndpoint = client.link is HttpLink
+        ? (client.link as HttpLink).uri
+        : Uri.parse(widget.scene.paths.stream ?? 'https://localhost/graphql');
+
+    _StreamChoice? best;
+    for (final stream in streams) {
+      final resolvedUrl = resolveGraphqlMediaUrl(
+        rawUrl: stream['url'] as String?,
+        graphqlEndpoint: graphqlEndpoint,
+      );
+      if (resolvedUrl.isEmpty) continue;
+
+      final mime = (stream['mime_type'] as String?)?.trim();
+      final label = (stream['label'] as String?)?.trim();
+      final guessed = _guessMimeType(resolvedUrl, label: label);
+      final choice = _StreamChoice(
+        url: resolvedUrl,
+        mimeType: (mime == null || mime.isEmpty) ? guessed : mime,
+        label: label,
+      );
+
+      if (best == null || choice.score > best.score) {
+        best = choice;
+      }
+    }
+
+    return best;
+  }
+
+  String _guessMimeType(String url, {String? label}) {
+    final uri = Uri.tryParse(url);
+    final path = (uri?.path ?? url).toLowerCase();
+    final lowerLabel = (label ?? '').toLowerCase();
+
+    if (path.endsWith('.m3u8') || lowerLabel.contains('hls')) {
+      return 'application/vnd.apple.mpegurl';
+    }
+    if (path.endsWith('.mpd') || lowerLabel.contains('dash')) {
+      return 'application/dash+xml';
+    }
+    if (path.endsWith('.mp4') || lowerLabel.contains('mp4')) {
+      return 'video/mp4';
+    }
+    if (path.endsWith('.webm') || lowerLabel.contains('webm')) {
+      return 'video/webm';
+    }
+    return 'unknown';
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final playerState = ref.watch(playerStateProvider);
 
-    if (playerState.activeScene?.id != scene.id) {
+    if (playerState.activeScene?.id != widget.scene.id) {
       return AspectRatio(
         aspectRatio: 16 / 9,
         child: Container(
           color: Colors.black,
           child: Center(
-            child: IconButton(
-              icon: const Icon(Icons.play_arrow, size: 64, color: Colors.white),
-              onPressed: () {
-                // We need the stream URL.
-                // For now, we'll use a placeholder or assume the repository provides it.
-                // TODO: Fetch stream URL via repository if not already in scene.paths.stream
-                final streamUrl = scene.paths.stream ?? '';
-                if (streamUrl.isNotEmpty) {
-                  ref
-                      .read(playerStateProvider.notifier)
-                      .playScene(scene, streamUrl);
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('No stream URL available')),
-                  );
-                }
-              },
-            ),
+            child: _isStarting
+                ? const CircularProgressIndicator()
+                : IconButton(
+                    icon: const Icon(
+                      Icons.play_arrow,
+                      size: 64,
+                      color: Colors.white,
+                    ),
+                    onPressed: () => _startPlaybackIfNeeded(force: true),
+                  ),
           ),
         ),
       );
@@ -52,7 +191,44 @@ class SceneVideoPlayer extends ConsumerWidget {
 
     return AspectRatio(
       aspectRatio: 16 / 9,
-      child: Chewie(controller: chewieController),
+      child: Stack(
+        children: [
+          Positioned.fill(child: Chewie(controller: chewieController)),
+          Positioned(
+            top: 8,
+            left: 8,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.black.withAlpha(180),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Text(
+                'mime: ${playerState.streamMimeType ?? 'unknown'}${playerState.streamLabel == null || playerState.streamLabel!.isEmpty ? '' : '  label: ${playerState.streamLabel}'}',
+                style: const TextStyle(color: Colors.white70, fontSize: 11),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
+  }
+}
+
+class _StreamChoice {
+  const _StreamChoice({required this.url, required this.mimeType, this.label});
+
+  final String url;
+  final String mimeType;
+  final String? label;
+
+  int get score {
+    final lowerMime = mimeType.toLowerCase();
+    final lowerLabel = (label ?? '').toLowerCase();
+    if (lowerMime.contains('mpegurl') || lowerMime.contains('hls')) return 300;
+    if (lowerMime.contains('dash')) return 250;
+    if (lowerMime.contains('mp4') && lowerLabel.contains('direct')) return 220;
+    if (lowerMime.contains('mp4')) return 200;
+    return 100;
   }
 }

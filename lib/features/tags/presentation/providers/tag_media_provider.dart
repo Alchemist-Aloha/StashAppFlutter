@@ -6,10 +6,10 @@ import '../../../../core/data/graphql/url_resolver.dart';
 import '../../../../core/data/preferences/shared_preferences_provider.dart';
 import '../../../scenes/data/graphql/scenes.graphql.dart';
 
-part 'performer_media_provider.g.dart';
+part 'tag_media_provider.g.dart';
 
-class PerformerMediaItem {
-  const PerformerMediaItem({
+class TagMediaItem {
+  const TagMediaItem({
     required this.sceneId,
     required this.title,
     required this.thumbnailUrl,
@@ -21,10 +21,7 @@ class PerformerMediaItem {
 }
 
 @riverpod
-FutureOr<List<PerformerMediaItem>> performerMedia(
-  Ref ref,
-  String performerId,
-) async {
+FutureOr<List<TagMediaItem>> tagMedia(Ref ref, String tagId) async {
   final client = ref.watch(graphqlClientProvider);
 
   final result = await client.query$FindScenes(
@@ -32,8 +29,8 @@ FutureOr<List<PerformerMediaItem>> performerMedia(
       variables: Variables$Query$FindScenes(
         filter: Input$FindFilterType(page: 1, per_page: 24),
         scene_filter: Input$SceneFilterType(
-          performers: Input$MultiCriterionInput(
-            value: <String>[performerId],
+          tags: Input$HierarchicalMultiCriterionInput(
+            value: <String>[tagId],
             modifier: Enum$CriterionModifier.INCLUDES,
           ),
         ),
@@ -54,7 +51,7 @@ FutureOr<List<PerformerMediaItem>> performerMedia(
 
   return result.parsedData!.findScenes.scenes
       .map(
-        (scene) => PerformerMediaItem(
+        (scene) => TagMediaItem(
           sceneId: scene.id,
           title: scene.title ?? 'Untitled',
           thumbnailUrl: resolveGraphqlMediaUrl(

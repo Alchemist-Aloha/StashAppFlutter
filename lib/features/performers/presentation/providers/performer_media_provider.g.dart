@@ -66,7 +66,7 @@ final class PerformerMediaProvider
   }
 }
 
-String _$performerMediaHash() => r'f224fd163fb6f639fd8e2032ae775dde2d9e3270';
+String _$performerMediaHash() => r'b8a5c702b4f78d98717ddede969326bfd5da60e7';
 
 final class PerformerMediaFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<List<PerformerMediaItem>>, String> {

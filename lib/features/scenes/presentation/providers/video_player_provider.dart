@@ -11,12 +11,16 @@ class GlobalPlayerState {
   final VideoPlayerController? videoPlayerController;
   final ChewieController? chewieController;
   final bool isPlaying;
+  final String? streamMimeType;
+  final String? streamLabel;
 
   GlobalPlayerState({
     this.activeScene,
     this.videoPlayerController,
     this.chewieController,
     this.isPlaying = false,
+    this.streamMimeType,
+    this.streamLabel,
   });
 
   GlobalPlayerState copyWith({
@@ -24,6 +28,8 @@ class GlobalPlayerState {
     VideoPlayerController? videoPlayerController,
     ChewieController? chewieController,
     bool? isPlaying,
+    String? streamMimeType,
+    String? streamLabel,
     bool clearActive = false,
   }) {
     return GlobalPlayerState(
@@ -35,6 +41,10 @@ class GlobalPlayerState {
           ? null
           : (chewieController ?? this.chewieController),
       isPlaying: isPlaying ?? this.isPlaying,
+      streamMimeType: clearActive
+          ? null
+          : (streamMimeType ?? this.streamMimeType),
+      streamLabel: clearActive ? null : (streamLabel ?? this.streamLabel),
     );
   }
 }
@@ -49,11 +59,20 @@ class PlayerState extends _$PlayerState {
     return GlobalPlayerState();
   }
 
-  Future<void> playScene(Scene scene, String streamUrl) async {
+  Future<void> playScene(
+    Scene scene,
+    String streamUrl, {
+    String? mimeType,
+    String? streamLabel,
+  }) async {
     if (state.activeScene?.id == scene.id &&
         state.videoPlayerController != null) {
       state.videoPlayerController?.play();
-      state = state.copyWith(isPlaying: true);
+      state = state.copyWith(
+        isPlaying: true,
+        streamMimeType: mimeType,
+        streamLabel: streamLabel,
+      );
       return;
     }
 
@@ -68,6 +87,8 @@ class PlayerState extends _$PlayerState {
       activeScene: scene,
       videoPlayerController: videoController,
       isPlaying: false,
+      streamMimeType: mimeType,
+      streamLabel: streamLabel,
     );
 
     try {
