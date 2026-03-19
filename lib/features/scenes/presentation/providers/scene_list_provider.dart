@@ -73,7 +73,7 @@ class SceneList extends _$SceneList {
     final filter = ref.watch(sceneFilterStateProvider);
     final organizedOnly = ref.watch(sceneOrganizedOnlyProvider);
     final repository = ref.watch(sceneRepositoryProvider);
-    
+
     return repository.findScenes(
       page: _currentPage,
       perPage: _perPage,
@@ -143,8 +143,8 @@ class SceneList extends _$SceneList {
     final query = useCurrentFilter ? ref.read(sceneSearchQueryProvider) : '';
     final filter = useCurrentFilter ? ref.read(sceneFilterStateProvider) : null;
     final organizedOnly = useCurrentFilter
-      ? ref.read(sceneOrganizedOnlyProvider)
-      : false;
+        ? ref.read(sceneOrganizedOnlyProvider)
+        : false;
 
     // Ask backend for true random ordering and pick a single item.
     final randomPage = await repository.findScenes(
