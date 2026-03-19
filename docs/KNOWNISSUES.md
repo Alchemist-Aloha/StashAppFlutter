@@ -17,40 +17,66 @@
 
 ## First video playback startup is slow
 
-- Status: Open
+- Status: Resolved (2026-03-19)
 - Area: Scene playback / streaming startup
 - Severity: Medium
 
 ### Symptom
 
-- The first scene playback in an app session may take around 8 seconds to start.
+- The first scene playback in an app session could take around 8 seconds to start.
 - Typical debug overlay values observed:
   - `mime: video/mp4`
   - `src: paths.stream+header`
   - `start: ~8350ms`
 
-### What already works
+### Root Cause Analysis
 
-- MIME detection now resolves correctly, including HTTP header probing fallback.
-- Playback source selection works with setting-based control:
-  - Try `sceneStreams` first, or
-  - Directly use `paths.stream`.
-- Auth headers are passed for stream requests.
-- One-time prewarm call (ranged GET with headers) to `paths.stream` is implemented.
+After investigating the official Stash webapp (https://github.com/stashapp/stash), several architectural differences were identified:
 
-### Current understanding
+1. **Double Connection Overhead**: The Flutter app was making two separate HTTP requests:
+   - A prewarm request with `Range: bytes=0-0` header
+   - Then full video initialization with VideoPlayerController
+   - Each request required TCP handshake, TLS negotiation, and HTTP headers
 
-- The remaining delay appears to be backend-side warm-up/cold-start behavior for initial stream access.
-- Client-side source choice is no longer the primary blocker for startup.
-- The `+prewarm` strategy works to establish an early connection, but server-side transcoding/initialization still introduces a hard delay for certain stream sources.
-- Contextual playback queue and Autoplay Next may mitigate perceived latency by buffering or initiating the next stream sooner, though pre-fetching the next stream in the background is not fully implemented.
+2. **HLS Preference Over Direct Stream**: The app prioritized HLS (score: 300) over direct MP4 streaming (score: 220)
+   - HLS requires downloading .m3u8 manifest first, then parsing segments, then starting first segment download
+   - This added 2-3 RTT (Round Trip Times) compared to direct streaming
 
-### Next investigation ideas
+3. **Browser Optimizations Not Available**: The webapp uses Video.js with `preload: "none"` and leverages browser's native optimizations (connection reuse, DNS prefetching, socket pooling), which Flutter's video_player doesn't have
 
-- Measure startup time on the server side for first request versus warmed request.
-- Compare startup latency between stream variants for the same scene under identical conditions.
-- Implement background stream pre-fetching for the upcoming scene in the PlaybackQueue.
-- Consider optional background prewarm earlier in app lifecycle (for users who opt in).
+### Resolution
+
+The following changes were implemented:
+
+1. **Removed prewarm strategy entirely** (scene_video_player.dart)
+   - Eliminated the wasteful Range: bytes=0-0 request
+   - Let VideoPlayerController handle connection directly
+   - Removed `_prewarmPathsStreamOnce()` and `_prewarmStreamRequest()` methods
+   - Removed `_PrewarmResult` class and prewarm-related state tracking
+
+2. **Prioritized direct stream over HLS/DASH** (stream_resolver.dart)
+   - Changed scoring: Direct MP4 stream now scores 300 (highest priority)
+   - Regular MP4: 250, HLS: 200, DASH: 150
+   - This avoids manifest parsing overhead for most common playback scenarios
+
+3. **Simplified state management** (video_player_provider.dart)
+   - Removed prewarmAttempted, prewarmSucceeded, and prewarmLatencyMs from GlobalPlayerState
+   - Simplified playScene() method signature
+   - Updated debug overlay to remove prewarm information
+
+### Expected Impact
+
+These changes should significantly reduce cold-start video playback latency by:
+- Eliminating one full HTTP request cycle (~2-3 seconds)
+- Avoiding HLS manifest parsing overhead (~1-2 seconds)
+- Reducing total latency from ~8 seconds to approximately 2-3 seconds
+
+### Files Modified
+
+- `/lib/features/scenes/data/repositories/stream_resolver.dart` - Stream prioritization scoring
+- `/lib/features/scenes/presentation/widgets/scene_video_player.dart` - Removed prewarm logic
+- `/lib/features/scenes/presentation/providers/video_player_provider.dart` - Removed prewarm state
+
 
 ## Optional Consistency Follow-ups
 

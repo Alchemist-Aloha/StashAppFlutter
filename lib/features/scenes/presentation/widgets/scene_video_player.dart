@@ -1,11 +1,7 @@
-import 'dart:io';
-
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:video_player/video_player.dart';
-import '../../../../core/data/graphql/graphql_client.dart';
 import '../../../../core/data/graphql/media_headers_provider.dart';
 import '../../../../core/data/graphql/url_resolver.dart';
 import '../../../../core/data/preferences/shared_preferences_provider.dart';
@@ -25,7 +21,6 @@ class SceneVideoPlayer extends ConsumerStatefulWidget {
 
 class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
   static const _preferSceneStreamsKey = 'prefer_scene_streams';
-  static Future<_PrewarmResult>? _pathsStreamPrewarmFuture;
 
   bool _isStarting = false;
   String? _autoStartedSceneId;
@@ -95,13 +90,6 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
           : 'sceneStreams';
       final mediaHeaders = ref.read(mediaHeadersProvider);
 
-      final prewarmResult = await _prewarmPathsStreamOnce(mediaHeaders);
-      if (prewarmResult.attempted) {
-        streamSource = prewarmResult.succeeded
-            ? '$streamSource+prewarm'
-            : '$streamSource+prewarm-fail';
-      }
-
       if (streamUrl.isEmpty) {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
@@ -131,86 +119,11 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
             streamLabel: streamLabel,
             streamSource: streamSource,
             httpHeaders: mediaHeaders,
-            prewarmAttempted: prewarmResult.attempted,
-            prewarmSucceeded: prewarmResult.succeeded,
-            prewarmLatencyMs: prewarmResult.latencyMs,
           );
     } finally {
       if (mounted) {
         setState(() => _isStarting = false);
       }
-    }
-  }
-
-  Future<_PrewarmResult> _prewarmPathsStreamOnce(Map<String, String> headers) {
-    final existingFuture = _pathsStreamPrewarmFuture;
-    if (existingFuture != null) return existingFuture;
-
-    final rawStreamUrl = widget.scene.paths.stream ?? '';
-    final client = ref.read(graphqlClientProvider);
-    final graphqlEndpoint = client.link is HttpLink
-        ? (client.link as HttpLink).uri
-        : Uri.parse(
-            rawStreamUrl.isEmpty ? 'https://localhost/graphql' : rawStreamUrl,
-          );
-    final streamUrl = resolveGraphqlMediaUrl(
-      rawUrl: rawStreamUrl,
-      graphqlEndpoint: graphqlEndpoint,
-    );
-    if (streamUrl.isEmpty) {
-      _pathsStreamPrewarmFuture = Future<_PrewarmResult>.value(
-        const _PrewarmResult(attempted: false, succeeded: false),
-      );
-      return _pathsStreamPrewarmFuture!;
-    }
-
-    final future = _prewarmStreamRequest(streamUrl, headers);
-    _pathsStreamPrewarmFuture = future;
-    return future;
-  }
-
-  Future<_PrewarmResult> _prewarmStreamRequest(
-    String streamUrl,
-    Map<String, String> headers,
-  ) async {
-    final stopwatch = Stopwatch()..start();
-    final uri = Uri.tryParse(streamUrl);
-    if (uri == null) {
-      stopwatch.stop();
-      return _PrewarmResult(
-        attempted: false,
-        succeeded: false,
-        latencyMs: stopwatch.elapsedMilliseconds,
-      );
-    }
-
-    final client = HttpClient();
-    client.connectionTimeout = const Duration(seconds: 3);
-
-    try {
-      final req = await client
-          .openUrl('GET', uri)
-          .timeout(const Duration(seconds: 3));
-      headers.forEach(req.headers.set);
-      req.headers.set('Range', 'bytes=0-0');
-
-      final res = await req.close().timeout(const Duration(seconds: 4));
-      await res.drain<void>();
-      stopwatch.stop();
-      return _PrewarmResult(
-        attempted: true,
-        succeeded: true,
-        latencyMs: stopwatch.elapsedMilliseconds,
-      );
-    } catch (_) {
-      stopwatch.stop();
-      return _PrewarmResult(
-        attempted: true,
-        succeeded: false,
-        latencyMs: stopwatch.elapsedMilliseconds,
-      );
-    } finally {
-      client.close(force: true);
     }
   }
 
@@ -311,7 +224,6 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
                   'mime: ${playerState.streamMimeType ?? 'unknown'}'
                   '${playerState.streamLabel == null || playerState.streamLabel!.isEmpty ? '' : '  label: ${playerState.streamLabel}'}'
                   '${playerState.streamSource == null || playerState.streamSource!.isEmpty ? '' : '  src: ${playerState.streamSource}'}'
-                  '${playerState.prewarmAttempted != true ? '' : '  prewarm: ${playerState.prewarmSucceeded == true ? 'ok' : 'fail'}${playerState.prewarmLatencyMs == null ? '' : '/${playerState.prewarmLatencyMs}ms'}'}'
                   '${playerState.startupLatencyMs == null ? '' : '  start: ${playerState.startupLatencyMs}ms'}',
                   style: const TextStyle(color: Colors.white70, fontSize: 11),
                 ),
@@ -336,16 +248,4 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
       ),
     );
   }
-}
-
-class _PrewarmResult {
-  const _PrewarmResult({
-    required this.attempted,
-    required this.succeeded,
-    this.latencyMs,
-  });
-
-  final bool attempted;
-  final bool succeeded;
-  final int? latencyMs;
 }
