@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:graphql/client.dart';
 import '../../../../core/data/graphql/graphql_client.dart';
 import '../../../../core/data/preferences/shared_preferences_provider.dart';
+import '../data/graphql/version.graphql.dart';
 import '../../scenes/presentation/providers/video_player_provider.dart';
 import 'providers/connection_provider.dart';
 
@@ -15,6 +17,8 @@ class SettingsPage extends ConsumerStatefulWidget {
 class _SettingsPageState extends ConsumerState<SettingsPage> {
   final _baseUrlController = TextEditingController();
   final _apiKeyController = TextEditingController();
+  final _baseUrlFocusNode = FocusNode();
+  final _apiKeyFocusNode = FocusNode();
   static const _preferSceneStreamsKey = 'prefer_scene_streams';
   static const _sceneGridLayoutKey = 'scene_grid_layout';
   static const _autoplayNextKey = 'autoplay_next';
@@ -26,10 +30,62 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   bool _showVideoDebugInfo = false;
   bool _loading = true;
 
+  bool _isHostOnlyInput(String raw) {
+    final parsed = Uri.tryParse(raw.trim());
+    if (parsed == null) return false;
+    return !parsed.hasScheme && parsed.host.isNotEmpty;
+  }
+
+  Future<bool> _canConnect(String endpointUrl, String apiKey) async {
+    final testClient = GraphQLClient(
+      link: HttpLink(endpointUrl, defaultHeaders: {'ApiKey': apiKey}),
+      cache: GraphQLCache(store: InMemoryStore()),
+    );
+
+    final result = await testClient
+        .query$GetVersion(
+          Options$Query$GetVersion(fetchPolicy: FetchPolicy.networkOnly),
+        )
+        .timeout(const Duration(seconds: 4));
+
+    return !result.hasException;
+  }
+
+  Future<String?> _resolveHostOnlyEndpoint(String hostOnlyInput) async {
+    final apiKey = _apiKeyController.text.trim();
+    final httpsCandidate = normalizeGraphqlServerUrl('https://$hostOnlyInput');
+    final httpCandidate = normalizeGraphqlServerUrl('http://$hostOnlyInput');
+
+    if (httpsCandidate.isNotEmpty) {
+      try {
+        if (await _canConnect(httpsCandidate, apiKey)) return httpsCandidate;
+      } catch (_) {
+        // Try http fallback.
+      }
+    }
+
+    if (httpCandidate.isNotEmpty) {
+      try {
+        if (await _canConnect(httpCandidate, apiKey)) return httpCandidate;
+      } catch (_) {
+        // Both candidates failed.
+      }
+    }
+
+    return null;
+  }
+
   @override
   void initState() {
     super.initState();
+    _baseUrlFocusNode.addListener(_onTextFieldFocusChanged);
+    _apiKeyFocusNode.addListener(_onTextFieldFocusChanged);
     _load();
+  }
+
+  void _onTextFieldFocusChanged() {
+    if (_baseUrlFocusNode.hasFocus || _apiKeyFocusNode.hasFocus) return;
+    _saveServerSettings();
   }
 
   Future<void> _load() async {
@@ -49,8 +105,26 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     setState(() => _loading = false);
   }
 
-  Future<void> _save() async {
-    final normalizedUrl = normalizeGraphqlServerUrl(_baseUrlController.text);
+  Future<void> _saveServerSettings() async {
+    final rawUrl = _baseUrlController.text.trim();
+    String normalizedUrl = normalizeGraphqlServerUrl(rawUrl);
+
+    if (_isHostOnlyInput(rawUrl)) {
+      final resolved = await _resolveHostOnlyEndpoint(rawUrl);
+      if (resolved == null) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Could not connect using https:// or http://. Check host, port, and API key.',
+            ),
+          ),
+        );
+        return;
+      }
+      normalizedUrl = resolved;
+    }
+
     if (_baseUrlController.text.trim().isNotEmpty && normalizedUrl.isEmpty) {
       if (!mounted) return;
       ScaffoldMessenger.of(
@@ -62,6 +136,15 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     final prefs = ref.read(sharedPreferencesProvider);
     await prefs.setString('server_base_url', normalizedUrl);
     await prefs.setString('server_api_key', _apiKeyController.text.trim());
+
+    _baseUrlController.text = normalizedUrl;
+
+    ref.invalidate(graphqlClientProvider);
+    ref.invalidate(connectionStatusProvider);
+  }
+
+  Future<void> _saveToggleSettings() async {
+    final prefs = ref.read(sharedPreferencesProvider);
     await prefs.setBool(_preferSceneStreamsKey, _preferSceneStreams);
     await prefs.setBool(_sceneGridLayoutKey, _sceneGridLayout);
     await prefs.setBool(_autoplayNextKey, _autoplayNext);
@@ -71,22 +154,18 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     final playerStateNotifier = ref.read(playerStateProvider.notifier);
     playerStateNotifier.setAutoplayNext(_autoplayNext);
     playerStateNotifier.setShowVideoDebugInfo(_showVideoDebugInfo);
-
-    _baseUrlController.text = normalizedUrl;
-
-    ref.invalidate(graphqlClientProvider);
-    ref.invalidate(connectionStatusProvider);
-
-    if (!mounted) return;
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Server settings saved')));
   }
 
   @override
   void dispose() {
     _baseUrlController.dispose();
     _apiKeyController.dispose();
+    _baseUrlFocusNode
+      ..removeListener(_onTextFieldFocusChanged)
+      ..dispose();
+    _apiKeyFocusNode
+      ..removeListener(_onTextFieldFocusChanged)
+      ..dispose();
     super.dispose();
   }
 
@@ -101,21 +180,31 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Server base URL'),
+                  const Text('GraphQL server URL'),
                   const SizedBox(height: 8),
                   TextField(
                     controller: _baseUrlController,
+                    focusNode: _baseUrlFocusNode,
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
-                      hintText: 'https://example.com/graphql',
+                      hintText: 'http://192.168.1.100:9999/graphql',
+                      helperText:
+                          'Example format: http(s)://host:port/graphql.',
                     ),
                     keyboardType: TextInputType.url,
+                    textInputAction: TextInputAction.done,
+                    onSubmitted: (_) => _saveServerSettings(),
+                    onEditingComplete: () {
+                      FocusScope.of(context).unfocus();
+                      _saveServerSettings();
+                    },
                   ),
                   const SizedBox(height: 16),
                   const Text('API key'),
                   const SizedBox(height: 8),
                   TextField(
                     controller: _apiKeyController,
+                    focusNode: _apiKeyFocusNode,
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       hintText: 'Paste ApiKey header value',
@@ -123,6 +212,12 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                     autocorrect: false,
                     enableSuggestions: false,
                     obscureText: true,
+                    textInputAction: TextInputAction.done,
+                    onSubmitted: (_) => _saveServerSettings(),
+                    onEditingComplete: () {
+                      FocusScope.of(context).unfocus();
+                      _saveServerSettings();
+                    },
                   ),
                   const SizedBox(height: 12),
                   SwitchListTile.adaptive(
@@ -132,8 +227,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                       'When off, playback directly uses paths.stream',
                     ),
                     value: _preferSceneStreams,
-                    onChanged: (value) {
+                    onChanged: (value) async {
                       setState(() => _preferSceneStreams = value);
+                      await _saveToggleSettings();
                     },
                   ),
                   SwitchListTile.adaptive(
@@ -143,8 +239,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                       'When on, Scenes page uses grid view by default',
                     ),
                     value: _sceneGridLayout,
-                    onChanged: (value) {
+                    onChanged: (value) async {
                       setState(() => _sceneGridLayout = value);
+                      await _saveToggleSettings();
                     },
                   ),
                   SwitchListTile.adaptive(
@@ -154,8 +251,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                       'Automatically play the next scene when current playback ends',
                     ),
                     value: _autoplayNext,
-                    onChanged: (value) {
+                    onChanged: (value) async {
                       setState(() => _autoplayNext = value);
+                      await _saveToggleSettings();
                     },
                   ),
                   SwitchListTile.adaptive(
@@ -165,22 +263,19 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                       'Display stream source and startup timing overlay on player',
                     ),
                     value: _showVideoDebugInfo,
-                    onChanged: (value) {
+                    onChanged: (value) async {
                       setState(() => _showVideoDebugInfo = value);
+                      await _saveToggleSettings();
                     },
                   ),
                   const SizedBox(height: 12),
                   Row(
                     children: [
-                      ElevatedButton(
-                        onPressed: _save,
-                        child: const Text('Save'),
-                      ),
-                      const SizedBox(width: 12),
                       TextButton(
-                        onPressed: () {
+                        onPressed: () async {
                           _baseUrlController.text = '';
                           _apiKeyController.text = '';
+                          await _saveServerSettings();
                         },
                         child: const Text('Clear'),
                       ),

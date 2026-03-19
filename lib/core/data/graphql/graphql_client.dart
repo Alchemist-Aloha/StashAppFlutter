@@ -4,18 +4,26 @@ import '../preferences/shared_preferences_provider.dart';
 
 part 'graphql_client.g.dart';
 
+Uri _withGraphqlPathIfMissing(Uri uri) {
+  final path = uri.path.trim();
+  if (path.isEmpty || path == '/') {
+    return uri.replace(path: '/graphql');
+  }
+  return uri;
+}
+
 String normalizeGraphqlServerUrl(String url) {
   final trimmed = url.trim();
   if (trimmed.isEmpty) return '';
 
   final direct = Uri.tryParse(trimmed);
   if (direct != null && direct.hasScheme && direct.host.isNotEmpty) {
-    return direct.toString();
+    return _withGraphqlPathIfMissing(direct).toString();
   }
 
   final withHttps = Uri.tryParse('https://$trimmed');
   if (withHttps != null && withHttps.host.isNotEmpty) {
-    return withHttps.toString();
+    return _withGraphqlPathIfMissing(withHttps).toString();
   }
 
   return '';
@@ -25,8 +33,7 @@ String normalizeGraphqlServerUrl(String url) {
 GraphQLClient graphqlClient(Ref ref) {
   // Default settings for development/testing. Remove or override in production.
   const defaultServerUrl = 'http://localhost:9999/graphql';
-  const defaultApiKey =
-      '';
+  const defaultApiKey = '';
 
   final prefs = ref.watch(sharedPreferencesProvider);
   final storedServerUrl = prefs.getString('server_base_url')?.trim() ?? '';
