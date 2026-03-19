@@ -35,27 +35,39 @@ class _PerformersPageState extends ConsumerState<PerformersPage> {
   void _applyServerSort(_PerformerSortOption option) {
     switch (option) {
       case _PerformerSortOption.name:
-        ref.read(performerListProvider.notifier).setSort(sort: 'name', descending: false);
+        ref
+            .read(performerListProvider.notifier)
+            .setSort(sort: 'name', descending: false);
         break;
       case _PerformerSortOption.sceneCount:
-        ref.read(performerListProvider.notifier).setSort(sort: 'scenes_count', descending: true);
+        ref
+            .read(performerListProvider.notifier)
+            .setSort(sort: 'scenes_count', descending: true);
         break;
       case _PerformerSortOption.lastUpdated:
-        ref.read(performerListProvider.notifier).setSort(sort: 'updated_at', descending: true);
+        ref
+            .read(performerListProvider.notifier)
+            .setSort(sort: 'updated_at', descending: true);
         break;
       case _PerformerSortOption.random:
-        ref.read(performerListProvider.notifier).setSort(sort: 'random', descending: true);
+        ref
+            .read(performerListProvider.notifier)
+            .setSort(sort: 'random', descending: true);
         break;
     }
   }
 
   Future<void> _openRandomPerformer() async {
-    final random = await ref.read(performerListProvider.notifier).getRandomPerformer();
+    final random = await ref
+        .read(performerListProvider.notifier)
+        .getRandomPerformer();
     if (!mounted) return;
 
     if (random == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No performers available for random navigation')),
+        const SnackBar(
+          content: Text('No performers available for random navigation'),
+        ),
       );
       return;
     }
@@ -73,7 +85,10 @@ class _PerformersPageState extends ConsumerState<PerformersPage> {
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingMedium, vertical: AppTheme.spacingSmall),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppTheme.spacingMedium,
+        vertical: AppTheme.spacingSmall,
+      ),
       child: Row(
         children: [
           for (final option in options) ...[
@@ -103,7 +118,8 @@ class _PerformersPageState extends ConsumerState<PerformersPage> {
       onSearchChanged: _onSearchChanged,
       provider: performersAsync,
       onRefresh: () => ref.refresh(performerListProvider.future),
-      onFetchNextPage: () => ref.read(performerListProvider.notifier).fetchNextPage(),
+      onFetchNextPage: () =>
+          ref.read(performerListProvider.notifier).fetchNextPage(),
       sortBar: _buildSortBar(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,

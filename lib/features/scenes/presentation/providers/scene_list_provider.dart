@@ -16,6 +16,17 @@ final sceneRepositoryProvider = Provider<SceneRepository>((ref) {
   return GraphQLSceneRepository(client);
 });
 
+final sceneOrganizedOnlyProvider = NotifierProvider<SceneOrganizedOnly, bool>(
+  SceneOrganizedOnly.new,
+);
+
+class SceneOrganizedOnly extends Notifier<bool> {
+  @override
+  bool build() => false;
+
+  void set(bool value) => state = value;
+}
+
 @riverpod
 class SceneSort extends _$SceneSort {
   @override
@@ -60,6 +71,7 @@ class SceneList extends _$SceneList {
     final query = ref.watch(sceneSearchQueryProvider);
     final sortConfig = ref.watch(sceneSortProvider);
     final filter = ref.watch(sceneFilterStateProvider);
+    final organizedOnly = ref.watch(sceneOrganizedOnlyProvider);
     final repository = ref.watch(sceneRepositoryProvider);
     
     return repository.findScenes(
@@ -68,6 +80,7 @@ class SceneList extends _$SceneList {
       filter: query.isEmpty ? null : query,
       sort: sortConfig.sort,
       descending: sortConfig.descending,
+      organized: organizedOnly ? true : null,
       sceneFilter: filter,
     );
   }
@@ -90,6 +103,7 @@ class SceneList extends _$SceneList {
     final query = ref.read(sceneSearchQueryProvider);
     final sortConfig = ref.read(sceneSortProvider);
     final filter = ref.read(sceneFilterStateProvider);
+    final organizedOnly = ref.read(sceneOrganizedOnlyProvider);
 
     try {
       final nextPage = _currentPage + 1;
@@ -99,6 +113,7 @@ class SceneList extends _$SceneList {
         filter: query.isEmpty ? null : query,
         sort: sortConfig.sort,
         descending: sortConfig.descending,
+        organized: organizedOnly ? true : null,
         sceneFilter: filter,
       );
 
@@ -127,6 +142,9 @@ class SceneList extends _$SceneList {
     final repository = ref.read(sceneRepositoryProvider);
     final query = useCurrentFilter ? ref.read(sceneSearchQueryProvider) : '';
     final filter = useCurrentFilter ? ref.read(sceneFilterStateProvider) : null;
+    final organizedOnly = useCurrentFilter
+      ? ref.read(sceneOrganizedOnlyProvider)
+      : false;
 
     // Ask backend for true random ordering and pick a single item.
     final randomPage = await repository.findScenes(
@@ -135,6 +153,7 @@ class SceneList extends _$SceneList {
       filter: query.isEmpty ? null : query,
       sort: 'random',
       descending: true,
+      organized: organizedOnly ? true : null,
       performerId: performerId,
       studioId: studioId,
       tagId: tagId,

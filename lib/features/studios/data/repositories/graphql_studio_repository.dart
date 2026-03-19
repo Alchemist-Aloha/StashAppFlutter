@@ -28,7 +28,9 @@ class GraphQLStudioRepository implements StudioRepository {
     );
 
     // Some servers may still use scene_count; retry if scenes_count is rejected.
-    if (result.hasException && effectiveSort == 'scenes_count' && _isInvalidSort(result.exception!, 'scenes_count')) {
+    if (result.hasException &&
+        effectiveSort == 'scenes_count' &&
+        _isInvalidSort(result.exception!, 'scenes_count')) {
       effectiveSort = 'scene_count';
       result = await _runFindStudios(
         page: page,
@@ -76,9 +78,11 @@ class GraphQLStudioRepository implements StudioRepository {
         .toList();
 
     if (shouldLocalSortBySceneCount) {
-      studios.sort((a, b) => (descending == true)
-          ? b.sceneCount.compareTo(a.sceneCount)
-          : a.sceneCount.compareTo(b.sceneCount));
+      studios.sort(
+        (a, b) => (descending == true)
+            ? b.sceneCount.compareTo(a.sceneCount)
+            : a.sceneCount.compareTo(b.sceneCount),
+      );
     }
 
     return studios;
@@ -111,7 +115,9 @@ class GraphQLStudioRepository implements StudioRepository {
 
   bool _isInvalidSort(OperationException exception, String attemptedSort) {
     return exception.graphqlErrors.any(
-      (e) => e.message.contains('invalid sort') && e.message.contains(attemptedSort),
+      (e) =>
+          e.message.contains('invalid sort') &&
+          e.message.contains(attemptedSort),
     );
   }
 

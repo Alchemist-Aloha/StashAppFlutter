@@ -34,13 +34,19 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
   void _applyServerSort(_StudioSortOption option) {
     switch (option) {
       case _StudioSortOption.name:
-        ref.read(studioListProvider.notifier).setSort(sort: 'name', descending: false);
+        ref
+            .read(studioListProvider.notifier)
+            .setSort(sort: 'name', descending: false);
         break;
       case _StudioSortOption.sceneCount:
-        ref.read(studioListProvider.notifier).setSort(sort: 'scenes_count', descending: true);
+        ref
+            .read(studioListProvider.notifier)
+            .setSort(sort: 'scenes_count', descending: true);
         break;
       case _StudioSortOption.rating:
-        ref.read(studioListProvider.notifier).setSort(sort: 'rating100', descending: true);
+        ref
+            .read(studioListProvider.notifier)
+            .setSort(sort: 'rating100', descending: true);
         break;
     }
   }
@@ -54,7 +60,10 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingMedium, vertical: AppTheme.spacingSmall),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppTheme.spacingMedium,
+        vertical: AppTheme.spacingSmall,
+      ),
       child: Row(
         children: [
           for (final option in options) ...[
@@ -84,7 +93,8 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
       onSearchChanged: _onSearchChanged,
       provider: studiosAsync,
       onRefresh: () => ref.refresh(studioListProvider.future),
-      onFetchNextPage: () => ref.read(studioListProvider.notifier).fetchNextPage(),
+      onFetchNextPage: () =>
+          ref.read(studioListProvider.notifier).fetchNextPage(),
       sortBar: _buildSortBar(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
@@ -120,7 +130,11 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
                     if (studio.rating100 != null)
                       Row(
                         children: [
-                          Icon(Icons.star, size: 14, color: context.colors.ratingColor),
+                          Icon(
+                            Icons.star,
+                            size: 14,
+                            color: context.colors.ratingColor,
+                          ),
                           const SizedBox(width: 2),
                           Text(
                             (studio.rating100! / 20).toStringAsFixed(1),

@@ -8,6 +8,7 @@ abstract class SceneRepository {
     String? filter,
     String? sort,
     bool descending = true,
+    bool? organized,
     String? performerId,
     String? studioId,
     String? tagId,

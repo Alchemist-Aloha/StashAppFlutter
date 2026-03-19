@@ -34,13 +34,19 @@ class _TagsPageState extends ConsumerState<TagsPage> {
   void _applyServerSort(_TagSortOption option) {
     switch (option) {
       case _TagSortOption.name:
-        ref.read(tagListProvider.notifier).setSort(sort: 'name', descending: false);
+        ref
+            .read(tagListProvider.notifier)
+            .setSort(sort: 'name', descending: false);
         break;
       case _TagSortOption.sceneCount:
-        ref.read(tagListProvider.notifier).setSort(sort: 'scenes_count', descending: true);
+        ref
+            .read(tagListProvider.notifier)
+            .setSort(sort: 'scenes_count', descending: true);
         break;
       case _TagSortOption.imageCount:
-        ref.read(tagListProvider.notifier).setSort(sort: 'image_count', descending: true);
+        ref
+            .read(tagListProvider.notifier)
+            .setSort(sort: 'image_count', descending: true);
         break;
     }
   }
@@ -54,7 +60,10 @@ class _TagsPageState extends ConsumerState<TagsPage> {
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingMedium, vertical: AppTheme.spacingSmall),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppTheme.spacingMedium,
+        vertical: AppTheme.spacingSmall,
+      ),
       child: Row(
         children: [
           for (final option in options) ...[
@@ -88,7 +97,10 @@ class _TagsPageState extends ConsumerState<TagsPage> {
       sortBar: _buildSortBar(),
       padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingSmall),
       itemBuilder: (context, tag) => Card(
-        margin: const EdgeInsets.symmetric(horizontal: AppTheme.spacingMedium, vertical: 4),
+        margin: const EdgeInsets.symmetric(
+          horizontal: AppTheme.spacingMedium,
+          vertical: 4,
+        ),
         child: ListTile(
           onTap: () => context.push('/tag/${tag.id}'),
           title: Text(

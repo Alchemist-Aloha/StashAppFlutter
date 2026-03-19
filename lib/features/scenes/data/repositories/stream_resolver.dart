@@ -56,16 +56,18 @@ class StreamResolver extends _$StreamResolver {
 
     if (result.hasException) return null;
 
-    final rootStreams = ((result.data?['sceneStreams']) as List?)
-        ?.whereType<Map<String, dynamic>>()
-        .toList() ??
-      const <Map<String, dynamic>>[];
-    final nestedStreams = ((result.data?['findScene']?['sceneStreams']) as List?)
-        ?.whereType<Map<String, dynamic>>()
-        .toList() ??
-      const <Map<String, dynamic>>[];
+    final rootStreams =
+        ((result.data?['sceneStreams']) as List?)
+            ?.whereType<Map<String, dynamic>>()
+            .toList() ??
+        const <Map<String, dynamic>>[];
+    final nestedStreams =
+        ((result.data?['findScene']?['sceneStreams']) as List?)
+            ?.whereType<Map<String, dynamic>>()
+            .toList() ??
+        const <Map<String, dynamic>>[];
     final streams = rootStreams.isNotEmpty ? rootStreams : nestedStreams;
-    
+
     final graphqlEndpoint = client.link is HttpLink
         ? (client.link as HttpLink).uri
         : Uri.parse(scene.paths.stream ?? 'https://localhost/graphql');
@@ -73,10 +75,7 @@ class StreamResolver extends _$StreamResolver {
     if (streams.isEmpty) {
       final streamUrl = scene.paths.stream ?? '';
       if (streamUrl.isEmpty) return null;
-      return StreamChoice(
-        url: streamUrl,
-        mimeType: guessMimeType(streamUrl),
-      );
+      return StreamChoice(url: streamUrl, mimeType: guessMimeType(streamUrl));
     }
 
     StreamChoice? best;
@@ -124,7 +123,10 @@ class StreamResolver extends _$StreamResolver {
     return 'unknown';
   }
 
-  Future<String?> probeMimeTypeFromHeaders(String url, Map<String, String> headers) async {
+  Future<String?> probeMimeTypeFromHeaders(
+    String url,
+    Map<String, String> headers,
+  ) async {
     final uri = Uri.tryParse(url);
     if (uri == null) return null;
 
@@ -132,8 +134,13 @@ class StreamResolver extends _$StreamResolver {
     client.connectionTimeout = const Duration(seconds: 3);
 
     try {
-      Future<String?> requestAndExtract(String method, {bool withRange = false}) async {
-        final req = await client.openUrl(method, uri).timeout(const Duration(seconds: 3));
+      Future<String?> requestAndExtract(
+        String method, {
+        bool withRange = false,
+      }) async {
+        final req = await client
+            .openUrl(method, uri)
+            .timeout(const Duration(seconds: 3));
         headers.forEach(req.headers.set);
         if (withRange) req.headers.set('Range', 'bytes=0-0');
 

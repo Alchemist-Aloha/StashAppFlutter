@@ -21,6 +21,7 @@ class GraphQLSceneRepository implements SceneRepository {
     String? filter,
     String? sort,
     bool descending = true,
+    bool? organized,
     String? performerId,
     String? studioId,
     String? tagId,
@@ -33,13 +34,16 @@ class GraphQLSceneRepository implements SceneRepository {
       filter: filter,
       sort: effectiveSort,
       descending: descending,
+      organized: organized,
       performerId: performerId,
       studioId: studioId,
       tagId: tagId,
       sceneFilter: sceneFilter,
     );
 
-    if (result.hasException && effectiveSort == 'rating' && _isInvalidSort(result.exception!, 'rating')) {
+    if (result.hasException &&
+        effectiveSort == 'rating' &&
+        _isInvalidSort(result.exception!, 'rating')) {
       effectiveSort = 'rating100';
       result = await _runFindScenes(
         page: page,
@@ -47,6 +51,7 @@ class GraphQLSceneRepository implements SceneRepository {
         filter: filter,
         sort: effectiveSort,
         descending: descending,
+        organized: organized,
         performerId: performerId,
         studioId: studioId,
         tagId: tagId,
@@ -93,10 +98,14 @@ class GraphQLSceneRepository implements SceneRepository {
             ),
             performerIds: s.performers.map((p) => p.id).toList(),
             performerNames: s.performers.map((p) => p.name).toList(),
-            performerImagePaths: s.performers.map((p) => resolveGraphqlMediaUrl(
-              rawUrl: p.image_path,
-              graphqlEndpoint: _graphqlEndpoint,
-            )).toList(),
+            performerImagePaths: s.performers
+                .map(
+                  (p) => resolveGraphqlMediaUrl(
+                    rawUrl: p.image_path,
+                    graphqlEndpoint: _graphqlEndpoint,
+                  ),
+                )
+                .toList(),
             tagIds: [],
             tagNames: [],
           ),
@@ -110,6 +119,7 @@ class GraphQLSceneRepository implements SceneRepository {
     String? filter,
     String? sort,
     required bool descending,
+    bool? organized,
     String? performerId,
     String? studioId,
     String? tagId,
@@ -128,19 +138,28 @@ class GraphQLSceneRepository implements SceneRepository {
                 : Enum$SortDirectionEnum.ASC,
           ),
           scene_filter: Input$SceneFilterType(
-            performers: (performerId != null || (sceneFilter?.performerIds?.isNotEmpty ?? false))
+            organized: organized,
+            performers:
+                (performerId != null ||
+                    (sceneFilter?.performerIds?.isNotEmpty ?? false))
                 ? Input$MultiCriterionInput(
-                    value: performerId != null ? [performerId] : sceneFilter!.performerIds,
+                    value: performerId != null
+                        ? [performerId]
+                        : sceneFilter!.performerIds,
                     modifier: Enum$CriterionModifier.INCLUDES,
                   )
                 : null,
             studios: (studioId != null || sceneFilter?.studioId != null)
                 ? Input$HierarchicalMultiCriterionInput(
-                    value: studioId != null ? [studioId] : [sceneFilter!.studioId!],
+                    value: studioId != null
+                        ? [studioId]
+                        : [sceneFilter!.studioId!],
                     modifier: Enum$CriterionModifier.INCLUDES,
                   )
                 : null,
-            tags: (tagId != null || (sceneFilter?.includeTags?.isNotEmpty ?? false))
+            tags:
+                (tagId != null ||
+                    (sceneFilter?.includeTags?.isNotEmpty ?? false))
                 ? Input$HierarchicalMultiCriterionInput(
                     value: tagId != null ? [tagId] : sceneFilter!.includeTags,
                     modifier: Enum$CriterionModifier.INCLUDES,
@@ -158,15 +177,22 @@ class GraphQLSceneRepository implements SceneRepository {
                     modifier: Enum$CriterionModifier.GREATER_THAN,
                   )
                 : sceneFilter?.isWatched == false
-                    ? Input$IntCriterionInput(
-                        value: 0,
-                        modifier: Enum$CriterionModifier.EQUALS,
-                      )
-                    : null,
-            date: (sceneFilter?.startDate != null || sceneFilter?.endDate != null)
+                ? Input$IntCriterionInput(
+                    value: 0,
+                    modifier: Enum$CriterionModifier.EQUALS,
+                  )
+                : null,
+            date:
+                (sceneFilter?.startDate != null || sceneFilter?.endDate != null)
                 ? Input$DateCriterionInput(
-                    value: sceneFilter?.startDate?.toIso8601String().split('T')[0] ?? '',
-                    value2: sceneFilter?.endDate?.toIso8601String().split('T')[0],
+                    value:
+                        sceneFilter?.startDate?.toIso8601String().split(
+                          'T',
+                        )[0] ??
+                        '',
+                    value2: sceneFilter?.endDate?.toIso8601String().split(
+                      'T',
+                    )[0],
                     modifier: sceneFilter?.endDate != null
                         ? Enum$CriterionModifier.BETWEEN
                         : Enum$CriterionModifier.GREATER_THAN,
@@ -180,7 +206,9 @@ class GraphQLSceneRepository implements SceneRepository {
 
   bool _isInvalidSort(OperationException exception, String attemptedSort) {
     return exception.graphqlErrors.any(
-      (e) => e.message.contains('invalid sort') && e.message.contains(attemptedSort),
+      (e) =>
+          e.message.contains('invalid sort') &&
+          e.message.contains(attemptedSort),
     );
   }
 
@@ -242,10 +270,14 @@ class GraphQLSceneRepository implements SceneRepository {
       ),
       performerIds: s.performers.map((p) => p.id).toList(),
       performerNames: s.performers.map((p) => p.name).toList(),
-      performerImagePaths: s.performers.map((p) => resolveGraphqlMediaUrl(
-        rawUrl: p.image_path,
-        graphqlEndpoint: _graphqlEndpoint,
-      )).toList(),
+      performerImagePaths: s.performers
+          .map(
+            (p) => resolveGraphqlMediaUrl(
+              rawUrl: p.image_path,
+              graphqlEndpoint: _graphqlEndpoint,
+            ),
+          )
+          .toList(),
       tagIds: s.tags.map((t) => t.id).toList(),
       tagNames: s.tags.map((t) => t.name).toList(),
     );
