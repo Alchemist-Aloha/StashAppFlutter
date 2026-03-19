@@ -15,6 +15,9 @@ class GlobalPlayerState {
   final String? streamLabel;
   final String? streamSource;
   final int? startupLatencyMs;
+  final bool? prewarmAttempted;
+  final bool? prewarmSucceeded;
+  final int? prewarmLatencyMs;
 
   GlobalPlayerState({
     this.activeScene,
@@ -25,6 +28,9 @@ class GlobalPlayerState {
     this.streamLabel,
     this.streamSource,
     this.startupLatencyMs,
+    this.prewarmAttempted,
+    this.prewarmSucceeded,
+    this.prewarmLatencyMs,
   });
 
   GlobalPlayerState copyWith({
@@ -36,6 +42,9 @@ class GlobalPlayerState {
     String? streamLabel,
     String? streamSource,
     int? startupLatencyMs,
+    bool? prewarmAttempted,
+    bool? prewarmSucceeded,
+    int? prewarmLatencyMs,
     bool clearActive = false,
   }) {
     return GlobalPlayerState(
@@ -55,6 +64,15 @@ class GlobalPlayerState {
       startupLatencyMs: clearActive
           ? null
           : (startupLatencyMs ?? this.startupLatencyMs),
+      prewarmAttempted: clearActive
+          ? null
+          : (prewarmAttempted ?? this.prewarmAttempted),
+      prewarmSucceeded: clearActive
+          ? null
+          : (prewarmSucceeded ?? this.prewarmSucceeded),
+      prewarmLatencyMs: clearActive
+          ? null
+          : (prewarmLatencyMs ?? this.prewarmLatencyMs),
     );
   }
 }
@@ -76,6 +94,9 @@ class PlayerState extends _$PlayerState {
     String? streamLabel,
     String? streamSource,
     Map<String, String>? httpHeaders,
+    bool? prewarmAttempted,
+    bool? prewarmSucceeded,
+    int? prewarmLatencyMs,
   }) async {
     if (state.activeScene?.id == scene.id &&
         state.videoPlayerController != null) {
@@ -85,6 +106,9 @@ class PlayerState extends _$PlayerState {
         streamMimeType: mimeType,
         streamLabel: streamLabel,
         streamSource: streamSource,
+        prewarmAttempted: prewarmAttempted,
+        prewarmSucceeded: prewarmSucceeded,
+        prewarmLatencyMs: prewarmLatencyMs,
       );
       return;
     }
@@ -106,6 +130,9 @@ class PlayerState extends _$PlayerState {
       streamLabel: streamLabel,
       streamSource: streamSource,
       startupLatencyMs: null,
+      prewarmAttempted: prewarmAttempted,
+      prewarmSucceeded: prewarmSucceeded,
+      prewarmLatencyMs: prewarmLatencyMs,
     );
 
     try {

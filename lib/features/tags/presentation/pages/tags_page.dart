@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/utils/pagination.dart';
+import '../../../../core/presentation/widgets/error_state_view.dart';
 import '../providers/tag_list_provider.dart';
 
 class TagsPage extends ConsumerStatefulWidget {
@@ -68,8 +70,7 @@ class _TagsPageState extends ConsumerState<TagsPage> {
 
             return NotificationListener<ScrollNotification>(
               onNotification: (ScrollNotification scrollInfo) {
-                if (scrollInfo.metrics.pixels >=
-                    scrollInfo.metrics.maxScrollExtent - 200) {
+                if (shouldLoadNextPage(scrollInfo.metrics)) {
                   ref.read(tagListProvider.notifier).fetchNextPage();
                 }
                 return false;
@@ -94,7 +95,10 @@ class _TagsPageState extends ConsumerState<TagsPage> {
             );
           },
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (err, _) => Center(child: Text('Error: $err')),
+          error: (err, _) => ErrorStateView(
+            message: 'Failed to load tags.\n$err',
+            onRetry: () => ref.refresh(tagListProvider),
+          ),
         ),
       ),
     );

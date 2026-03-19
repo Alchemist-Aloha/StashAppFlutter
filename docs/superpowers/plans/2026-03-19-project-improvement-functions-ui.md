@@ -32,9 +32,9 @@
 
 ### Task 1.1: Pagination guardrails
 
-- [ ] Add a reusable pagination trigger utility/provider mixin for list pages.
-- [ ] Prevent duplicate `fetchNextPage()` calls when already loading.
-- [ ] Add page-end threshold constants in one place.
+- [x] Add a reusable pagination trigger utility/provider mixin for list pages.
+- [x] Prevent duplicate `fetchNextPage()` calls when already loading.
+- [x] Add page-end threshold constants in one place.
 
 Candidate files:
 - `lib/features/scenes/presentation/providers/scene_list_provider.dart`
@@ -47,9 +47,9 @@ Validation:
 
 ### Task 1.2: Stream startup instrumentation hardening
 
-- [ ] Record prewarm execution result and timing (success/failure, ms) in player debug state.
-- [ ] Add explicit marker when startup path was prewarmed.
-- [ ] Keep prewarm best-effort and non-fatal.
+- [x] Record prewarm execution result and timing (success/failure, ms) in player debug state.
+- [x] Add explicit marker when startup path was prewarmed.
+- [x] Keep prewarm best-effort and non-fatal.
 
 Candidate files:
 - `lib/features/scenes/presentation/widgets/scene_video_player.dart`
@@ -60,8 +60,8 @@ Validation:
 
 ### Task 1.3: Unified retry/error messaging
 
-- [ ] Create shared error widget with retry callback and contextual message.
-- [ ] Replace ad-hoc `Text('Error: ...')` sections in major pages.
+- [x] Create shared error widget with retry callback and contextual message.
+- [x] Replace ad-hoc `Text('Error: ...')` sections in major pages.
 
 Candidate files:
 - `lib/core/presentation/widgets/` (new shared widget)

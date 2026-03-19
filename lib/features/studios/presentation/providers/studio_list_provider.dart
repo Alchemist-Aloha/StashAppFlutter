@@ -4,6 +4,7 @@ import '../../domain/entities/studio.dart';
 import '../../domain/repositories/studio_repository.dart';
 import '../../data/repositories/graphql_studio_repository.dart';
 import '../../../../core/data/graphql/graphql_client.dart';
+import '../../../../core/utils/pagination.dart';
 
 part 'studio_list_provider.g.dart';
 
@@ -23,7 +24,7 @@ class StudioSearchQuery extends _$StudioSearchQuery {
 @riverpod
 class StudioList extends _$StudioList {
   int _currentPage = 1;
-  static const int _perPage = 20;
+  static const int _perPage = kDefaultPageSize;
   bool _hasMore = true;
   bool _isLoadingMore = false;
 
@@ -31,6 +32,7 @@ class StudioList extends _$StudioList {
   FutureOr<List<Studio>> build() async {
     _currentPage = 1;
     _hasMore = true;
+    _isLoadingMore = false;
     final query = ref.watch(studioSearchQueryProvider);
     final repository = ref.watch(studioRepositoryProvider);
     return repository.findStudios(
@@ -41,7 +43,7 @@ class StudioList extends _$StudioList {
   }
 
   Future<void> fetchNextPage() async {
-    if (_isLoadingMore || !_hasMore) return;
+    if (_isLoadingMore || !_hasMore || state.isLoading) return;
 
     _isLoadingMore = true;
     final repository = ref.read(studioRepositoryProvider);

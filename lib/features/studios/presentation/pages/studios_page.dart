@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/utils/pagination.dart';
+import '../../../../core/presentation/widgets/error_state_view.dart';
 import '../providers/studio_list_provider.dart';
 
 class StudiosPage extends ConsumerStatefulWidget {
@@ -68,8 +70,7 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
 
             return NotificationListener<ScrollNotification>(
               onNotification: (ScrollNotification scrollInfo) {
-                if (scrollInfo.metrics.pixels >=
-                    scrollInfo.metrics.maxScrollExtent - 200) {
+                if (shouldLoadNextPage(scrollInfo.metrics)) {
                   ref.read(studioListProvider.notifier).fetchNextPage();
                 }
                 return false;
@@ -116,7 +117,10 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
             );
           },
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (err, _) => Center(child: Text('Error: $err')),
+          error: (err, _) => ErrorStateView(
+            message: 'Failed to load studios.\n$err',
+            onRetry: () => ref.refresh(studioListProvider),
+          ),
         ),
       ),
     );

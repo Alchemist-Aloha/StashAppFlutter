@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stash_app_flutter/core/data/preferences/shared_preferences_provider.dart';
 import 'package:stash_app_flutter/features/scenes/domain/entities/scene.dart';
 import 'package:stash_app_flutter/features/scenes/domain/repositories/scene_repository.dart';
 import 'package:stash_app_flutter/features/scenes/presentation/pages/scenes_page.dart';
@@ -35,6 +37,9 @@ void main() {
   testWidgets('ScenesPage renders and filters with mock repository', (
     tester,
   ) async {
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
+
     final repo = FakeSceneRepository([
       Scene(
         id: 'scene-1',
@@ -61,7 +66,10 @@ void main() {
 
     await tester.pumpWidget(
       ProviderScope(
-        overrides: [sceneRepositoryProvider.overrideWithValue(repo)],
+        overrides: [
+          sceneRepositoryProvider.overrideWithValue(repo),
+          sharedPreferencesProvider.overrideWithValue(prefs),
+        ],
         child: const MaterialApp(home: ScenesPage()),
       ),
     );

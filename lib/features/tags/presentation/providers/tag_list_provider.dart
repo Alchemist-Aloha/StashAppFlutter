@@ -4,6 +4,7 @@ import '../../domain/entities/tag.dart';
 import '../../domain/repositories/tag_repository.dart';
 import '../../data/repositories/graphql_tag_repository.dart';
 import '../../../../core/data/graphql/graphql_client.dart';
+import '../../../../core/utils/pagination.dart';
 
 part 'tag_list_provider.g.dart';
 
@@ -23,7 +24,7 @@ class TagSearchQuery extends _$TagSearchQuery {
 @riverpod
 class TagList extends _$TagList {
   int _currentPage = 1;
-  static const int _perPage = 20;
+  static const int _perPage = kDefaultPageSize;
   bool _hasMore = true;
   bool _isLoadingMore = false;
 
@@ -31,6 +32,7 @@ class TagList extends _$TagList {
   FutureOr<List<Tag>> build() async {
     _currentPage = 1;
     _hasMore = true;
+    _isLoadingMore = false;
     final query = ref.watch(tagSearchQueryProvider);
     final repository = ref.watch(tagRepositoryProvider);
     return repository.findTags(
@@ -41,7 +43,7 @@ class TagList extends _$TagList {
   }
 
   Future<void> fetchNextPage() async {
-    if (_isLoadingMore || !_hasMore) return;
+    if (_isLoadingMore || !_hasMore || state.isLoading) return;
 
     _isLoadingMore = true;
     final repository = ref.read(tagRepositoryProvider);

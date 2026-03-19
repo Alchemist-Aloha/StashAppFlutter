@@ -181,6 +181,12 @@ Candidate files:
 - [ ] Scene sort options: Date newest, Date oldest, Rating, Play count, Random.
 - [ ] Performer sort options: Name, Scene count, Last updated.
 
+Progress:
+- [x] Scene sort chips implemented (Newest, Oldest, Rating, Play Count, Random).
+- [x] Performer sort chips implemented (Name, Scene Count, Rating, Random).
+- [ ] Add sort chips for Studios and Tags.
+- [ ] Add true `Last updated` sorting for performers when backend field is available.
+
 Value:
 - Immediate usability boost for large libraries.
 
@@ -197,6 +203,12 @@ Best starting points:
 - [ ] Add global random scene mode.
 - [ ] Add contextual random scene mode within performer/studio/tag scope.
 - [ ] Add a `Surprise Me` entry in bottom-nav shell overflow.
+
+Progress:
+- [x] Random scene button added to Scenes app bar.
+- [x] Random scene button added to Scene Details app bar.
+- [x] `Surprise Me` shell overflow entry added.
+- [ ] Add contextual random mode inside performer/studio/tag details.
 
 Value:
 - Strong engagement feature, low cognitive load.
