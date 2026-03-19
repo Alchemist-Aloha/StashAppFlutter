@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../providers/studio_list_provider.dart';
 
 class StudiosPage extends ConsumerStatefulWidget {
@@ -84,25 +85,29 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
                 itemCount: studios.length,
                 itemBuilder: (context, index) {
                   final studio = studios[index];
-                  return Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            studio.name,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
+                  return InkWell(
+                    onTap: () => context.push('/studio/${studio.id}'),
+                    borderRadius: BorderRadius.circular(12),
+                    child: Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              studio.name,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 8),
-                          Text('Scenes: ${studio.sceneCount}'),
-                          Text('Performers: ${studio.performerCount}'),
-                        ],
+                            const SizedBox(height: 8),
+                            Text('Scenes: ${studio.sceneCount}'),
+                            Text('Performers: ${studio.performerCount}'),
+                          ],
+                        ),
                       ),
                     ),
                   );

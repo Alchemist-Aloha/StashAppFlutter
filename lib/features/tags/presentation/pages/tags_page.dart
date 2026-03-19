@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../providers/tag_list_provider.dart';
 
 class TagsPage extends ConsumerStatefulWidget {
@@ -81,6 +82,7 @@ class _TagsPageState extends ConsumerState<TagsPage> {
                   final tag = tags[index];
                   return Card(
                     child: ListTile(
+                      onTap: () => context.push('/tag/${tag.id}'),
                       title: Text(tag.name),
                       subtitle: Text(
                         'Scenes: ${tag.sceneCount}  Images: ${tag.imageCount}',

@@ -5,7 +5,9 @@ import '../../scenes/presentation/pages/scene_details_page.dart';
 import '../../performers/presentation/pages/performers_page.dart';
 import '../../performers/presentation/pages/performer_details_page.dart';
 import '../../studios/presentation/pages/studios_page.dart';
+import '../../studios/presentation/pages/studio_details_page.dart';
 import '../../tags/presentation/pages/tags_page.dart';
+import '../../tags/presentation/pages/tag_details_page.dart';
 import '../../galleries/presentation/pages/galleries_page.dart';
 import '../../groups/presentation/pages/groups_page.dart';
 import '../../setup/presentation/settings_page.dart';
@@ -55,6 +57,16 @@ GoRouter router(Ref ref) {
             path: '/performer/:id',
             builder: (context, state) =>
                 PerformerDetailsPage(performerId: state.pathParameters['id']!),
+          ),
+          GoRoute(
+            path: '/studio/:id',
+            builder: (context, state) =>
+                StudioDetailsPage(studioId: state.pathParameters['id']!),
+          ),
+          GoRoute(
+            path: '/tag/:id',
+            builder: (context, state) =>
+                TagDetailsPage(tagId: state.pathParameters['id']!),
           ),
           // Explore, Subscriptions, Library routes will be added later
         ],

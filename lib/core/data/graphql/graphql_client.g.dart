@@ -48,4 +48,4 @@ final class GraphqlClientProvider
   }
 }
 
-String _$graphqlClientHash() => r'ee33d8d5ca95bd0363e533c9447a34580d164cf9';
+String _$graphqlClientHash() => r'1aac533e2e53c27358edec72412b7a1640541971';
