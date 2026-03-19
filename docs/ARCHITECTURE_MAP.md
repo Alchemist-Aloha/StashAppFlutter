@@ -40,3 +40,18 @@
 - `server_base_url`
 - `server_api_key`
 - `prefer_scene_streams`
+- `scene_grid_layout`
+
+## List UX Pattern (current)
+
+- Shared shell: `ListPageScaffold`
+- Search in app bar
+- Sort and filter via modal bottom sheets
+- Active sort/filter indicators in app bar actions
+- Random discovery via `FloatingActionButton.small`
+
+## GraphQL Source of Truth
+
+- Schema used for generation: `graphql/combined_schema.graphql`
+- Feature operation documents: `lib/features/**/*.graphql`
+- Generated types: `lib/core/data/graphql/schema.graphql.dart` and feature `*.graphql.dart`

@@ -1,17 +1,66 @@
-# stash_app_flutter
+# StashAppFlutter
 
-A new Flutter project.
+Mobile-first Flutter client for a Stash server, with GraphQL-backed browsing and playback.
 
-## Getting Started
+## Current Highlights
 
-This project is a starting point for a Flutter application.
+- Scene, performer, studio, and tag browsing with pagination and search.
+- Menu-based sorting/filtering across list pages.
+- Floating random-discovery actions on list pages (Scenes, Performers, Studios, Tags).
+- Scene playback with stream strategy toggles and startup diagnostics.
+- Settings-driven runtime server config (URL + API key) and UI preferences.
 
-A few resources to get you started if this is your first Flutter project:
+## Tech Stack
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+- Flutter
+- Riverpod (providers + generated notifiers)
+- GoRouter
+- GraphQL (`graphql_flutter` + `graphql_codegen` generated classes)
+- SharedPreferences
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Quick Start
+
+```bash
+flutter pub get
+flutter analyze
+flutter test
+flutter run
+```
+
+## Build
+
+```bash
+flutter build apk
+```
+
+## Regenerate Generated Code
+
+Run this after editing GraphQL documents/schema mappings or generated-provider inputs:
+
+```bash
+dart run build_runner build --delete-conflicting-outputs
+```
+
+## Runtime Settings
+
+Configured inside the app Settings page:
+
+- `server_base_url`
+- `server_api_key`
+- `prefer_scene_streams`
+- `scene_grid_layout`
+
+## Project Structure
+
+- `lib/core` shared infrastructure
+- `lib/features/*` feature modules (domain/data/presentation)
+- `graphql/` schema and GraphQL documents
+- `docs/` internal runbooks and architecture notes
+
+## Documentation
+
+- `docs/README.md` docs index
+- `docs/AGENT_START_HERE.md` quick onboarding checklist
+- `docs/ARCHITECTURE_MAP.md` architecture and data-flow overview
+- `docs/DEBUGGING_PLAYBOOK.md` troubleshooting patterns
+- `docs/KNOWNISSUES.md` actively tracked issues

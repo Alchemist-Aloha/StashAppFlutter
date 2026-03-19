@@ -21,6 +21,16 @@ class TagSearchQuery extends _$TagSearchQuery {
   void update(String query) => state = query;
 }
 
+final tagFavoritesOnlyProvider =
+    NotifierProvider<TagFavoritesOnlyNotifier, bool>(
+      TagFavoritesOnlyNotifier.new,
+    );
+
+class TagFavoritesOnlyNotifier extends Notifier<bool> {
+  @override
+  bool build() => false;
+}
+
 @riverpod
 class TagList extends _$TagList {
   int _currentPage = 1;
@@ -36,6 +46,7 @@ class TagList extends _$TagList {
     _hasMore = true;
     _isLoadingMore = false;
     final query = ref.watch(tagSearchQueryProvider);
+    final favoritesOnly = ref.watch(tagFavoritesOnlyProvider);
     final repository = ref.watch(tagRepositoryProvider);
     return repository.findTags(
       page: _currentPage,
@@ -43,6 +54,7 @@ class TagList extends _$TagList {
       filter: query.isEmpty ? null : query,
       sort: _sort,
       descending: _descending,
+      favoritesOnly: favoritesOnly,
     );
   }
 
@@ -52,12 +64,21 @@ class TagList extends _$TagList {
     ref.invalidateSelf();
   }
 
+  void setFavoritesOnly(bool enabled) {
+    ref.read(tagFavoritesOnlyProvider.notifier).state = enabled;
+    _currentPage = 1;
+    _hasMore = true;
+    _isLoadingMore = false;
+    ref.invalidateSelf();
+  }
+
   Future<void> fetchNextPage() async {
     if (_isLoadingMore || !_hasMore || state.isLoading) return;
 
     _isLoadingMore = true;
     final repository = ref.read(tagRepositoryProvider);
     final query = ref.read(tagSearchQueryProvider);
+    final favoritesOnly = ref.read(tagFavoritesOnlyProvider);
 
     try {
       final nextPage = _currentPage + 1;
@@ -67,6 +88,7 @@ class TagList extends _$TagList {
         filter: query.isEmpty ? null : query,
         sort: _sort,
         descending: _descending,
+        favoritesOnly: favoritesOnly,
       );
 
       if (nextTags.isEmpty) {
@@ -82,4 +104,31 @@ class TagList extends _$TagList {
 
   bool get hasMore => _hasMore;
   bool get isLoadingMore => _isLoadingMore;
+
+  Future<Tag?> getRandomTag({bool useCurrentFilter = false}) async {
+    final repository = ref.read(tagRepositoryProvider);
+    final query = useCurrentFilter ? ref.read(tagSearchQueryProvider) : '';
+    final favoritesOnly = useCurrentFilter
+        ? ref.read(tagFavoritesOnlyProvider)
+        : false;
+
+    final randomPage = await repository.findTags(
+      page: 1,
+      perPage: 1,
+      filter: query.isEmpty ? null : query,
+      sort: 'random',
+      descending: true,
+      favoritesOnly: favoritesOnly,
+    );
+    if (randomPage.isNotEmpty) {
+      return randomPage.first;
+    }
+
+    final loaded = state.asData?.value;
+    if (loaded != null && loaded.isNotEmpty) {
+      return loaded.first;
+    }
+
+    return null;
+  }
 }

@@ -18,6 +18,7 @@ class TagsPage extends ConsumerStatefulWidget {
 
 class _TagsPageState extends ConsumerState<TagsPage> {
   _TagSortOption _sortOption = _TagSortOption.name;
+  bool _sortDescending = false;
 
   @override
   void initState() {
@@ -32,60 +33,249 @@ class _TagsPageState extends ConsumerState<TagsPage> {
   }
 
   void _applyServerSort(_TagSortOption option) {
+    final sortKey = switch (option) {
+      _TagSortOption.name => 'name',
+      _TagSortOption.sceneCount => 'scenes_count',
+      _TagSortOption.imageCount => 'image_count',
+    };
+
+    ref
+        .read(tagListProvider.notifier)
+        .setSort(sort: sortKey, descending: _sortDescending);
+  }
+
+  String _sortLabel(_TagSortOption option) {
     switch (option) {
       case _TagSortOption.name:
-        ref
-            .read(tagListProvider.notifier)
-            .setSort(sort: 'name', descending: false);
-        break;
+        return 'Name';
       case _TagSortOption.sceneCount:
-        ref
-            .read(tagListProvider.notifier)
-            .setSort(sort: 'scenes_count', descending: true);
-        break;
+        return 'Scene Count';
       case _TagSortOption.imageCount:
-        ref
-            .read(tagListProvider.notifier)
-            .setSort(sort: 'image_count', descending: true);
-        break;
+        return 'Image Count';
     }
   }
 
-  Widget _buildSortBar() {
-    const options = [
-      (_TagSortOption.name, 'Name'),
-      (_TagSortOption.sceneCount, 'Scene Count'),
-      (_TagSortOption.imageCount, 'Image Count'),
-    ];
+  void _showSortPanel() {
+    var tempOption = _sortOption;
+    var tempDescending = _sortDescending;
 
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppTheme.spacingMedium,
-        vertical: AppTheme.spacingSmall,
-      ),
-      child: Row(
-        children: [
-          for (final option in options) ...[
-            ChoiceChip(
-              label: Text(option.$2),
-              selected: _sortOption == option.$1,
-              onSelected: (selected) {
-                if (!selected) return;
-                setState(() => _sortOption = option.$1);
-                _applyServerSort(option.$1);
-              },
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setModalState) {
+          return Container(
+            padding: const EdgeInsets.all(AppTheme.spacingMedium),
+            decoration: BoxDecoration(
+              color: context.colors.surface,
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(AppTheme.radiusLarge),
+              ),
             ),
-            const SizedBox(width: AppTheme.spacingSmall),
-          ],
-        ],
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Sort Tags',
+                      style: context.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        setModalState(() {
+                          tempOption = _TagSortOption.name;
+                          tempDescending = false;
+                        });
+                      },
+                      child: const Text('Reset'),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppTheme.spacingMedium),
+                Text('Sort Method', style: context.textTheme.labelLarge),
+                const SizedBox(height: AppTheme.spacingSmall),
+                Wrap(
+                  spacing: AppTheme.spacingSmall,
+                  runSpacing: AppTheme.spacingSmall,
+                  children: _TagSortOption.values
+                      .map(
+                        (option) => ChoiceChip(
+                          label: Text(_sortLabel(option)),
+                          selected: tempOption == option,
+                          onSelected: (selected) {
+                            if (!selected) return;
+                            setModalState(() {
+                              tempOption = option;
+                            });
+                          },
+                        ),
+                      )
+                      .toList(),
+                ),
+                const SizedBox(height: AppTheme.spacingMedium),
+                Text('Direction', style: context.textTheme.labelLarge),
+                const SizedBox(height: AppTheme.spacingSmall),
+                Row(
+                  children: [
+                    ChoiceChip(
+                      label: const Text('Descending'),
+                      selected: tempDescending,
+                      onSelected: (selected) {
+                        if (!selected) return;
+                        setModalState(() => tempDescending = true);
+                      },
+                    ),
+                    const SizedBox(width: AppTheme.spacingSmall),
+                    ChoiceChip(
+                      label: const Text('Ascending'),
+                      selected: !tempDescending,
+                      onSelected: (selected) {
+                        if (!selected) return;
+                        setModalState(() => tempDescending = false);
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppTheme.spacingLarge),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        _sortOption = tempOption;
+                        _sortDescending = tempDescending;
+                      });
+                      _applyServerSort(_sortOption);
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: context.colors.primary,
+                      foregroundColor: context.colors.onPrimary,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: AppTheme.spacingMedium,
+                      ),
+                    ),
+                    child: const Text('Apply Sort'),
+                  ),
+                ),
+                const SizedBox(height: AppTheme.spacingMedium),
+              ],
+            ),
+          );
+        },
       ),
     );
+  }
+
+  void _showFilterPanel() {
+    final currentFavoritesOnly = ref.read(tagFavoritesOnlyProvider);
+    var tempFavoritesOnly = currentFavoritesOnly;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setModalState) {
+          return Container(
+            padding: const EdgeInsets.all(AppTheme.spacingMedium),
+            decoration: BoxDecoration(
+              color: context.colors.surface,
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(AppTheme.radiusLarge),
+              ),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Filter Tags',
+                      style: context.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        setModalState(() {
+                          tempFavoritesOnly = false;
+                        });
+                      },
+                      child: const Text('Reset'),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppTheme.spacingSmall),
+                SwitchListTile.adaptive(
+                  value: tempFavoritesOnly,
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Favorites only'),
+                  onChanged: (value) {
+                    setModalState(() => tempFavoritesOnly = value);
+                  },
+                ),
+                const SizedBox(height: AppTheme.spacingMedium),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      ref
+                          .read(tagListProvider.notifier)
+                          .setFavoritesOnly(tempFavoritesOnly);
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: context.colors.primary,
+                      foregroundColor: context.colors.onPrimary,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: AppTheme.spacingMedium,
+                      ),
+                    ),
+                    child: const Text('Apply Filters'),
+                  ),
+                ),
+                const SizedBox(height: AppTheme.spacingMedium),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Future<void> _openRandomTag() async {
+    final randomTag = await ref
+        .read(tagListProvider.notifier)
+        .getRandomTag(useCurrentFilter: true);
+    if (!mounted) return;
+
+    if (randomTag == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No tags available for random navigation'),
+        ),
+      );
+      return;
+    }
+
+    context.push('/tag/${randomTag.id}');
   }
 
   @override
   Widget build(BuildContext context) {
     final tagsAsync = ref.watch(tagListProvider);
+    final favoritesOnly = ref.watch(tagFavoritesOnlyProvider);
+    final hasSortOverride =
+        _sortOption != _TagSortOption.name || _sortDescending;
 
     return ListPageScaffold<Tag>(
       title: 'Tags',
@@ -94,7 +284,52 @@ class _TagsPageState extends ConsumerState<TagsPage> {
       provider: tagsAsync,
       onRefresh: () => ref.refresh(tagListProvider.future),
       onFetchNextPage: () => ref.read(tagListProvider.notifier).fetchNextPage(),
-      sortBar: _buildSortBar(),
+      actions: [
+        Stack(
+          children: [
+            IconButton(
+              icon: const Icon(Icons.sort),
+              tooltip: 'Sort options',
+              onPressed: _showSortPanel,
+            ),
+            if (hasSortOverride)
+              Positioned(
+                right: 8,
+                top: 8,
+                child: Container(
+                  padding: const EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                    color: context.colors.secondary,
+                    shape: BoxShape.circle,
+                  ),
+                  constraints: const BoxConstraints(minWidth: 8, minHeight: 8),
+                ),
+              ),
+          ],
+        ),
+        Stack(
+          children: [
+            IconButton(
+              icon: const Icon(Icons.filter_list),
+              tooltip: 'Filter options',
+              onPressed: _showFilterPanel,
+            ),
+            if (favoritesOnly)
+              Positioned(
+                right: 8,
+                top: 8,
+                child: Container(
+                  padding: const EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                    color: context.colors.secondary,
+                    shape: BoxShape.circle,
+                  ),
+                  constraints: const BoxConstraints(minWidth: 8, minHeight: 8),
+                ),
+              ),
+          ],
+        ),
+      ],
       padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingSmall),
       itemBuilder: (context, tag) => Card(
         margin: const EdgeInsets.symmetric(
@@ -112,6 +347,14 @@ class _TagsPageState extends ConsumerState<TagsPage> {
             style: context.textTheme.bodySmall,
           ),
         ),
+      ),
+      floatingActionButton: tagsAsync.maybeWhen(
+        data: (tags) => FloatingActionButton.small(
+          onPressed: _openRandomTag,
+          tooltip: 'Random tag',
+          child: const Icon(Icons.casino_outlined),
+        ),
+        orElse: () => null,
       ),
     );
   }

@@ -46,6 +46,16 @@ Checks:
 2. Regenerate code (`dart run build_runner build --delete-conflicting-outputs`).
 3. Re-run analyze/tests.
 
+## Sorting/filtering errors from backend
+
+Symptoms:
+- GraphQL error such as `invalid sort: ...`
+
+Checks:
+1. Confirm list page uses official sort key naming from server/web behavior.
+2. Verify repository retry/fallback logic for known variants (for example `scenes_count` vs `scene_count`).
+3. Confirm text search uses `FindFilterType.q` (not strict `EQUALS` criteria for keyword search).
+
 ## Troubleshooting Matrix
 
 | Symptom | Probable Cause | Action |
@@ -56,3 +66,14 @@ Checks:
 | Duplicate items in list | Pagination trigger firing multiple times | Verify `_isLoadingMore` lock in provider. Check scroll threshold in `ListPageScaffold`. |
 | Player debug overlay shows `mime: unknown` | Stash backend not providing `mime_type` or stream is raw | Enable `+header` probing. Verify `StreamResolver.guessMimeType()` coverage. |
 | "Add to Queue" does nothing | `PlaybackQueue` state not updating or Player not consuming it | Verify `PlaybackQueue` provider via devtools. Ensure `autoplayNext` is toggled on in player. |
+
+## Random discovery behavior
+
+Expected:
+- Random actions on list pages are available via floating action button.
+- Random fetch should respect active filters when invoked from filtered context.
+
+If broken:
+1. Verify corresponding provider has a `getRandom*` method using server `sort: 'random'`.
+2. Verify page calls the provider method and handles `null` with snack bar.
+3. Check route push target path and entity id.

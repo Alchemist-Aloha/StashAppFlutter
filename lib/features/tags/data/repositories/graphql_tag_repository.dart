@@ -15,6 +15,7 @@ class GraphQLTagRepository implements TagRepository {
     String? filter,
     String? sort,
     bool? descending,
+    bool favoritesOnly = false,
   }) async {
     QueryResult<Query$FindTags> result;
     String? effectiveSort = sort == 'scene_count' ? 'scenes_count' : sort;
@@ -25,6 +26,7 @@ class GraphQLTagRepository implements TagRepository {
       filter: filter,
       sort: effectiveSort,
       descending: descending,
+      favoritesOnly: favoritesOnly,
     );
 
     // Some servers may still use scene_count; retry if scenes_count is rejected.
@@ -38,6 +40,7 @@ class GraphQLTagRepository implements TagRepository {
         filter: filter,
         sort: effectiveSort,
         descending: descending,
+        favoritesOnly: favoritesOnly,
       );
     }
 
@@ -54,6 +57,7 @@ class GraphQLTagRepository implements TagRepository {
         filter: filter,
         sort: null,
         descending: descending,
+        favoritesOnly: favoritesOnly,
       );
     }
 
@@ -92,6 +96,7 @@ class GraphQLTagRepository implements TagRepository {
     String? filter,
     String? sort,
     bool? descending,
+    required bool favoritesOnly,
   }) {
     return client.query$FindTags(
       Options$Query$FindTags(
@@ -105,7 +110,9 @@ class GraphQLTagRepository implements TagRepository {
                 ? Enum$SortDirectionEnum.DESC
                 : Enum$SortDirectionEnum.ASC,
           ),
-          tag_filter: null,
+          tag_filter: favoritesOnly
+              ? Input$TagFilterType(favorite: true)
+              : null,
         ),
       ),
     );

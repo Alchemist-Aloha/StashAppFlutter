@@ -18,6 +18,7 @@ class StudiosPage extends ConsumerStatefulWidget {
 
 class _StudiosPageState extends ConsumerState<StudiosPage> {
   _StudioSortOption _sortOption = _StudioSortOption.name;
+  bool _sortDescending = false;
 
   @override
   void initState() {
@@ -32,60 +33,249 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
   }
 
   void _applyServerSort(_StudioSortOption option) {
+    final sortKey = switch (option) {
+      _StudioSortOption.name => 'name',
+      _StudioSortOption.sceneCount => 'scenes_count',
+      _StudioSortOption.rating => 'rating100',
+    };
+
+    ref
+        .read(studioListProvider.notifier)
+        .setSort(sort: sortKey, descending: _sortDescending);
+  }
+
+  String _sortLabel(_StudioSortOption option) {
     switch (option) {
       case _StudioSortOption.name:
-        ref
-            .read(studioListProvider.notifier)
-            .setSort(sort: 'name', descending: false);
-        break;
+        return 'Name';
       case _StudioSortOption.sceneCount:
-        ref
-            .read(studioListProvider.notifier)
-            .setSort(sort: 'scenes_count', descending: true);
-        break;
+        return 'Scene Count';
       case _StudioSortOption.rating:
-        ref
-            .read(studioListProvider.notifier)
-            .setSort(sort: 'rating100', descending: true);
-        break;
+        return 'Rating';
     }
   }
 
-  Widget _buildSortBar() {
-    const options = [
-      (_StudioSortOption.name, 'Name'),
-      (_StudioSortOption.sceneCount, 'Scene Count'),
-      (_StudioSortOption.rating, 'Rating'),
-    ];
+  void _showSortPanel() {
+    var tempOption = _sortOption;
+    var tempDescending = _sortDescending;
 
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppTheme.spacingMedium,
-        vertical: AppTheme.spacingSmall,
-      ),
-      child: Row(
-        children: [
-          for (final option in options) ...[
-            ChoiceChip(
-              label: Text(option.$2),
-              selected: _sortOption == option.$1,
-              onSelected: (selected) {
-                if (!selected) return;
-                setState(() => _sortOption = option.$1);
-                _applyServerSort(option.$1);
-              },
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setModalState) {
+          return Container(
+            padding: const EdgeInsets.all(AppTheme.spacingMedium),
+            decoration: BoxDecoration(
+              color: context.colors.surface,
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(AppTheme.radiusLarge),
+              ),
             ),
-            const SizedBox(width: AppTheme.spacingSmall),
-          ],
-        ],
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Sort Studios',
+                      style: context.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        setModalState(() {
+                          tempOption = _StudioSortOption.name;
+                          tempDescending = false;
+                        });
+                      },
+                      child: const Text('Reset'),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppTheme.spacingMedium),
+                Text('Sort Method', style: context.textTheme.labelLarge),
+                const SizedBox(height: AppTheme.spacingSmall),
+                Wrap(
+                  spacing: AppTheme.spacingSmall,
+                  runSpacing: AppTheme.spacingSmall,
+                  children: _StudioSortOption.values
+                      .map(
+                        (option) => ChoiceChip(
+                          label: Text(_sortLabel(option)),
+                          selected: tempOption == option,
+                          onSelected: (selected) {
+                            if (!selected) return;
+                            setModalState(() {
+                              tempOption = option;
+                            });
+                          },
+                        ),
+                      )
+                      .toList(),
+                ),
+                const SizedBox(height: AppTheme.spacingMedium),
+                Text('Direction', style: context.textTheme.labelLarge),
+                const SizedBox(height: AppTheme.spacingSmall),
+                Row(
+                  children: [
+                    ChoiceChip(
+                      label: const Text('Descending'),
+                      selected: tempDescending,
+                      onSelected: (selected) {
+                        if (!selected) return;
+                        setModalState(() => tempDescending = true);
+                      },
+                    ),
+                    const SizedBox(width: AppTheme.spacingSmall),
+                    ChoiceChip(
+                      label: const Text('Ascending'),
+                      selected: !tempDescending,
+                      onSelected: (selected) {
+                        if (!selected) return;
+                        setModalState(() => tempDescending = false);
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppTheme.spacingLarge),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        _sortOption = tempOption;
+                        _sortDescending = tempDescending;
+                      });
+                      _applyServerSort(_sortOption);
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: context.colors.primary,
+                      foregroundColor: context.colors.onPrimary,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: AppTheme.spacingMedium,
+                      ),
+                    ),
+                    child: const Text('Apply Sort'),
+                  ),
+                ),
+                const SizedBox(height: AppTheme.spacingMedium),
+              ],
+            ),
+          );
+        },
       ),
     );
+  }
+
+  void _showFilterPanel() {
+    final currentFavoritesOnly = ref.read(studioFavoritesOnlyProvider);
+    var tempFavoritesOnly = currentFavoritesOnly;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setModalState) {
+          return Container(
+            padding: const EdgeInsets.all(AppTheme.spacingMedium),
+            decoration: BoxDecoration(
+              color: context.colors.surface,
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(AppTheme.radiusLarge),
+              ),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Filter Studios',
+                      style: context.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        setModalState(() {
+                          tempFavoritesOnly = false;
+                        });
+                      },
+                      child: const Text('Reset'),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppTheme.spacingSmall),
+                SwitchListTile.adaptive(
+                  value: tempFavoritesOnly,
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Favorites only'),
+                  onChanged: (value) {
+                    setModalState(() => tempFavoritesOnly = value);
+                  },
+                ),
+                const SizedBox(height: AppTheme.spacingMedium),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      ref
+                          .read(studioListProvider.notifier)
+                          .setFavoritesOnly(tempFavoritesOnly);
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: context.colors.primary,
+                      foregroundColor: context.colors.onPrimary,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: AppTheme.spacingMedium,
+                      ),
+                    ),
+                    child: const Text('Apply Filters'),
+                  ),
+                ),
+                const SizedBox(height: AppTheme.spacingMedium),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Future<void> _openRandomStudio() async {
+    final randomStudio = await ref
+        .read(studioListProvider.notifier)
+        .getRandomStudio(useCurrentFilter: true);
+    if (!mounted) return;
+
+    if (randomStudio == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No studios available for random navigation'),
+        ),
+      );
+      return;
+    }
+
+    context.push('/studio/${randomStudio.id}');
   }
 
   @override
   Widget build(BuildContext context) {
     final studiosAsync = ref.watch(studioListProvider);
+    final favoritesOnly = ref.watch(studioFavoritesOnlyProvider);
+    final hasSortOverride =
+        _sortOption != _StudioSortOption.name || _sortDescending;
 
     return ListPageScaffold<Studio>(
       title: 'Studios',
@@ -95,7 +285,52 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
       onRefresh: () => ref.refresh(studioListProvider.future),
       onFetchNextPage: () =>
           ref.read(studioListProvider.notifier).fetchNextPage(),
-      sortBar: _buildSortBar(),
+      actions: [
+        Stack(
+          children: [
+            IconButton(
+              icon: const Icon(Icons.sort),
+              tooltip: 'Sort options',
+              onPressed: _showSortPanel,
+            ),
+            if (hasSortOverride)
+              Positioned(
+                right: 8,
+                top: 8,
+                child: Container(
+                  padding: const EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                    color: context.colors.secondary,
+                    shape: BoxShape.circle,
+                  ),
+                  constraints: const BoxConstraints(minWidth: 8, minHeight: 8),
+                ),
+              ),
+          ],
+        ),
+        Stack(
+          children: [
+            IconButton(
+              icon: const Icon(Icons.filter_list),
+              tooltip: 'Filter options',
+              onPressed: _showFilterPanel,
+            ),
+            if (favoritesOnly)
+              Positioned(
+                right: 8,
+                top: 8,
+                child: Container(
+                  padding: const EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                    color: context.colors.secondary,
+                    shape: BoxShape.circle,
+                  ),
+                  constraints: const BoxConstraints(minWidth: 8, minHeight: 8),
+                ),
+              ),
+          ],
+        ),
+      ],
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         crossAxisSpacing: AppTheme.spacingMedium,
@@ -148,6 +383,14 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
             ),
           ),
         ),
+      ),
+      floatingActionButton: studiosAsync.maybeWhen(
+        data: (studios) => FloatingActionButton.small(
+          onPressed: _openRandomStudio,
+          tooltip: 'Random studio',
+          child: const Icon(Icons.casino_outlined),
+        ),
+        orElse: () => null,
       ),
     );
   }

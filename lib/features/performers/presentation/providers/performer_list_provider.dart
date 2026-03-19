@@ -34,6 +34,16 @@ class PerformerSearchQuery extends _$PerformerSearchQuery {
   void update(String query) => state = query;
 }
 
+final performerFavoritesOnlyProvider =
+    NotifierProvider<PerformerFavoritesOnlyNotifier, bool>(
+      PerformerFavoritesOnlyNotifier.new,
+    );
+
+class PerformerFavoritesOnlyNotifier extends Notifier<bool> {
+  @override
+  bool build() => false;
+}
+
 @riverpod
 class PerformerList extends _$PerformerList {
   int _currentPage = 1;
@@ -48,6 +58,7 @@ class PerformerList extends _$PerformerList {
     _isLoadingMore = false;
     final query = ref.watch(performerSearchQueryProvider);
     final sortConfig = ref.watch(performerSortProvider);
+    final favoritesOnly = ref.watch(performerFavoritesOnlyProvider);
     final repository = ref.watch(performerRepositoryProvider);
     return repository.findPerformers(
       page: _currentPage,
@@ -55,6 +66,7 @@ class PerformerList extends _$PerformerList {
       filter: query.isEmpty ? null : query,
       sort: sortConfig.sort,
       descending: sortConfig.descending,
+      favoritesOnly: favoritesOnly,
     );
   }
 
@@ -68,6 +80,14 @@ class PerformerList extends _$PerformerList {
     ref.invalidateSelf();
   }
 
+  void setFavoritesOnly(bool enabled) {
+    ref.read(performerFavoritesOnlyProvider.notifier).state = enabled;
+    _currentPage = 1;
+    _hasMore = true;
+    _isLoadingMore = false;
+    ref.invalidateSelf();
+  }
+
   Future<void> fetchNextPage() async {
     if (_isLoadingMore || !_hasMore || state.isLoading) return;
 
@@ -75,6 +95,7 @@ class PerformerList extends _$PerformerList {
     final repository = ref.read(performerRepositoryProvider);
     final query = ref.read(performerSearchQueryProvider);
     final sortConfig = ref.read(performerSortProvider);
+    final favoritesOnly = ref.read(performerFavoritesOnlyProvider);
 
     try {
       final nextPage = _currentPage + 1;
@@ -84,6 +105,7 @@ class PerformerList extends _$PerformerList {
         filter: query.isEmpty ? null : query,
         sort: sortConfig.sort,
         descending: sortConfig.descending,
+        favoritesOnly: favoritesOnly,
       );
 
       if (nextPerformers.isEmpty) {
@@ -107,6 +129,9 @@ class PerformerList extends _$PerformerList {
     final query = useCurrentFilter
         ? ref.read(performerSearchQueryProvider)
         : '';
+    final favoritesOnly = useCurrentFilter
+        ? ref.read(performerFavoritesOnlyProvider)
+        : false;
 
     final randomPage = await repository.findPerformers(
       page: 1,
@@ -114,6 +139,7 @@ class PerformerList extends _$PerformerList {
       filter: query.isEmpty ? null : query,
       sort: 'random',
       descending: true,
+      favoritesOnly: favoritesOnly,
     );
     if (randomPage.isNotEmpty) {
       return randomPage.first;

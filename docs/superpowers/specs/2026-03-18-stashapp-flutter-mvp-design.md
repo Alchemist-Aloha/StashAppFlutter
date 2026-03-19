@@ -1,3 +1,5 @@
+_Historical note (2026-03-19): This document is retained for planning/spec context and may not reflect the current implementation exactly._
+
 # StashAppFlutter MVP Design Specification
 
 ## 1. Overview

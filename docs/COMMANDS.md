@@ -14,10 +14,25 @@ flutter test
 flutter build apk
 ```
 
+## Fast smoke flow after UI/data changes
+
+```bash
+flutter analyze
+flutter test
+flutter build apk
+```
+
 ## Regenerate code (when GraphQL/provider/model sources change)
 
 ```bash
 dart run build_runner build --delete-conflicting-outputs
+```
+
+## Helpful focused checks
+
+```bash
+flutter test test/scenes_page_mock_repo_test.dart
+flutter test integration_test/core_flow_test.dart
 ```
 
 ## Optional cleanup and refresh

@@ -15,6 +15,7 @@ class GraphQLStudioRepository implements StudioRepository {
     String? filter,
     String? sort,
     bool? descending,
+    bool favoritesOnly = false,
   }) async {
     QueryResult<Query$FindStudios> result;
     String? effectiveSort = sort == 'scene_count' ? 'scenes_count' : sort;
@@ -25,6 +26,7 @@ class GraphQLStudioRepository implements StudioRepository {
       filter: filter,
       sort: effectiveSort,
       descending: descending,
+      favoritesOnly: favoritesOnly,
     );
 
     // Some servers may still use scene_count; retry if scenes_count is rejected.
@@ -38,6 +40,7 @@ class GraphQLStudioRepository implements StudioRepository {
         filter: filter,
         sort: effectiveSort,
         descending: descending,
+        favoritesOnly: favoritesOnly,
       );
     }
 
@@ -54,6 +57,7 @@ class GraphQLStudioRepository implements StudioRepository {
         filter: filter,
         sort: null,
         descending: descending,
+        favoritesOnly: favoritesOnly,
       );
     }
 
@@ -94,6 +98,7 @@ class GraphQLStudioRepository implements StudioRepository {
     String? filter,
     String? sort,
     bool? descending,
+    required bool favoritesOnly,
   }) {
     return client.query$FindStudios(
       Options$Query$FindStudios(
@@ -107,7 +112,9 @@ class GraphQLStudioRepository implements StudioRepository {
                 ? Enum$SortDirectionEnum.DESC
                 : Enum$SortDirectionEnum.ASC,
           ),
-          studio_filter: null,
+          studio_filter: favoritesOnly
+              ? Input$StudioFilterType(favorite: true)
+              : null,
         ),
       ),
     );

@@ -13,11 +13,13 @@ class SceneFilterPanel extends ConsumerStatefulWidget {
 
 class _SceneFilterPanelState extends ConsumerState<SceneFilterPanel> {
   late SceneFilter _tempFilter;
+  late bool _tempOrganizedOnly;
 
   @override
   void initState() {
     super.initState();
     _tempFilter = ref.read(sceneFilterStateProvider);
+    _tempOrganizedOnly = ref.read(sceneOrganizedOnlyProvider);
   }
 
   @override
@@ -41,7 +43,10 @@ class _SceneFilterPanelState extends ConsumerState<SceneFilterPanel> {
               ),
               TextButton(
                 onPressed: () {
-                  setState(() => _tempFilter = SceneFilter.empty());
+                  setState(() {
+                    _tempFilter = SceneFilter.empty();
+                    _tempOrganizedOnly = false;
+                  });
                 },
                 child: const Text('Reset'),
               ),
@@ -80,12 +85,25 @@ class _SceneFilterPanelState extends ConsumerState<SceneFilterPanel> {
               ),
             ],
           ),
+          const SizedBox(height: AppTheme.spacingSmall),
+          Text('Organization', style: context.textTheme.labelLarge),
+          const SizedBox(height: AppTheme.spacingSmall),
+          FilterChip(
+            label: const Text('Organized only'),
+            selected: _tempOrganizedOnly,
+            onSelected: (selected) {
+              setState(() => _tempOrganizedOnly = selected);
+            },
+          ),
           const SizedBox(height: AppTheme.spacingLarge),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
                 ref.read(sceneFilterStateProvider.notifier).update(_tempFilter);
+                ref
+                    .read(sceneOrganizedOnlyProvider.notifier)
+                    .set(_tempOrganizedOnly);
                 Navigator.pop(context);
               },
               style: ElevatedButton.styleFrom(

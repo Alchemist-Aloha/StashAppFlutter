@@ -7,6 +7,8 @@ Use this before closing a task.
 - [ ] Minimal scope; no unrelated refactors.
 - [ ] New behavior is behind existing patterns or settings when appropriate.
 - [ ] SharedPreferences keys are stable and documented if added.
+- [ ] List-page random actions use floating buttons (not app bar icons).
+- [ ] Sort/filter changes follow bottom-sheet control pattern.
 
 ## Validation
 
@@ -19,6 +21,7 @@ Use this before closing a task.
 - [ ] Known issues updated if problem remains unresolved.
 - [ ] New runtime toggles are reflected in docs.
 - [ ] Debugging notes updated for newly learned failure modes.
+- [ ] `README.md` and `docs/README.md` updated when UX/flow changes are user-visible.
 
 ## Handoff quality
 

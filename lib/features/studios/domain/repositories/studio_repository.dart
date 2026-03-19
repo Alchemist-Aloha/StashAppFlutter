@@ -7,6 +7,7 @@ abstract class StudioRepository {
     String? filter,
     String? sort,
     bool? descending,
+    bool favoritesOnly = false,
   });
   Future<Studio> getStudioById(String id);
 }

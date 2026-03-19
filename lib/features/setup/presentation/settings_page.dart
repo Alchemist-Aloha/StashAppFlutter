@@ -15,8 +15,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   final _baseUrlController = TextEditingController();
   final _apiKeyController = TextEditingController();
   static const _preferSceneStreamsKey = 'prefer_scene_streams';
+  static const _sceneGridLayoutKey = 'scene_grid_layout';
 
   bool _preferSceneStreams = true;
+  bool _sceneGridLayout = false;
   bool _loading = true;
 
   @override
@@ -30,9 +32,11 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     final url = prefs.getString('server_base_url') ?? '';
     final apiKey = prefs.getString('server_api_key') ?? '';
     final preferSceneStreams = prefs.getBool(_preferSceneStreamsKey) ?? true;
+    final sceneGridLayout = prefs.getBool(_sceneGridLayoutKey) ?? false;
     _baseUrlController.text = url;
     _apiKeyController.text = apiKey;
     _preferSceneStreams = preferSceneStreams;
+    _sceneGridLayout = sceneGridLayout;
     setState(() => _loading = false);
   }
 
@@ -50,6 +54,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     await prefs.setString('server_base_url', normalizedUrl);
     await prefs.setString('server_api_key', _apiKeyController.text.trim());
     await prefs.setBool(_preferSceneStreamsKey, _preferSceneStreams);
+    await prefs.setBool(_sceneGridLayoutKey, _sceneGridLayout);
 
     _baseUrlController.text = normalizedUrl;
 
@@ -113,6 +118,17 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                     value: _preferSceneStreams,
                     onChanged: (value) {
                       setState(() => _preferSceneStreams = value);
+                    },
+                  ),
+                  SwitchListTile.adaptive(
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text('Scenes Grid Layout'),
+                    subtitle: const Text(
+                      'When on, Scenes page uses grid view by default',
+                    ),
+                    value: _sceneGridLayout,
+                    onChanged: (value) {
+                      setState(() => _sceneGridLayout = value);
                     },
                   ),
                   const SizedBox(height: 12),

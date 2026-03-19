@@ -20,6 +20,7 @@ class GraphQLPerformerRepository implements PerformerRepository {
     String? filter,
     String? sort,
     bool descending = true,
+    bool favoritesOnly = false,
   }) async {
     QueryResult<Query$FindPerformers>? result;
     String? effectiveSort = sort == 'scene_count' ? 'scenes_count' : sort;
@@ -30,6 +31,7 @@ class GraphQLPerformerRepository implements PerformerRepository {
       filter: filter,
       sort: effectiveSort,
       descending: descending,
+      favoritesOnly: favoritesOnly,
     );
 
     // Some servers may still use scene_count; retry if scenes_count is rejected.
@@ -43,6 +45,7 @@ class GraphQLPerformerRepository implements PerformerRepository {
         filter: filter,
         sort: effectiveSort,
         descending: descending,
+        favoritesOnly: favoritesOnly,
       );
     }
 
@@ -59,6 +62,7 @@ class GraphQLPerformerRepository implements PerformerRepository {
         filter: filter,
         sort: null,
         descending: descending,
+        favoritesOnly: favoritesOnly,
       );
     }
 
@@ -124,6 +128,7 @@ class GraphQLPerformerRepository implements PerformerRepository {
     String? filter,
     String? sort,
     required bool descending,
+    required bool favoritesOnly,
   }) {
     return client.query$FindPerformers(
       Options$Query$FindPerformers(
@@ -137,7 +142,9 @@ class GraphQLPerformerRepository implements PerformerRepository {
                 ? Enum$SortDirectionEnum.DESC
                 : Enum$SortDirectionEnum.ASC,
           ),
-          performer_filter: null,
+          performer_filter: favoritesOnly
+              ? Input$PerformerFilterType(filter_favorites: true)
+              : null,
         ),
       ),
     );

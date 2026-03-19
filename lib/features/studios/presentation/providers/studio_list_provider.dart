@@ -21,6 +21,16 @@ class StudioSearchQuery extends _$StudioSearchQuery {
   void update(String query) => state = query;
 }
 
+final studioFavoritesOnlyProvider =
+    NotifierProvider<StudioFavoritesOnlyNotifier, bool>(
+      StudioFavoritesOnlyNotifier.new,
+    );
+
+class StudioFavoritesOnlyNotifier extends Notifier<bool> {
+  @override
+  bool build() => false;
+}
+
 @riverpod
 class StudioList extends _$StudioList {
   int _currentPage = 1;
@@ -36,6 +46,7 @@ class StudioList extends _$StudioList {
     _hasMore = true;
     _isLoadingMore = false;
     final query = ref.watch(studioSearchQueryProvider);
+    final favoritesOnly = ref.watch(studioFavoritesOnlyProvider);
     final repository = ref.watch(studioRepositoryProvider);
     return repository.findStudios(
       page: _currentPage,
@@ -43,6 +54,7 @@ class StudioList extends _$StudioList {
       filter: query.isEmpty ? null : query,
       sort: _sort,
       descending: _descending,
+      favoritesOnly: favoritesOnly,
     );
   }
 
@@ -52,12 +64,21 @@ class StudioList extends _$StudioList {
     ref.invalidateSelf();
   }
 
+  void setFavoritesOnly(bool enabled) {
+    ref.read(studioFavoritesOnlyProvider.notifier).state = enabled;
+    _currentPage = 1;
+    _hasMore = true;
+    _isLoadingMore = false;
+    ref.invalidateSelf();
+  }
+
   Future<void> fetchNextPage() async {
     if (_isLoadingMore || !_hasMore || state.isLoading) return;
 
     _isLoadingMore = true;
     final repository = ref.read(studioRepositoryProvider);
     final query = ref.read(studioSearchQueryProvider);
+    final favoritesOnly = ref.read(studioFavoritesOnlyProvider);
 
     try {
       final nextPage = _currentPage + 1;
@@ -67,6 +88,7 @@ class StudioList extends _$StudioList {
         filter: query.isEmpty ? null : query,
         sort: _sort,
         descending: _descending,
+        favoritesOnly: favoritesOnly,
       );
 
       if (nextStudios.isEmpty) {
@@ -82,4 +104,31 @@ class StudioList extends _$StudioList {
 
   bool get hasMore => _hasMore;
   bool get isLoadingMore => _isLoadingMore;
+
+  Future<Studio?> getRandomStudio({bool useCurrentFilter = false}) async {
+    final repository = ref.read(studioRepositoryProvider);
+    final query = useCurrentFilter ? ref.read(studioSearchQueryProvider) : '';
+    final favoritesOnly = useCurrentFilter
+        ? ref.read(studioFavoritesOnlyProvider)
+        : false;
+
+    final randomPage = await repository.findStudios(
+      page: 1,
+      perPage: 1,
+      filter: query.isEmpty ? null : query,
+      sort: 'random',
+      descending: true,
+      favoritesOnly: favoritesOnly,
+    );
+    if (randomPage.isNotEmpty) {
+      return randomPage.first;
+    }
+
+    final loaded = state.asData?.value;
+    if (loaded != null && loaded.isNotEmpty) {
+      return loaded.first;
+    }
+
+    return null;
+  }
 }

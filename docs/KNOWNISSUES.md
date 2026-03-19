@@ -1,34 +1,18 @@
 # Known Issues
 
-## Scene rating and play-count sorting not working as expected
+# Known Issues
 
-- Status: Open
-- Area: Scene list sorting (server-side sort)
-- Severity: Medium
+## Closed Recently
 
-### Symptom
+### Scene rating and play-count sorting mismatch
 
-- Selecting scene sort by rating or play count does not produce expected ordering.
+- Status: Closed (2026-03-19)
+- Resolution: Switched to official sort keys with fallback handling.
 
-### Notes
+### Performer/studio/tag scene-count sort mismatch
 
-- The issue appears when using server-side sort through `FindFilterType.sort` and `FindFilterType.direction`.
-- Other sort modes may still appear functional.
-
-## Performer scene-count sorting not working as expected
-
-- Status: Open
-- Area: Performer list sorting (server-side sort)
-- Severity: Medium
-
-### Symptom
-
-- Selecting performer sort by scene count does not produce expected ordering.
-
-### Notes
-
-- The issue appears when using server-side sort through `FindFilterType.sort` and `FindFilterType.direction`.
-- Sorting behavior may differ from expected backend field mapping.
+- Status: Closed (2026-03-19)
+- Resolution: Aligned to `scenes_count` with compatibility fallback and local fallback sort.
 
 
 ## First video playback startup is slow
@@ -67,3 +51,17 @@
 - Compare startup latency between stream variants for the same scene under identical conditions.
 - Implement background stream pre-fetching for the upcoming scene in the PlaybackQueue.
 - Consider optional background prewarm earlier in app lifecycle (for users who opt in).
+
+## Optional Consistency Follow-ups
+
+### Sort default direction consistency per field
+
+- Status: Open
+- Area: List-page UX consistency
+- Severity: Low
+
+### Lightweight list-page widget tests for sort/filter panel flows
+
+- Status: Open
+- Area: UI regression safety
+- Severity: Low

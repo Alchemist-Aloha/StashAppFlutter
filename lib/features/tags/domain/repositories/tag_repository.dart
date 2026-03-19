@@ -7,6 +7,7 @@ abstract class TagRepository {
     String? filter,
     String? sort,
     bool? descending,
+    bool favoritesOnly = false,
   });
   Future<Tag> getTagById(String id);
 }

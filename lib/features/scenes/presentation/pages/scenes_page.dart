@@ -5,6 +5,7 @@ import '../../domain/entities/scene.dart';
 import '../../domain/entities/scene_filter.dart';
 import '../providers/scene_list_provider.dart';
 import '../widgets/scene_card.dart';
+import '../../../../core/data/preferences/shared_preferences_provider.dart';
 
 import '../../../../core/presentation/widgets/list_page_scaffold.dart';
 import '../../../../core/presentation/theme/app_theme.dart';
@@ -21,7 +22,7 @@ class ScenesPage extends ConsumerStatefulWidget {
 }
 
 class _ScenesPageState extends ConsumerState<ScenesPage> {
-  bool _isGridView = false;
+  static const _sceneGridLayoutKey = 'scene_grid_layout';
   _SceneSortField _sortField = _SceneSortField.date;
   bool _sortDescending = true;
 
@@ -89,7 +90,6 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
   void _showSortPanel() {
     var tempField = _sortField;
     var tempDescending = _sortDescending;
-    var tempOrganizedOnly = ref.read(sceneOrganizedOnlyProvider);
 
     showModalBottomSheet(
       context: context,
@@ -124,7 +124,6 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
                           setModalState(() {
                             tempField = _SceneSortField.date;
                             tempDescending = true;
-                            tempOrganizedOnly = false;
                           });
                         },
                         child: const Text('Reset'),
@@ -176,14 +175,6 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: AppTheme.spacingMedium),
-                  FilterChip(
-                    label: const Text('Organized only'),
-                    selected: tempOrganizedOnly,
-                    onSelected: (selected) {
-                      setModalState(() => tempOrganizedOnly = selected);
-                    },
-                  ),
                   const SizedBox(height: AppTheme.spacingLarge),
                   SizedBox(
                     width: double.infinity,
@@ -193,9 +184,6 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
                           _sortField = tempField;
                           _sortDescending = tempDescending;
                         });
-                        ref
-                            .read(sceneOrganizedOnlyProvider.notifier)
-                            .set(tempOrganizedOnly);
                         _applyServerSort();
                         Navigator.pop(context);
                       },
@@ -221,6 +209,8 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
 
   @override
   Widget build(BuildContext context) {
+    final prefs = ref.watch(sharedPreferencesProvider);
+    final isGridView = prefs.getBool(_sceneGridLayoutKey) ?? false;
     final scenesAsync = ref.watch(sceneListProvider);
     final filterState = ref.watch(sceneFilterStateProvider);
     final organizedOnly = ref.watch(sceneOrganizedOnlyProvider);
@@ -258,10 +248,6 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
               ),
           ],
         ),
-        IconButton(
-          icon: Icon(_isGridView ? Icons.view_list : Icons.grid_view),
-          onPressed: () => setState(() => _isGridView = !_isGridView),
-        ),
         Stack(
           children: [
             IconButton(
@@ -283,13 +269,8 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
               ),
           ],
         ),
-        IconButton(
-          icon: const Icon(Icons.casino_outlined),
-          tooltip: 'Random scene',
-          onPressed: _openRandomScene,
-        ),
       ],
-      gridDelegate: _isGridView
+      gridDelegate: isGridView
           ? const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               crossAxisSpacing: AppTheme.spacingSmall,
@@ -297,11 +278,19 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
               childAspectRatio: 0.8,
             )
           : null,
-      padding: EdgeInsets.all(_isGridView ? AppTheme.spacingSmall : 0),
+      padding: EdgeInsets.all(isGridView ? AppTheme.spacingSmall : 0),
       itemBuilder: (context, scene) => SceneCard(
         scene: scene,
-        isGrid: _isGridView,
+        isGrid: isGridView,
         onTap: () => context.push('/scene/${scene.id}'),
+      ),
+      floatingActionButton: scenesAsync.maybeWhen(
+        data: (scenes) => FloatingActionButton.small(
+          onPressed: _openRandomScene,
+          tooltip: 'Random scene',
+          child: const Icon(Icons.casino_outlined),
+        ),
+        orElse: () => null,
       ),
     );
   }

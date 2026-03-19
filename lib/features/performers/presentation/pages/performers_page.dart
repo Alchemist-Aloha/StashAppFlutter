@@ -19,6 +19,7 @@ class PerformersPage extends ConsumerStatefulWidget {
 
 class _PerformersPageState extends ConsumerState<PerformersPage> {
   _PerformerSortOption _sortOption = _PerformerSortOption.name;
+  bool _sortDescending = false;
 
   @override
   void initState() {
@@ -33,27 +34,28 @@ class _PerformersPageState extends ConsumerState<PerformersPage> {
   }
 
   void _applyServerSort(_PerformerSortOption option) {
+    final sortKey = switch (option) {
+      _PerformerSortOption.name => 'name',
+      _PerformerSortOption.sceneCount => 'scenes_count',
+      _PerformerSortOption.lastUpdated => 'updated_at',
+      _PerformerSortOption.random => 'random',
+    };
+
+    ref
+        .read(performerListProvider.notifier)
+        .setSort(sort: sortKey, descending: _sortDescending);
+  }
+
+  String _sortLabel(_PerformerSortOption option) {
     switch (option) {
       case _PerformerSortOption.name:
-        ref
-            .read(performerListProvider.notifier)
-            .setSort(sort: 'name', descending: false);
-        break;
+        return 'Name';
       case _PerformerSortOption.sceneCount:
-        ref
-            .read(performerListProvider.notifier)
-            .setSort(sort: 'scenes_count', descending: true);
-        break;
+        return 'Scene Count';
       case _PerformerSortOption.lastUpdated:
-        ref
-            .read(performerListProvider.notifier)
-            .setSort(sort: 'updated_at', descending: true);
-        break;
+        return 'Last Updated';
       case _PerformerSortOption.random:
-        ref
-            .read(performerListProvider.notifier)
-            .setSort(sort: 'random', descending: true);
-        break;
+        return 'Random';
     }
   }
 
@@ -75,35 +77,199 @@ class _PerformersPageState extends ConsumerState<PerformersPage> {
     context.push('/performer/${random.id}');
   }
 
-  Widget _buildSortBar() {
-    const options = [
-      (_PerformerSortOption.name, 'Name'),
-      (_PerformerSortOption.sceneCount, 'Scene Count'),
-      (_PerformerSortOption.lastUpdated, 'Last Updated'),
-      (_PerformerSortOption.random, 'Random'),
-    ];
+  void _showSortPanel() {
+    var tempOption = _sortOption;
+    var tempDescending = _sortDescending;
 
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppTheme.spacingMedium,
-        vertical: AppTheme.spacingSmall,
-      ),
-      child: Row(
-        children: [
-          for (final option in options) ...[
-            ChoiceChip(
-              label: Text(option.$2),
-              selected: _sortOption == option.$1,
-              onSelected: (selected) {
-                if (!selected) return;
-                setState(() => _sortOption = option.$1);
-                _applyServerSort(option.$1);
-              },
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setModalState) {
+          return Container(
+            padding: const EdgeInsets.all(AppTheme.spacingMedium),
+            decoration: BoxDecoration(
+              color: context.colors.surface,
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(AppTheme.radiusLarge),
+              ),
             ),
-            const SizedBox(width: AppTheme.spacingSmall),
-          ],
-        ],
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Sort Performers',
+                      style: context.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        setModalState(() {
+                          tempOption = _PerformerSortOption.name;
+                          tempDescending = false;
+                        });
+                      },
+                      child: const Text('Reset'),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppTheme.spacingMedium),
+                Text('Sort Method', style: context.textTheme.labelLarge),
+                const SizedBox(height: AppTheme.spacingSmall),
+                Wrap(
+                  spacing: AppTheme.spacingSmall,
+                  runSpacing: AppTheme.spacingSmall,
+                  children: _PerformerSortOption.values
+                      .map(
+                        (option) => ChoiceChip(
+                          label: Text(_sortLabel(option)),
+                          selected: tempOption == option,
+                          onSelected: (selected) {
+                            if (!selected) return;
+                            setModalState(() {
+                              tempOption = option;
+                            });
+                          },
+                        ),
+                      )
+                      .toList(),
+                ),
+                const SizedBox(height: AppTheme.spacingMedium),
+                Text('Direction', style: context.textTheme.labelLarge),
+                const SizedBox(height: AppTheme.spacingSmall),
+                Row(
+                  children: [
+                    ChoiceChip(
+                      label: const Text('Descending'),
+                      selected: tempDescending,
+                      onSelected: (selected) {
+                        if (!selected) return;
+                        setModalState(() => tempDescending = true);
+                      },
+                    ),
+                    const SizedBox(width: AppTheme.spacingSmall),
+                    ChoiceChip(
+                      label: const Text('Ascending'),
+                      selected: !tempDescending,
+                      onSelected: (selected) {
+                        if (!selected) return;
+                        setModalState(() => tempDescending = false);
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppTheme.spacingLarge),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        _sortOption = tempOption;
+                        _sortDescending = tempDescending;
+                      });
+                      _applyServerSort(_sortOption);
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: context.colors.primary,
+                      foregroundColor: context.colors.onPrimary,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: AppTheme.spacingMedium,
+                      ),
+                    ),
+                    child: const Text('Apply Sort'),
+                  ),
+                ),
+                const SizedBox(height: AppTheme.spacingMedium),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  void _showFilterPanel() {
+    final currentFavoritesOnly = ref.read(performerFavoritesOnlyProvider);
+    var tempFavoritesOnly = currentFavoritesOnly;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setModalState) {
+          return Container(
+            padding: const EdgeInsets.all(AppTheme.spacingMedium),
+            decoration: BoxDecoration(
+              color: context.colors.surface,
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(AppTheme.radiusLarge),
+              ),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Filter Performers',
+                      style: context.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        setModalState(() {
+                          tempFavoritesOnly = false;
+                        });
+                      },
+                      child: const Text('Reset'),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppTheme.spacingSmall),
+                SwitchListTile.adaptive(
+                  value: tempFavoritesOnly,
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Favorites only'),
+                  onChanged: (value) {
+                    setModalState(() => tempFavoritesOnly = value);
+                  },
+                ),
+                const SizedBox(height: AppTheme.spacingMedium),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      ref
+                          .read(performerListProvider.notifier)
+                          .setFavoritesOnly(tempFavoritesOnly);
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: context.colors.primary,
+                      foregroundColor: context.colors.onPrimary,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: AppTheme.spacingMedium,
+                      ),
+                    ),
+                    child: const Text('Apply Filters'),
+                  ),
+                ),
+                const SizedBox(height: AppTheme.spacingMedium),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
@@ -111,6 +277,9 @@ class _PerformersPageState extends ConsumerState<PerformersPage> {
   @override
   Widget build(BuildContext context) {
     final performersAsync = ref.watch(performerListProvider);
+    final favoritesOnly = ref.watch(performerFavoritesOnlyProvider);
+    final hasSortOverride =
+        _sortOption != _PerformerSortOption.name || _sortDescending;
 
     return ListPageScaffold<Performer>(
       title: 'Performers',
@@ -120,7 +289,52 @@ class _PerformersPageState extends ConsumerState<PerformersPage> {
       onRefresh: () => ref.refresh(performerListProvider.future),
       onFetchNextPage: () =>
           ref.read(performerListProvider.notifier).fetchNextPage(),
-      sortBar: _buildSortBar(),
+      actions: [
+        Stack(
+          children: [
+            IconButton(
+              icon: const Icon(Icons.sort),
+              tooltip: 'Sort options',
+              onPressed: _showSortPanel,
+            ),
+            if (hasSortOverride)
+              Positioned(
+                right: 8,
+                top: 8,
+                child: Container(
+                  padding: const EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                    color: context.colors.secondary,
+                    shape: BoxShape.circle,
+                  ),
+                  constraints: const BoxConstraints(minWidth: 8, minHeight: 8),
+                ),
+              ),
+          ],
+        ),
+        Stack(
+          children: [
+            IconButton(
+              icon: const Icon(Icons.filter_list),
+              tooltip: 'Filter options',
+              onPressed: _showFilterPanel,
+            ),
+            if (favoritesOnly)
+              Positioned(
+                right: 8,
+                top: 8,
+                child: Container(
+                  padding: const EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                    color: context.colors.secondary,
+                    shape: BoxShape.circle,
+                  ),
+                  constraints: const BoxConstraints(minWidth: 8, minHeight: 8),
+                ),
+              ),
+          ],
+        ),
+      ],
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
         crossAxisSpacing: AppTheme.spacingMedium,
