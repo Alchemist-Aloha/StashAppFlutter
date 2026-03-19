@@ -138,7 +138,9 @@ class SceneCard extends ConsumerWidget {
                       Text(
                         '${scene.studioName ?? "Unknown Studio"} • ${scene.date.year}',
                         style: TextStyle(
-                          color: context.colors.onSurface.withValues(alpha: 0.75),
+                          color: context.colors.onSurface.withValues(
+                            alpha: 0.75,
+                          ),
                           fontSize: 12,
                         ),
                       ),
@@ -149,11 +151,7 @@ class SceneCard extends ConsumerWidget {
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                   onPressed: () => _showMenu(context, ref),
-                  icon: const Icon(
-                    Icons.more_vert,
-                    size: 20,
-                    color: null,
-                  ),
+                  icon: const Icon(Icons.more_vert, size: 20, color: null),
                 ),
               ],
             ),
@@ -211,7 +209,9 @@ class SceneCard extends ConsumerWidget {
                       Text(
                         scene.studioName ?? 'Unknown Studio',
                         style: TextStyle(
-                          color: context.colors.onSurface.withValues(alpha: 0.75),
+                          color: context.colors.onSurface.withValues(
+                            alpha: 0.75,
+                          ),
                           fontSize: 10,
                         ),
                         maxLines: 1,
@@ -224,11 +224,7 @@ class SceneCard extends ConsumerWidget {
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                   onPressed: () => _showMenu(context, ref),
-                  icon: const Icon(
-                    Icons.more_vert,
-                    size: 16,
-                    color: null,
-                  ),
+                  icon: const Icon(Icons.more_vert, size: 16, color: null),
                 ),
               ],
             ),

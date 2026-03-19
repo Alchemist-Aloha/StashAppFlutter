@@ -61,8 +61,7 @@ class _ScrubChewieControlsState extends State<ScrubChewieControls> {
     final currentMs = _isScrubbing
         ? _scrubMs
         : value.position.inMilliseconds.toDouble();
-    final sliderValue =
-      currentMs.clamp(0, durationMs.toDouble()).toDouble();
+    final sliderValue = currentMs.clamp(0, durationMs.toDouble()).toDouble();
 
     return Align(
       alignment: Alignment.bottomCenter,

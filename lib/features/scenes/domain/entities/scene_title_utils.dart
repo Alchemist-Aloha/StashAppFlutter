@@ -31,7 +31,10 @@ String? _nameFromPath(String? rawPath) {
       ? (parsed?.path ?? normalized)
       : normalized;
 
-  final segments = pathPart.split('/').where((part) => part.isNotEmpty).toList();
+  final segments = pathPart
+      .split('/')
+      .where((part) => part.isNotEmpty)
+      .toList();
   final lastSegment = segments.isEmpty ? '' : segments.last;
   if (lastSegment.isEmpty) return null;
 
@@ -48,8 +51,8 @@ String? _nameFromPath(String? rawPath) {
 
 extension SceneDisplayTitleX on Scene {
   String get displayTitle => buildSceneDisplayTitle(
-        title: title,
-        filePath: path,
-        streamPath: paths.stream,
-      );
+    title: title,
+    filePath: path,
+    streamPath: paths.stream,
+  );
 }

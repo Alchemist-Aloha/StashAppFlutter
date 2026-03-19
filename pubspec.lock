@@ -1165,7 +1165,7 @@ packages:
     source: hosted
     version: "15.0.2"
   wakelock_plus:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: wakelock_plus
       sha256: "8b12256f616346910c519a35606fb69b1fe0737c06b6a447c6df43888b097f39"

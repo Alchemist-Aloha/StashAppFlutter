@@ -26,7 +26,10 @@ class MiniPlayer extends ConsumerWidget {
         decoration: BoxDecoration(
           color: context.colors.surface,
           border: Border(
-            top: BorderSide(color: context.colors.outline.withValues(alpha: 0.5), width: 0.5),
+            top: BorderSide(
+              color: context.colors.outline.withValues(alpha: 0.5),
+              width: 0.5,
+            ),
           ),
         ),
         child: Row(

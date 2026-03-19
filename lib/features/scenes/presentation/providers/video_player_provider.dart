@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:video_player/video_player.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 import '../../domain/entities/scene.dart';
 import 'playback_queue_provider.dart';
 import '../../data/repositories/stream_resolver.dart';
@@ -206,6 +209,8 @@ class PlayerState extends _$PlayerState {
         startupLatencyMs: stopwatch.elapsedMilliseconds,
       );
 
+      unawaited(WakelockPlus.enable());
+
       videoController.addListener(_videoListener);
     } catch (e) {
       debugPrint('Error initializing video player: $e');
@@ -219,15 +224,30 @@ class PlayerState extends _$PlayerState {
       if (controller.value.isPlaying) {
         controller.pause();
         state = state.copyWith(isPlaying: false);
+        unawaited(WakelockPlus.disable());
       } else {
         controller.play();
         state = state.copyWith(isPlaying: true);
+        unawaited(WakelockPlus.enable());
       }
     }
   }
 
+  void seekRelative(Duration delta) {
+    final controller = state.videoPlayerController;
+    if (controller == null || !controller.value.isInitialized) return;
+
+    final current = controller.value.position;
+    final duration = controller.value.duration;
+    var target = current + delta;
+    if (target < Duration.zero) target = Duration.zero;
+    if (target > duration) target = duration;
+    controller.seekTo(target);
+  }
+
   void stop() {
     _disposeControllers();
+    unawaited(WakelockPlus.disable());
     state = GlobalPlayerState(
       autoplayNext: state.autoplayNext,
       showVideoDebugInfo: state.showVideoDebugInfo,
@@ -238,6 +258,7 @@ class PlayerState extends _$PlayerState {
     state.videoPlayerController?.removeListener(_videoListener);
     state.chewieController?.dispose();
     await state.videoPlayerController?.dispose();
+    await WakelockPlus.disable();
   }
 
   void _videoListener() {
@@ -245,6 +266,11 @@ class PlayerState extends _$PlayerState {
     if (controller != null) {
       if (controller.value.isPlaying != state.isPlaying) {
         state = state.copyWith(isPlaying: controller.value.isPlaying);
+        unawaited(
+          controller.value.isPlaying
+              ? WakelockPlus.enable()
+              : WakelockPlus.disable(),
+        );
       }
 
       // Check if finished
