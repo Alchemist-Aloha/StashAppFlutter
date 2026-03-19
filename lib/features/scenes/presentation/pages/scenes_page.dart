@@ -25,6 +25,7 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
   static const _sceneGridLayoutKey = 'scene_grid_layout';
   _SceneSortField _sortField = _SceneSortField.date;
   bool _sortDescending = true;
+  String? _lastRandomSceneId;
 
   @override
   void initState() {
@@ -54,7 +55,10 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
   Future<void> _openRandomScene() async {
     final randomScene = await ref
         .read(sceneListProvider.notifier)
-        .getRandomScene(useCurrentFilter: true);
+        .getRandomScene(
+          useCurrentFilter: true,
+          excludeSceneId: _lastRandomSceneId,
+        );
     if (!mounted) return;
 
     if (randomScene == null) {
@@ -66,6 +70,7 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
       return;
     }
 
+    _lastRandomSceneId = randomScene.id;
     context.push('/scene/${randomScene.id}');
   }
 

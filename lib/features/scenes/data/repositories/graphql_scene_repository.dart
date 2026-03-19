@@ -127,6 +127,9 @@ class GraphQLSceneRepository implements SceneRepository {
   }) {
     return client.query$FindScenes(
       Options$Query$FindScenes(
+        fetchPolicy: sort == 'random'
+            ? FetchPolicy.noCache
+            : FetchPolicy.cacheFirst,
         variables: Variables$Query$FindScenes(
           filter: Input$FindFilterType(
             q: filter ?? sceneFilter?.searchQuery,

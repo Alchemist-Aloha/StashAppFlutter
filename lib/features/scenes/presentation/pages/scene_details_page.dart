@@ -16,12 +16,16 @@ class SceneDetailsPage extends ConsumerWidget {
   const SceneDetailsPage({required this.sceneId, super.key});
 
   Future<void> _openRandomScene(BuildContext context, WidgetRef ref) async {
-    final randomScene = await ref.read(sceneListProvider.notifier).getRandomScene(useCurrentFilter: true);
+    final randomScene = await ref
+        .read(sceneListProvider.notifier)
+        .getRandomScene(useCurrentFilter: true, excludeSceneId: sceneId);
     if (!context.mounted) return;
 
     if (randomScene == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No scenes available for random navigation')),
+        const SnackBar(
+          content: Text('No scenes available for random navigation'),
+        ),
       );
       return;
     }
@@ -95,9 +99,13 @@ class SceneDetailsPage extends ConsumerWidget {
                         children: [
                           if (scene.studioImagePath != null)
                             Padding(
-                              padding: const EdgeInsets.only(right: AppTheme.spacingSmall),
+                              padding: const EdgeInsets.only(
+                                right: AppTheme.spacingSmall,
+                              ),
                               child: CircleAvatar(
-                                backgroundImage: NetworkImage(scene.studioImagePath!),
+                                backgroundImage: NetworkImage(
+                                  scene.studioImagePath!,
+                                ),
                                 radius: 12,
                               ),
                             ),
@@ -112,7 +120,11 @@ class SceneDetailsPage extends ConsumerWidget {
                           if (scene.studioName != null)
                             Text(
                               ' • ',
-                              style: TextStyle(color: context.colors.onSurface.withOpacity(0.5)),
+                              style: TextStyle(
+                                color: context.colors.onSurface.withOpacity(
+                                  0.5,
+                                ),
+                              ),
                             ),
                           Text(
                             scene.date.year.toString(),
@@ -128,13 +140,30 @@ class SceneDetailsPage extends ConsumerWidget {
                         runSpacing: AppTheme.spacingSmall,
                         children: [
                           if (primaryFile?.duration != null)
-                            _buildChip(context, _formatDuration(primaryFile!.duration), icon: Icons.timer),
-                          if (primaryFile?.width != null && primaryFile?.height != null)
-                            _buildChip(context, '${primaryFile!.width}x${primaryFile.height}', icon: Icons.fullscreen),
+                            _buildChip(
+                              context,
+                              _formatDuration(primaryFile!.duration),
+                              icon: Icons.timer,
+                            ),
+                          if (primaryFile?.width != null &&
+                              primaryFile?.height != null)
+                            _buildChip(
+                              context,
+                              '${primaryFile!.width}x${primaryFile.height}',
+                              icon: Icons.fullscreen,
+                            ),
                           if (primaryFile?.frameRate != null)
-                            _buildChip(context, '${primaryFile!.frameRate!.toStringAsFixed(2)} fps', icon: Icons.slow_motion_video),
+                            _buildChip(
+                              context,
+                              '${primaryFile!.frameRate!.toStringAsFixed(2)} fps',
+                              icon: Icons.slow_motion_video,
+                            ),
                           if (primaryFile?.bitRate != null)
-                            _buildChip(context, '${(primaryFile!.bitRate! / 1000000).toStringAsFixed(2)} Mbps', icon: Icons.speed),
+                            _buildChip(
+                              context,
+                              '${(primaryFile!.bitRate! / 1000000).toStringAsFixed(2)} Mbps',
+                              icon: Icons.speed,
+                            ),
                           if (scene.rating100 != null)
                             _buildChip(
                               context,
@@ -142,12 +171,20 @@ class SceneDetailsPage extends ConsumerWidget {
                               icon: Icons.star,
                               iconColor: context.colors.ratingColor,
                             ),
-                          _buildChip(context, '${scene.playCount} plays', icon: Icons.play_arrow),
+                          _buildChip(
+                            context,
+                            '${scene.playCount} plays',
+                            icon: Icons.play_arrow,
+                          ),
                         ],
                       ),
                       const Divider(height: 32, color: Colors.grey),
-                      if (scene.details != null && scene.details!.isNotEmpty) ...[
-                        const SectionHeader(title: 'Details', padding: EdgeInsets.zero),
+                      if (scene.details != null &&
+                          scene.details!.isNotEmpty) ...[
+                        const SectionHeader(
+                          title: 'Details',
+                          padding: EdgeInsets.zero,
+                        ),
                         const SizedBox(height: AppTheme.spacingSmall),
                         Text(
                           scene.details!,
@@ -158,14 +195,22 @@ class SceneDetailsPage extends ConsumerWidget {
                         const Divider(height: 32, color: Colors.grey),
                       ],
                       if (scene.tagNames.isNotEmpty) ...[
-                        const SectionHeader(title: 'Tags', padding: EdgeInsets.zero),
+                        const SectionHeader(
+                          title: 'Tags',
+                          padding: EdgeInsets.zero,
+                        ),
                         const SizedBox(height: AppTheme.spacingSmall),
                         Wrap(
                           spacing: AppTheme.spacingSmall,
                           runSpacing: AppTheme.spacingSmall,
-                          children: List.generate(scene.tagNames.length, (index) {
+                          children: List.generate(scene.tagNames.length, (
+                            index,
+                          ) {
                             return ActionChip(
-                              label: Text(scene.tagNames[index], style: context.textTheme.bodySmall),
+                              label: Text(
+                                scene.tagNames[index],
+                                style: context.textTheme.bodySmall,
+                              ),
                               backgroundColor: context.colors.surfaceVariant,
                               side: BorderSide.none,
                               visualDensity: VisualDensity.compact,
@@ -179,19 +224,29 @@ class SceneDetailsPage extends ConsumerWidget {
                         ),
                         const Divider(height: 32, color: Colors.grey),
                       ],
-                      const SectionHeader(title: 'Performers', padding: EdgeInsets.zero),
+                      const SectionHeader(
+                        title: 'Performers',
+                        padding: EdgeInsets.zero,
+                      ),
                       const SizedBox(height: AppTheme.spacingSmall),
                       ListView.separated(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: scene.performerNames.length,
-                        separatorBuilder: (context, index) => const SizedBox(height: AppTheme.spacingSmall),
+                        separatorBuilder: (context, index) =>
+                            const SizedBox(height: AppTheme.spacingSmall),
                         itemBuilder: (context, index) {
-                          final hasImage = index < scene.performerImagePaths.length && scene.performerImagePaths[index] != null;
+                          final hasImage =
+                              index < scene.performerImagePaths.length &&
+                              scene.performerImagePaths[index] != null;
                           return ListTile(
                             contentPadding: EdgeInsets.zero,
                             leading: hasImage
-                                ? CircleAvatar(backgroundImage: NetworkImage(scene.performerImagePaths[index]!))
+                                ? CircleAvatar(
+                                    backgroundImage: NetworkImage(
+                                      scene.performerImagePaths[index]!,
+                                    ),
+                                  )
                                 : const CircleAvatar(child: Icon(Icons.person)),
                             title: Text(
                               scene.performerNames[index],
@@ -200,7 +255,9 @@ class SceneDetailsPage extends ConsumerWidget {
                             trailing: const Icon(Icons.chevron_right),
                             onTap: () {
                               if (index < scene.performerIds.length) {
-                                context.push('/performer/${scene.performerIds[index]}');
+                                context.push(
+                                  '/performer/${scene.performerIds[index]}',
+                                );
                               }
                             },
                           );
@@ -222,9 +279,20 @@ class SceneDetailsPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildChip(BuildContext context, String label, {IconData? icon, Color? iconColor}) {
+  Widget _buildChip(
+    BuildContext context,
+    String label, {
+    IconData? icon,
+    Color? iconColor,
+  }) {
     return Chip(
-      avatar: icon != null ? Icon(icon, size: 16, color: iconColor ?? context.colors.onSurfaceVariant) : null,
+      avatar: icon != null
+          ? Icon(
+              icon,
+              size: 16,
+              color: iconColor ?? context.colors.onSurfaceVariant,
+            )
+          : null,
       label: Text(label, style: context.textTheme.bodySmall),
       backgroundColor: context.colors.surfaceVariant,
       side: BorderSide.none,

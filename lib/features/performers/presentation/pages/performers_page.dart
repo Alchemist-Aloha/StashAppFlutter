@@ -20,6 +20,7 @@ class PerformersPage extends ConsumerStatefulWidget {
 class _PerformersPageState extends ConsumerState<PerformersPage> {
   _PerformerSortOption _sortOption = _PerformerSortOption.name;
   bool _sortDescending = false;
+  String? _lastRandomPerformerId;
 
   @override
   void initState() {
@@ -62,7 +63,7 @@ class _PerformersPageState extends ConsumerState<PerformersPage> {
   Future<void> _openRandomPerformer() async {
     final random = await ref
         .read(performerListProvider.notifier)
-        .getRandomPerformer();
+        .getRandomPerformer(excludePerformerId: _lastRandomPerformerId);
     if (!mounted) return;
 
     if (random == null) {
@@ -74,6 +75,7 @@ class _PerformersPageState extends ConsumerState<PerformersPage> {
       return;
     }
 
+    _lastRandomPerformerId = random.id;
     context.push('/performer/${random.id}');
   }
 

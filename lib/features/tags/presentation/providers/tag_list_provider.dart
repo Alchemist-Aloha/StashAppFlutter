@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'dart:math';
 import '../../domain/entities/tag.dart';
 import '../../domain/repositories/tag_repository.dart';
 import '../../data/repositories/graphql_tag_repository.dart';
@@ -105,28 +106,41 @@ class TagList extends _$TagList {
   bool get hasMore => _hasMore;
   bool get isLoadingMore => _isLoadingMore;
 
-  Future<Tag?> getRandomTag({bool useCurrentFilter = false}) async {
+  Future<Tag?> getRandomTag({
+    bool useCurrentFilter = false,
+    String? excludeTagId,
+  }) async {
     final repository = ref.read(tagRepositoryProvider);
     final query = useCurrentFilter ? ref.read(tagSearchQueryProvider) : '';
     final favoritesOnly = useCurrentFilter
         ? ref.read(tagFavoritesOnlyProvider)
         : false;
 
-    final randomPage = await repository.findTags(
-      page: 1,
-      perPage: 1,
-      filter: query.isEmpty ? null : query,
-      sort: 'random',
-      descending: true,
-      favoritesOnly: favoritesOnly,
-    );
-    if (randomPage.isNotEmpty) {
-      return randomPage.first;
+    final attempts = excludeTagId == null ? 1 : 3;
+    for (var i = 0; i < attempts; i++) {
+      final randomPage = await repository.findTags(
+        page: 1,
+        perPage: 1,
+        filter: query.isEmpty ? null : query,
+        sort: 'random',
+        descending: true,
+        favoritesOnly: favoritesOnly,
+      );
+      if (randomPage.isEmpty) continue;
+      final candidate = randomPage.first;
+      if (excludeTagId == null || candidate.id != excludeTagId) {
+        return candidate;
+      }
     }
 
     final loaded = state.asData?.value;
     if (loaded != null && loaded.isNotEmpty) {
-      return loaded.first;
+      final candidates = excludeTagId == null
+          ? loaded
+          : loaded.where((tag) => tag.id != excludeTagId).toList();
+      if (candidates.isEmpty) return null;
+      final random = Random();
+      return candidates[random.nextInt(candidates.length)];
     }
 
     return null;

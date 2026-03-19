@@ -138,6 +138,7 @@ class SceneList extends _$SceneList {
     String? performerId,
     String? studioId,
     String? tagId,
+    String? excludeSceneId,
   }) async {
     final repository = ref.read(sceneRepositoryProvider);
     final query = useCurrentFilter ? ref.read(sceneSearchQueryProvider) : '';
@@ -146,27 +147,36 @@ class SceneList extends _$SceneList {
         ? ref.read(sceneOrganizedOnlyProvider)
         : false;
 
-    // Ask backend for true random ordering and pick a single item.
-    final randomPage = await repository.findScenes(
-      page: 1,
-      perPage: 1,
-      filter: query.isEmpty ? null : query,
-      sort: 'random',
-      descending: true,
-      organized: organizedOnly ? true : null,
-      performerId: performerId,
-      studioId: studioId,
-      tagId: tagId,
-      sceneFilter: filter,
-    );
-    if (randomPage.isNotEmpty) {
-      return randomPage.first;
+    // Ask backend for random ordering; if needed, retry to avoid returning same id.
+    final attempts = excludeSceneId == null ? 1 : 3;
+    for (var i = 0; i < attempts; i++) {
+      final randomPage = await repository.findScenes(
+        page: 1,
+        perPage: 1,
+        filter: query.isEmpty ? null : query,
+        sort: 'random',
+        descending: true,
+        organized: organizedOnly ? true : null,
+        performerId: performerId,
+        studioId: studioId,
+        tagId: tagId,
+        sceneFilter: filter,
+      );
+      if (randomPage.isEmpty) continue;
+      final candidate = randomPage.first;
+      if (excludeSceneId == null || candidate.id != excludeSceneId) {
+        return candidate;
+      }
     }
 
     final loadedScenes = state.asData?.value;
     if (loadedScenes != null && loadedScenes.isNotEmpty) {
+      final candidates = excludeSceneId == null
+          ? loadedScenes
+          : loadedScenes.where((scene) => scene.id != excludeSceneId).toList();
+      if (candidates.isEmpty) return null;
       final random = Random();
-      return loadedScenes[random.nextInt(loadedScenes.length)];
+      return candidates[random.nextInt(candidates.length)];
     }
 
     return null;

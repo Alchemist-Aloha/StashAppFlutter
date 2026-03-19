@@ -19,6 +19,7 @@ class StudiosPage extends ConsumerStatefulWidget {
 class _StudiosPageState extends ConsumerState<StudiosPage> {
   _StudioSortOption _sortOption = _StudioSortOption.name;
   bool _sortDescending = false;
+  String? _lastRandomStudioId;
 
   @override
   void initState() {
@@ -255,7 +256,10 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
   Future<void> _openRandomStudio() async {
     final randomStudio = await ref
         .read(studioListProvider.notifier)
-        .getRandomStudio(useCurrentFilter: true);
+        .getRandomStudio(
+          useCurrentFilter: true,
+          excludeStudioId: _lastRandomStudioId,
+        );
     if (!mounted) return;
 
     if (randomStudio == null) {
@@ -267,6 +271,7 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
       return;
     }
 
+    _lastRandomStudioId = randomStudio.id;
     context.push('/studio/${randomStudio.id}');
   }
 

@@ -19,6 +19,7 @@ class TagsPage extends ConsumerStatefulWidget {
 class _TagsPageState extends ConsumerState<TagsPage> {
   _TagSortOption _sortOption = _TagSortOption.name;
   bool _sortDescending = false;
+  String? _lastRandomTagId;
 
   @override
   void initState() {
@@ -255,7 +256,7 @@ class _TagsPageState extends ConsumerState<TagsPage> {
   Future<void> _openRandomTag() async {
     final randomTag = await ref
         .read(tagListProvider.notifier)
-        .getRandomTag(useCurrentFilter: true);
+        .getRandomTag(useCurrentFilter: true, excludeTagId: _lastRandomTagId);
     if (!mounted) return;
 
     if (randomTag == null) {
@@ -267,6 +268,7 @@ class _TagsPageState extends ConsumerState<TagsPage> {
       return;
     }
 
+    _lastRandomTagId = randomTag.id;
     context.push('/tag/${randomTag.id}');
   }
 

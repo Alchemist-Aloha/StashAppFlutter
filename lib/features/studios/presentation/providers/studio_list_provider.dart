@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'dart:math';
 import '../../domain/entities/studio.dart';
 import '../../domain/repositories/studio_repository.dart';
 import '../../data/repositories/graphql_studio_repository.dart';
@@ -105,28 +106,41 @@ class StudioList extends _$StudioList {
   bool get hasMore => _hasMore;
   bool get isLoadingMore => _isLoadingMore;
 
-  Future<Studio?> getRandomStudio({bool useCurrentFilter = false}) async {
+  Future<Studio?> getRandomStudio({
+    bool useCurrentFilter = false,
+    String? excludeStudioId,
+  }) async {
     final repository = ref.read(studioRepositoryProvider);
     final query = useCurrentFilter ? ref.read(studioSearchQueryProvider) : '';
     final favoritesOnly = useCurrentFilter
         ? ref.read(studioFavoritesOnlyProvider)
         : false;
 
-    final randomPage = await repository.findStudios(
-      page: 1,
-      perPage: 1,
-      filter: query.isEmpty ? null : query,
-      sort: 'random',
-      descending: true,
-      favoritesOnly: favoritesOnly,
-    );
-    if (randomPage.isNotEmpty) {
-      return randomPage.first;
+    final attempts = excludeStudioId == null ? 1 : 3;
+    for (var i = 0; i < attempts; i++) {
+      final randomPage = await repository.findStudios(
+        page: 1,
+        perPage: 1,
+        filter: query.isEmpty ? null : query,
+        sort: 'random',
+        descending: true,
+        favoritesOnly: favoritesOnly,
+      );
+      if (randomPage.isEmpty) continue;
+      final candidate = randomPage.first;
+      if (excludeStudioId == null || candidate.id != excludeStudioId) {
+        return candidate;
+      }
     }
 
     final loaded = state.asData?.value;
     if (loaded != null && loaded.isNotEmpty) {
-      return loaded.first;
+      final candidates = excludeStudioId == null
+          ? loaded
+          : loaded.where((studio) => studio.id != excludeStudioId).toList();
+      if (candidates.isEmpty) return null;
+      final random = Random();
+      return candidates[random.nextInt(candidates.length)];
     }
 
     return null;

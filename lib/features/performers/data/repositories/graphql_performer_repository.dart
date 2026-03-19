@@ -132,6 +132,9 @@ class GraphQLPerformerRepository implements PerformerRepository {
   }) {
     return client.query$FindPerformers(
       Options$Query$FindPerformers(
+        fetchPolicy: sort == 'random'
+            ? FetchPolicy.noCache
+            : FetchPolicy.cacheFirst,
         variables: Variables$Query$FindPerformers(
           filter: Input$FindFilterType(
             q: filter,

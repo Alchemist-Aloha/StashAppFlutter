@@ -100,6 +100,9 @@ class GraphQLTagRepository implements TagRepository {
   }) {
     return client.query$FindTags(
       Options$Query$FindTags(
+        fetchPolicy: sort == 'random'
+            ? FetchPolicy.noCache
+            : FetchPolicy.cacheFirst,
         variables: Variables$Query$FindTags(
           filter: Input$FindFilterType(
             q: filter,

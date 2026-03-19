@@ -1,5 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'dart:math';
 import '../../domain/entities/performer.dart';
 import '../../domain/repositories/performer_repository.dart';
 import '../../data/repositories/graphql_performer_repository.dart';
@@ -124,7 +125,10 @@ class PerformerList extends _$PerformerList {
   bool get hasMore => _hasMore;
   bool get isLoadingMore => _isLoadingMore;
 
-  Future<Performer?> getRandomPerformer({bool useCurrentFilter = false}) async {
+  Future<Performer?> getRandomPerformer({
+    bool useCurrentFilter = false,
+    String? excludePerformerId,
+  }) async {
     final repository = ref.read(performerRepositoryProvider);
     final query = useCurrentFilter
         ? ref.read(performerSearchQueryProvider)
@@ -133,21 +137,33 @@ class PerformerList extends _$PerformerList {
         ? ref.read(performerFavoritesOnlyProvider)
         : false;
 
-    final randomPage = await repository.findPerformers(
-      page: 1,
-      perPage: 1,
-      filter: query.isEmpty ? null : query,
-      sort: 'random',
-      descending: true,
-      favoritesOnly: favoritesOnly,
-    );
-    if (randomPage.isNotEmpty) {
-      return randomPage.first;
+    final attempts = excludePerformerId == null ? 1 : 3;
+    for (var i = 0; i < attempts; i++) {
+      final randomPage = await repository.findPerformers(
+        page: 1,
+        perPage: 1,
+        filter: query.isEmpty ? null : query,
+        sort: 'random',
+        descending: true,
+        favoritesOnly: favoritesOnly,
+      );
+      if (randomPage.isEmpty) continue;
+      final candidate = randomPage.first;
+      if (excludePerformerId == null || candidate.id != excludePerformerId) {
+        return candidate;
+      }
     }
 
     final loaded = state.asData?.value;
     if (loaded != null && loaded.isNotEmpty) {
-      return loaded.first;
+      final candidates = excludePerformerId == null
+          ? loaded
+          : loaded
+                .where((performer) => performer.id != excludePerformerId)
+                .toList();
+      if (candidates.isEmpty) return null;
+      final random = Random();
+      return candidates[random.nextInt(candidates.length)];
     }
 
     return null;
