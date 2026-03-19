@@ -3,8 +3,6 @@
 
 A mobile-first Flutter client for your **Stash** server. Designed for seamless browsing, effortless discovery, and high-quality playback on the go.
 
-![StashAppFlutter Showcase](docs/assets/showcase.png)
-
 ## 📸 Screenshots
 
 <p align="center">
@@ -30,7 +28,7 @@ A mobile-first Flutter client for your **Stash** server. Designed for seamless b
 Tailor your experience in the app settings:
 - `server_base_url` & `server_api_key`
 - `prefer_scene_streams` (Toggle stream strategies)
-- `scene_grid_layout` (Switch between Grid/List)
+- `scene_grid_layout` (Switch between single/double column)
 
 ---
 
@@ -70,4 +68,3 @@ For architecture, known issues, and onboarding, see:
 - [Architecture Map](docs/ARCHITECTURE_MAP.md)
 - [Debugging Playbook](docs/DEBUGGING_PLAYBOOK.md)
 - [Known Issues](docs/KNOWNISSUES.md)
-- [Agent Start Here](docs/AGENT_START_HERE.md)
