@@ -14,14 +14,6 @@ A mobile-first Flutter client for your **Stash** server. Designed for seamless b
 - 🔍 **Advanced Filtering:** Powerful menu-based sorting and filtering to find exactly what you're looking for.
 - 🛠️ **Native Customization:** Configure your server connection, UI preferences (Grid/List layouts), and streaming quality in one place.
 
-## Tech Stack
-
-- Flutter
-- Riverpod (providers + generated notifiers)
-- GoRouter
-- GraphQL (`graphql_flutter` + `graphql_codegen` generated classes)
-- SharedPreferences
-
 ## 🚀 Getting Started
 
 1. **Download:** Grab the latest APK from the [Releases](https://github.com/Alchemist-Aloha/StashAppFlutter/releases) page.
@@ -34,12 +26,37 @@ Tailor your experience in the app settings:
 - `prefer_scene_streams` (Toggle stream strategies)
 - `scene_grid_layout` (Switch between Grid/List)
 
-## Project Structure
+---
 
+## 🤓 For Developers
+
+### Tech Stack
+- **Flutter** & **GoRouter**
+- **Riverpod** (State Management)
+- **GraphQL** (`graphql_flutter` + `codegen`)
+- **SharedPreferences**
+
+### Project Structure
 - `lib/core` shared infrastructure
 - `lib/features/*` feature modules (domain/data/presentation)
 - `graphql/` schema and GraphQL documents
-- `docs/` internal runbooks and architecture notes
+
+### Development
+```bash
+# Get dependencies
+flutter pub get
+
+# Regenerate code (GraphQL & Notifiers)
+dart run build_runner build --delete-conflicting-outputs
+
+# Run app
+flutter run
+```
+
+### Build
+```bash
+flutter build apk
+```
 
 ## Documentation
 
