@@ -133,6 +133,38 @@ class PlayerState extends _$PlayerState {
     state = state.copyWith(useDoubleTapSeek: value);
     final prefs = ref.read(sharedPreferencesProvider);
     prefs.setBool(_useDoubleTapSeekKey, value);
+    _rebuildChewieControls();
+  }
+
+  void _rebuildChewieControls() {
+    final videoController = state.videoPlayerController;
+    if (videoController == null || !videoController.value.isInitialized) {
+      return;
+    }
+
+    final existingChewie = state.chewieController;
+    final scene = state.activeScene;
+    final initializedAspectRatio = videoController.value.aspectRatio;
+    final metadataAspectRatio = scene == null ? null : _sceneAspectRatio(scene);
+    final resolvedAspectRatio =
+        (initializedAspectRatio.isFinite && initializedAspectRatio > 0)
+        ? initializedAspectRatio
+        : (metadataAspectRatio ?? (16 / 9));
+
+    final newChewie = ChewieController(
+      videoPlayerController: videoController,
+      autoPlay: videoController.value.isPlaying,
+      looping: false,
+      aspectRatio: resolvedAspectRatio,
+      allowFullScreen: true,
+      customControls: ScrubChewieControls(
+        useDoubleTapSeek: state.useDoubleTapSeek,
+      ),
+      placeholder: Container(color: Colors.black),
+    );
+
+    existingChewie?.dispose();
+    state = state.copyWith(chewieController: newChewie);
   }
 
   double? _sceneAspectRatio(Scene scene) {
@@ -211,7 +243,9 @@ class PlayerState extends _$PlayerState {
         looping: false,
         aspectRatio: resolvedAspectRatio,
         allowFullScreen: true,
-        customControls: const ScrubChewieControls(),
+        customControls: ScrubChewieControls(
+          useDoubleTapSeek: state.useDoubleTapSeek,
+        ),
         placeholder: Container(color: Colors.black),
       );
 
