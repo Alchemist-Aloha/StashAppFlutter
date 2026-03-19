@@ -10,6 +10,7 @@ import '../../../../core/data/graphql/graphql_client.dart';
 import '../../../../core/data/graphql/media_headers_provider.dart';
 import '../../../../core/data/graphql/url_resolver.dart';
 import '../../../../core/data/preferences/shared_preferences_provider.dart';
+import '../../../../core/utils/app_log_store.dart';
 import '../providers/video_player_provider.dart';
 import '../../domain/entities/scene.dart';
 import '../../domain/entities/scene_title_utils.dart';
@@ -78,10 +79,16 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
     if (!force && playerState.activeScene?.id == widget.scene.id) return;
 
     setState(() => _isStarting = true);
+    final startupStopwatch = Stopwatch()..start();
     try {
       final prefs = ref.read(sharedPreferencesProvider);
       final preferSceneStreams = prefs.getBool(_preferSceneStreamsKey) ?? true;
       final resolver = ref.read(streamResolverProvider.notifier);
+
+      AppLogStore.instance.add(
+        'startup begin scene=${widget.scene.id} preferSceneStreams=$preferSceneStreams',
+        source: 'player_startup',
+      );
 
       final choice = preferSceneStreams
           ? await resolver.resolvePreferredStream(widget.scene)
@@ -94,6 +101,11 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
           ? (preferSceneStreams ? 'paths.stream' : 'paths.stream(direct)')
           : 'sceneStreams';
       final mediaHeaders = ref.read(mediaHeadersProvider);
+
+      AppLogStore.instance.add(
+        'startup select scene=${widget.scene.id} source=$streamSource mime=$mimeType label=${streamLabel ?? '-'}',
+        source: 'player_startup',
+      );
 
       final prewarmFuture = _prewarmPathsStreamOnce(mediaHeaders);
 
@@ -113,6 +125,10 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
         if (probedMime != null && probedMime.isNotEmpty) {
           mimeType = probedMime;
           streamSource = '$streamSource+header';
+          AppLogStore.instance.add(
+            'startup header-probe scene=${widget.scene.id} mime=$probedMime',
+            source: 'player_startup',
+          );
         }
       }
 
@@ -130,6 +146,12 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
             prewarmSucceeded: false,
           );
 
+      startupStopwatch.stop();
+      AppLogStore.instance.add(
+        'startup playScene-dispatched scene=${widget.scene.id} elapsed=${startupStopwatch.elapsedMilliseconds}ms source=$streamSource mime=$mimeType',
+        source: 'player_startup',
+      );
+
       unawaited(
         prewarmFuture.then((result) {
           if (!mounted) return;
@@ -145,6 +167,13 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
               );
         }),
       );
+    } catch (error, stack) {
+      startupStopwatch.stop();
+      AppLogStore.instance.add(
+        'startup error scene=${widget.scene.id} elapsed=${startupStopwatch.elapsedMilliseconds}ms error=$error\n$stack',
+        source: 'player_startup',
+      );
+      rethrow;
     } finally {
       if (mounted) {
         setState(() => _isStarting = false);

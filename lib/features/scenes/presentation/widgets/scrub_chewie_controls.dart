@@ -1,20 +1,28 @@
 import 'dart:async';
 import 'dart:math' as math;
+import 'dart:io';
 
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
+import '../../../../core/utils/pip_mode.dart';
 
 class ScrubChewieControls extends StatefulWidget {
-  const ScrubChewieControls({required this.useDoubleTapSeek, super.key});
+  const ScrubChewieControls({
+    required this.useDoubleTapSeek,
+    required this.enableNativePip,
+    super.key,
+  });
 
   final bool useDoubleTapSeek;
+  final bool enableNativePip;
 
   @override
   State<ScrubChewieControls> createState() => _ScrubChewieControlsState();
 }
 
-class _ScrubChewieControlsState extends State<ScrubChewieControls> {
+class _ScrubChewieControlsState extends State<ScrubChewieControls>
+  with WidgetsBindingObserver {
   ChewieController? _chewieController;
   VideoPlayerController? _boundVideoController;
   static const _playbackSpeeds = <double>[0.75, 1.0, 1.25, 1.5, 2.0];
@@ -54,10 +62,35 @@ class _ScrubChewieControlsState extends State<ScrubChewieControls> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didUpdateWidget(covariant ScrubChewieControls oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.enableNativePip != widget.enableNativePip) {
+      _showControlsTemporarily();
+    }
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _cancelAutoHide();
     _boundVideoController?.removeListener(_onVideoTick);
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (!widget.enableNativePip || !Platform.isAndroid) return;
+    if (state != AppLifecycleState.paused) return;
+
+    final controller = _boundVideoController;
+    if (controller == null || !controller.value.isPlaying) return;
+    unawaited(PipMode.enterIfAvailable());
   }
 
   void _onVideoTick() {
@@ -415,6 +448,18 @@ class _ScrubChewieControlsState extends State<ScrubChewieControls> {
                           ),
                         ),
                         const SizedBox(width: 6),
+                        if (widget.enableNativePip && Platform.isAndroid)
+                          IconButton(
+                            tooltip: 'Picture-in-Picture',
+                            icon: const Icon(
+                              Icons.picture_in_picture_alt_outlined,
+                              color: Colors.white,
+                            ),
+                            onPressed: () async {
+                              await PipMode.enterIfAvailable();
+                              _showControlsTemporarily();
+                            },
+                          ),
                         IconButton(
                           icon: Icon(
                             chewieController.isFullScreen

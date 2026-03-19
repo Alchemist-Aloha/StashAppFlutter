@@ -42,12 +42,16 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   static const _autoplayNextKey = 'autoplay_next';
   static const _showVideoDebugInfoKey = 'show_video_debug_info';
   static const _useDoubleTapSeekKey = 'video_use_double_tap_seek';
+  static const _enableBackgroundPlaybackKey = 'video_background_playback';
+  static const _enableNativePipKey = 'video_native_pip';
 
   bool _preferSceneStreams = true;
   bool _sceneGridLayout = false;
   bool _autoplayNext = false;
   bool _showVideoDebugInfo = false;
   bool _useDoubleTapSeek = true;
+  bool _enableBackgroundPlayback = false;
+  bool _enableNativePip = false;
   ThemeMode _themeMode = ThemeMode.system;
   bool _loading = true;
 
@@ -118,6 +122,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     final autoplayNext = prefs.getBool(_autoplayNextKey) ?? false;
     final showVideoDebugInfo = prefs.getBool(_showVideoDebugInfoKey) ?? false;
     final useDoubleTapSeek = prefs.getBool(_useDoubleTapSeekKey) ?? true;
+    final enableBackgroundPlayback =
+      prefs.getBool(_enableBackgroundPlaybackKey) ?? false;
+    final enableNativePip = prefs.getBool(_enableNativePipKey) ?? false;
     final themeMode = ref.read(appThemeModeProvider);
     _baseUrlController.text = url;
     _apiKeyController.text = apiKey;
@@ -126,6 +133,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     _autoplayNext = autoplayNext;
     _showVideoDebugInfo = showVideoDebugInfo;
     _useDoubleTapSeek = useDoubleTapSeek;
+    _enableBackgroundPlayback = enableBackgroundPlayback;
+    _enableNativePip = enableNativePip;
     _themeMode = themeMode;
     setState(() => _loading = false);
   }
@@ -223,12 +232,16 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     await prefs.setBool(_autoplayNextKey, _autoplayNext);
     await prefs.setBool(_showVideoDebugInfoKey, _showVideoDebugInfo);
     await prefs.setBool(_useDoubleTapSeekKey, _useDoubleTapSeek);
+    await prefs.setBool(_enableBackgroundPlaybackKey, _enableBackgroundPlayback);
+    await prefs.setBool(_enableNativePipKey, _enableNativePip);
 
     // Keep in-memory player state synchronized with persisted settings.
     final playerStateNotifier = ref.read(playerStateProvider.notifier);
     playerStateNotifier.setAutoplayNext(_autoplayNext);
     playerStateNotifier.setShowVideoDebugInfo(_showVideoDebugInfo);
     playerStateNotifier.setUseDoubleTapSeek(_useDoubleTapSeek);
+    playerStateNotifier.setEnableBackgroundPlayback(_enableBackgroundPlayback);
+    playerStateNotifier.setEnableNativePip(_enableNativePip);
   }
 
   @override
@@ -340,6 +353,30 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                     value: _showVideoDebugInfo,
                     onChanged: (value) async {
                       setState(() => _showVideoDebugInfo = value);
+                      await _saveToggleSettings();
+                    },
+                  ),
+                  SwitchListTile.adaptive(
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text('Background Playback'),
+                    subtitle: const Text(
+                      'Keep video audio playing when app is backgrounded',
+                    ),
+                    value: _enableBackgroundPlayback,
+                    onChanged: (value) async {
+                      setState(() => _enableBackgroundPlayback = value);
+                      await _saveToggleSettings();
+                    },
+                  ),
+                  SwitchListTile.adaptive(
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text('Native Picture-in-Picture'),
+                    subtitle: const Text(
+                      'Enable Android PiP button and auto-enter on background',
+                    ),
+                    value: _enableNativePip,
+                    onChanged: (value) async {
+                      setState(() => _enableNativePip = value);
                       await _saveToggleSettings();
                     },
                   ),

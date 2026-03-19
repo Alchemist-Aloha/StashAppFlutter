@@ -29,6 +29,8 @@ class GlobalPlayerState {
   final bool autoplayNext;
   final bool showVideoDebugInfo;
   final bool useDoubleTapSeek;
+  final bool enableBackgroundPlayback;
+  final bool enableNativePip;
 
   GlobalPlayerState({
     this.activeScene,
@@ -45,6 +47,8 @@ class GlobalPlayerState {
     this.autoplayNext = false,
     this.showVideoDebugInfo = false,
     this.useDoubleTapSeek = true,
+    this.enableBackgroundPlayback = false,
+    this.enableNativePip = false,
   });
 
   GlobalPlayerState copyWith({
@@ -62,6 +66,8 @@ class GlobalPlayerState {
     bool? autoplayNext,
     bool? showVideoDebugInfo,
     bool? useDoubleTapSeek,
+    bool? enableBackgroundPlayback,
+    bool? enableNativePip,
     bool clearActive = false,
   }) {
     return GlobalPlayerState(
@@ -93,6 +99,9 @@ class GlobalPlayerState {
       autoplayNext: autoplayNext ?? this.autoplayNext,
       showVideoDebugInfo: showVideoDebugInfo ?? this.showVideoDebugInfo,
       useDoubleTapSeek: useDoubleTapSeek ?? this.useDoubleTapSeek,
+      enableBackgroundPlayback:
+          enableBackgroundPlayback ?? this.enableBackgroundPlayback,
+      enableNativePip: enableNativePip ?? this.enableNativePip,
     );
   }
 }
@@ -102,6 +111,8 @@ class PlayerState extends _$PlayerState {
   static const _autoplayNextKey = 'autoplay_next';
   static const _showVideoDebugInfoKey = 'show_video_debug_info';
   static const _useDoubleTapSeekKey = 'video_use_double_tap_seek';
+  static const _enableBackgroundPlaybackKey = 'video_background_playback';
+  static const _enableNativePipKey = 'video_native_pip';
 
   @override
   GlobalPlayerState build() {
@@ -114,6 +125,9 @@ class PlayerState extends _$PlayerState {
       autoplayNext: prefs.getBool(_autoplayNextKey) ?? false,
       showVideoDebugInfo: prefs.getBool(_showVideoDebugInfoKey) ?? false,
       useDoubleTapSeek: prefs.getBool(_useDoubleTapSeekKey) ?? true,
+      enableBackgroundPlayback:
+          prefs.getBool(_enableBackgroundPlaybackKey) ?? false,
+      enableNativePip: prefs.getBool(_enableNativePipKey) ?? false,
     );
   }
 
@@ -133,6 +147,19 @@ class PlayerState extends _$PlayerState {
     state = state.copyWith(useDoubleTapSeek: value);
     final prefs = ref.read(sharedPreferencesProvider);
     prefs.setBool(_useDoubleTapSeekKey, value);
+    _rebuildChewieControls();
+  }
+
+  void setEnableBackgroundPlayback(bool value) {
+    state = state.copyWith(enableBackgroundPlayback: value);
+    final prefs = ref.read(sharedPreferencesProvider);
+    prefs.setBool(_enableBackgroundPlaybackKey, value);
+  }
+
+  void setEnableNativePip(bool value) {
+    state = state.copyWith(enableNativePip: value);
+    final prefs = ref.read(sharedPreferencesProvider);
+    prefs.setBool(_enableNativePipKey, value);
     _rebuildChewieControls();
   }
 
@@ -171,6 +198,7 @@ class PlayerState extends _$PlayerState {
       allowFullScreen: true,
       customControls: ScrubChewieControls(
         useDoubleTapSeek: state.useDoubleTapSeek,
+        enableNativePip: state.enableNativePip,
       ),
       placeholder: Container(color: Colors.black),
     );
@@ -223,6 +251,9 @@ class PlayerState extends _$PlayerState {
     final videoController = VideoPlayerController.networkUrl(
       Uri.parse(streamUrl),
       httpHeaders: httpHeaders ?? const <String, String>{},
+      videoPlayerOptions: VideoPlayerOptions(
+        allowBackgroundPlayback: state.enableBackgroundPlayback,
+      ),
     );
 
     state = state.copyWith(
@@ -257,6 +288,7 @@ class PlayerState extends _$PlayerState {
         allowFullScreen: true,
         customControls: ScrubChewieControls(
           useDoubleTapSeek: state.useDoubleTapSeek,
+          enableNativePip: state.enableNativePip,
         ),
         placeholder: Container(color: Colors.black),
       );
@@ -310,6 +342,8 @@ class PlayerState extends _$PlayerState {
       autoplayNext: state.autoplayNext,
       showVideoDebugInfo: state.showVideoDebugInfo,
       useDoubleTapSeek: state.useDoubleTapSeek,
+      enableBackgroundPlayback: state.enableBackgroundPlayback,
+      enableNativePip: state.enableNativePip,
     );
   }
 

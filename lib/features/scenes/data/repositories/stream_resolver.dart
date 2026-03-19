@@ -2,7 +2,9 @@ import 'dart:io';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../core/data/graphql/graphql_client.dart';
+import '../../../../core/data/graphql/media_headers_provider.dart';
 import '../../../../core/data/graphql/url_resolver.dart';
+import '../../../../core/utils/app_log_store.dart';
 import '../../domain/entities/scene.dart';
 
 part 'stream_resolver.g.dart';
@@ -79,7 +81,8 @@ class StreamResolver extends _$StreamResolver {
       return StreamChoice(url: streamUrl, mimeType: guessMimeType(streamUrl));
     }
 
-    StreamChoice? best;
+    final mediaHeaders = ref.read(mediaHeadersProvider);
+    final candidates = <StreamChoice>[];
     for (final stream in streams) {
       final resolvedUrl = resolveGraphqlMediaUrl(
         rawUrl: stream['url'] as String?,
@@ -96,18 +99,115 @@ class StreamResolver extends _$StreamResolver {
         label: label,
       );
 
-      if (best == null || choice.score > best.score) {
-        best = choice;
-      }
+      candidates.add(choice);
     }
 
+    if (candidates.isEmpty) return null;
+
+    candidates.sort((a, b) => b.score.compareTo(a.score));
+
+    StreamChoice? best;
+    var probeCount = 0;
+    const maxProbes = 2;
+    for (final choice in candidates) {
+      final shouldProbe =
+          probeCount < maxProbes && _shouldProbeByHeaders(choice);
+      if (!shouldProbe) {
+        best = choice;
+        break;
+      }
+
+      probeCount++;
+      final probedMime = await probeMimeTypeFromHeaders(
+        choice.url,
+        mediaHeaders,
+      );
+      if (probedMime == null || probedMime.isEmpty) {
+        best = choice;
+        break;
+      }
+
+      if (_isLikelyHtmlContentType(probedMime)) {
+        AppLogStore.instance.add(
+          'skip html stream candidate scene=${scene.id} mime=$probedMime label=${choice.label ?? '-'} url=${_shortUrl(choice.url)}',
+          source: 'stream_resolver',
+        );
+        continue;
+      }
+
+      best = StreamChoice(
+        url: choice.url,
+        mimeType: probedMime,
+        label: choice.label,
+      );
+      break;
+    }
+
+    best ??= candidates.first;
+
+    AppLogStore.instance.add(
+      'selected stream scene=${scene.id} candidates=${candidates.length} mime=${best.mimeType} label=${best.label ?? '-'} url=${_shortUrl(best.url)}',
+      source: 'stream_resolver',
+    );
+
     return best;
+  }
+
+  bool _shouldProbeByHeaders(StreamChoice choice) {
+    final lowerMime = choice.mimeType.toLowerCase();
+    final lowerLabel = (choice.label ?? '').toLowerCase();
+    final path = (Uri.tryParse(choice.url)?.path ?? choice.url).toLowerCase();
+
+    if (lowerMime.contains('mpegurl') || lowerMime.contains('dash')) {
+      return false;
+    }
+
+    final hasKnownExtension =
+        path.endsWith('.mp4') ||
+        path.endsWith('.webm') ||
+        path.endsWith('.mkv');
+    final looksLikeStreamRoute =
+        path.contains('/stream') || path.contains('/scene/');
+
+    // Probe when URL shape might return an HTML wrapper despite direct-media labels.
+    return (lowerMime.contains('mp4') || lowerLabel.contains('direct')) &&
+        (!hasKnownExtension || looksLikeStreamRoute);
+  }
+
+  bool _isLikelyHtmlContentType(String mimeType) {
+    final lower = mimeType.toLowerCase();
+    return lower.contains('text/html') ||
+        lower.contains('application/xhtml+xml');
+  }
+
+  String _shortUrl(String url) {
+    final uri = Uri.tryParse(url);
+    if (uri == null) return url;
+    return '${uri.scheme}://${uri.host}${uri.path}';
   }
 
   String guessMimeType(String url, {String? label}) {
     final uri = Uri.tryParse(url);
     final path = (uri?.path ?? url).toLowerCase();
+    final wholeUrl = url.toLowerCase();
     final lowerLabel = (label ?? '').toLowerCase();
+    final queryParams =
+        uri?.queryParametersAll ?? const <String, List<String>>{};
+
+    String? fromToken(String token) {
+      final lower = token.toLowerCase();
+      if (lower.contains('m3u8') ||
+          lower.contains('mpegurl') ||
+          lower == 'hls') {
+        return 'application/vnd.apple.mpegurl';
+      }
+      if (lower.contains('mpd') || lower.contains('dash')) {
+        return 'application/dash+xml';
+      }
+      if (lower.contains('webm')) return 'video/webm';
+      if (lower.contains('mp4')) return 'video/mp4';
+      return null;
+    }
 
     if (path.endsWith('.m3u8') || lowerLabel.contains('hls')) {
       return 'application/vnd.apple.mpegurl';
@@ -121,6 +221,29 @@ class StreamResolver extends _$StreamResolver {
     if (path.endsWith('.webm') || lowerLabel.contains('webm')) {
       return 'video/webm';
     }
+
+    // Extension-less stream endpoints often encode format in query parameters.
+    for (final entry in queryParams.entries) {
+      final keyGuess = fromToken(entry.key);
+      if (keyGuess != null) return keyGuess;
+      for (final value in entry.value) {
+        final valueGuess = fromToken(value);
+        if (valueGuess != null) return valueGuess;
+      }
+    }
+
+    final inlineGuess = fromToken(wholeUrl);
+    if (inlineGuess != null) return inlineGuess;
+
+    // Stash-style scene stream endpoints default to direct MP4 when no manifest hint exists.
+    if (path.contains('/scene/') && path.endsWith('/stream')) {
+      return 'video/mp4';
+    }
+
+    if (lowerLabel.contains('direct') || lowerLabel.contains('source')) {
+      return 'video/mp4';
+    }
+
     return 'unknown';
   }
 
