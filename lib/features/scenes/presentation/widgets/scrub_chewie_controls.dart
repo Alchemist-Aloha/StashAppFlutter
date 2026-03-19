@@ -55,7 +55,9 @@ class _ScrubChewieControlsState extends State<ScrubChewieControls> {
 
   String _formatSpeed(double speed) {
     final whole = speed.roundToDouble() == speed;
-    return whole ? '${speed.toStringAsFixed(0)}x' : '${speed.toStringAsFixed(2)}x';
+    return whole
+        ? '${speed.toStringAsFixed(0)}x'
+        : '${speed.toStringAsFixed(2)}x';
   }
 
   @override
@@ -135,7 +137,9 @@ class _ScrubChewieControlsState extends State<ScrubChewieControls> {
                   child: IconButton(
                     iconSize: 24,
                     icon: Icon(
-                      value.isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                      value.isPlaying
+                          ? Icons.pause_rounded
+                          : Icons.play_arrow_rounded,
                       color: Colors.white,
                     ),
                     onPressed: () {

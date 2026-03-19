@@ -28,6 +28,7 @@ class GlobalPlayerState {
   final int? prewarmLatencyMs;
   final bool autoplayNext;
   final bool showVideoDebugInfo;
+  final bool useDoubleTapSeek;
 
   GlobalPlayerState({
     this.activeScene,
@@ -43,6 +44,7 @@ class GlobalPlayerState {
     this.prewarmLatencyMs,
     this.autoplayNext = false,
     this.showVideoDebugInfo = false,
+    this.useDoubleTapSeek = true,
   });
 
   GlobalPlayerState copyWith({
@@ -59,6 +61,7 @@ class GlobalPlayerState {
     int? prewarmLatencyMs,
     bool? autoplayNext,
     bool? showVideoDebugInfo,
+    bool? useDoubleTapSeek,
     bool clearActive = false,
   }) {
     return GlobalPlayerState(
@@ -89,6 +92,7 @@ class GlobalPlayerState {
           : (prewarmLatencyMs ?? this.prewarmLatencyMs),
       autoplayNext: autoplayNext ?? this.autoplayNext,
       showVideoDebugInfo: showVideoDebugInfo ?? this.showVideoDebugInfo,
+      useDoubleTapSeek: useDoubleTapSeek ?? this.useDoubleTapSeek,
     );
   }
 }
@@ -97,6 +101,7 @@ class GlobalPlayerState {
 class PlayerState extends _$PlayerState {
   static const _autoplayNextKey = 'autoplay_next';
   static const _showVideoDebugInfoKey = 'show_video_debug_info';
+  static const _useDoubleTapSeekKey = 'video_use_double_tap_seek';
 
   @override
   GlobalPlayerState build() {
@@ -108,6 +113,7 @@ class PlayerState extends _$PlayerState {
     return GlobalPlayerState(
       autoplayNext: prefs.getBool(_autoplayNextKey) ?? false,
       showVideoDebugInfo: prefs.getBool(_showVideoDebugInfoKey) ?? false,
+      useDoubleTapSeek: prefs.getBool(_useDoubleTapSeekKey) ?? true,
     );
   }
 
@@ -121,6 +127,12 @@ class PlayerState extends _$PlayerState {
     state = state.copyWith(showVideoDebugInfo: value);
     final prefs = ref.read(sharedPreferencesProvider);
     prefs.setBool(_showVideoDebugInfoKey, value);
+  }
+
+  void setUseDoubleTapSeek(bool value) {
+    state = state.copyWith(useDoubleTapSeek: value);
+    final prefs = ref.read(sharedPreferencesProvider);
+    prefs.setBool(_useDoubleTapSeekKey, value);
   }
 
   double? _sceneAspectRatio(Scene scene) {
@@ -251,6 +263,7 @@ class PlayerState extends _$PlayerState {
     state = GlobalPlayerState(
       autoplayNext: state.autoplayNext,
       showVideoDebugInfo: state.showVideoDebugInfo,
+      useDoubleTapSeek: state.useDoubleTapSeek,
     );
   }
 
