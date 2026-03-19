@@ -71,13 +71,23 @@ class StudioDetailsPage extends ConsumerWidget {
                     if (studio.rating100 != null)
                       _statRow('Rating', studio.rating100.toString()),
                     const SizedBox(height: 20),
-                    const Text(
-                      'Media',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+                    Row(
+                      children: [
+                        const Text(
+                          'Media',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const Spacer(),
+                        TextButton(
+                          onPressed: () =>
+                              context.push('/studio/${studio.id}/media'),
+                          child: const Text('View all'),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 12),
                     mediaAsync.when(

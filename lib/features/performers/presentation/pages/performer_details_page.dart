@@ -70,13 +70,23 @@ class PerformerDetailsPage extends ConsumerWidget {
                     _buildInfoRow('Eye Color', performer.eyeColor),
                     _buildInfoRow('Hair Color', performer.hairColor),
                     const Divider(height: 32, color: Colors.grey),
-                    const Text(
-                      'Media',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+                    Row(
+                      children: [
+                        const Text(
+                          'Media',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const Spacer(),
+                        TextButton(
+                          onPressed: () =>
+                              context.push('/performer/${performer.id}/media'),
+                          child: const Text('View all'),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 12),
                     mediaAsync.when(

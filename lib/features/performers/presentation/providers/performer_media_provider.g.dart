@@ -85,3 +85,103 @@ final class PerformerMediaFamily extends $Family
   @override
   String toString() => r'performerMediaProvider';
 }
+
+@ProviderFor(PerformerMediaGrid)
+final performerMediaGridProvider = PerformerMediaGridFamily._();
+
+final class PerformerMediaGridProvider
+    extends
+        $AsyncNotifierProvider<PerformerMediaGrid, List<PerformerMediaItem>> {
+  PerformerMediaGridProvider._({
+    required PerformerMediaGridFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'performerMediaGridProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$performerMediaGridHash();
+
+  @override
+  String toString() {
+    return r'performerMediaGridProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  PerformerMediaGrid create() => PerformerMediaGrid();
+
+  @override
+  bool operator ==(Object other) {
+    return other is PerformerMediaGridProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$performerMediaGridHash() =>
+    r'f905cbb921e21be8c17e4e46b102f5d22c51b752';
+
+final class PerformerMediaGridFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          PerformerMediaGrid,
+          AsyncValue<List<PerformerMediaItem>>,
+          List<PerformerMediaItem>,
+          FutureOr<List<PerformerMediaItem>>,
+          String
+        > {
+  PerformerMediaGridFamily._()
+    : super(
+        retry: null,
+        name: r'performerMediaGridProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  PerformerMediaGridProvider call(String performerId) =>
+      PerformerMediaGridProvider._(argument: performerId, from: this);
+
+  @override
+  String toString() => r'performerMediaGridProvider';
+}
+
+abstract class _$PerformerMediaGrid
+    extends $AsyncNotifier<List<PerformerMediaItem>> {
+  late final _$args = ref.$arg as String;
+  String get performerId => _$args;
+
+  FutureOr<List<PerformerMediaItem>> build(String performerId);
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref =
+        this.ref
+            as $Ref<
+              AsyncValue<List<PerformerMediaItem>>,
+              List<PerformerMediaItem>
+            >;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<
+                AsyncValue<List<PerformerMediaItem>>,
+                List<PerformerMediaItem>
+              >,
+              AsyncValue<List<PerformerMediaItem>>,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, () => build(_$args));
+  }
+}

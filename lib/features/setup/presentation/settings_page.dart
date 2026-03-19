@@ -13,6 +13,9 @@ class SettingsPage extends ConsumerStatefulWidget {
 class _SettingsPageState extends ConsumerState<SettingsPage> {
   final _baseUrlController = TextEditingController();
   final _apiKeyController = TextEditingController();
+  static const _preferSceneStreamsKey = 'prefer_scene_streams';
+
+  bool _preferSceneStreams = true;
   bool _loading = true;
 
   @override
@@ -25,8 +28,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     final prefs = ref.read(sharedPreferencesProvider);
     final url = prefs.getString('server_base_url') ?? '';
     final apiKey = prefs.getString('server_api_key') ?? '';
+    final preferSceneStreams = prefs.getBool(_preferSceneStreamsKey) ?? true;
     _baseUrlController.text = url;
     _apiKeyController.text = apiKey;
+    _preferSceneStreams = preferSceneStreams;
     setState(() => _loading = false);
   }
 
@@ -43,6 +48,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     final prefs = ref.read(sharedPreferencesProvider);
     await prefs.setString('server_base_url', normalizedUrl);
     await prefs.setString('server_api_key', _apiKeyController.text.trim());
+    await prefs.setBool(_preferSceneStreamsKey, _preferSceneStreams);
 
     _baseUrlController.text = normalizedUrl;
 
@@ -94,6 +100,18 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                     autocorrect: false,
                     enableSuggestions: false,
                     obscureText: true,
+                  ),
+                  const SizedBox(height: 12),
+                  SwitchListTile.adaptive(
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text('Prefer sceneStreams first'),
+                    subtitle: const Text(
+                      'When off, playback directly uses paths.stream',
+                    ),
+                    value: _preferSceneStreams,
+                    onChanged: (value) {
+                      setState(() => _preferSceneStreams = value);
+                    },
                   ),
                   const SizedBox(height: 12),
                   Row(

@@ -1,9 +1,13 @@
+import 'dart:io';
+
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import '../../../../core/data/graphql/graphql_client.dart';
+import '../../../../core/data/graphql/media_headers_provider.dart';
 import '../../../../core/data/graphql/url_resolver.dart';
+import '../../../../core/data/preferences/shared_preferences_provider.dart';
 import '../providers/video_player_provider.dart';
 import '../../domain/entities/scene.dart';
 
@@ -16,6 +20,9 @@ class SceneVideoPlayer extends ConsumerStatefulWidget {
 }
 
 class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
+  static const _preferSceneStreamsKey = 'prefer_scene_streams';
+  static Future<void>? _pathsStreamPrewarmFuture;
+
   bool _isStarting = false;
   String? _autoStartedSceneId;
 
@@ -47,10 +54,21 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
 
     setState(() => _isStarting = true);
     try {
-      final choice = await _resolvePreferredStream();
+      final prefs = ref.read(sharedPreferencesProvider);
+      final preferSceneStreams = prefs.getBool(_preferSceneStreamsKey) ?? true;
+
+      final choice = preferSceneStreams
+          ? await _resolvePreferredStream()
+          : null;
       final streamUrl = choice?.url ?? widget.scene.paths.stream ?? '';
-      final mimeType = choice?.mimeType ?? _guessMimeType(streamUrl);
+      var mimeType = choice?.mimeType ?? _guessMimeType(streamUrl);
       final streamLabel = choice?.label;
+      var streamSource = choice == null
+          ? (preferSceneStreams ? 'paths.stream' : 'paths.stream(direct)')
+          : 'sceneStreams';
+      final mediaHeaders = ref.read(mediaHeadersProvider);
+
+      await _prewarmPathsStreamOnce(mediaHeaders);
 
       if (streamUrl.isEmpty) {
         if (!mounted) return;
@@ -58,6 +76,17 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
           const SnackBar(content: Text('No stream URL available')),
         );
         return;
+      }
+
+      if (mimeType == 'unknown') {
+        final probedMime = await _probeMimeTypeFromHeaders(
+          streamUrl,
+          mediaHeaders,
+        );
+        if (probedMime != null && probedMime.isNotEmpty) {
+          mimeType = probedMime;
+          streamSource = '$streamSource+header';
+        }
       }
 
       _autoStartedSceneId = widget.scene.id;
@@ -68,11 +97,64 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
             streamUrl,
             mimeType: mimeType,
             streamLabel: streamLabel,
+            streamSource: streamSource,
+            httpHeaders: mediaHeaders,
           );
     } finally {
       if (mounted) {
         setState(() => _isStarting = false);
       }
+    }
+  }
+
+  Future<void> _prewarmPathsStreamOnce(Map<String, String> headers) {
+    final existingFuture = _pathsStreamPrewarmFuture;
+    if (existingFuture != null) return existingFuture;
+
+    final rawStreamUrl = widget.scene.paths.stream ?? '';
+    final client = ref.read(graphqlClientProvider);
+    final graphqlEndpoint = client.link is HttpLink
+        ? (client.link as HttpLink).uri
+        : Uri.parse(
+            rawStreamUrl.isEmpty ? 'https://localhost/graphql' : rawStreamUrl,
+          );
+    final streamUrl = resolveGraphqlMediaUrl(
+      rawUrl: rawStreamUrl,
+      graphqlEndpoint: graphqlEndpoint,
+    );
+    if (streamUrl.isEmpty) {
+      _pathsStreamPrewarmFuture = Future<void>.value();
+      return _pathsStreamPrewarmFuture!;
+    }
+
+    final future = _prewarmStreamRequest(streamUrl, headers);
+    _pathsStreamPrewarmFuture = future;
+    return future;
+  }
+
+  Future<void> _prewarmStreamRequest(
+    String streamUrl,
+    Map<String, String> headers,
+  ) async {
+    final uri = Uri.tryParse(streamUrl);
+    if (uri == null) return;
+
+    final client = HttpClient();
+    client.connectionTimeout = const Duration(seconds: 3);
+
+    try {
+      final req = await client
+          .openUrl('GET', uri)
+          .timeout(const Duration(seconds: 3));
+      headers.forEach(req.headers.set);
+      req.headers.set('Range', 'bytes=0-0');
+
+      final res = await req.close().timeout(const Duration(seconds: 4));
+      await res.drain<void>();
+    } catch (_) {
+      // Best effort prewarm only; ignore failures.
+    } finally {
+      client.close(force: true);
     }
   }
 
@@ -100,7 +182,8 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
       return null;
     }
 
-    final streams = ((result.data?['findScene']?['sceneStreams']) as List?)
+    final streams =
+        ((result.data?['findScene']?['sceneStreams']) as List?)
             ?.whereType<Map<String, dynamic>>()
             .toList() ??
         const <Map<String, dynamic>>[];
@@ -133,6 +216,50 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
     }
 
     return best;
+  }
+
+  Future<String?> _probeMimeTypeFromHeaders(
+    String url,
+    Map<String, String> headers,
+  ) async {
+    final uri = Uri.tryParse(url);
+    if (uri == null) return null;
+
+    final client = HttpClient();
+    client.connectionTimeout = const Duration(seconds: 3);
+
+    try {
+      Future<String?> requestAndExtract(
+        String method, {
+        bool withRange = false,
+      }) async {
+        final req = await client
+            .openUrl(method, uri)
+            .timeout(const Duration(seconds: 3));
+        headers.forEach(req.headers.set);
+        if (withRange) {
+          req.headers.set('Range', 'bytes=0-0');
+        }
+
+        final res = await req.close().timeout(const Duration(seconds: 3));
+        await res.drain<void>();
+
+        final contentType = res.headers.value(HttpHeaders.contentTypeHeader);
+        if (contentType == null || contentType.trim().isEmpty) return null;
+        return contentType.split(';').first.trim().toLowerCase();
+      }
+
+      final fromHead = await requestAndExtract('HEAD');
+      if (fromHead != null && fromHead.isNotEmpty) return fromHead;
+
+      final fromGet = await requestAndExtract('GET', withRange: true);
+      if (fromGet != null && fromGet.isNotEmpty) return fromGet;
+      return null;
+    } catch (_) {
+      return null;
+    } finally {
+      client.close(force: true);
+    }
   }
 
   String _guessMimeType(String url, {String? label}) {
@@ -204,7 +331,10 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Text(
-                'mime: ${playerState.streamMimeType ?? 'unknown'}${playerState.streamLabel == null || playerState.streamLabel!.isEmpty ? '' : '  label: ${playerState.streamLabel}'}',
+                'mime: ${playerState.streamMimeType ?? 'unknown'}'
+                '${playerState.streamLabel == null || playerState.streamLabel!.isEmpty ? '' : '  label: ${playerState.streamLabel}'}'
+                '${playerState.streamSource == null || playerState.streamSource!.isEmpty ? '' : '  src: ${playerState.streamSource}'}'
+                '${playerState.startupLatencyMs == null ? '' : '  start: ${playerState.startupLatencyMs}ms'}',
                 style: const TextStyle(color: Colors.white70, fontSize: 11),
               ),
             ),

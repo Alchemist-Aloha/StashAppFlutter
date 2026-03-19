@@ -13,6 +13,8 @@ class GlobalPlayerState {
   final bool isPlaying;
   final String? streamMimeType;
   final String? streamLabel;
+  final String? streamSource;
+  final int? startupLatencyMs;
 
   GlobalPlayerState({
     this.activeScene,
@@ -21,6 +23,8 @@ class GlobalPlayerState {
     this.isPlaying = false,
     this.streamMimeType,
     this.streamLabel,
+    this.streamSource,
+    this.startupLatencyMs,
   });
 
   GlobalPlayerState copyWith({
@@ -30,6 +34,8 @@ class GlobalPlayerState {
     bool? isPlaying,
     String? streamMimeType,
     String? streamLabel,
+    String? streamSource,
+    int? startupLatencyMs,
     bool clearActive = false,
   }) {
     return GlobalPlayerState(
@@ -45,6 +51,10 @@ class GlobalPlayerState {
           ? null
           : (streamMimeType ?? this.streamMimeType),
       streamLabel: clearActive ? null : (streamLabel ?? this.streamLabel),
+      streamSource: clearActive ? null : (streamSource ?? this.streamSource),
+      startupLatencyMs: clearActive
+          ? null
+          : (startupLatencyMs ?? this.startupLatencyMs),
     );
   }
 }
@@ -64,6 +74,8 @@ class PlayerState extends _$PlayerState {
     String streamUrl, {
     String? mimeType,
     String? streamLabel,
+    String? streamSource,
+    Map<String, String>? httpHeaders,
   }) async {
     if (state.activeScene?.id == scene.id &&
         state.videoPlayerController != null) {
@@ -72,6 +84,7 @@ class PlayerState extends _$PlayerState {
         isPlaying: true,
         streamMimeType: mimeType,
         streamLabel: streamLabel,
+        streamSource: streamSource,
       );
       return;
     }
@@ -79,8 +92,10 @@ class PlayerState extends _$PlayerState {
     // Stop current
     await _disposeControllers();
 
+    final stopwatch = Stopwatch()..start();
     final videoController = VideoPlayerController.networkUrl(
       Uri.parse(streamUrl),
+      httpHeaders: httpHeaders ?? const <String, String>{},
     );
 
     state = state.copyWith(
@@ -89,10 +104,13 @@ class PlayerState extends _$PlayerState {
       isPlaying: false,
       streamMimeType: mimeType,
       streamLabel: streamLabel,
+      streamSource: streamSource,
+      startupLatencyMs: null,
     );
 
     try {
       await videoController.initialize();
+      stopwatch.stop();
 
       final chewieController = ChewieController(
         videoPlayerController: videoController,
@@ -106,6 +124,7 @@ class PlayerState extends _$PlayerState {
       state = state.copyWith(
         chewieController: chewieController,
         isPlaying: true,
+        startupLatencyMs: stopwatch.elapsedMilliseconds,
       );
 
       videoController.addListener(_videoListener);

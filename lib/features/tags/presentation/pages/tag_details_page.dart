@@ -69,13 +69,22 @@ class TagDetailsPage extends ConsumerWidget {
                     _statRow('Galleries', tag.galleryCount.toString()),
                     _statRow('Performers', tag.performerCount.toString()),
                     const SizedBox(height: 20),
-                    const Text(
-                      'Media',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+                    Row(
+                      children: [
+                        const Text(
+                          'Media',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const Spacer(),
+                        TextButton(
+                          onPressed: () => context.push('/tag/${tag.id}/media'),
+                          child: const Text('View all'),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 12),
                     mediaAsync.when(
