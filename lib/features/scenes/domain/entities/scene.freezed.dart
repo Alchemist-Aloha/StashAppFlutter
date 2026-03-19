@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Scene {
 
- String get id; String get title; String? get details; String? get path; DateTime get date; int? get rating100; int get oCounter; bool get organized; bool get interactive; double? get resumeTime; int get playCount; List<SceneFile> get files; ScenePaths get paths; String? get studioId; String? get studioName; List<String> get performerIds; List<String> get performerNames; List<String> get tagIds; List<String> get tagNames;
+ String get id; String get title; String? get details; String? get path; DateTime get date; int? get rating100;@JsonKey(name: 'o_counter') int get oCounter; bool get organized; bool get interactive;@JsonKey(name: 'resume_time') double? get resumeTime;@JsonKey(name: 'play_count') int get playCount; List<SceneFile> get files; ScenePaths get paths;@JsonKey(name: 'studio_id') String? get studioId;@JsonKey(name: 'studio_name') String? get studioName;@JsonKey(name: 'performer_ids') List<String> get performerIds;@JsonKey(name: 'performer_names') List<String> get performerNames;@JsonKey(name: 'tag_ids') List<String> get tagIds;@JsonKey(name: 'tag_names') List<String> get tagNames;
 /// Create a copy of Scene
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $SceneCopyWith<$Res>  {
   factory $SceneCopyWith(Scene value, $Res Function(Scene) _then) = _$SceneCopyWithImpl;
 @useResult
 $Res call({
- String id, String title, String? details, String? path, DateTime date, int? rating100, int oCounter, bool organized, bool interactive, double? resumeTime, int playCount, List<SceneFile> files, ScenePaths paths, String? studioId, String? studioName, List<String> performerIds, List<String> performerNames, List<String> tagIds, List<String> tagNames
+ String id, String title, String? details, String? path, DateTime date, int? rating100,@JsonKey(name: 'o_counter') int oCounter, bool organized, bool interactive,@JsonKey(name: 'resume_time') double? resumeTime,@JsonKey(name: 'play_count') int playCount, List<SceneFile> files, ScenePaths paths,@JsonKey(name: 'studio_id') String? studioId,@JsonKey(name: 'studio_name') String? studioName,@JsonKey(name: 'performer_ids') List<String> performerIds,@JsonKey(name: 'performer_names') List<String> performerNames,@JsonKey(name: 'tag_ids') List<String> tagIds,@JsonKey(name: 'tag_names') List<String> tagNames
 });
 
 
@@ -180,7 +180,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String? details,  String? path,  DateTime date,  int? rating100,  int oCounter,  bool organized,  bool interactive,  double? resumeTime,  int playCount,  List<SceneFile> files,  ScenePaths paths,  String? studioId,  String? studioName,  List<String> performerIds,  List<String> performerNames,  List<String> tagIds,  List<String> tagNames)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String? details,  String? path,  DateTime date,  int? rating100, @JsonKey(name: 'o_counter')  int oCounter,  bool organized,  bool interactive, @JsonKey(name: 'resume_time')  double? resumeTime, @JsonKey(name: 'play_count')  int playCount,  List<SceneFile> files,  ScenePaths paths, @JsonKey(name: 'studio_id')  String? studioId, @JsonKey(name: 'studio_name')  String? studioName, @JsonKey(name: 'performer_ids')  List<String> performerIds, @JsonKey(name: 'performer_names')  List<String> performerNames, @JsonKey(name: 'tag_ids')  List<String> tagIds, @JsonKey(name: 'tag_names')  List<String> tagNames)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Scene() when $default != null:
 return $default(_that.id,_that.title,_that.details,_that.path,_that.date,_that.rating100,_that.oCounter,_that.organized,_that.interactive,_that.resumeTime,_that.playCount,_that.files,_that.paths,_that.studioId,_that.studioName,_that.performerIds,_that.performerNames,_that.tagIds,_that.tagNames);case _:
@@ -201,7 +201,7 @@ return $default(_that.id,_that.title,_that.details,_that.path,_that.date,_that.r
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String? details,  String? path,  DateTime date,  int? rating100,  int oCounter,  bool organized,  bool interactive,  double? resumeTime,  int playCount,  List<SceneFile> files,  ScenePaths paths,  String? studioId,  String? studioName,  List<String> performerIds,  List<String> performerNames,  List<String> tagIds,  List<String> tagNames)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String? details,  String? path,  DateTime date,  int? rating100, @JsonKey(name: 'o_counter')  int oCounter,  bool organized,  bool interactive, @JsonKey(name: 'resume_time')  double? resumeTime, @JsonKey(name: 'play_count')  int playCount,  List<SceneFile> files,  ScenePaths paths, @JsonKey(name: 'studio_id')  String? studioId, @JsonKey(name: 'studio_name')  String? studioName, @JsonKey(name: 'performer_ids')  List<String> performerIds, @JsonKey(name: 'performer_names')  List<String> performerNames, @JsonKey(name: 'tag_ids')  List<String> tagIds, @JsonKey(name: 'tag_names')  List<String> tagNames)  $default,) {final _that = this;
 switch (_that) {
 case _Scene():
 return $default(_that.id,_that.title,_that.details,_that.path,_that.date,_that.rating100,_that.oCounter,_that.organized,_that.interactive,_that.resumeTime,_that.playCount,_that.files,_that.paths,_that.studioId,_that.studioName,_that.performerIds,_that.performerNames,_that.tagIds,_that.tagNames);case _:
@@ -221,7 +221,7 @@ return $default(_that.id,_that.title,_that.details,_that.path,_that.date,_that.r
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String? details,  String? path,  DateTime date,  int? rating100,  int oCounter,  bool organized,  bool interactive,  double? resumeTime,  int playCount,  List<SceneFile> files,  ScenePaths paths,  String? studioId,  String? studioName,  List<String> performerIds,  List<String> performerNames,  List<String> tagIds,  List<String> tagNames)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String? details,  String? path,  DateTime date,  int? rating100, @JsonKey(name: 'o_counter')  int oCounter,  bool organized,  bool interactive, @JsonKey(name: 'resume_time')  double? resumeTime, @JsonKey(name: 'play_count')  int playCount,  List<SceneFile> files,  ScenePaths paths, @JsonKey(name: 'studio_id')  String? studioId, @JsonKey(name: 'studio_name')  String? studioName, @JsonKey(name: 'performer_ids')  List<String> performerIds, @JsonKey(name: 'performer_names')  List<String> performerNames, @JsonKey(name: 'tag_ids')  List<String> tagIds, @JsonKey(name: 'tag_names')  List<String> tagNames)?  $default,) {final _that = this;
 switch (_that) {
 case _Scene() when $default != null:
 return $default(_that.id,_that.title,_that.details,_that.path,_that.date,_that.rating100,_that.oCounter,_that.organized,_that.interactive,_that.resumeTime,_that.playCount,_that.files,_that.paths,_that.studioId,_that.studioName,_that.performerIds,_that.performerNames,_that.tagIds,_that.tagNames);case _:
@@ -236,7 +236,7 @@ return $default(_that.id,_that.title,_that.details,_that.path,_that.date,_that.r
 @JsonSerializable()
 
 class _Scene implements Scene {
-  const _Scene({required this.id, required this.title, this.details, this.path, required this.date, required this.rating100, required this.oCounter, required this.organized, required this.interactive, required this.resumeTime, required this.playCount, required final  List<SceneFile> files, required this.paths, required this.studioId, required this.studioName, required final  List<String> performerIds, required final  List<String> performerNames, required final  List<String> tagIds, required final  List<String> tagNames}): _files = files,_performerIds = performerIds,_performerNames = performerNames,_tagIds = tagIds,_tagNames = tagNames;
+  const _Scene({required this.id, required this.title, this.details, this.path, required this.date, required this.rating100, @JsonKey(name: 'o_counter') required this.oCounter, required this.organized, required this.interactive, @JsonKey(name: 'resume_time') required this.resumeTime, @JsonKey(name: 'play_count') required this.playCount, required final  List<SceneFile> files, required this.paths, @JsonKey(name: 'studio_id') required this.studioId, @JsonKey(name: 'studio_name') required this.studioName, @JsonKey(name: 'performer_ids') required final  List<String> performerIds, @JsonKey(name: 'performer_names') required final  List<String> performerNames, @JsonKey(name: 'tag_ids') required final  List<String> tagIds, @JsonKey(name: 'tag_names') required final  List<String> tagNames}): _files = files,_performerIds = performerIds,_performerNames = performerNames,_tagIds = tagIds,_tagNames = tagNames;
   factory _Scene.fromJson(Map<String, dynamic> json) => _$SceneFromJson(json);
 
 @override final  String id;
@@ -245,11 +245,11 @@ class _Scene implements Scene {
 @override final  String? path;
 @override final  DateTime date;
 @override final  int? rating100;
-@override final  int oCounter;
+@override@JsonKey(name: 'o_counter') final  int oCounter;
 @override final  bool organized;
 @override final  bool interactive;
-@override final  double? resumeTime;
-@override final  int playCount;
+@override@JsonKey(name: 'resume_time') final  double? resumeTime;
+@override@JsonKey(name: 'play_count') final  int playCount;
  final  List<SceneFile> _files;
 @override List<SceneFile> get files {
   if (_files is EqualUnmodifiableListView) return _files;
@@ -258,31 +258,31 @@ class _Scene implements Scene {
 }
 
 @override final  ScenePaths paths;
-@override final  String? studioId;
-@override final  String? studioName;
+@override@JsonKey(name: 'studio_id') final  String? studioId;
+@override@JsonKey(name: 'studio_name') final  String? studioName;
  final  List<String> _performerIds;
-@override List<String> get performerIds {
+@override@JsonKey(name: 'performer_ids') List<String> get performerIds {
   if (_performerIds is EqualUnmodifiableListView) return _performerIds;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_performerIds);
 }
 
  final  List<String> _performerNames;
-@override List<String> get performerNames {
+@override@JsonKey(name: 'performer_names') List<String> get performerNames {
   if (_performerNames is EqualUnmodifiableListView) return _performerNames;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_performerNames);
 }
 
  final  List<String> _tagIds;
-@override List<String> get tagIds {
+@override@JsonKey(name: 'tag_ids') List<String> get tagIds {
   if (_tagIds is EqualUnmodifiableListView) return _tagIds;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_tagIds);
 }
 
  final  List<String> _tagNames;
-@override List<String> get tagNames {
+@override@JsonKey(name: 'tag_names') List<String> get tagNames {
   if (_tagNames is EqualUnmodifiableListView) return _tagNames;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_tagNames);
@@ -322,7 +322,7 @@ abstract mixin class _$SceneCopyWith<$Res> implements $SceneCopyWith<$Res> {
   factory _$SceneCopyWith(_Scene value, $Res Function(_Scene) _then) = __$SceneCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String title, String? details, String? path, DateTime date, int? rating100, int oCounter, bool organized, bool interactive, double? resumeTime, int playCount, List<SceneFile> files, ScenePaths paths, String? studioId, String? studioName, List<String> performerIds, List<String> performerNames, List<String> tagIds, List<String> tagNames
+ String id, String title, String? details, String? path, DateTime date, int? rating100,@JsonKey(name: 'o_counter') int oCounter, bool organized, bool interactive,@JsonKey(name: 'resume_time') double? resumeTime,@JsonKey(name: 'play_count') int playCount, List<SceneFile> files, ScenePaths paths,@JsonKey(name: 'studio_id') String? studioId,@JsonKey(name: 'studio_name') String? studioName,@JsonKey(name: 'performer_ids') List<String> performerIds,@JsonKey(name: 'performer_names') List<String> performerNames,@JsonKey(name: 'tag_ids') List<String> tagIds,@JsonKey(name: 'tag_names') List<String> tagNames
 });
 
 
@@ -380,7 +380,7 @@ $ScenePathsCopyWith<$Res> get paths {
 /// @nodoc
 mixin _$SceneFile {
 
- String? get format; int? get width; int? get height; String? get videoCodec; String? get audioCodec; int? get bitRate;
+ String? get format; int? get width; int? get height;@JsonKey(name: 'video_codec') String? get videoCodec;@JsonKey(name: 'audio_codec') String? get audioCodec;@JsonKey(name: 'bit_rate') int? get bitRate;
 /// Create a copy of SceneFile
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -413,7 +413,7 @@ abstract mixin class $SceneFileCopyWith<$Res>  {
   factory $SceneFileCopyWith(SceneFile value, $Res Function(SceneFile) _then) = _$SceneFileCopyWithImpl;
 @useResult
 $Res call({
- String? format, int? width, int? height, String? videoCodec, String? audioCodec, int? bitRate
+ String? format, int? width, int? height,@JsonKey(name: 'video_codec') String? videoCodec,@JsonKey(name: 'audio_codec') String? audioCodec,@JsonKey(name: 'bit_rate') int? bitRate
 });
 
 
@@ -523,7 +523,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? format,  int? width,  int? height,  String? videoCodec,  String? audioCodec,  int? bitRate)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? format,  int? width,  int? height, @JsonKey(name: 'video_codec')  String? videoCodec, @JsonKey(name: 'audio_codec')  String? audioCodec, @JsonKey(name: 'bit_rate')  int? bitRate)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SceneFile() when $default != null:
 return $default(_that.format,_that.width,_that.height,_that.videoCodec,_that.audioCodec,_that.bitRate);case _:
@@ -544,7 +544,7 @@ return $default(_that.format,_that.width,_that.height,_that.videoCodec,_that.aud
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? format,  int? width,  int? height,  String? videoCodec,  String? audioCodec,  int? bitRate)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? format,  int? width,  int? height, @JsonKey(name: 'video_codec')  String? videoCodec, @JsonKey(name: 'audio_codec')  String? audioCodec, @JsonKey(name: 'bit_rate')  int? bitRate)  $default,) {final _that = this;
 switch (_that) {
 case _SceneFile():
 return $default(_that.format,_that.width,_that.height,_that.videoCodec,_that.audioCodec,_that.bitRate);case _:
@@ -564,7 +564,7 @@ return $default(_that.format,_that.width,_that.height,_that.videoCodec,_that.aud
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? format,  int? width,  int? height,  String? videoCodec,  String? audioCodec,  int? bitRate)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? format,  int? width,  int? height, @JsonKey(name: 'video_codec')  String? videoCodec, @JsonKey(name: 'audio_codec')  String? audioCodec, @JsonKey(name: 'bit_rate')  int? bitRate)?  $default,) {final _that = this;
 switch (_that) {
 case _SceneFile() when $default != null:
 return $default(_that.format,_that.width,_that.height,_that.videoCodec,_that.audioCodec,_that.bitRate);case _:
@@ -579,15 +579,15 @@ return $default(_that.format,_that.width,_that.height,_that.videoCodec,_that.aud
 @JsonSerializable()
 
 class _SceneFile implements SceneFile {
-  const _SceneFile({required this.format, required this.width, required this.height, required this.videoCodec, required this.audioCodec, required this.bitRate});
+  const _SceneFile({required this.format, required this.width, required this.height, @JsonKey(name: 'video_codec') required this.videoCodec, @JsonKey(name: 'audio_codec') required this.audioCodec, @JsonKey(name: 'bit_rate') required this.bitRate});
   factory _SceneFile.fromJson(Map<String, dynamic> json) => _$SceneFileFromJson(json);
 
 @override final  String? format;
 @override final  int? width;
 @override final  int? height;
-@override final  String? videoCodec;
-@override final  String? audioCodec;
-@override final  int? bitRate;
+@override@JsonKey(name: 'video_codec') final  String? videoCodec;
+@override@JsonKey(name: 'audio_codec') final  String? audioCodec;
+@override@JsonKey(name: 'bit_rate') final  int? bitRate;
 
 /// Create a copy of SceneFile
 /// with the given fields replaced by the non-null parameter values.
@@ -622,7 +622,7 @@ abstract mixin class _$SceneFileCopyWith<$Res> implements $SceneFileCopyWith<$Re
   factory _$SceneFileCopyWith(_SceneFile value, $Res Function(_SceneFile) _then) = __$SceneFileCopyWithImpl;
 @override @useResult
 $Res call({
- String? format, int? width, int? height, String? videoCodec, String? audioCodec, int? bitRate
+ String? format, int? width, int? height,@JsonKey(name: 'video_codec') String? videoCodec,@JsonKey(name: 'audio_codec') String? audioCodec,@JsonKey(name: 'bit_rate') int? bitRate
 });
 
 

@@ -12,7 +12,8 @@ part of 'video_player_provider.dart';
 @ProviderFor(PlayerState)
 final playerStateProvider = PlayerStateProvider._();
 
-final class PlayerStateProvider extends $NotifierProvider<PlayerState, Scene?> {
+final class PlayerStateProvider
+    extends $NotifierProvider<PlayerState, GlobalPlayerState> {
   PlayerStateProvider._()
     : super(
         from: null,
@@ -32,27 +33,27 @@ final class PlayerStateProvider extends $NotifierProvider<PlayerState, Scene?> {
   PlayerState create() => PlayerState();
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(Scene? value) {
+  Override overrideWithValue(GlobalPlayerState value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<Scene?>(value),
+      providerOverride: $SyncValueProvider<GlobalPlayerState>(value),
     );
   }
 }
 
-String _$playerStateHash() => r'38081e6ff5611d806dcbb2f4e590cd9da97082d4';
+String _$playerStateHash() => r'539b567c9ea1cb130105a56151961ca50fa35a07';
 
-abstract class _$PlayerState extends $Notifier<Scene?> {
-  Scene? build();
+abstract class _$PlayerState extends $Notifier<GlobalPlayerState> {
+  GlobalPlayerState build();
   @$mustCallSuper
   @override
   void runBuild() {
-    final ref = this.ref as $Ref<Scene?, Scene?>;
+    final ref = this.ref as $Ref<GlobalPlayerState, GlobalPlayerState>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<Scene?, Scene?>,
-              Scene?,
+              AnyNotifier<GlobalPlayerState, GlobalPlayerState>,
+              GlobalPlayerState,
               Object?,
               Object?
             >;

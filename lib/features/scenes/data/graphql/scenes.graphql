@@ -1,36 +1,59 @@
+fragment SlimSceneData on Scene {
+  id
+  title
+  date
+  rating100
+  o_counter
+  organized
+  interactive
+  resume_time
+  play_count
+  paths {
+    screenshot
+    preview
+    stream
+  }
+  studio {
+    id
+    name
+  }
+  performers {
+    id
+    name
+  }
+}
+
+fragment SceneData on Scene {
+  ...SlimSceneData
+  details
+  urls
+  director
+  files {
+    format
+    width
+    height
+    video_codec
+    audio_codec
+    bit_rate
+  }
+  tags {
+    id
+    name
+  }
+}
+
 query FindScenes($filter: FindFilterType, $scene_filter: SceneFilterType) {
   findScenes(filter: $filter, scene_filter: $scene_filter) {
     count
     scenes {
-      id
-      title
-      date
-      rating100
-      paths {
-        screenshot
-        preview
-      }
-      studio {
-        id
-        name
-      }
-      performers {
-        id
-        name
-      }
+      ...SlimSceneData
     }
   }
 }
 
 query FindScene($id: ID!) {
   findScene(id: $id) {
-    id
-    title
-    details
-    path
-    date
-    rating
-    rating100
+    ...SceneData
   }
 }
 

@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Performer {
 
- String get id; String get name; String? get disambiguation; List<String> get urls; String? get gender; String? get birthdate; String? get ethnicity; String? get country; String? get eyeColor; int? get heightCm; String? get measurements; String? get fakeTits; double? get penisLength; String? get circumcised; String? get careerStart; String? get careerEnd; String? get tattoos; String? get piercings; List<String> get aliasList; bool get favorite; String? get imagePath; int get sceneCount; int get imageCount; int get galleryCount; int get groupCount; int? get rating100; String? get details; String? get deathDate; String? get hairColor; int? get weight; List<String> get tagIds; List<String> get tagNames;
+ String get id; String get name; String? get disambiguation; List<String> get urls; String? get gender; String? get birthdate; String? get ethnicity; String? get country;@JsonKey(name: 'eye_color') String? get eyeColor;@JsonKey(name: 'height_cm') int? get heightCm; String? get measurements;@JsonKey(name: 'fake_tits') String? get fakeTits;@JsonKey(name: 'penis_length') double? get penisLength; String? get circumcised;@JsonKey(name: 'career_start') String? get careerStart;@JsonKey(name: 'career_end') String? get careerEnd; String? get tattoos; String? get piercings;@JsonKey(name: 'alias_list') List<String> get aliasList; bool get favorite;@JsonKey(name: 'image_path') String? get imagePath;@JsonKey(name: 'scene_count') int get sceneCount;@JsonKey(name: 'image_count') int get imageCount;@JsonKey(name: 'gallery_count') int get galleryCount;@JsonKey(name: 'group_count') int get groupCount; int? get rating100; String? get details;@JsonKey(name: 'death_date') String? get deathDate;@JsonKey(name: 'hair_color') String? get hairColor; int? get weight;@JsonKey(name: 'tag_ids') List<String> get tagIds;@JsonKey(name: 'tag_names') List<String> get tagNames;
 /// Create a copy of Performer
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $PerformerCopyWith<$Res>  {
   factory $PerformerCopyWith(Performer value, $Res Function(Performer) _then) = _$PerformerCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, String? disambiguation, List<String> urls, String? gender, String? birthdate, String? ethnicity, String? country, String? eyeColor, int? heightCm, String? measurements, String? fakeTits, double? penisLength, String? circumcised, String? careerStart, String? careerEnd, String? tattoos, String? piercings, List<String> aliasList, bool favorite, String? imagePath, int sceneCount, int imageCount, int galleryCount, int groupCount, int? rating100, String? details, String? deathDate, String? hairColor, int? weight, List<String> tagIds, List<String> tagNames
+ String id, String name, String? disambiguation, List<String> urls, String? gender, String? birthdate, String? ethnicity, String? country,@JsonKey(name: 'eye_color') String? eyeColor,@JsonKey(name: 'height_cm') int? heightCm, String? measurements,@JsonKey(name: 'fake_tits') String? fakeTits,@JsonKey(name: 'penis_length') double? penisLength, String? circumcised,@JsonKey(name: 'career_start') String? careerStart,@JsonKey(name: 'career_end') String? careerEnd, String? tattoos, String? piercings,@JsonKey(name: 'alias_list') List<String> aliasList, bool favorite,@JsonKey(name: 'image_path') String? imagePath,@JsonKey(name: 'scene_count') int sceneCount,@JsonKey(name: 'image_count') int imageCount,@JsonKey(name: 'gallery_count') int galleryCount,@JsonKey(name: 'group_count') int groupCount, int? rating100, String? details,@JsonKey(name: 'death_date') String? deathDate,@JsonKey(name: 'hair_color') String? hairColor, int? weight,@JsonKey(name: 'tag_ids') List<String> tagIds,@JsonKey(name: 'tag_names') List<String> tagNames
 });
 
 
@@ -184,7 +184,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String? disambiguation,  List<String> urls,  String? gender,  String? birthdate,  String? ethnicity,  String? country,  String? eyeColor,  int? heightCm,  String? measurements,  String? fakeTits,  double? penisLength,  String? circumcised,  String? careerStart,  String? careerEnd,  String? tattoos,  String? piercings,  List<String> aliasList,  bool favorite,  String? imagePath,  int sceneCount,  int imageCount,  int galleryCount,  int groupCount,  int? rating100,  String? details,  String? deathDate,  String? hairColor,  int? weight,  List<String> tagIds,  List<String> tagNames)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String? disambiguation,  List<String> urls,  String? gender,  String? birthdate,  String? ethnicity,  String? country, @JsonKey(name: 'eye_color')  String? eyeColor, @JsonKey(name: 'height_cm')  int? heightCm,  String? measurements, @JsonKey(name: 'fake_tits')  String? fakeTits, @JsonKey(name: 'penis_length')  double? penisLength,  String? circumcised, @JsonKey(name: 'career_start')  String? careerStart, @JsonKey(name: 'career_end')  String? careerEnd,  String? tattoos,  String? piercings, @JsonKey(name: 'alias_list')  List<String> aliasList,  bool favorite, @JsonKey(name: 'image_path')  String? imagePath, @JsonKey(name: 'scene_count')  int sceneCount, @JsonKey(name: 'image_count')  int imageCount, @JsonKey(name: 'gallery_count')  int galleryCount, @JsonKey(name: 'group_count')  int groupCount,  int? rating100,  String? details, @JsonKey(name: 'death_date')  String? deathDate, @JsonKey(name: 'hair_color')  String? hairColor,  int? weight, @JsonKey(name: 'tag_ids')  List<String> tagIds, @JsonKey(name: 'tag_names')  List<String> tagNames)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Performer() when $default != null:
 return $default(_that.id,_that.name,_that.disambiguation,_that.urls,_that.gender,_that.birthdate,_that.ethnicity,_that.country,_that.eyeColor,_that.heightCm,_that.measurements,_that.fakeTits,_that.penisLength,_that.circumcised,_that.careerStart,_that.careerEnd,_that.tattoos,_that.piercings,_that.aliasList,_that.favorite,_that.imagePath,_that.sceneCount,_that.imageCount,_that.galleryCount,_that.groupCount,_that.rating100,_that.details,_that.deathDate,_that.hairColor,_that.weight,_that.tagIds,_that.tagNames);case _:
@@ -205,7 +205,7 @@ return $default(_that.id,_that.name,_that.disambiguation,_that.urls,_that.gender
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String? disambiguation,  List<String> urls,  String? gender,  String? birthdate,  String? ethnicity,  String? country,  String? eyeColor,  int? heightCm,  String? measurements,  String? fakeTits,  double? penisLength,  String? circumcised,  String? careerStart,  String? careerEnd,  String? tattoos,  String? piercings,  List<String> aliasList,  bool favorite,  String? imagePath,  int sceneCount,  int imageCount,  int galleryCount,  int groupCount,  int? rating100,  String? details,  String? deathDate,  String? hairColor,  int? weight,  List<String> tagIds,  List<String> tagNames)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String? disambiguation,  List<String> urls,  String? gender,  String? birthdate,  String? ethnicity,  String? country, @JsonKey(name: 'eye_color')  String? eyeColor, @JsonKey(name: 'height_cm')  int? heightCm,  String? measurements, @JsonKey(name: 'fake_tits')  String? fakeTits, @JsonKey(name: 'penis_length')  double? penisLength,  String? circumcised, @JsonKey(name: 'career_start')  String? careerStart, @JsonKey(name: 'career_end')  String? careerEnd,  String? tattoos,  String? piercings, @JsonKey(name: 'alias_list')  List<String> aliasList,  bool favorite, @JsonKey(name: 'image_path')  String? imagePath, @JsonKey(name: 'scene_count')  int sceneCount, @JsonKey(name: 'image_count')  int imageCount, @JsonKey(name: 'gallery_count')  int galleryCount, @JsonKey(name: 'group_count')  int groupCount,  int? rating100,  String? details, @JsonKey(name: 'death_date')  String? deathDate, @JsonKey(name: 'hair_color')  String? hairColor,  int? weight, @JsonKey(name: 'tag_ids')  List<String> tagIds, @JsonKey(name: 'tag_names')  List<String> tagNames)  $default,) {final _that = this;
 switch (_that) {
 case _Performer():
 return $default(_that.id,_that.name,_that.disambiguation,_that.urls,_that.gender,_that.birthdate,_that.ethnicity,_that.country,_that.eyeColor,_that.heightCm,_that.measurements,_that.fakeTits,_that.penisLength,_that.circumcised,_that.careerStart,_that.careerEnd,_that.tattoos,_that.piercings,_that.aliasList,_that.favorite,_that.imagePath,_that.sceneCount,_that.imageCount,_that.galleryCount,_that.groupCount,_that.rating100,_that.details,_that.deathDate,_that.hairColor,_that.weight,_that.tagIds,_that.tagNames);case _:
@@ -225,7 +225,7 @@ return $default(_that.id,_that.name,_that.disambiguation,_that.urls,_that.gender
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String? disambiguation,  List<String> urls,  String? gender,  String? birthdate,  String? ethnicity,  String? country,  String? eyeColor,  int? heightCm,  String? measurements,  String? fakeTits,  double? penisLength,  String? circumcised,  String? careerStart,  String? careerEnd,  String? tattoos,  String? piercings,  List<String> aliasList,  bool favorite,  String? imagePath,  int sceneCount,  int imageCount,  int galleryCount,  int groupCount,  int? rating100,  String? details,  String? deathDate,  String? hairColor,  int? weight,  List<String> tagIds,  List<String> tagNames)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String? disambiguation,  List<String> urls,  String? gender,  String? birthdate,  String? ethnicity,  String? country, @JsonKey(name: 'eye_color')  String? eyeColor, @JsonKey(name: 'height_cm')  int? heightCm,  String? measurements, @JsonKey(name: 'fake_tits')  String? fakeTits, @JsonKey(name: 'penis_length')  double? penisLength,  String? circumcised, @JsonKey(name: 'career_start')  String? careerStart, @JsonKey(name: 'career_end')  String? careerEnd,  String? tattoos,  String? piercings, @JsonKey(name: 'alias_list')  List<String> aliasList,  bool favorite, @JsonKey(name: 'image_path')  String? imagePath, @JsonKey(name: 'scene_count')  int sceneCount, @JsonKey(name: 'image_count')  int imageCount, @JsonKey(name: 'gallery_count')  int galleryCount, @JsonKey(name: 'group_count')  int groupCount,  int? rating100,  String? details, @JsonKey(name: 'death_date')  String? deathDate, @JsonKey(name: 'hair_color')  String? hairColor,  int? weight, @JsonKey(name: 'tag_ids')  List<String> tagIds, @JsonKey(name: 'tag_names')  List<String> tagNames)?  $default,) {final _that = this;
 switch (_that) {
 case _Performer() when $default != null:
 return $default(_that.id,_that.name,_that.disambiguation,_that.urls,_that.gender,_that.birthdate,_that.ethnicity,_that.country,_that.eyeColor,_that.heightCm,_that.measurements,_that.fakeTits,_that.penisLength,_that.circumcised,_that.careerStart,_that.careerEnd,_that.tattoos,_that.piercings,_that.aliasList,_that.favorite,_that.imagePath,_that.sceneCount,_that.imageCount,_that.galleryCount,_that.groupCount,_that.rating100,_that.details,_that.deathDate,_that.hairColor,_that.weight,_that.tagIds,_that.tagNames);case _:
@@ -240,7 +240,7 @@ return $default(_that.id,_that.name,_that.disambiguation,_that.urls,_that.gender
 @JsonSerializable()
 
 class _Performer implements Performer {
-  const _Performer({required this.id, required this.name, this.disambiguation, required final  List<String> urls, this.gender, required this.birthdate, this.ethnicity, this.country, this.eyeColor, this.heightCm, this.measurements, this.fakeTits, this.penisLength, this.circumcised, this.careerStart, this.careerEnd, this.tattoos, this.piercings, required final  List<String> aliasList, required this.favorite, required this.imagePath, required this.sceneCount, required this.imageCount, required this.galleryCount, required this.groupCount, this.rating100, this.details, this.deathDate, this.hairColor, this.weight, required final  List<String> tagIds, required final  List<String> tagNames}): _urls = urls,_aliasList = aliasList,_tagIds = tagIds,_tagNames = tagNames;
+  const _Performer({required this.id, required this.name, this.disambiguation, required final  List<String> urls, this.gender, required this.birthdate, this.ethnicity, this.country, @JsonKey(name: 'eye_color') this.eyeColor, @JsonKey(name: 'height_cm') this.heightCm, this.measurements, @JsonKey(name: 'fake_tits') this.fakeTits, @JsonKey(name: 'penis_length') this.penisLength, this.circumcised, @JsonKey(name: 'career_start') this.careerStart, @JsonKey(name: 'career_end') this.careerEnd, this.tattoos, this.piercings, @JsonKey(name: 'alias_list') required final  List<String> aliasList, required this.favorite, @JsonKey(name: 'image_path') required this.imagePath, @JsonKey(name: 'scene_count') required this.sceneCount, @JsonKey(name: 'image_count') required this.imageCount, @JsonKey(name: 'gallery_count') required this.galleryCount, @JsonKey(name: 'group_count') required this.groupCount, this.rating100, this.details, @JsonKey(name: 'death_date') this.deathDate, @JsonKey(name: 'hair_color') this.hairColor, this.weight, @JsonKey(name: 'tag_ids') required final  List<String> tagIds, @JsonKey(name: 'tag_names') required final  List<String> tagNames}): _urls = urls,_aliasList = aliasList,_tagIds = tagIds,_tagNames = tagNames;
   factory _Performer.fromJson(Map<String, dynamic> json) => _$PerformerFromJson(json);
 
 @override final  String id;
@@ -257,43 +257,43 @@ class _Performer implements Performer {
 @override final  String? birthdate;
 @override final  String? ethnicity;
 @override final  String? country;
-@override final  String? eyeColor;
-@override final  int? heightCm;
+@override@JsonKey(name: 'eye_color') final  String? eyeColor;
+@override@JsonKey(name: 'height_cm') final  int? heightCm;
 @override final  String? measurements;
-@override final  String? fakeTits;
-@override final  double? penisLength;
+@override@JsonKey(name: 'fake_tits') final  String? fakeTits;
+@override@JsonKey(name: 'penis_length') final  double? penisLength;
 @override final  String? circumcised;
-@override final  String? careerStart;
-@override final  String? careerEnd;
+@override@JsonKey(name: 'career_start') final  String? careerStart;
+@override@JsonKey(name: 'career_end') final  String? careerEnd;
 @override final  String? tattoos;
 @override final  String? piercings;
  final  List<String> _aliasList;
-@override List<String> get aliasList {
+@override@JsonKey(name: 'alias_list') List<String> get aliasList {
   if (_aliasList is EqualUnmodifiableListView) return _aliasList;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_aliasList);
 }
 
 @override final  bool favorite;
-@override final  String? imagePath;
-@override final  int sceneCount;
-@override final  int imageCount;
-@override final  int galleryCount;
-@override final  int groupCount;
+@override@JsonKey(name: 'image_path') final  String? imagePath;
+@override@JsonKey(name: 'scene_count') final  int sceneCount;
+@override@JsonKey(name: 'image_count') final  int imageCount;
+@override@JsonKey(name: 'gallery_count') final  int galleryCount;
+@override@JsonKey(name: 'group_count') final  int groupCount;
 @override final  int? rating100;
 @override final  String? details;
-@override final  String? deathDate;
-@override final  String? hairColor;
+@override@JsonKey(name: 'death_date') final  String? deathDate;
+@override@JsonKey(name: 'hair_color') final  String? hairColor;
 @override final  int? weight;
  final  List<String> _tagIds;
-@override List<String> get tagIds {
+@override@JsonKey(name: 'tag_ids') List<String> get tagIds {
   if (_tagIds is EqualUnmodifiableListView) return _tagIds;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_tagIds);
 }
 
  final  List<String> _tagNames;
-@override List<String> get tagNames {
+@override@JsonKey(name: 'tag_names') List<String> get tagNames {
   if (_tagNames is EqualUnmodifiableListView) return _tagNames;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_tagNames);
@@ -333,7 +333,7 @@ abstract mixin class _$PerformerCopyWith<$Res> implements $PerformerCopyWith<$Re
   factory _$PerformerCopyWith(_Performer value, $Res Function(_Performer) _then) = __$PerformerCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, String? disambiguation, List<String> urls, String? gender, String? birthdate, String? ethnicity, String? country, String? eyeColor, int? heightCm, String? measurements, String? fakeTits, double? penisLength, String? circumcised, String? careerStart, String? careerEnd, String? tattoos, String? piercings, List<String> aliasList, bool favorite, String? imagePath, int sceneCount, int imageCount, int galleryCount, int groupCount, int? rating100, String? details, String? deathDate, String? hairColor, int? weight, List<String> tagIds, List<String> tagNames
+ String id, String name, String? disambiguation, List<String> urls, String? gender, String? birthdate, String? ethnicity, String? country,@JsonKey(name: 'eye_color') String? eyeColor,@JsonKey(name: 'height_cm') int? heightCm, String? measurements,@JsonKey(name: 'fake_tits') String? fakeTits,@JsonKey(name: 'penis_length') double? penisLength, String? circumcised,@JsonKey(name: 'career_start') String? careerStart,@JsonKey(name: 'career_end') String? careerEnd, String? tattoos, String? piercings,@JsonKey(name: 'alias_list') List<String> aliasList, bool favorite,@JsonKey(name: 'image_path') String? imagePath,@JsonKey(name: 'scene_count') int sceneCount,@JsonKey(name: 'image_count') int imageCount,@JsonKey(name: 'gallery_count') int galleryCount,@JsonKey(name: 'group_count') int groupCount, int? rating100, String? details,@JsonKey(name: 'death_date') String? deathDate,@JsonKey(name: 'hair_color') String? hairColor, int? weight,@JsonKey(name: 'tag_ids') List<String> tagIds,@JsonKey(name: 'tag_names') List<String> tagNames
 });
 
 

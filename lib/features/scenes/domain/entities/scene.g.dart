@@ -13,25 +13,25 @@ _Scene _$SceneFromJson(Map<String, dynamic> json) => _Scene(
   path: json['path'] as String?,
   date: DateTime.parse(json['date'] as String),
   rating100: (json['rating100'] as num?)?.toInt(),
-  oCounter: (json['oCounter'] as num).toInt(),
+  oCounter: (json['o_counter'] as num).toInt(),
   organized: json['organized'] as bool,
   interactive: json['interactive'] as bool,
-  resumeTime: (json['resumeTime'] as num?)?.toDouble(),
-  playCount: (json['playCount'] as num).toInt(),
+  resumeTime: (json['resume_time'] as num?)?.toDouble(),
+  playCount: (json['play_count'] as num).toInt(),
   files: (json['files'] as List<dynamic>)
       .map((e) => SceneFile.fromJson(e as Map<String, dynamic>))
       .toList(),
   paths: ScenePaths.fromJson(json['paths'] as Map<String, dynamic>),
-  studioId: json['studioId'] as String?,
-  studioName: json['studioName'] as String?,
-  performerIds: (json['performerIds'] as List<dynamic>)
+  studioId: json['studio_id'] as String?,
+  studioName: json['studio_name'] as String?,
+  performerIds: (json['performer_ids'] as List<dynamic>)
       .map((e) => e as String)
       .toList(),
-  performerNames: (json['performerNames'] as List<dynamic>)
+  performerNames: (json['performer_names'] as List<dynamic>)
       .map((e) => e as String)
       .toList(),
-  tagIds: (json['tagIds'] as List<dynamic>).map((e) => e as String).toList(),
-  tagNames: (json['tagNames'] as List<dynamic>)
+  tagIds: (json['tag_ids'] as List<dynamic>).map((e) => e as String).toList(),
+  tagNames: (json['tag_names'] as List<dynamic>)
       .map((e) => e as String)
       .toList(),
 );
@@ -43,28 +43,28 @@ Map<String, dynamic> _$SceneToJson(_Scene instance) => <String, dynamic>{
   'path': instance.path,
   'date': instance.date.toIso8601String(),
   'rating100': instance.rating100,
-  'oCounter': instance.oCounter,
+  'o_counter': instance.oCounter,
   'organized': instance.organized,
   'interactive': instance.interactive,
-  'resumeTime': instance.resumeTime,
-  'playCount': instance.playCount,
+  'resume_time': instance.resumeTime,
+  'play_count': instance.playCount,
   'files': instance.files,
   'paths': instance.paths,
-  'studioId': instance.studioId,
-  'studioName': instance.studioName,
-  'performerIds': instance.performerIds,
-  'performerNames': instance.performerNames,
-  'tagIds': instance.tagIds,
-  'tagNames': instance.tagNames,
+  'studio_id': instance.studioId,
+  'studio_name': instance.studioName,
+  'performer_ids': instance.performerIds,
+  'performer_names': instance.performerNames,
+  'tag_ids': instance.tagIds,
+  'tag_names': instance.tagNames,
 };
 
 _SceneFile _$SceneFileFromJson(Map<String, dynamic> json) => _SceneFile(
   format: json['format'] as String?,
   width: (json['width'] as num?)?.toInt(),
   height: (json['height'] as num?)?.toInt(),
-  videoCodec: json['videoCodec'] as String?,
-  audioCodec: json['audioCodec'] as String?,
-  bitRate: (json['bitRate'] as num?)?.toInt(),
+  videoCodec: json['video_codec'] as String?,
+  audioCodec: json['audio_codec'] as String?,
+  bitRate: (json['bit_rate'] as num?)?.toInt(),
 );
 
 Map<String, dynamic> _$SceneFileToJson(_SceneFile instance) =>
@@ -72,9 +72,9 @@ Map<String, dynamic> _$SceneFileToJson(_SceneFile instance) =>
       'format': instance.format,
       'width': instance.width,
       'height': instance.height,
-      'videoCodec': instance.videoCodec,
-      'audioCodec': instance.audioCodec,
-      'bitRate': instance.bitRate,
+      'video_codec': instance.videoCodec,
+      'audio_codec': instance.audioCodec,
+      'bit_rate': instance.bitRate,
     };
 
 _ScenePaths _$ScenePathsFromJson(Map<String, dynamic> json) => _ScenePaths(

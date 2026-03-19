@@ -12,19 +12,19 @@ abstract class Scene with _$Scene {
     String? path,
     required DateTime date,
     required int? rating100,
-    required int oCounter,
+    @JsonKey(name: 'o_counter') required int oCounter,
     required bool organized,
     required bool interactive,
-    required double? resumeTime,
-    required int playCount,
+    @JsonKey(name: 'resume_time') required double? resumeTime,
+    @JsonKey(name: 'play_count') required int playCount,
     required List<SceneFile> files,
     required ScenePaths paths,
-    required String? studioId,
-    required String? studioName,
-    required List<String> performerIds,
-    required List<String> performerNames,
-    required List<String> tagIds,
-    required List<String> tagNames,
+    @JsonKey(name: 'studio_id') required String? studioId,
+    @JsonKey(name: 'studio_name') required String? studioName,
+    @JsonKey(name: 'performer_ids') required List<String> performerIds,
+    @JsonKey(name: 'performer_names') required List<String> performerNames,
+    @JsonKey(name: 'tag_ids') required List<String> tagIds,
+    @JsonKey(name: 'tag_names') required List<String> tagNames,
   }) = _Scene;
 
   factory Scene.fromJson(Map<String, dynamic> json) => _$SceneFromJson(json);
@@ -36,12 +36,13 @@ abstract class SceneFile with _$SceneFile {
     required String? format,
     required int? width,
     required int? height,
-    required String? videoCodec,
-    required String? audioCodec,
-    required int? bitRate,
+    @JsonKey(name: 'video_codec') required String? videoCodec,
+    @JsonKey(name: 'audio_codec') required String? audioCodec,
+    @JsonKey(name: 'bit_rate') required int? bitRate,
   }) = _SceneFile;
 
-  factory SceneFile.fromJson(Map<String, dynamic> json) => _$SceneFileFromJson(json);
+  factory SceneFile.fromJson(Map<String, dynamic> json) =>
+      _$SceneFileFromJson(json);
 }
 
 @freezed
@@ -52,5 +53,6 @@ abstract class ScenePaths with _$ScenePaths {
     required String? stream,
   }) = _ScenePaths;
 
-  factory ScenePaths.fromJson(Map<String, dynamic> json) => _$ScenePathsFromJson(json);
+  factory ScenePaths.fromJson(Map<String, dynamic> json) =>
+      _$ScenePathsFromJson(json);
 }

@@ -2,6 +2,12 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:go_router/go_router.dart';
 import '../../scenes/presentation/pages/scenes_page.dart';
 import '../../scenes/presentation/pages/scene_details_page.dart';
+import '../../performers/presentation/pages/performers_page.dart';
+import '../../performers/presentation/pages/performer_details_page.dart';
+import '../../studios/presentation/pages/studios_page.dart';
+import '../../tags/presentation/pages/tags_page.dart';
+import '../../galleries/presentation/pages/galleries_page.dart';
+import '../../groups/presentation/pages/groups_page.dart';
 import '../../setup/presentation/settings_page.dart';
 import 'shell_page.dart';
 
@@ -20,13 +26,35 @@ GoRouter router(Ref ref) {
             builder: (context, state) => const ScenesPage(),
           ),
           GoRoute(
+            path: '/performers',
+            builder: (context, state) => const PerformersPage(),
+          ),
+          GoRoute(
             path: '/settings',
             builder: (context, state) => const SettingsPage(),
+          ),
+          GoRoute(
+            path: '/studios',
+            builder: (context, state) => const StudiosPage(),
+          ),
+          GoRoute(path: '/tags', builder: (context, state) => const TagsPage()),
+          GoRoute(
+            path: '/galleries',
+            builder: (context, state) => const GalleriesPage(),
+          ),
+          GoRoute(
+            path: '/groups',
+            builder: (context, state) => const GroupsPage(),
           ),
           GoRoute(
             path: '/scene/:id',
             builder: (context, state) =>
                 SceneDetailsPage(sceneId: state.pathParameters['id']!),
+          ),
+          GoRoute(
+            path: '/performer/:id',
+            builder: (context, state) =>
+                PerformerDetailsPage(performerId: state.pathParameters['id']!),
           ),
           // Explore, Subscriptions, Library routes will be added later
         ],

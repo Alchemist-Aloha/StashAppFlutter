@@ -1,22 +1,52 @@
+fragment PerformerData on Performer {
+  id
+  name
+  disambiguation
+  url
+  urls
+  gender
+  birthdate
+  ethnicity
+  country
+  eye_color
+  height_cm
+  measurements
+  fake_tits
+  penis_length
+  circumcised
+  career_start
+  career_end
+  tattoos
+  piercings
+  alias_list
+  favorite
+  image_path
+  details
+  death_date
+  hair_color
+  weight
+  rating100
+  scene_count
+  image_count
+  gallery_count
+  group_count
+  tags {
+    id
+    name
+  }
+}
+
 query FindPerformers($filter: FindFilterType, $performer_filter: PerformerFilterType) {
   findPerformers(filter: $filter, performer_filter: $performer_filter) {
     count
     performers {
-      id
-      name
-      details
-      image_path
-      disambiguation
+      ...PerformerData
     }
   }
 }
 
 query FindPerformer($id: ID!) {
   findPerformer(id: $id) {
-    id
-    name
-    details
-    image_path
-    disambiguation
+    ...PerformerData
   }
 }

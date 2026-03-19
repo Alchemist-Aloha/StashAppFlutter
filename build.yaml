@@ -11,6 +11,9 @@ targets:
         enabled: false
       graphql_codegen:
         options:
+          clients:
+            - graphql
           schema_mapping:
-            - schema: lib/schema.graphql
+            - schema: lib/core/data/graphql/schema.graphql
               queries_glob: lib/**/*.graphql
+              output_directory: lib/core/data/graphql/__generated__

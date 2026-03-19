@@ -1,4 +1,6 @@
 import 'package:graphql/client.dart';
+import '../../../../core/data/graphql/schema.graphql.dart';
+import '../graphql/scenes.graphql.dart';
 import '../../domain/entities/scene.dart';
 import '../../domain/repositories/scene_repository.dart';
 
@@ -12,43 +14,50 @@ class GraphQLSceneRepository implements SceneRepository {
     int? perPage,
     String? filter,
   }) async {
-    const String findScenesQuery = r'''
-      query FindScenes($page: Int, $perPage: Int) {
-        findScenes(filter: { page: $page, per_page: $perPage }) {
-          count
-          scenes {
-            id
-            title
-            date
-            rating
-          }
-        }
-      }
-    ''';
-
-    final result = await client.query(
-      QueryOptions(
-        document: gql(findScenesQuery),
-        variables: {'page': page, 'perPage': perPage},
+    final result = await client.query$FindScenes(
+      Options$Query$FindScenes(
+        variables: Variables$Query$FindScenes(
+          filter: Input$FindFilterType(page: page, per_page: perPage),
+          scene_filter: filter != null
+              ? Input$SceneFilterType(
+                  title: Input$StringCriterionInput(
+                    value: filter,
+                    modifier: Enum$CriterionModifier.EQUALS,
+                  ),
+                )
+              : null,
+        ),
       ),
     );
 
     if (result.hasException) throw result.exception!;
 
-    final List scenesJson = result.data?['findScenes']?['scenes'] ?? [];
-
-    return scenesJson
+    return result.parsedData!.findScenes.scenes
         .map(
           (s) => Scene(
-            id: s['id'],
-            title: s['title'] ?? '',
-            date: DateTime.tryParse(s['date'] ?? '') ?? DateTime.now(),
-            rating: (s['rating'] as num?)?.toDouble() ?? 0.0,
-            tags: [],
-            performers: [],
-            studio: null,
-            streamUrl: null,
-            thumbUrl: null,
+            id: s.id,
+            title: s.title ?? '',
+            details: null,
+            path: null,
+            date: DateTime.tryParse(s.date ?? '') ?? DateTime.now(),
+            rating100: s.rating100,
+            oCounter: s.o_counter ?? 0,
+            organized: s.organized,
+            interactive: s.interactive,
+            resumeTime: s.resume_time,
+            playCount: s.play_count ?? 0,
+            files: [], // Slim data doesn't have files
+            paths: ScenePaths(
+              screenshot: s.paths.screenshot,
+              preview: s.paths.preview,
+              stream: s.paths.stream,
+            ),
+            studioId: s.studio?.id,
+            studioName: s.studio?.name,
+            performerIds: s.performers.map((p) => p.id).toList(),
+            performerNames: s.performers.map((p) => p.name).toList(),
+            tagIds: [],
+            tagNames: [],
           ),
         )
         .toList();
@@ -56,38 +65,49 @@ class GraphQLSceneRepository implements SceneRepository {
 
   @override
   Future<Scene> getSceneById(String id) async {
-    const String findSceneQuery = r'''
-      query FindScene($id: ID!) {
-        findScene(id: $id) {
-          id
-          title
-          date
-          rating
-        }
-      }
-    ''';
-
-    final result = await client.query(
-      QueryOptions(document: gql(findSceneQuery), variables: {'id': id}),
+    final result = await client.query$FindScene(
+      Options$Query$FindScene(variables: Variables$Query$FindScene(id: id)),
     );
 
     if (result.hasException) throw result.exception!;
-
-    final sceneJson = result.data?['findScene'];
-    if (sceneJson == null) {
-      throw StateError('Scene not found for id: $id');
-    }
+    final s = result.parsedData!.findScene;
+    if (s == null) throw StateError('Scene not found');
 
     return Scene(
-      id: sceneJson['id'],
-      title: sceneJson['title'] ?? '',
-      date: DateTime.tryParse(sceneJson['date'] ?? '') ?? DateTime.now(),
-      rating: (sceneJson['rating'] as num?)?.toDouble() ?? 0.0,
-      tags: [],
-      performers: [],
-      studio: null,
-      streamUrl: null,
-      thumbUrl: null,
+      id: s.id,
+      title: s.title ?? '',
+      details: s.details,
+      path: null,
+      date: DateTime.tryParse(s.date ?? '') ?? DateTime.now(),
+      rating100: s.rating100,
+      oCounter: s.o_counter ?? 0,
+      organized: s.organized,
+      interactive: s.interactive,
+      resumeTime: s.resume_time,
+      playCount: s.play_count ?? 0,
+      files: s.files
+          .map(
+            (f) => SceneFile(
+              format: f.format,
+              width: f.width,
+              height: f.height,
+              videoCodec: f.video_codec,
+              audioCodec: f.audio_codec,
+              bitRate: f.bit_rate,
+            ),
+          )
+          .toList(),
+      paths: ScenePaths(
+        screenshot: s.paths.screenshot,
+        preview: s.paths.preview,
+        stream: s.paths.stream,
+      ),
+      studioId: s.studio?.id,
+      studioName: s.studio?.name,
+      performerIds: s.performers.map((p) => p.id).toList(),
+      performerNames: s.performers.map((p) => p.name).toList(),
+      tagIds: s.tags.map((t) => t.id).toList(),
+      tagNames: s.tags.map((t) => t.name).toList(),
     );
   }
 }

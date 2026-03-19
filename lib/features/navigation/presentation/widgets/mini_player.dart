@@ -8,23 +8,62 @@ class MiniPlayer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final activeScene = ref.watch(playerStateProvider);
+    final playerState = ref.watch(playerStateProvider);
+    final activeScene = playerState.activeScene;
+
     if (activeScene == null) return const SizedBox.shrink();
 
     return GestureDetector(
       onTap: () => context.push('/scene/${activeScene.id}'),
       child: Container(
         height: 60,
-        color: Colors.grey[900],
+        decoration: BoxDecoration(
+          color: Colors.grey[900],
+          border: Border(top: BorderSide(color: Colors.grey[800]!, width: 0.5)),
+        ),
         child: Row(
           children: [
             AspectRatio(
               aspectRatio: 16 / 9,
-              child: Image.network(activeScene.thumbUrl ?? '', fit: BoxFit.cover, errorBuilder: (c, e, s) => const Placeholder()),
+              child: Image.network(
+                activeScene.paths.screenshot ?? '',
+                fit: BoxFit.cover,
+                errorBuilder: (c, e, s) => const Icon(Icons.movie),
+              ),
             ),
             const SizedBox(width: 8),
-            Expanded(child: Text(activeScene.title, maxLines: 1, overflow: TextOverflow.ellipsis)),
-            IconButton(onPressed: () => ref.read(playerStateProvider.notifier).stop(), icon: const Icon(Icons.close)),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    activeScene.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontSize: 14, color: Colors.white),
+                  ),
+                  Text(
+                    activeScene.studioName ?? '',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
+                ],
+              ),
+            ),
+            IconButton(
+              onPressed: () =>
+                  ref.read(playerStateProvider.notifier).togglePlayPause(),
+              icon: Icon(
+                playerState.isPlaying ? Icons.pause : Icons.play_arrow,
+                color: Colors.white,
+              ),
+            ),
+            IconButton(
+              onPressed: () => ref.read(playerStateProvider.notifier).stop(),
+              icon: const Icon(Icons.close, color: Colors.white),
+            ),
           ],
         ),
       ),

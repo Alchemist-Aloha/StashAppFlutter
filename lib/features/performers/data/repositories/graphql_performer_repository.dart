@@ -1,4 +1,6 @@
 import 'package:graphql/client.dart';
+import '../../../../core/data/graphql/schema.graphql.dart';
+import '../graphql/performers.graphql.dart';
 import '../../domain/entities/performer.dart';
 import '../../domain/repositories/performer_repository.dart';
 
@@ -12,42 +14,59 @@ class GraphQLPerformerRepository implements PerformerRepository {
     int? perPage,
     String? filter,
   }) async {
-    const String findPerformersQuery = r'''
-      query FindPerformers($page: Int, $perPage: Int) {
-        findPerformers(filter: { page: $page, per_page: $perPage }) {
-          count
-          performers {
-            id
-            name
-            details
-            image_path
-          }
-        }
-      }
-    ''';
-
-    final result = await client.query(
-      QueryOptions(
-        document: gql(findPerformersQuery),
-        variables: {'page': page, 'perPage': perPage},
+    final result = await client.query$FindPerformers(
+      Options$Query$FindPerformers(
+        variables: Variables$Query$FindPerformers(
+          filter: Input$FindFilterType(page: page, per_page: perPage),
+          performer_filter: filter != null
+              ? Input$PerformerFilterType(
+                  name: Input$StringCriterionInput(
+                    value: filter,
+                    modifier: Enum$CriterionModifier.EQUALS,
+                  ),
+                )
+              : null,
+        ),
       ),
     );
 
     if (result.hasException) throw result.exception!;
 
-    final List performersJson =
-        result.data?['findPerformers']?['performers'] ?? [];
-
-    return performersJson
+    return result.parsedData!.findPerformers.performers
         .map(
           (p) => Performer(
-            id: p['id'],
-            name: p['name'] ?? '',
-            details: p['details'],
-            gender: null,
-            birthdate: null,
-            imagePath: p['image_path'],
-            tags: [],
+            id: p.id,
+            name: p.name,
+            disambiguation: p.disambiguation,
+            urls: p.urls ?? [],
+            gender: p.gender?.name,
+            birthdate: p.birthdate,
+            ethnicity: p.ethnicity,
+            country: p.country,
+            eyeColor: p.eye_color,
+            heightCm: p.height_cm,
+            measurements: p.measurements,
+            fakeTits: p.fake_tits,
+            penisLength: p.penis_length,
+            circumcised: p.circumcised?.name,
+            careerStart: p.career_start,
+            careerEnd: p.career_end,
+            tattoos: p.tattoos,
+            piercings: p.piercings,
+            aliasList: p.alias_list,
+            favorite: p.favorite,
+            imagePath: p.image_path,
+            sceneCount: p.scene_count,
+            imageCount: p.image_count,
+            galleryCount: p.gallery_count,
+            groupCount: p.group_count,
+            rating100: p.rating100,
+            details: p.details,
+            deathDate: p.death_date,
+            hairColor: p.hair_color,
+            weight: p.weight,
+            tagIds: p.tags.map((t) => t.id).toList(),
+            tagNames: p.tags.map((t) => t.name).toList(),
           ),
         )
         .toList();
@@ -55,38 +74,49 @@ class GraphQLPerformerRepository implements PerformerRepository {
 
   @override
   Future<Performer> getPerformerById(String id) async {
-    const String findPerformerQuery = r'''
-      query FindPerformer($id: ID!) {
-        findPerformer(id: $id) {
-          id
-          name
-          details
-          gender
-          birthdate
-          image_path
-        }
-      }
-    ''';
-
-    final result = await client.query(
-      QueryOptions(document: gql(findPerformerQuery), variables: {'id': id}),
+    final result = await client.query$FindPerformer(
+      Options$Query$FindPerformer(
+        variables: Variables$Query$FindPerformer(id: id),
+      ),
     );
 
     if (result.hasException) throw result.exception!;
-
-    final performerJson = result.data?['findPerformer'];
-    if (performerJson == null) {
-      throw StateError('Performer not found for id: $id');
-    }
+    final p = result.parsedData!.findPerformer;
+    if (p == null) throw StateError('Performer not found');
 
     return Performer(
-      id: performerJson['id'],
-      name: performerJson['name'] ?? '',
-      details: performerJson['details'],
-      gender: performerJson['gender'],
-      birthdate: performerJson['birthdate']?.toString(),
-      imagePath: performerJson['image_path'],
-      tags: [],
+      id: p.id,
+      name: p.name,
+      disambiguation: p.disambiguation,
+      urls: p.urls ?? [],
+      gender: p.gender?.name,
+      birthdate: p.birthdate,
+      ethnicity: p.ethnicity,
+      country: p.country,
+      eyeColor: p.eye_color,
+      heightCm: p.height_cm,
+      measurements: p.measurements,
+      fakeTits: p.fake_tits,
+      penisLength: p.penis_length,
+      circumcised: p.circumcised?.name,
+      careerStart: p.career_start,
+      careerEnd: p.career_end,
+      tattoos: p.tattoos,
+      piercings: p.piercings,
+      aliasList: p.alias_list,
+      favorite: p.favorite,
+      imagePath: p.image_path,
+      sceneCount: p.scene_count,
+      imageCount: p.image_count,
+      galleryCount: p.gallery_count,
+      groupCount: p.group_count,
+      rating100: p.rating100,
+      details: p.details,
+      deathDate: p.death_date,
+      hairColor: p.hair_color,
+      weight: p.weight,
+      tagIds: p.tags.map((t) => t.id).toList(),
+      tagNames: p.tags.map((t) => t.name).toList(),
     );
   }
 }

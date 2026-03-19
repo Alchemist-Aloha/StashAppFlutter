@@ -8,20 +8,24 @@ class ShellPage extends StatelessWidget {
 
   int _selectedIndexForPath(String path) {
     if (path.startsWith('/settings')) return 4;
-    if (path.startsWith('/explore')) return 1;
-    if (path.startsWith('/subscriptions')) return 2;
-    if (path.startsWith('/library')) return 3;
+    if (path.startsWith('/performers')) return 1;
+    if (path.startsWith('/studios')) return 2;
+    if (path.startsWith('/tags')) return 3;
     return 0;
   }
 
   String _routeForIndex(int index) {
     switch (index) {
+      case 0:
+        return '/scenes';
+      case 1:
+        return '/performers';
+      case 2:
+        return '/studios';
+      case 3:
+        return '/tags';
       case 4:
         return '/settings';
-      case 0:
-      case 1:
-      case 2:
-      case 3:
       default:
         return '/scenes';
     }
@@ -41,9 +45,9 @@ class ShellPage extends StatelessWidget {
         selectedIndex: _selectedIndexForPath(currentPath),
         destinations: const [
           NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
-          NavigationDestination(icon: Icon(Icons.explore), label: 'Explore'),
-          NavigationDestination(icon: Icon(Icons.subscriptions), label: 'Subscriptions'),
-          NavigationDestination(icon: Icon(Icons.video_library), label: 'Library'),
+          NavigationDestination(icon: Icon(Icons.people), label: 'Performers'),
+          NavigationDestination(icon: Icon(Icons.business), label: 'Studios'),
+          NavigationDestination(icon: Icon(Icons.local_offer), label: 'Tags'),
           NavigationDestination(icon: Icon(Icons.settings), label: 'Settings'),
         ],
         onDestinationSelected: (index) {

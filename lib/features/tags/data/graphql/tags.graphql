@@ -1,0 +1,26 @@
+fragment TagData on Tag {
+  id
+  name
+  description
+  image_path
+  scene_count
+  image_count
+  gallery_count
+  performer_count
+  favorite
+}
+
+query FindTags($filter: FindFilterType, $tag_filter: TagFilterType) {
+  findTags(filter: $filter, tag_filter: $tag_filter) {
+    count
+    tags {
+      ...TagData
+    }
+  }
+}
+
+query FindTag($id: ID!) {
+  findTag(id: $id) {
+    ...TagData
+  }
+}
