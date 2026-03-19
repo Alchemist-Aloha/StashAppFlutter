@@ -6,13 +6,13 @@ A mobile-first Flutter client for your **Stash** server. Designed for seamless b
 ![StashAppFlutter Showcase](docs/assets/showcase.png)
 *(Screenshot coming soon)*
 
-## Current Highlights
+## ✨ Key Features
 
-- Scene, performer, studio, and tag browsing with pagination and search.
-- Menu-based sorting/filtering across list pages.
-- Floating random-discovery actions on list pages (Scenes, Performers, Studios, Tags).
-- Scene playback with stream strategy toggles and startup diagnostics.
-- Settings-driven runtime server config (URL + API key) and UI preferences.
+- 🎬 **Seamless Playback:** Integrated video player with support for multiple streaming strategies and startup diagnostics.
+- 👤 **Rich Browsing:** Explore Scenes, Performers, Studios, and Tags with native-feel pagination and fast search.
+- 🎲 **Discovery Tools:** Floating "Random" actions to find hidden gems in your library across all categories.
+- 🔍 **Advanced Filtering:** Powerful menu-based sorting and filtering to find exactly what you're looking for.
+- 🛠️ **Native Customization:** Configure your server connection, UI preferences (Grid/List layouts), and streaming quality in one place.
 
 ## Tech Stack
 
