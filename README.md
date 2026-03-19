@@ -4,7 +4,13 @@
 A mobile-first Flutter client for your **Stash** server. Designed for seamless browsing, effortless discovery, and high-quality playback on the go.
 
 ![StashAppFlutter Showcase](docs/assets/showcase.png)
-*(Screenshot coming soon)*
+
+## 📸 Screenshots
+
+<p align="center">
+	<img src="asset/scenes.jpg" alt="Scenes feed" width="280" />
+	<img src="asset/scene_details.jpg" alt="Scene details playback" width="280" />
+</p>
 
 ## ✨ Key Features
 
