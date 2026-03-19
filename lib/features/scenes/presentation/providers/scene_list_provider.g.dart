@@ -9,6 +9,69 @@ part of 'scene_list_provider.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
+@ProviderFor(SceneSort)
+final sceneSortProvider = SceneSortProvider._();
+
+final class SceneSortProvider
+    extends $NotifierProvider<SceneSort, ({bool descending, String? sort})> {
+  SceneSortProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'sceneSortProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$sceneSortHash();
+
+  @$internal
+  @override
+  SceneSort create() => SceneSort();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(({bool descending, String? sort}) value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<({bool descending, String? sort})>(
+        value,
+      ),
+    );
+  }
+}
+
+String _$sceneSortHash() => r'454670e56538ff99f93debc540b3367ad4a6334a';
+
+abstract class _$SceneSort
+    extends $Notifier<({bool descending, String? sort})> {
+  ({bool descending, String? sort}) build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref =
+        this.ref
+            as $Ref<
+              ({bool descending, String? sort}),
+              ({bool descending, String? sort})
+            >;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<
+                ({bool descending, String? sort}),
+                ({bool descending, String? sort})
+              >,
+              ({bool descending, String? sort}),
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
 @ProviderFor(SceneSearchQuery)
 final sceneSearchQueryProvider = SceneSearchQueryProvider._();
 
@@ -85,7 +148,7 @@ final class SceneListProvider
   SceneList create() => SceneList();
 }
 
-String _$sceneListHash() => r'3d2717c90bb76fdf5339455fcce9f5138b88d1db';
+String _$sceneListHash() => r'89dbaf897a944aab99f6e36fc5cc2c5276180069';
 
 abstract class _$SceneList extends $AsyncNotifier<List<Scene>> {
   FutureOr<List<Scene>> build();

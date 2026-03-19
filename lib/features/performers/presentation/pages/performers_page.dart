@@ -22,6 +22,14 @@ class _PerformersPageState extends ConsumerState<PerformersPage> {
   _PerformerSortOption _sortOption = _PerformerSortOption.name;
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _applyServerSort(_sortOption);
+    });
+  }
+
+  @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
@@ -32,52 +40,49 @@ class _PerformersPageState extends ConsumerState<PerformersPage> {
   }
 
   List<Performer> _sortPerformers(List<Performer> input) {
-    final performers = [...input];
     switch (_sortOption) {
       case _PerformerSortOption.name:
       case _PerformerSortOption.sceneCount:
       case _PerformerSortOption.lastUpdated:
+      case _PerformerSortOption.random:
         // Server-side ordering handles these options.
         break;
-      case _PerformerSortOption.random:
-        performers.shuffle();
-        break;
     }
-    return performers;
+    return input;
   }
 
   void _applyServerSort(_PerformerSortOption option) {
     switch (option) {
       case _PerformerSortOption.name:
-        ref.read(performerListProvider.notifier).setSort(
-          sort: 'name',
-          descending: false,
-        );
+        ref
+            .read(performerListProvider.notifier)
+            .setSort(sort: 'name', descending: false);
         break;
       case _PerformerSortOption.sceneCount:
-        ref.read(performerListProvider.notifier).setSort(
-          sort: 'scene_count',
-          descending: true,
-        );
+        ref
+            .read(performerListProvider.notifier)
+            .setSort(sort: 'scene_count', descending: true);
         break;
       case _PerformerSortOption.lastUpdated:
-        ref.read(performerListProvider.notifier).setSort(
-          sort: 'updated_at',
-          descending: true,
-        );
+        ref
+            .read(performerListProvider.notifier)
+            .setSort(sort: 'updated_at', descending: true);
         break;
       case _PerformerSortOption.random:
-        // Random option intentionally remains client-side shuffle.
-        ref.read(performerListProvider.notifier).setSort(
-          sort: 'name',
-          descending: false,
-        );
+        ref
+            .read(performerListProvider.notifier)
+            .setSort(sort: 'random', descending: true);
         break;
     }
   }
 
-  void _openRandomPerformer(List<Performer> performers) {
-    if (performers.isEmpty) {
+  Future<void> _openRandomPerformer() async {
+    final random = await ref
+        .read(performerListProvider.notifier)
+        .getRandomPerformer();
+    if (!mounted) return;
+
+    if (random == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('No performers available for random navigation'),
@@ -86,8 +91,6 @@ class _PerformersPageState extends ConsumerState<PerformersPage> {
       return;
     }
 
-    final shuffled = [...performers]..shuffle();
-    final random = shuffled.first;
     context.push('/performer/${random.id}');
   }
 
@@ -212,7 +215,7 @@ class _PerformersPageState extends ConsumerState<PerformersPage> {
       ),
       floatingActionButton: performersAsync.maybeWhen(
         data: (performers) => FloatingActionButton.small(
-          onPressed: () => _openRandomPerformer(performers),
+          onPressed: _openRandomPerformer,
           tooltip: 'Random performer',
           child: const Icon(Icons.casino_outlined),
         ),

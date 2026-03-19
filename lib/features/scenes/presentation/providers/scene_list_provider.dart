@@ -16,6 +16,18 @@ final sceneRepositoryProvider = Provider<SceneRepository>((ref) {
 });
 
 @riverpod
+class SceneSort extends _$SceneSort {
+  @override
+  ({String? sort, bool descending}) build() {
+    return (sort: 'date', descending: true);
+  }
+
+  void setSort({String? sort, bool descending = true}) {
+    state = (sort: sort, descending: descending);
+  }
+}
+
+@riverpod
 class SceneSearchQuery extends _$SceneSearchQuery {
   @override
   String build() => '';
@@ -25,13 +37,10 @@ class SceneSearchQuery extends _$SceneSearchQuery {
 
 @riverpod
 class SceneList extends _$SceneList {
-  final Random _random = Random();
   int _currentPage = 1;
   static const int _perPage = kDefaultPageSize;
   bool _hasMore = true;
   bool _isLoadingMore = false;
-  String? _sort;
-  bool _descending = true;
 
   @override
   FutureOr<List<Scene>> build() async {
@@ -39,19 +48,21 @@ class SceneList extends _$SceneList {
     _hasMore = true;
     _isLoadingMore = false;
     final query = ref.watch(sceneSearchQueryProvider);
+    final sortConfig = ref.watch(sceneSortProvider);
     final repository = ref.watch(sceneRepositoryProvider);
     return repository.findScenes(
       page: _currentPage,
       perPage: _perPage,
       filter: query.isEmpty ? null : query,
-      sort: _sort,
-      descending: _descending,
+      sort: sortConfig.sort,
+      descending: sortConfig.descending,
     );
   }
 
   void setSort({String? sort, bool descending = true}) {
-    _sort = sort;
-    _descending = descending;
+    ref
+        .read(sceneSortProvider.notifier)
+        .setSort(sort: sort, descending: descending);
     _currentPage = 1;
     _hasMore = true;
     _isLoadingMore = false;
@@ -64,6 +75,7 @@ class SceneList extends _$SceneList {
     _isLoadingMore = true;
     final repository = ref.read(sceneRepositoryProvider);
     final query = ref.read(sceneSearchQueryProvider);
+    final sortConfig = ref.read(sceneSortProvider);
 
     try {
       final nextPage = _currentPage + 1;
@@ -71,8 +83,8 @@ class SceneList extends _$SceneList {
         page: nextPage,
         perPage: _perPage,
         filter: query.isEmpty ? null : query,
-        sort: _sort,
-        descending: _descending,
+        sort: sortConfig.sort,
+        descending: sortConfig.descending,
       );
 
       if (nextScenes.isEmpty) {
@@ -91,22 +103,28 @@ class SceneList extends _$SceneList {
   bool get hasMore => _hasMore;
   bool get isLoadingMore => _isLoadingMore;
 
-  Future<Scene?> getRandomScene() async {
-    final loadedScenes = state.asData?.value;
-    if (loadedScenes != null && loadedScenes.isNotEmpty) {
-      return loadedScenes[_random.nextInt(loadedScenes.length)];
+  Future<Scene?> getRandomScene({bool useCurrentFilter = false}) async {
+    final repository = ref.read(sceneRepositoryProvider);
+    final query = useCurrentFilter ? ref.read(sceneSearchQueryProvider) : '';
+
+    // Ask backend for true random ordering and pick a single item.
+    final randomPage = await repository.findScenes(
+      page: 1,
+      perPage: 1,
+      filter: query.isEmpty ? null : query,
+      sort: 'random',
+      descending: true,
+    );
+    if (randomPage.isNotEmpty) {
+      return randomPage.first;
     }
 
-    final repository = ref.read(sceneRepositoryProvider);
-    final query = ref.read(sceneSearchQueryProvider);
-    final firstPage = await repository.findScenes(
-      page: 1,
-      perPage: _perPage,
-      filter: query.isEmpty ? null : query,
-      sort: _sort,
-      descending: _descending,
-    );
-    if (firstPage.isEmpty) return null;
-    return firstPage[_random.nextInt(firstPage.length)];
+    final loadedScenes = state.asData?.value;
+    if (loadedScenes != null && loadedScenes.isNotEmpty) {
+      final random = Random();
+      return loadedScenes[random.nextInt(loadedScenes.length)];
+    }
+
+    return null;
   }
 }

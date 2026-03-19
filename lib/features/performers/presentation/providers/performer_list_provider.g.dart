@@ -9,6 +9,70 @@ part of 'performer_list_provider.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
+@ProviderFor(PerformerSort)
+final performerSortProvider = PerformerSortProvider._();
+
+final class PerformerSortProvider
+    extends
+        $NotifierProvider<PerformerSort, ({bool descending, String? sort})> {
+  PerformerSortProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'performerSortProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$performerSortHash();
+
+  @$internal
+  @override
+  PerformerSort create() => PerformerSort();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(({bool descending, String? sort}) value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<({bool descending, String? sort})>(
+        value,
+      ),
+    );
+  }
+}
+
+String _$performerSortHash() => r'4d1492d4b8c084795ab6a6c564026d91548a8bee';
+
+abstract class _$PerformerSort
+    extends $Notifier<({bool descending, String? sort})> {
+  ({bool descending, String? sort}) build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref =
+        this.ref
+            as $Ref<
+              ({bool descending, String? sort}),
+              ({bool descending, String? sort})
+            >;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<
+                ({bool descending, String? sort}),
+                ({bool descending, String? sort})
+              >,
+              ({bool descending, String? sort}),
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
 @ProviderFor(PerformerSearchQuery)
 final performerSearchQueryProvider = PerformerSearchQueryProvider._();
 
@@ -86,7 +150,7 @@ final class PerformerListProvider
   PerformerList create() => PerformerList();
 }
 
-String _$performerListHash() => r'4fd486548fcf71b18c8c02c7ba06f9a929658692';
+String _$performerListHash() => r'8d206c5e5337097b6ac985d8c1ae2570529208c8';
 
 abstract class _$PerformerList extends $AsyncNotifier<List<Performer>> {
   FutureOr<List<Performer>> build();

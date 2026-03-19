@@ -23,6 +23,14 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
   _SceneSortOption _sortOption = _SceneSortOption.dateNewest;
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _applyServerSort(_sortOption);
+    });
+  }
+
+  @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
@@ -33,53 +41,45 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
   }
 
   List<Scene> _sortScenes(List<Scene> input) {
-    final scenes = [...input];
     switch (_sortOption) {
       case _SceneSortOption.dateNewest:
       case _SceneSortOption.dateOldest:
       case _SceneSortOption.rating:
       case _SceneSortOption.playCount:
+      case _SceneSortOption.random:
         // Server-side ordering handles these options.
         break;
-      case _SceneSortOption.random:
-        scenes.shuffle();
-        break;
     }
-    return scenes;
+    return input;
   }
 
   void _applyServerSort(_SceneSortOption option) {
     switch (option) {
       case _SceneSortOption.dateNewest:
-        ref.read(sceneListProvider.notifier).setSort(
-          sort: 'date',
-          descending: true,
-        );
+        ref
+            .read(sceneListProvider.notifier)
+            .setSort(sort: 'date', descending: true);
         break;
       case _SceneSortOption.dateOldest:
-        ref.read(sceneListProvider.notifier).setSort(
-          sort: 'date',
-          descending: false,
-        );
+        ref
+            .read(sceneListProvider.notifier)
+            .setSort(sort: 'date', descending: false);
         break;
       case _SceneSortOption.rating:
-        ref.read(sceneListProvider.notifier).setSort(
-          sort: 'rating100',
-          descending: true,
-        );
+        ref
+            .read(sceneListProvider.notifier)
+            .setSort(sort: 'rating100', descending: true);
         break;
       case _SceneSortOption.playCount:
-        ref.read(sceneListProvider.notifier).setSort(
-          sort: 'play_count',
-          descending: true,
-        );
+        ref
+            .read(sceneListProvider.notifier)
+            .setSort(sort: 'play_count', descending: true);
         break;
       case _SceneSortOption.random:
         // Random option intentionally remains client-side shuffle.
-        ref.read(sceneListProvider.notifier).setSort(
-          sort: 'date',
-          descending: true,
-        );
+        ref
+            .read(sceneListProvider.notifier)
+            .setSort(sort: 'random', descending: true);
         break;
     }
   }

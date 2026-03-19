@@ -1,5 +1,36 @@
 # Known Issues
 
+## Scene rating and play-count sorting not working as expected
+
+- Status: Open
+- Area: Scene list sorting (server-side sort)
+- Severity: Medium
+
+### Symptom
+
+- Selecting scene sort by rating or play count does not produce expected ordering.
+
+### Notes
+
+- The issue appears when using server-side sort through `FindFilterType.sort` and `FindFilterType.direction`.
+- Other sort modes may still appear functional.
+
+## Performer scene-count sorting not working as expected
+
+- Status: Open
+- Area: Performer list sorting (server-side sort)
+- Severity: Medium
+
+### Symptom
+
+- Selecting performer sort by scene count does not produce expected ordering.
+
+### Notes
+
+- The issue appears when using server-side sort through `FindFilterType.sort` and `FindFilterType.direction`.
+- Sorting behavior may differ from expected backend field mapping.
+
+
 ## First video playback startup is slow
 
 - Status: Open

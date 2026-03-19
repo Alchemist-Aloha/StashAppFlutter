@@ -84,7 +84,7 @@ final class TagListProvider extends $AsyncNotifierProvider<TagList, List<Tag>> {
   TagList create() => TagList();
 }
 
-String _$tagListHash() => r'001d92bd3a212a21221c3d23a48a5bde58ec7805';
+String _$tagListHash() => r'34013e1a4fa2d0571de501f24a689a45bb0cc9d2';
 
 abstract class _$TagList extends $AsyncNotifier<List<Tag>> {
   FutureOr<List<Tag>> build();
