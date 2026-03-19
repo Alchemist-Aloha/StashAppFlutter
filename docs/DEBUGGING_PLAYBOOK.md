@@ -32,12 +32,38 @@ Checks:
 4. Check if `src` includes `+header` (indicates extra roundtrip for MIME probing).
 5. Compare first request vs second request latency for same scene.
 6. Check app logs for provider lifecycle errors (`Cannot use the Ref of playerStateProvider after it has been disposed`).
+7. Compare startup phase timings from logs:
+	- `resolver query ... elapsed=...`
+	- `resolver probe ... elapsed=...`
+	- `provider initialize done ... elapsed=...`
+	- `provider chewie ready ... chewieBuild=...`
+	- `startup chewie-wait-done ... elapsed=...`
+	- `provider first-frame ...`
 
 Interpretation:
 - Prewarm is now best-effort and non-blocking for player startup; it should not gate first frame display.
 - If MIME is valid and first start is still slow after the non-blocking change, likely backend warm-up/cold-start.
 - If `src` shows `autoplay-next`, it implies the stream was initiated via PlaybackQueue.
 - If disposed-ref errors appear near startup logs, treat those as a separate lifecycle fault before concluding pure network/backend latency.
+- If `provider initialize done` is high while resolver/probe/prewarm are low and `chewieBuild` is near zero, startup delay is not Chewie; investigate upstream/proxy/backend first-request behavior.
+
+## Reverse proxy (Caddy) first-play delay
+
+Symptoms:
+- First play after idle/start takes seconds, while next plays start quickly.
+- App logs show low resolver/probe/prewarm latency but high `provider initialize done` latency.
+
+Checks:
+1. Compare identical scene stream URL through Caddy vs direct upstream (first request and second request).
+2. Check Caddy logs for upstream dial/connect/first-byte timing on stream endpoints.
+3. Verify stream routes are not passing through response transforms/compression intended for text payloads.
+4. Confirm reverse proxy transport reuse/keepalive and compare cold connection vs warmed connection behavior.
+5. Confirm app uses normalized server URL and correct auth headers (ApiKey) to avoid retries/fallback noise.
+
+Interpretation:
+- If direct upstream is fast but proxied first request is slow, proxy config/path is the bottleneck.
+- If both direct and proxied first request are slow, backend media pipeline warm-up is the bottleneck.
+- Chewie timing near zero indicates UI layer is not responsible for first-play delay.
 
 ## Mini-player tap restarts playback
 

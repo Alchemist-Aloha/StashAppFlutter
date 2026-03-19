@@ -23,6 +23,10 @@ This folder contains agent-focused project documentation.
 - Mini-player navigation back to scene details preserves current playback session (no intentional restart).
 - Native PiP is enabled as an optional setting; PiP entry prefers fullscreen player context for video-only surface.
 - Startup diagnostics include stream resolver and player startup logs; provider lifecycle race is still being monitored.
+- Startup timing now includes resolver, probe, prewarm, initialize, Chewie build, and first-frame markers for phase-by-phase attribution.
+- Latest measurements indicate first-play delay is dominated by native initialize/upstream path, not Chewie controller/UI loading.
+- Resolver now tolerates cache re-read exceptions when stream data is present and continues with available stream candidates.
+- Scene title fallback is hardened against malformed percent-encoded paths.
 - GraphQL codegen maps to `graphql/combined_schema.graphql` and feature documents.
 
 ## Purpose
