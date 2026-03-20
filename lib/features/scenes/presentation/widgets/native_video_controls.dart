@@ -35,7 +35,7 @@ class NativeVideoControls extends ConsumerStatefulWidget {
 class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
     with WidgetsBindingObserver {
   static const _playbackSpeeds = <double>[0.75, 1.0, 1.25, 1.5, 2.0];
-  static const _controlsAutoHideDelay = Duration(milliseconds: 1500);
+  static const _controlsAutoHideDelay = Duration(milliseconds: 1000);
   static const _gestureSeekSeconds = 10;
   static const _dragSeekSensitivity = 0.30;
   static const _dragSeekCurveExponent = 1.6;
