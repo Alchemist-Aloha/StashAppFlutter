@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:video_player/video_player.dart';
 import 'package:go_router/go_router.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../../domain/entities/scene.dart';
 import '../providers/scene_list_provider.dart';
@@ -45,6 +48,7 @@ class _TiktokScenesViewState extends ConsumerState<TiktokScenesView> {
   void initState() {
     super.initState();
     _pageController.addListener(_onScroll);
+    WakelockPlus.enable();
   }
 
   @override
@@ -55,6 +59,7 @@ class _TiktokScenesViewState extends ConsumerState<TiktokScenesView> {
       controller.dispose();
     }
     _controllers.clear();
+    WakelockPlus.disable();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
@@ -173,34 +178,50 @@ class _TiktokScenesViewState extends ConsumerState<TiktokScenesView> {
   @override
   Widget build(BuildContext context) {
     final scenesAsync = ref.watch(sceneListProvider);
+    final isFullScreen = ref.watch(fullScreenModeProvider);
 
-    return scenesAsync.when(
-      data: (scenes) {
-        if (scenes.isEmpty) {
-          return const Center(child: Text('No scenes found'));
+    return PopScope(
+      canPop: !isFullScreen,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop && isFullScreen) {
+          ref.read(fullScreenModeProvider.notifier).set(false);
+          SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+          SystemChrome.setPreferredOrientations([
+            DeviceOrientation.portraitUp,
+            DeviceOrientation.portraitDown,
+            DeviceOrientation.landscapeLeft,
+            DeviceOrientation.landscapeRight,
+          ]);
         }
-
-        // Initialize first batch if needed
-        if (_controllers.isEmpty && _initFutures.isEmpty) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            _manageControllers();
-          });
-        }
-
-        return PageView.builder(
-          controller: _pageController,
-          scrollDirection: Axis.vertical,
-          itemCount: scenes.length,
-          itemBuilder: (context, index) {
-            return TiktokSceneItem(
-              scene: scenes[index],
-              controller: _controllers[scenes[index].id],
-            );
-          },
-        );
       },
-      loading: () => const Center(child: CircularProgressContext()),
-      error: (e, st) => Center(child: Text('Error: $e')),
+      child: scenesAsync.when(
+        data: (scenes) {
+          if (scenes.isEmpty) {
+            return const Center(child: Text('No scenes found'));
+          }
+  
+          // Initialize first batch if needed
+          if (_controllers.isEmpty && _initFutures.isEmpty) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _manageControllers();
+            });
+          }
+  
+          return PageView.builder(
+            controller: _pageController,
+            scrollDirection: Axis.vertical,
+            itemCount: scenes.length,
+            itemBuilder: (context, index) {
+              return TiktokSceneItem(
+                scene: scenes[index],
+                controller: _controllers[scenes[index].id],
+              );
+            },
+          );
+        },
+        loading: () => const Center(child: CircularProgressContext()),
+        error: (e, st) => Center(child: Text('Error: $e')),
+      ),
     );
   }
 }
@@ -227,7 +248,135 @@ class TiktokSceneItem extends ConsumerStatefulWidget {
 
 class _TiktokSceneItemState extends ConsumerState<TiktokSceneItem> {
   double _originalSpeed = 1.0;
+  double _currentSpeed = 5.0;
   bool _isSpeedingUp = false;
+  Timer? _playCountTimer;
+  bool _playCountIncremented = false;
+  int? _localRating;
+
+  @override
+  void initState() {
+    super.initState();
+    _localRating = widget.scene.rating100;
+    widget.controller?.addListener(_onControllerChanged);
+    if (widget.controller?.value.isPlaying == true) {
+      _startPlayCountTimer();
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.controller?.removeListener(_onControllerChanged);
+    _playCountTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(TiktokSceneItem oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.scene.id != widget.scene.id || oldWidget.scene.rating100 != widget.scene.rating100) {
+      setState(() {
+        _localRating = widget.scene.rating100;
+      });
+    }
+    if (oldWidget.controller != widget.controller) {
+      oldWidget.controller?.removeListener(_onControllerChanged);
+      widget.controller?.addListener(_onControllerChanged);
+      if (widget.controller?.value.isPlaying == true) {
+        _startPlayCountTimer();
+      }
+    }
+  }
+
+  void _onControllerChanged() {
+    if (widget.controller?.value.isPlaying == true) {
+      _startPlayCountTimer();
+    } else {
+      _playCountTimer?.cancel();
+    }
+  }
+
+  void _startPlayCountTimer() {
+    if (_playCountIncremented) return;
+    _playCountTimer?.cancel();
+    _playCountTimer = Timer(const Duration(seconds: 5), () async {
+      if (!mounted) return;
+      try {
+        await ref
+            .read(sceneRepositoryProvider)
+            .incrementScenePlayCount(widget.scene.id);
+        _playCountIncremented = true;
+        // Invalidate list to keep play counts accurate in other views, 
+        // but we don't necessarily need to trigger a full refresh of the current TikTok view 
+        // as it might be disruptive. For now, let's just invalidate.
+        ref.invalidate(sceneListProvider);
+      } catch (e) {
+        debugPrint('Failed to increment play count: $e');
+      }
+    });
+  }
+
+  void _showRatingPicker() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(AppTheme.spacingLarge),
+          decoration: BoxDecoration(
+            color: context.colors.surface,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Rate Scene', style: context.textTheme.titleLarge),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: List.generate(5, (index) {
+                  final starValue = (index + 1) * 20;
+                  final currentRating = _localRating ?? 0;
+                  return IconButton(
+                    icon: Icon(
+                      currentRating >= starValue ? Icons.star : Icons.star_border,
+                      size: 40,
+                      color: Colors.amber,
+                    ),
+                    onPressed: () async {
+                      setState(() {
+                        _localRating = starValue;
+                      });
+                      await ref
+                          .read(sceneRepositoryProvider)
+                          .updateSceneRating(widget.scene.id, starValue);
+                      ref.invalidate(sceneListProvider);
+                      if (context.mounted) Navigator.pop(context);
+                    },
+                  );
+                }),
+              ),
+              const SizedBox(height: 16),
+              TextButton(
+                onPressed: () async {
+                  setState(() {
+                    _localRating = 0;
+                  });
+                  await ref
+                      .read(sceneRepositoryProvider)
+                      .updateSceneRating(widget.scene.id, 0);
+                  ref.invalidate(sceneListProvider);
+                  if (context.mounted) Navigator.pop(context);
+                },
+                child: const Text('Clear Rating'),
+              ),
+              const SizedBox(height: AppTheme.spacingMedium),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   void _toggleFullScreen() {
     final isFullScreen = ref.read(fullScreenModeProvider);
@@ -294,8 +443,21 @@ class _TiktokSceneItemState extends ConsumerState<TiktokSceneItem> {
                 },
                 onLongPressStart: (_) {
                   _originalSpeed = controller.value.playbackSpeed;
-                  controller.setPlaybackSpeed(5.0);
+                  _currentSpeed = 5.0;
+                  controller.setPlaybackSpeed(_currentSpeed);
                   setState(() => _isSpeedingUp = true);
+                },
+                onLongPressMoveUpdate: (details) {
+                  final dy = details.localOffsetFromOrigin.dy;
+                  if (dy < 0) {
+                    // Increase speed up to 20x
+                    final extraSpeed = (-dy / 10).clamp(0, 15);
+                    final newSpeed = 5.0 + extraSpeed;
+                    if (newSpeed != _currentSpeed) {
+                      setState(() => _currentSpeed = newSpeed);
+                      controller.setPlaybackSpeed(_currentSpeed);
+                    }
+                  }
                 },
                 onLongPressEnd: (_) {
                   controller.setPlaybackSpeed(_originalSpeed);
@@ -311,17 +473,25 @@ class _TiktokSceneItemState extends ConsumerState<TiktokSceneItem> {
                 right: 0,
                 child: Center(
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
                       color: Colors.black54,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text('5x Speed', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                        SizedBox(width: 8),
-                        Icon(Icons.fast_forward, color: Colors.white, size: 20),
+                        Text(
+                          '${_currentSpeed.toStringAsFixed(1)}x Speed',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        const Icon(Icons.fast_forward,
+                            color: Colors.white, size: 20),
                       ],
                     ),
                   ),
@@ -368,6 +538,25 @@ class _TiktokSceneItemState extends ConsumerState<TiktokSceneItem> {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
+                  if (widget.scene.studioName != null && widget.scene.studioName!.isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    GestureDetector(
+                      onTap: () {
+                        if (widget.scene.studioId != null) {
+                          context.push('/studios/studio/${widget.scene.studioId}');
+                        }
+                      },
+                      child: Text(
+                        widget.scene.studioName!,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 8),
                   if (widget.scene.date != null)
                     Text(
@@ -381,6 +570,27 @@ class _TiktokSceneItemState extends ConsumerState<TiktokSceneItem> {
               ),
             ),
 
+            // Minimum Progress Bar
+            if (controller != null && controller.value.isInitialized)
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: SizedBox(
+                  height: 2,
+                  child: VideoProgressIndicator(
+                    controller,
+                    allowScrubbing: true,
+                    padding: EdgeInsets.zero,
+                    colors: VideoProgressColors(
+                      playedColor: Colors.white.withValues(alpha: 0.8),
+                      bufferedColor: Colors.white.withValues(alpha: 0.2),
+                      backgroundColor: Colors.transparent,
+                    ),
+                  ),
+                ),
+              ),
+
             // Right side buttons
             Positioned(
               bottom: 20,
@@ -388,6 +598,25 @@ class _TiktokSceneItemState extends ConsumerState<TiktokSceneItem> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  Column(
+                    children: [
+                      _OverlayButton(
+                        icon: (widget.scene.rating100 ?? 0) > 0
+                            ? Icons.star
+                            : Icons.star_border,
+                        onTap: _showRatingPicker,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        (widget.scene.rating100 ?? 0) > 0
+                            ? (widget.scene.rating100! / 20).toStringAsFixed(1)
+                            : '-',
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 12),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
                   _OverlayButton(
                     icon: Icons.fullscreen,
                     onTap: _toggleFullScreen,
@@ -402,7 +631,7 @@ class _TiktokSceneItemState extends ConsumerState<TiktokSceneItem> {
                 ],
               ),
             ),
-          ]
+          ],
       ],
     );
   }

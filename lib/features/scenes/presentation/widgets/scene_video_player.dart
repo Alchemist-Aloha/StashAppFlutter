@@ -421,6 +421,7 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
     }
 
     return PopScope(
+      canPop: true,
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) {
           ref.read(playerStateProvider.notifier).setFullScreen(false);

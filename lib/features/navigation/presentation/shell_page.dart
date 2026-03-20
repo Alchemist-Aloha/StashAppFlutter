@@ -25,9 +25,11 @@ class ShellPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentPath = GoRouterState.of(context).uri.path;
-    final activeSceneId = ref.watch(playerStateProvider).activeScene?.id;
+    final playerState = ref.watch(playerStateProvider);
+    final activeSceneId = playerState.activeScene?.id;
     final pathSceneId = _extractSceneIdFromPath(currentPath);
-    final isFullScreen = ref.watch(fullScreenModeProvider);
+    final isTiktokFullScreen = ref.watch(fullScreenModeProvider);
+    final isFullScreen = playerState.isFullScreen || isTiktokFullScreen;
     final isTiktokLayout = ref.watch(sceneTiktokLayoutProvider);
     
     final onScenesPage = currentPath == '/scenes';
