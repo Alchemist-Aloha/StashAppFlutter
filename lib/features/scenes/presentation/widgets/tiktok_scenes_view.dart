@@ -10,6 +10,7 @@ import '../providers/video_player_provider.dart';
 import '../../data/repositories/stream_resolver.dart';
 import '../../../../core/presentation/theme/app_theme.dart';
 import '../../../../core/data/graphql/media_headers_provider.dart';
+import 'native_video_controls.dart';
 
 class FullScreenMode extends Notifier<bool> {
   @override
@@ -54,6 +55,13 @@ class _TiktokScenesViewState extends ConsumerState<TiktokScenesView> {
       controller.dispose();
     }
     _controllers.clear();
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
     super.dispose();
   }
 
@@ -115,6 +123,11 @@ class _TiktokScenesViewState extends ConsumerState<TiktokScenesView> {
       final controller = entry.value;
       if (id == scenes[_currentIndex].id) {
         if (!controller.value.isPlaying) {
+          // Stop global player if it's playing to avoid audio overlap
+          final globalPlayer = ref.read(playerStateProvider);
+          if (globalPlayer.activeScene != null) {
+            ref.read(playerStateProvider.notifier).stop();
+          }
           controller.play();
         }
       } else {
@@ -198,7 +211,7 @@ class CircularProgressContext extends StatelessWidget {
   Widget build(BuildContext context) => const CircularProgressIndicator();
 }
 
-class TiktokSceneItem extends ConsumerWidget {
+class TiktokSceneItem extends ConsumerStatefulWidget {
   final Scene scene;
   final VideoPlayerController? controller;
 
@@ -209,8 +222,39 @@ class TiktokSceneItem extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<TiktokSceneItem> createState() => _TiktokSceneItemState();
+}
+
+class _TiktokSceneItemState extends ConsumerState<TiktokSceneItem> {
+  double _originalSpeed = 1.0;
+  bool _isSpeedingUp = false;
+
+  void _toggleFullScreen() {
+    final isFullScreen = ref.read(fullScreenModeProvider);
+    final newMode = !isFullScreen;
+    ref.read(fullScreenModeProvider.notifier).set(newMode);
+    if (newMode) {
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight,
+      ]);
+    } else {
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight,
+      ]);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final isFullScreen = ref.watch(fullScreenModeProvider);
+    final playerState = ref.watch(playerStateProvider);
+    final controller = widget.controller;
 
     return Stack(
       fit: StackFit.expand,
@@ -218,107 +262,147 @@ class TiktokSceneItem extends ConsumerWidget {
         // Video background
         Container(
           color: Colors.black,
-          child: controller != null && controller!.value.isInitialized
-              ? GestureDetector(
-                  onTap: () {
-                    if (controller!.value.isPlaying) {
-                      controller!.pause();
-                    } else {
-                      controller!.play();
-                    }
-                  },
-                  child: Center(
-                    child: AspectRatio(
-                      aspectRatio: controller!.value.aspectRatio,
-                      child: VideoPlayer(controller!),
-                    ),
+          child: controller != null && controller.value.isInitialized
+              ? Center(
+                  child: AspectRatio(
+                    aspectRatio: controller.value.aspectRatio,
+                    child: VideoPlayer(controller),
                   ),
                 )
               : const Center(child: CircularProgressIndicator()),
         ),
 
-        // Gradient overlay
-        Positioned(
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: 300,
-          child: IgnorePointer(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter,
-                  colors: [
-                    Colors.black.withOpacity(0.8),
-                    Colors.transparent,
-                  ],
+        if (controller != null && controller.value.isInitialized)
+          if (isFullScreen)
+            NativeVideoControls(
+              controller: controller,
+              useDoubleTapSeek: playerState.useDoubleTapSeek,
+              enableNativePip: playerState.enableNativePip,
+              onFullScreenToggle: _toggleFullScreen,
+              scene: widget.scene,
+            )
+          else ...[
+            // TikTok touch area
+            Positioned.fill(
+              child: GestureDetector(
+                onTap: () {
+                  if (controller.value.isPlaying) {
+                    controller.pause();
+                  } else {
+                    controller.play();
+                  }
+                },
+                onLongPressStart: (_) {
+                  _originalSpeed = controller.value.playbackSpeed;
+                  controller.setPlaybackSpeed(5.0);
+                  setState(() => _isSpeedingUp = true);
+                },
+                onLongPressEnd: (_) {
+                  controller.setPlaybackSpeed(_originalSpeed);
+                  setState(() => _isSpeedingUp = false);
+                },
+              ),
+            ),
+
+            if (_isSpeedingUp)
+              Positioned(
+                top: 50,
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.black54,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text('5x Speed', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                        SizedBox(width: 8),
+                        Icon(Icons.fast_forward, color: Colors.white, size: 20),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+            // Gradient overlay
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: 300,
+              child: IgnorePointer(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
+                      colors: [
+                        Colors.black.withOpacity(0.8),
+                        Colors.transparent,
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
-        ),
 
-        // Metadata overlay
-        Positioned(
-          bottom: 20,
-          left: 16,
-          right: 80, // Space for right buttons
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                scene.title.isNotEmpty ? scene.title : 'Scene ${scene.id}',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 8),
-              if (scene.date != null)
-                Text(
-                  scene.date.toString().split(' ')[0],
-                  style: const TextStyle(
-                    color: Colors.white70,
-                    fontSize: 14,
+            // Metadata overlay
+            Positioned(
+              bottom: 20,
+              left: 16,
+              right: 80, // Space for right buttons
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.scene.title.isNotEmpty ? widget.scene.title : 'Scene ${widget.scene.id}',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-            ],
-          ),
-        ),
+                  const SizedBox(height: 8),
+                  if (widget.scene.date != null)
+                    Text(
+                      widget.scene.date.toString().split(' ')[0],
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
+                      ),
+                    ),
+                ],
+              ),
+            ),
 
-        // Right side buttons
-        Positioned(
-          bottom: 20,
-          right: 8,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _OverlayButton(
-                icon: isFullScreen ? Icons.fullscreen_exit : Icons.fullscreen,
-                onTap: () {
-                  final newMode = !isFullScreen;
-                  ref.read(fullScreenModeProvider.notifier).set(newMode);
-                  if (newMode) {
-                    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-                  } else {
-                    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-                  }
-                },
+            // Right side buttons
+            Positioned(
+              bottom: 20,
+              right: 8,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _OverlayButton(
+                    icon: Icons.fullscreen,
+                    onTap: _toggleFullScreen,
+                  ),
+                  const SizedBox(height: 16),
+                  _OverlayButton(
+                    icon: Icons.info_outline,
+                    onTap: () {
+                      context.push('/scenes/scene/${widget.scene.id}');
+                    },
+                  ),
+                ],
               ),
-              const SizedBox(height: 16),
-              _OverlayButton(
-                icon: Icons.info_outline,
-                onTap: () {
-                  context.push('/scenes/scene/${scene.id}');
-                },
-              ),
-            ],
-          ),
-        ),
+            ),
+          ]
       ],
     );
   }

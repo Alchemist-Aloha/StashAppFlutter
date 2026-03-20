@@ -435,29 +435,55 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                   ),
                   const SizedBox(height: AppTheme.spacingLarge),
                   _buildSectionHeader('Display'),
-                  SwitchListTile.adaptive(
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text('Scenes Grid Layout'),
-                    subtitle: const Text(
-                      'When on, Scenes page uses grid view by default',
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingSmall),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text('Scenes Layout', style: TextStyle(fontSize: 16)),
+                              const SizedBox(height: 4),
+                              Text('Choose the default layout for the Scenes page', style: TextStyle(fontSize: 14, color: context.colors.onSurfaceVariant)),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: AppTheme.spacingMedium),
+                        DropdownMenu<String>(
+                          initialSelection: _sceneTiktokLayout
+                                  ? 'tiktok'
+                                  : (_sceneGridLayout ? 'grid' : 'list'),
+                          onSelected: (String? value) async {
+                            if (value == null) return;
+                            setState(() {
+                              _sceneTiktokLayout = value == 'tiktok';
+                              _sceneGridLayout = value == 'grid';
+                            });
+                            await _saveToggleSettings();
+                          },
+                          dropdownMenuEntries: const [
+                            DropdownMenuEntry<String>(
+                              value: 'list',
+                              label: '1 Column',
+                              leadingIcon: Icon(Icons.view_list),
+                            ),
+                            DropdownMenuEntry<String>(
+                              value: 'grid',
+                              label: '2 Column',
+                              leadingIcon: Icon(Icons.grid_view),
+                            ),
+                            DropdownMenuEntry<String>(
+                              value: 'tiktok',
+                              label: 'Infinite Scroll',
+                              leadingIcon: Icon(Icons.swipe_up),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                    value: _sceneGridLayout,
-                    onChanged: (value) async {
-                      setState(() => _sceneGridLayout = value);
-                      await _saveToggleSettings();
-                    },
-                  ),
-                  SwitchListTile.adaptive(
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text('Scenes TikTok Layout'),
-                    subtitle: const Text(
-                      'When on, Scenes page uses a vertical swiping view',
-                    ),
-                    value: _sceneTiktokLayout,
-                    onChanged: (value) async {
-                      setState(() => _sceneTiktokLayout = value);
-                      await _saveToggleSettings();
-                    },
                   ),
                   SwitchListTile.adaptive(
                     contentPadding: EdgeInsets.zero,

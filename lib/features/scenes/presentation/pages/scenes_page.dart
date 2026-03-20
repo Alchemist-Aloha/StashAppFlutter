@@ -371,7 +371,7 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
           context.push('/scenes/scene/${scene.id}');
         },
       ),
-      floatingActionButton: randomNavigationEnabled
+      floatingActionButton: (randomNavigationEnabled && !isTiktokLayout)
           ? scenesAsync.maybeWhen(
               data: (scenes) => FloatingActionButton.small(
                 onPressed: _openRandomScene,
