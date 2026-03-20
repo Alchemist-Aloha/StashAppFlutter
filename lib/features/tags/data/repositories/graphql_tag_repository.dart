@@ -164,10 +164,7 @@ class GraphQLTagRepository implements TagRepository {
             }
           }
         '''),
-        variables: <String, dynamic>{
-          'id': id,
-          'favorite': favorite,
-        },
+        variables: <String, dynamic>{'id': id, 'favorite': favorite},
       ),
     );
 

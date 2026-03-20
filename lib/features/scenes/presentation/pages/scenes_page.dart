@@ -251,12 +251,16 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
                           _sortDescending = tempDescending;
                         });
                         _applyServerSort();
-                        await ref.read(sceneSortProvider.notifier).saveAsDefault();
+                        await ref
+                            .read(sceneSortProvider.notifier)
+                            .saveAsDefault();
                         if (context.mounted) {
                           Navigator.pop(context);
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text('Sort preferences saved as default'),
+                              content: Text(
+                                'Sort preferences saved as default',
+                              ),
                             ),
                           );
                         }
@@ -287,8 +291,7 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
     final organizedOnly = ref.watch(sceneOrganizedOnlyProvider);
     final randomNavigationEnabled = ref.watch(randomNavigationEnabledProvider);
     final hasActiveFilters =
-      filterState != SceneFilter.empty() ||
-      organizedOnly;
+        filterState != SceneFilter.empty() || organizedOnly;
 
     return ListPageScaffold<Scene>(
       title: 'Stash',

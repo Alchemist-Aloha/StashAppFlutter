@@ -114,11 +114,10 @@ class PerformerDetailsPage extends ConsumerWidget {
                           Expanded(
                             child: Text(
                               performer.name,
-                              style: context.textTheme.headlineMedium
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: context.colors.onSurface,
-                                  ),
+                              style: context.textTheme.headlineMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: context.colors.onSurface,
+                              ),
                             ),
                           ),
                           IconButton.filledTonal(

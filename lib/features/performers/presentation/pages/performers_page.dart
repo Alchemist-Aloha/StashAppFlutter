@@ -254,7 +254,8 @@ class _PerformersPageState extends ConsumerState<PerformersPage> {
                     child: const Text('Save as Default'),
                   ),
                 ),
-                const SizedBox(height: AppTheme.spacingMedium),              ],
+                const SizedBox(height: AppTheme.spacingMedium),
+              ],
             ),
           );
         },
@@ -324,7 +325,8 @@ class _PerformersPageState extends ConsumerState<PerformersPage> {
                     ChoiceChip(
                       label: const Text('Any'),
                       selected: tempGenders.isEmpty,
-                      onSelected: (_) => setModalState(() => tempGenders.clear()),
+                      onSelected: (_) =>
+                          setModalState(() => tempGenders.clear()),
                     ),
                     for (final option in const [
                       ('FEMALE', 'Female'),

@@ -81,7 +81,9 @@ class _SceneDetailsPageState extends ConsumerState<SceneDetailsPage> {
       if (widget.sceneId != sceneId) return;
 
       try {
-        await ref.read(sceneRepositoryProvider).incrementScenePlayCount(sceneId);
+        await ref
+            .read(sceneRepositoryProvider)
+            .incrementScenePlayCount(sceneId);
         _countedPlayScenes.add(sceneId);
         _scheduledPlayCountSceneId = null;
         ref.invalidate(sceneDetailsProvider(sceneId));

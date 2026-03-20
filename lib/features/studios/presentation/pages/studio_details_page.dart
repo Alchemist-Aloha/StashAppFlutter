@@ -188,8 +188,9 @@ class StudioDetailsPage extends ConsumerWidget {
                                   id: item.sceneId,
                                   title: item.title,
                                   thumbnailUrl: item.thumbnailUrl,
-                                  onTap: () =>
-                                      context.push('/scenes/scene/${item.sceneId}'),
+                                  onTap: () => context.push(
+                                    '/scenes/scene/${item.sceneId}',
+                                  ),
                                 ),
                               )
                               .toList(),

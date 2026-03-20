@@ -139,10 +139,9 @@ class GraphQLPerformerRepository implements PerformerRepository {
         .map(fromJson$Enum$GenderEnum)
         .toList();
 
-    final performerFilter =
-      (favoritesOnly || genderEnums.isNotEmpty)
+    final performerFilter = (favoritesOnly || genderEnums.isNotEmpty)
         ? Input$PerformerFilterType(
-        filter_favorites: favoritesOnly ? true : null,
+            filter_favorites: favoritesOnly ? true : null,
             gender: genderEnums.isEmpty
                 ? null
                 : Input$GenderCriterionInput(
@@ -244,10 +243,7 @@ class GraphQLPerformerRepository implements PerformerRepository {
             }
           }
         '''),
-        variables: <String, dynamic>{
-          'id': id,
-          'favorite': favorite,
-        },
+        variables: <String, dynamic>{'id': id, 'favorite': favorite},
       ),
     );
 

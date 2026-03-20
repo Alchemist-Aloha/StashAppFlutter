@@ -242,7 +242,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     );
     await prefs.setBool(_enableNativePipKey, _enableNativePip);
 
-    ref.read(randomNavigationEnabledProvider.notifier).set(_showRandomNavigation);
+    ref
+        .read(randomNavigationEnabledProvider.notifier)
+        .set(_showRandomNavigation);
 
     // Keep in-memory player state synchronized with persisted settings.
     final playerStateNotifier = ref.read(playerStateProvider.notifier);
@@ -522,9 +524,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
-        side: BorderSide(
-          color: context.colors.outline.withValues(alpha: 0.2),
-        ),
+        side: BorderSide(color: context.colors.outline.withValues(alpha: 0.2)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(AppTheme.spacingMedium),

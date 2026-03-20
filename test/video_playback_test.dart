@@ -30,7 +30,8 @@ class MockSceneRepository implements SceneRepository {
   }) async => scenes;
 
   @override
-  Future<Scene> getSceneById(String id) async => scenes.firstWhere((s) => s.id == id);
+  Future<Scene> getSceneById(String id) async =>
+      scenes.firstWhere((s) => s.id == id);
 
   @override
   Future<void> updateSceneRating(String id, int rating100) async {}
@@ -64,9 +65,9 @@ void main() {
       playCount: 0,
       files: [],
       paths: const ScenePaths(
-        screenshot: null, 
-        preview: null, 
-        stream: 'http://test.com/stream.mp4'
+        screenshot: null,
+        preview: null,
+        stream: 'http://test.com/stream.mp4',
       ),
       studioId: null,
       studioName: null,
@@ -102,8 +103,8 @@ void main() {
 
     // Find the play button in the video player overlay if not auto-started
     if (find.byIcon(Icons.play_arrow).first.evaluate().isNotEmpty) {
-       await tester.tap(find.byIcon(Icons.play_arrow).first);
-       await tester.pump();
+      await tester.tap(find.byIcon(Icons.play_arrow).first);
+      await tester.pump();
     }
   });
 }

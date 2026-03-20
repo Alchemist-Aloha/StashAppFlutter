@@ -205,7 +205,9 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
                         _sortDescending = tempDescending;
                       });
                       _applyServerSort(_sortOption);
-                      await ref.read(studioSortProvider.notifier).saveAsDefault();
+                      await ref
+                          .read(studioSortProvider.notifier)
+                          .saveAsDefault();
                       if (context.mounted) {
                         Navigator.pop(context);
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -317,8 +319,9 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
                         Navigator.pop(context);
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content:
-                                Text('Filter preferences saved as default'),
+                            content: Text(
+                              'Filter preferences saved as default',
+                            ),
                           ),
                         );
                       }

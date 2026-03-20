@@ -8,13 +8,7 @@ import '../../../../core/presentation/widgets/list_page_scaffold.dart';
 import '../../../../core/presentation/theme/app_theme.dart';
 import '../../domain/entities/tag.dart';
 
-enum _TagSortOption {
-  name,
-  sceneCount,
-  lastUpdated,
-  createdAt,
-  random,
-}
+enum _TagSortOption { name, sceneCount, lastUpdated, createdAt, random }
 
 class TagsPage extends ConsumerStatefulWidget {
   const TagsPage({super.key});
@@ -312,8 +306,9 @@ class _TagsPageState extends ConsumerState<TagsPage> {
                         Navigator.pop(context);
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content:
-                                Text('Filter preferences saved as default'),
+                            content: Text(
+                              'Filter preferences saved as default',
+                            ),
                           ),
                         );
                       }

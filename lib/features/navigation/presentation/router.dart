@@ -25,15 +25,15 @@ GoRouter router(Ref ref) {
     initialLocation: '/scenes',
     redirect: (context, state) {
       final prefs = ref.read(sharedPreferencesProvider);
-      final serverUrl =
-          normalizeGraphqlServerUrl(
-            prefs.getString('server_base_url')?.trim() ?? '',
-          );
+      final serverUrl = normalizeGraphqlServerUrl(
+        prefs.getString('server_base_url')?.trim() ?? '',
+      );
       final apiKey = prefs.getString('server_api_key')?.trim() ?? '';
 
       final isConfigured = serverUrl.isNotEmpty && apiKey.isNotEmpty;
       final isSettingsPath =
-          state.uri.path == '/settings' || state.uri.path.startsWith('/settings/');
+          state.uri.path == '/settings' ||
+          state.uri.path.startsWith('/settings/');
 
       if (!isConfigured && !isSettingsPath) {
         return '/settings';

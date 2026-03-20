@@ -28,7 +28,9 @@ class MockSceneRepository implements SceneRepository {
     String? tagId,
     SceneFilter? sceneFilter,
   }) async {
-    print('MockSceneRepository: findScenes called with filter=$filter, sort=$sort, organized=$organized');
+    print(
+      'MockSceneRepository: findScenes called with filter=$filter, sort=$sort, organized=$organized',
+    );
     var result = List<Scene>.from(scenes);
 
     if (filter != null && filter.isNotEmpty) {
@@ -42,7 +44,9 @@ class MockSceneRepository implements SceneRepository {
     }
 
     if (sceneFilter?.minRating != null) {
-      result = result.where((s) => (s.rating100 ?? 0) >= sceneFilter!.minRating!).toList();
+      result = result
+          .where((s) => (s.rating100 ?? 0) >= sceneFilter!.minRating!)
+          .toList();
     }
 
     // Simple sorting
@@ -78,7 +82,9 @@ class MockSceneRepository implements SceneRepository {
   Future<void> incrementSceneOCounter(String id) async {
     final index = scenes.indexWhere((s) => s.id == id);
     if (index != -1) {
-      scenes[index] = scenes[index].copyWith(oCounter: scenes[index].oCounter + 1);
+      scenes[index] = scenes[index].copyWith(
+        oCounter: scenes[index].oCounter + 1,
+      );
     }
   }
 
@@ -86,7 +92,9 @@ class MockSceneRepository implements SceneRepository {
   Future<void> incrementScenePlayCount(String id) async {
     final index = scenes.indexWhere((s) => s.id == id);
     if (index != -1) {
-      scenes[index] = scenes[index].copyWith(playCount: scenes[index].playCount + 1);
+      scenes[index] = scenes[index].copyWith(
+        playCount: scenes[index].playCount + 1,
+      );
     }
   }
 }
@@ -107,7 +115,11 @@ void main() {
       resumeTime: null,
       playCount: 0,
       files: [],
-      paths: const ScenePaths(screenshot: null, preview: null, stream: 'http://test.com/1'),
+      paths: const ScenePaths(
+        screenshot: null,
+        preview: null,
+        stream: 'http://test.com/1',
+      ),
       studioId: null,
       studioName: null,
       studioImagePath: null,
@@ -128,7 +140,11 @@ void main() {
       resumeTime: null,
       playCount: 10,
       files: [],
-      paths: const ScenePaths(screenshot: null, preview: null, stream: 'http://test.com/2'),
+      paths: const ScenePaths(
+        screenshot: null,
+        preview: null,
+        stream: 'http://test.com/2',
+      ),
       studioId: null,
       studioName: null,
       studioImagePath: null,
@@ -163,9 +179,9 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
 
     await tester.pumpWidget(createTestWidget());
-    await tester.pump(); 
+    await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
-    await tester.pumpAndSettle(); 
+    await tester.pumpAndSettle();
 
     // Verify initial state
     expect(find.text('Apple Scene'), findsOneWidget);
@@ -174,11 +190,11 @@ void main() {
     // Test Sorting
     await tester.tap(find.byIcon(Icons.sort));
     await tester.pump(const Duration(milliseconds: 500));
-    
+
     // Select Title sort
     await tester.tap(find.text('Title'), warnIfMissed: false);
     await tester.pump(const Duration(milliseconds: 500));
-    
+
     await tester.tap(find.text('Apply Sort'));
     await tester.pump(const Duration(milliseconds: 500));
     await tester.pump(const Duration(milliseconds: 500));

@@ -78,7 +78,8 @@ class PerformerFilterNotifier extends Notifier<PerformerFilterState> {
     final legacyGender = prefs.getString(_genderKey);
     return PerformerFilterState(
       favoritesOnly: prefs.getBool(_favoritesKey) ?? false,
-      genders: savedGenders ??
+      genders:
+          savedGenders ??
           (legacyGender == null ? const <String>[] : <String>[legacyGender]),
     );
   }
@@ -218,8 +219,8 @@ class PerformerList extends _$PerformerList {
         ? ref.read(performerSearchQueryProvider)
         : '';
     final filterState = useCurrentFilter
-      ? ref.read(performerFilterProvider)
-      : PerformerFilterState.empty;
+        ? ref.read(performerFilterProvider)
+        : PerformerFilterState.empty;
 
     final attempts = excludePerformerId == null ? 1 : 3;
     for (var i = 0; i < attempts; i++) {
