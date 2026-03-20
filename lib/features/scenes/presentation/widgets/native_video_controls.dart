@@ -2,29 +2,32 @@ import 'dart:async';
 import 'dart:math' as math;
 import 'dart:io';
 
-import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:video_player/video_player.dart';
 import '../../../../core/utils/pip_mode.dart';
+import '../providers/video_player_provider.dart';
 
-class ScrubChewieControls extends StatefulWidget {
-  const ScrubChewieControls({
+class NativeVideoControls extends ConsumerStatefulWidget {
+  const NativeVideoControls({
+    required this.controller,
     required this.useDoubleTapSeek,
     required this.enableNativePip,
+    this.onFullScreenToggle,
     super.key,
   });
 
+  final VideoPlayerController controller;
   final bool useDoubleTapSeek;
   final bool enableNativePip;
+  final VoidCallback? onFullScreenToggle;
 
   @override
-  State<ScrubChewieControls> createState() => _ScrubChewieControlsState();
+  ConsumerState<NativeVideoControls> createState() => _NativeVideoControlsState();
 }
 
-class _ScrubChewieControlsState extends State<ScrubChewieControls>
+class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
     with WidgetsBindingObserver {
-  ChewieController? _chewieController;
-  VideoPlayerController? _boundVideoController;
   static const _playbackSpeeds = <double>[0.75, 1.0, 1.25, 1.5, 2.0];
   static const _controlsAutoHideDelay = Duration(seconds: 3);
   static const _gestureSeekSeconds = 10;
@@ -41,37 +44,22 @@ class _ScrubChewieControlsState extends State<ScrubChewieControls>
   double _dragSeekAccumulatedDx = 0;
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final nextController = ChewieController.of(context);
-    if (identical(nextController, _chewieController)) return;
-
-    _boundVideoController?.removeListener(_onVideoTick);
-    _chewieController = nextController;
-    _boundVideoController = nextController.videoPlayerController;
-    _boundVideoController?.addListener(_onVideoTick);
-
-    final isPlaying = _boundVideoController?.value.isPlaying ?? false;
-    _wasPlaying = isPlaying;
-    if (isPlaying) {
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    widget.controller.addListener(_onVideoTick);
+    _wasPlaying = widget.controller.value.isPlaying;
+    if (_wasPlaying) {
       _scheduleAutoHide();
-    } else {
-      _cancelAutoHide();
-      _controlsVisible = true;
     }
   }
 
   @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
-  }
-
-  @override
-  void didUpdateWidget(covariant ScrubChewieControls oldWidget) {
+  void didUpdateWidget(covariant NativeVideoControls oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.enableNativePip != widget.enableNativePip) {
-      _showControlsTemporarily();
+    if (oldWidget.controller != widget.controller) {
+      oldWidget.controller.removeListener(_onVideoTick);
+      widget.controller.addListener(_onVideoTick);
     }
   }
 
@@ -79,7 +67,7 @@ class _ScrubChewieControlsState extends State<ScrubChewieControls>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _cancelAutoHide();
-    _boundVideoController?.removeListener(_onVideoTick);
+    widget.controller.removeListener(_onVideoTick);
     super.dispose();
   }
 
@@ -88,37 +76,26 @@ class _ScrubChewieControlsState extends State<ScrubChewieControls>
     if (!widget.enableNativePip || !Platform.isAndroid) return;
     if (state != AppLifecycleState.paused) return;
 
-    final controller = _boundVideoController;
-    if (controller == null || !controller.value.isPlaying) return;
-    if (!(_chewieController?.isFullScreen ?? false)) return;
+    final controller = widget.controller;
+    if (!controller.value.isPlaying) return;
+    
+    final isFullScreen = ref.read(playerStateProvider).isFullScreen;
+    if (!isFullScreen) return;
+    
     unawaited(PipMode.enterIfAvailable());
-  }
-
-  Future<void> _enterPipVideoOnly() async {
-    if (!widget.enableNativePip || !Platform.isAndroid) return;
-
-    final chewieController = _chewieController;
-    if (chewieController == null) return;
-
-    if (!chewieController.isFullScreen) {
-      chewieController.enterFullScreen();
-      await Future<void>.delayed(const Duration(milliseconds: 140));
-    }
-
-    await PipMode.enterIfAvailable();
   }
 
   void _onVideoTick() {
     if (!mounted) return;
 
-    final isPlaying = _boundVideoController?.value.isPlaying ?? false;
+    final isPlaying = widget.controller.value.isPlaying;
     if (isPlaying != _wasPlaying) {
       _wasPlaying = isPlaying;
       if (isPlaying) {
         _scheduleAutoHide();
       } else {
         _cancelAutoHide();
-        _controlsVisible = true;
+        setState(() => _controlsVisible = true);
       }
     }
 
@@ -133,15 +110,26 @@ class _ScrubChewieControlsState extends State<ScrubChewieControls>
 
   void _scheduleAutoHide() {
     _cancelAutoHide();
-    final isPlaying = _boundVideoController?.value.isPlaying ?? false;
+    final isPlaying = widget.controller.value.isPlaying;
     if (!isPlaying || _isScrubbing) return;
 
     _hideControlsTimer = Timer(_controlsAutoHideDelay, () {
       if (!mounted) return;
-      final stillPlaying = _boundVideoController?.value.isPlaying ?? false;
+      final stillPlaying = widget.controller.value.isPlaying;
       if (!stillPlaying || _isScrubbing || !_controlsVisible) return;
       setState(() => _controlsVisible = false);
     });
+  }
+
+  void _toggleControls() {
+    setState(() {
+      _controlsVisible = !_controlsVisible;
+    });
+    if (_controlsVisible) {
+      _scheduleAutoHide();
+    } else {
+      _cancelAutoHide();
+    }
   }
 
   void _showControlsTemporarily() {
@@ -151,32 +139,28 @@ class _ScrubChewieControlsState extends State<ScrubChewieControls>
     _scheduleAutoHide();
   }
 
-  void _seekRelativeSeconds(VideoPlayerController controller, int seconds) {
-    if (!controller.value.isInitialized) return;
-    final current = controller.value.position;
-    final duration = controller.value.duration;
+  void _seekRelativeSeconds(int seconds) {
+    if (!widget.controller.value.isInitialized) return;
+    final current = widget.controller.value.position;
+    final duration = widget.controller.value.duration;
     var target = current + Duration(seconds: seconds);
     if (target < Duration.zero) target = Duration.zero;
     if (target > duration) target = duration;
-    controller.seekTo(target);
+    widget.controller.seekTo(target);
   }
 
-  void _beginDragSeek(VideoPlayerController controller) {
-    if (!controller.value.isInitialized) return;
-    _dragSeekStartPosition = controller.value.position;
+  void _beginDragSeek() {
+    if (!widget.controller.value.isInitialized) return;
+    _dragSeekStartPosition = widget.controller.value.position;
     _dragSeekAccumulatedDx = 0;
   }
 
-  void _updateDragSeek(
-    VideoPlayerController controller,
-    DragUpdateDetails details,
-    double dragAreaWidth,
-  ) {
+  void _updateDragSeek(DragUpdateDetails details, double dragAreaWidth) {
     final startPosition = _dragSeekStartPosition;
-    if (!controller.value.isInitialized || startPosition == null) return;
+    if (!widget.controller.value.isInitialized || startPosition == null) return;
     if (dragAreaWidth <= 0) return;
 
-    final duration = controller.value.duration;
+    final duration = widget.controller.value.duration;
     if (duration <= Duration.zero) return;
 
     _dragSeekAccumulatedDx += details.primaryDelta ?? 0;
@@ -196,7 +180,7 @@ class _ScrubChewieControlsState extends State<ScrubChewieControls>
       duration.inMilliseconds.toDouble(),
     );
 
-    controller.seekTo(Duration(milliseconds: targetMs.round()));
+    widget.controller.seekTo(Duration(milliseconds: targetMs.round()));
   }
 
   void _endDragSeek() {
@@ -224,19 +208,11 @@ class _ScrubChewieControlsState extends State<ScrubChewieControls>
 
   @override
   Widget build(BuildContext context) {
-    final chewieController = _chewieController ?? ChewieController.of(context);
-    if (!identical(chewieController, _chewieController)) {
-      _boundVideoController?.removeListener(_onVideoTick);
-      _chewieController = chewieController;
-      _boundVideoController = chewieController.videoPlayerController;
-      _boundVideoController?.addListener(_onVideoTick);
-    }
-
-    final videoController = chewieController.videoPlayerController;
-    final value = videoController.value;
+    final value = widget.controller.value;
     final duration = value.duration;
     final durationMs = math.max(1, duration.inMilliseconds);
     final playbackSpeed = value.playbackSpeed;
+    final isFullScreen = ref.watch(playerStateProvider).isFullScreen;
 
     final currentMs = _isScrubbing
         ? _scrubMs
@@ -255,27 +231,21 @@ class _ScrubChewieControlsState extends State<ScrubChewieControls>
                           Expanded(
                             child: GestureDetector(
                               behavior: HitTestBehavior.opaque,
-                              onTap: _showControlsTemporarily,
+                              onTap: _toggleControls,
                               onDoubleTap: () {
-                                _seekRelativeSeconds(
-                                  videoController,
-                                  -_gestureSeekSeconds,
-                                );
-                                _showControlsTemporarily();
+                                _seekRelativeSeconds(-_gestureSeekSeconds);
                               },
+                              child: const ColoredBox(color: Colors.transparent),
                             ),
                           ),
                           Expanded(
                             child: GestureDetector(
                               behavior: HitTestBehavior.opaque,
-                              onTap: _showControlsTemporarily,
+                              onTap: _toggleControls,
                               onDoubleTap: () {
-                                _seekRelativeSeconds(
-                                  videoController,
-                                  _gestureSeekSeconds,
-                                );
-                                _showControlsTemporarily();
+                                _seekRelativeSeconds(_gestureSeekSeconds);
                               },
+                              child: const ColoredBox(color: Colors.transparent),
                             ),
                           ),
                         ],
@@ -284,28 +254,26 @@ class _ScrubChewieControlsState extends State<ScrubChewieControls>
                         builder: (context, constraints) {
                           return GestureDetector(
                             behavior: HitTestBehavior.opaque,
-                            onTap: _showControlsTemporarily,
+                            onTap: _toggleControls,
                             onHorizontalDragStart: (_) {
-                              _beginDragSeek(videoController);
+                              _beginDragSeek();
                             },
                             onHorizontalDragUpdate: (details) {
-                              _updateDragSeek(
-                                videoController,
-                                details,
-                                constraints.maxWidth,
-                              );
-                              _showControlsTemporarily();
+                              _updateDragSeek(details, constraints.maxWidth);
                             },
                             onHorizontalDragEnd: (_) {
                               _endDragSeek();
-                              _showControlsTemporarily();
                             },
                             onHorizontalDragCancel: _endDragSeek,
+                            child: const ColoredBox(color: Colors.transparent),
                           );
                         },
                       ),
               ),
-              const SizedBox(height: _controlsTouchSafeHeight),
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 180),
+                height: _controlsVisible ? _controlsTouchSafeHeight : 0,
+              ),
             ],
           ),
         ),
@@ -363,12 +331,12 @@ class _ScrubChewieControlsState extends State<ScrubChewieControls>
                         },
                         onChangeEnd: (v) {
                           final target = Duration(milliseconds: v.round());
-                          videoController.seekTo(target);
+                          widget.controller.seekTo(target);
                           setState(() {
                             _isScrubbing = false;
                             _scrubMs = 0;
                           });
-                          _showControlsTemporarily();
+                          _scheduleAutoHide();
                         },
                       ),
                     ),
@@ -388,9 +356,9 @@ class _ScrubChewieControlsState extends State<ScrubChewieControls>
                             ),
                             onPressed: () {
                               if (value.isPlaying) {
-                                videoController.pause();
+                                widget.controller.pause();
                               } else {
-                                videoController.play();
+                                widget.controller.play();
                               }
                               _showControlsTemporarily();
                             },
@@ -411,7 +379,7 @@ class _ScrubChewieControlsState extends State<ScrubChewieControls>
                           initialValue: playbackSpeed,
                           color: const Color(0xEE1C1C1C),
                           onSelected: (speed) async {
-                            await videoController.setPlaybackSpeed(speed);
+                            await widget.controller.setPlaybackSpeed(speed);
                             _showControlsTemporarily();
                           },
                           itemBuilder: (context) {
@@ -471,23 +439,24 @@ class _ScrubChewieControlsState extends State<ScrubChewieControls>
                               color: Colors.white,
                             ),
                             onPressed: () async {
-                              await _enterPipVideoOnly();
+                              if (!isFullScreen) {
+                                widget.onFullScreenToggle?.call();
+                                // Small delay to allow transition
+                                await Future.delayed(const Duration(milliseconds: 150));
+                              }
+                              await PipMode.enterIfAvailable();
                               _showControlsTemporarily();
                             },
                           ),
                         IconButton(
                           icon: Icon(
-                            chewieController.isFullScreen
+                            isFullScreen
                                 ? Icons.fullscreen_exit_rounded
                                 : Icons.fullscreen_rounded,
                             color: Colors.white,
                           ),
                           onPressed: () {
-                            if (chewieController.isFullScreen) {
-                              chewieController.exitFullScreen();
-                            } else {
-                              chewieController.enterFullScreen();
-                            }
+                            widget.onFullScreenToggle?.call();
                             _showControlsTemporarily();
                           },
                         ),

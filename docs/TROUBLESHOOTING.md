@@ -97,7 +97,7 @@ Symptoms:
 Checks:
 1. Verify seek interaction setting in Settings (`Drag` vs `Double-tap`).
 2. Confirm custom controls are active (not default Chewie controls).
-3. Ensure gestures are implemented inside `ScrubChewieControls` (fullscreen route uses controls widget).
+3. Ensure gestures are implemented inside `NativeVideoControls` (fullscreen route uses controls widget).
 
 Interpretation:
 - Page-level overlays do not apply in fullscreen Chewie route; gesture handling must live in the controls layer.

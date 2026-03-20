@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'dart:async';
 
-import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:video_player/video_player.dart';
@@ -17,6 +17,7 @@ import '../../domain/entities/scene.dart';
 import '../../domain/entities/scene_title_utils.dart';
 import '../providers/playback_queue_provider.dart';
 import '../../data/repositories/stream_resolver.dart';
+import 'native_video_controls.dart';
 
 class SceneVideoPlayer extends ConsumerStatefulWidget {
   final Scene scene;
@@ -32,9 +33,6 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
 
   bool _isStarting = false;
   String? _autoStartedSceneId;
-  String? _chewieWaitSceneId;
-  Stopwatch? _chewieWaitStopwatch;
-  String? _chewieReadyLoggedSceneId;
 
   double _effectiveAspectRatio(VideoPlayerController? controller) {
     final controllerRatio = controller?.value.aspectRatio;
@@ -69,9 +67,6 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.scene.id != widget.scene.id) {
       _autoStartedSceneId = null;
-      _chewieWaitSceneId = null;
-      _chewieWaitStopwatch = null;
-      _chewieReadyLoggedSceneId = null;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _startPlaybackIfNeeded();
       });
@@ -291,6 +286,21 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
     }
   }
 
+  Future<void> _toggleFullScreen() async {
+    final playerState = ref.read(playerStateProvider);
+    if (playerState.isFullScreen) {
+      Navigator.of(context, rootNavigator: true).pop();
+    } else {
+      await Navigator.of(context, rootNavigator: true).push(
+        MaterialPageRoute<void>(
+          builder: (context) => FullscreenPlayerPage(
+            scene: widget.scene,
+          ),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final playerState = ref.watch(playerStateProvider);
@@ -320,31 +330,12 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
       );
     }
 
-    final chewieController = playerState.chewieController;
+    final controller = playerState.videoPlayerController;
 
-    if (chewieController == null) {
-      if (_chewieWaitSceneId != widget.scene.id) {
-        _chewieWaitSceneId = widget.scene.id;
-        _chewieWaitStopwatch = Stopwatch()..start();
-        AppLogStore.instance.add(
-          'startup chewie-wait-start scene=${widget.scene.id}',
-          source: 'player_startup',
-        );
-      }
+    if (controller == null || !controller.value.isInitialized) {
       return AspectRatio(
         aspectRatio: aspectRatio,
-        child: Center(child: CircularProgressIndicator()),
-      );
-    }
-
-    if (_chewieWaitSceneId == widget.scene.id &&
-        _chewieReadyLoggedSceneId != widget.scene.id) {
-      _chewieReadyLoggedSceneId = widget.scene.id;
-      final elapsed = _chewieWaitStopwatch?.elapsedMilliseconds ?? 0;
-      _chewieWaitStopwatch?.stop();
-      AppLogStore.instance.add(
-        'startup chewie-wait-done scene=${widget.scene.id} elapsed=${elapsed}ms',
-        source: 'player_startup',
+        child: const Center(child: CircularProgressIndicator()),
       );
     }
 
@@ -352,7 +343,23 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
       aspectRatio: aspectRatio,
       child: Stack(
         children: [
-          Positioned.fill(child: Chewie(controller: chewieController)),
+          Positioned.fill(
+            child: Container(
+              color: Colors.black,
+              child: Center(
+                child: AspectRatio(
+                  aspectRatio: controller.value.aspectRatio,
+                  child: VideoPlayer(controller),
+                ),
+              ),
+            ),
+          ),
+          NativeVideoControls(
+            controller: controller,
+            useDoubleTapSeek: playerState.useDoubleTapSeek,
+            enableNativePip: playerState.enableNativePip,
+            onFullScreenToggle: _toggleFullScreen,
+          ),
           if (playerState.showVideoDebugInfo)
             Positioned(
               top: 8,
@@ -375,7 +382,7 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
             ),
           if (nextScene != null)
             Positioned(
-              bottom: 50,
+              bottom: 130, // Adjusted to be above controls
               right: 16,
               child: ElevatedButton.icon(
                 onPressed: () =>
@@ -389,6 +396,86 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
               ),
             ),
         ],
+      ),
+    );
+  }
+}
+
+class FullscreenPlayerPage extends ConsumerStatefulWidget {
+  final Scene scene;
+  const FullscreenPlayerPage({required this.scene, super.key});
+
+  @override
+  ConsumerState<FullscreenPlayerPage> createState() => _FullscreenPlayerPageState();
+}
+
+class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
+  @override
+  void initState() {
+    super.initState();
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(playerStateProvider.notifier).setFullScreen(true);
+    });
+  }
+
+  @override
+  void dispose() {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+    // Note: We don't call setFullScreen(false) here because it might be called after build
+    // but the next build will see it as false if we do it properly.
+    // Better to do it in a way that doesn't trigger build during dispose if possible.
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final playerState = ref.watch(playerStateProvider);
+    final controller = playerState.videoPlayerController;
+
+    if (controller == null || !controller.value.isInitialized) {
+      return const Scaffold(
+        backgroundColor: Colors.black,
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    return PopScope(
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) {
+          ref.read(playerStateProvider.notifier).setFullScreen(false);
+        }
+      },
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        body: Stack(
+          children: [
+            Positioned.fill(
+              child: Center(
+                child: AspectRatio(
+                  aspectRatio: controller.value.aspectRatio,
+                  child: VideoPlayer(controller),
+                ),
+              ),
+            ),
+            NativeVideoControls(
+              controller: controller,
+              useDoubleTapSeek: playerState.useDoubleTapSeek,
+              enableNativePip: playerState.enableNativePip,
+              onFullScreenToggle: () => Navigator.of(context).pop(),
+            ),
+          ],
+        ),
       ),
     );
   }

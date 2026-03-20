@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:video_player/video_player.dart';
@@ -11,15 +10,14 @@ import '../../data/repositories/stream_resolver.dart';
 import '../../../../core/data/graphql/media_headers_provider.dart';
 import '../../../../core/data/preferences/shared_preferences_provider.dart';
 import '../../../../core/utils/app_log_store.dart';
-import '../widgets/scrub_chewie_controls.dart';
 
 part 'video_player_provider.g.dart';
 
 class GlobalPlayerState {
   final Scene? activeScene;
   final VideoPlayerController? videoPlayerController;
-  final ChewieController? chewieController;
   final bool isPlaying;
+  final bool isFullScreen;
   final String? streamMimeType;
   final String? streamLabel;
   final String? streamSource;
@@ -36,8 +34,8 @@ class GlobalPlayerState {
   GlobalPlayerState({
     this.activeScene,
     this.videoPlayerController,
-    this.chewieController,
     this.isPlaying = false,
+    this.isFullScreen = false,
     this.streamMimeType,
     this.streamLabel,
     this.streamSource,
@@ -55,8 +53,8 @@ class GlobalPlayerState {
   GlobalPlayerState copyWith({
     Scene? activeScene,
     VideoPlayerController? videoPlayerController,
-    ChewieController? chewieController,
     bool? isPlaying,
+    bool? isFullScreen,
     String? streamMimeType,
     String? streamLabel,
     String? streamSource,
@@ -76,10 +74,8 @@ class GlobalPlayerState {
       videoPlayerController: clearActive
           ? null
           : (videoPlayerController ?? this.videoPlayerController),
-      chewieController: clearActive
-          ? null
-          : (chewieController ?? this.chewieController),
       isPlaying: isPlaying ?? this.isPlaying,
+      isFullScreen: isFullScreen ?? this.isFullScreen,
       streamMimeType: clearActive
           ? null
           : (streamMimeType ?? this.streamMimeType),
@@ -116,7 +112,6 @@ class PlayerState extends _$PlayerState {
   static const _enableNativePipKey = 'video_native_pip';
 
   VideoPlayerController? _videoControllerRef;
-  ChewieController? _chewieControllerRef;
   String? _firstFrameLoggedSceneId;
 
   @override
@@ -155,7 +150,6 @@ class PlayerState extends _$PlayerState {
     state = state.copyWith(useDoubleTapSeek: value);
     final prefs = ref.read(sharedPreferencesProvider);
     prefs.setBool(_useDoubleTapSeekKey, value);
-    _rebuildChewieControls();
   }
 
   void setEnableBackgroundPlayback(bool value) {
@@ -168,7 +162,6 @@ class PlayerState extends _$PlayerState {
     state = state.copyWith(enableNativePip: value);
     final prefs = ref.read(sharedPreferencesProvider);
     prefs.setBool(_enableNativePipKey, value);
-    _rebuildChewieControls();
   }
 
   void setPrewarmResult({
@@ -183,48 +176,8 @@ class PlayerState extends _$PlayerState {
     );
   }
 
-  void _rebuildChewieControls() {
-    final videoController = state.videoPlayerController;
-    if (videoController == null || !videoController.value.isInitialized) {
-      return;
-    }
-
-    final existingChewie = state.chewieController;
-    final scene = state.activeScene;
-    final initializedAspectRatio = videoController.value.aspectRatio;
-    final metadataAspectRatio = scene == null ? null : _sceneAspectRatio(scene);
-    final resolvedAspectRatio =
-        (initializedAspectRatio.isFinite && initializedAspectRatio > 0)
-        ? initializedAspectRatio
-        : (metadataAspectRatio ?? (16 / 9));
-
-    final newChewie = ChewieController(
-      videoPlayerController: videoController,
-      autoPlay: videoController.value.isPlaying,
-      looping: false,
-      aspectRatio: resolvedAspectRatio,
-      allowFullScreen: true,
-      customControls: ScrubChewieControls(
-        useDoubleTapSeek: state.useDoubleTapSeek,
-        enableNativePip: state.enableNativePip,
-      ),
-      placeholder: Container(color: Colors.black),
-    );
-
-    existingChewie?.dispose();
-    _chewieControllerRef = newChewie;
-    state = state.copyWith(chewieController: newChewie);
-  }
-
-  double? _sceneAspectRatio(Scene scene) {
-    if (scene.files.isEmpty) return null;
-    final file = scene.files.first;
-    final width = file.width;
-    final height = file.height;
-    if (width == null || height == null || width <= 0 || height <= 0) {
-      return null;
-    }
-    return width / height;
+  void setFullScreen(bool value) {
+    state = state.copyWith(isFullScreen: value);
   }
 
   Future<void> playScene(
@@ -239,8 +192,6 @@ class PlayerState extends _$PlayerState {
     int? prewarmLatencyMs,
   }) async {
     final allowBackgroundPlayback = state.enableBackgroundPlayback;
-    final useDoubleTapSeek = state.useDoubleTapSeek;
-    final enableNativePip = state.enableNativePip;
 
     AppLogStore.instance.add(
       'provider playScene begin scene=${scene.id} source=${streamSource ?? '-'} mime=${mimeType ?? '-'}',
@@ -290,7 +241,6 @@ class PlayerState extends _$PlayerState {
     state = state.copyWith(
       activeScene: scene,
       videoPlayerController: videoController,
-      chewieController: null,
       isPlaying: false,
       streamMimeType: mimeType,
       streamLabel: streamLabel,
@@ -314,43 +264,20 @@ class PlayerState extends _$PlayerState {
         source: 'player_provider',
       );
 
-      final initializedAspectRatio = videoController.value.aspectRatio;
-      final metadataAspectRatio = _sceneAspectRatio(scene);
-      final resolvedAspectRatio =
-          (initializedAspectRatio.isFinite && initializedAspectRatio > 0)
-          ? initializedAspectRatio
-          : (metadataAspectRatio ?? (16 / 9));
-
-      final chewieBuildStopwatch = Stopwatch()..start();
-      final chewieController = ChewieController(
-        videoPlayerController: videoController,
-        autoPlay: true,
-        looping: false,
-        aspectRatio: resolvedAspectRatio,
-        allowFullScreen: true,
-        customControls: ScrubChewieControls(
-          useDoubleTapSeek: useDoubleTapSeek,
-          enableNativePip: enableNativePip,
-        ),
-        placeholder: Container(color: Colors.black),
-      );
-      _chewieControllerRef = chewieController;
-      chewieBuildStopwatch.stop();
-
       state = state.copyWith(
-        chewieController: chewieController,
         isPlaying: true,
         startupLatencyMs: initializeElapsedMs,
       );
 
       AppLogStore.instance.add(
-        'provider chewie ready scene=${scene.id} chewieBuild=${chewieBuildStopwatch.elapsedMilliseconds}ms startup=${initializeElapsedMs}ms',
+        'provider ready scene=${scene.id} startup=${initializeElapsedMs}ms',
         source: 'player_provider',
       );
 
       unawaited(WakelockPlus.enable());
 
       videoController.addListener(_videoListener);
+      unawaited(videoController.play());
     } catch (e) {
       debugPrint('Error initializing video player: $e');
       AppLogStore.instance.add(
@@ -410,13 +337,9 @@ class PlayerState extends _$PlayerState {
     final videoController =
         _videoControllerRef ??
         (ref.mounted ? state.videoPlayerController : null);
-    final chewieController =
-        _chewieControllerRef ?? (ref.mounted ? state.chewieController : null);
     _videoControllerRef = null;
-    _chewieControllerRef = null;
 
     videoController?.removeListener(_videoListener);
-    chewieController?.dispose();
     await videoController?.dispose();
     await WakelockPlus.disable();
   }
