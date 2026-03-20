@@ -359,42 +359,8 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
             useDoubleTapSeek: playerState.useDoubleTapSeek,
             enableNativePip: playerState.enableNativePip,
             onFullScreenToggle: _toggleFullScreen,
+            scene: widget.scene,
           ),
-          if (playerState.showVideoDebugInfo)
-            Positioned(
-              top: 8,
-              left: 8,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.black.withAlpha(180),
-                  borderRadius: BorderRadius.circular(AppTheme.radiusSmall),
-                ),
-                child: Text(
-                  'mime: ${playerState.streamMimeType ?? 'unknown'}'
-                  '${playerState.streamLabel == null || playerState.streamLabel!.isEmpty ? '' : '  label: ${playerState.streamLabel}'}'
-                  '${playerState.streamSource == null || playerState.streamSource!.isEmpty ? '' : '  src: ${playerState.streamSource}'}'
-                  '${playerState.prewarmAttempted != true ? '' : '  prewarm: ${playerState.prewarmSucceeded == true ? 'ok' : 'fail'}${playerState.prewarmLatencyMs == null ? '' : '/${playerState.prewarmLatencyMs}ms'}'}'
-                  '${playerState.startupLatencyMs == null ? '' : '  start: ${playerState.startupLatencyMs}ms'}',
-                  style: const TextStyle(color: Colors.white70, fontSize: 11),
-                ),
-              ),
-            ),
-          if (nextScene != null)
-            Positioned(
-              bottom: 130, // Adjusted to be above controls
-              right: 16,
-              child: ElevatedButton.icon(
-                onPressed: () =>
-                    ref.read(playerStateProvider.notifier).playNext(),
-                icon: const Icon(Icons.skip_next),
-                label: Text('Next: ${nextScene.displayTitle}'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black54,
-                  foregroundColor: Colors.white,
-                ),
-              ),
-            ),
         ],
       ),
     );
@@ -413,14 +379,18 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
   @override
   void initState() {
     super.initState();
+    _enterFullscreen();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(playerStateProvider.notifier).setFullScreen(true);
+    });
+  }
+
+  void _enterFullscreen() {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(playerStateProvider.notifier).setFullScreen(true);
-    });
   }
 
   @override
@@ -432,9 +402,6 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
-    // Note: We don't call setFullScreen(false) here because it might be called after build
-    // but the next build will see it as false if we do it properly.
-    // Better to do it in a way that doesn't trigger build during dispose if possible.
     super.dispose();
   }
 
@@ -444,9 +411,9 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
     final controller = playerState.videoPlayerController;
 
     if (controller == null || !controller.value.isInitialized) {
-      return const Scaffold(
-        backgroundColor: Colors.black,
-        body: Center(child: CircularProgressIndicator()),
+      return Container(
+        color: Colors.black,
+        child: const Center(child: CircularProgressIndicator()),
       );
     }
 
@@ -456,25 +423,28 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
           ref.read(playerStateProvider.notifier).setFullScreen(false);
         }
       },
-      child: Scaffold(
-        backgroundColor: Colors.black,
-        body: Stack(
-          children: [
-            Positioned.fill(
-              child: Center(
-                child: AspectRatio(
-                  aspectRatio: controller.value.aspectRatio,
-                  child: VideoPlayer(controller),
+      child: Material(
+        color: Colors.black,
+        child: SizedBox.expand(
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: Center(
+                  child: AspectRatio(
+                    aspectRatio: controller.value.aspectRatio,
+                    child: VideoPlayer(controller),
+                  ),
                 ),
               ),
-            ),
-            NativeVideoControls(
-              controller: controller,
-              useDoubleTapSeek: playerState.useDoubleTapSeek,
-              enableNativePip: playerState.enableNativePip,
-              onFullScreenToggle: () => Navigator.of(context).pop(),
-            ),
-          ],
+              NativeVideoControls(
+                controller: controller,
+                useDoubleTapSeek: playerState.useDoubleTapSeek,
+                enableNativePip: playerState.enableNativePip,
+                onFullScreenToggle: () => Navigator.of(context, rootNavigator: true).pop(),
+                scene: widget.scene,
+              ),
+            ],
+          ),
         ),
       ),
     );
