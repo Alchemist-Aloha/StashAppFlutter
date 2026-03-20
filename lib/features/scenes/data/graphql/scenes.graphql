@@ -76,3 +76,63 @@ query SceneStreams($id: ID!) {
     }
   }
 }
+
+query ListSceneScrapers {
+  listScrapers(types: [SCENE]) {
+    id
+    name
+    scene {
+      supported_scrapes
+    }
+  }
+}
+
+query ScrapeSingleScene(
+  $source: ScraperSourceInput!
+  $input: ScrapeSingleSceneInput!
+) {
+  scrapeSingleScene(source: $source, input: $input) {
+    title
+    code
+    details
+    director
+    urls
+    date
+    image
+    studio {
+      stored_id
+      name
+    }
+    tags {
+      stored_id
+      name
+    }
+    performers {
+      stored_id
+      name
+    }
+  }
+}
+
+mutation UpdateScene($input: SceneUpdateInput!) {
+  sceneUpdate(input: $input) {
+    id
+    title
+    details
+    date
+    director
+    urls
+    studio {
+      id
+      name
+    }
+    tags {
+      id
+      name
+    }
+    performers {
+      id
+      name
+    }
+  }
+}

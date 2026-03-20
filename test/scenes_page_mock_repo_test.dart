@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stash_app_flutter/core/data/preferences/shared_preferences_provider.dart';
 import 'package:stash_app_flutter/features/scenes/domain/entities/scene.dart';
 import 'package:stash_app_flutter/features/scenes/domain/entities/scene_filter.dart';
+import 'package:stash_app_flutter/features/scenes/domain/entities/scraper.dart';
 import 'package:stash_app_flutter/features/scenes/domain/repositories/scene_repository.dart';
 import 'package:stash_app_flutter/features/scenes/presentation/pages/scenes_page.dart';
 import 'package:stash_app_flutter/features/scenes/presentation/providers/scene_list_provider.dart';
@@ -38,9 +39,22 @@ class FakeSceneRepository implements SceneRepository {
 
   @override
   Future<Scene> getSceneById(String id) async {
-    return _scenes.firstWhere((scene) => scene.id == id);
+    return _scenes.firstWhere((s) => s.id == id);
   }
-}
+
+  @override
+  Future<List<Scraper>> listSceneScrapers() async => [];
+
+  @override
+  Future<List<ScrapedScene>> scrapeSingleScene({
+    required String scraperId,
+    String? sceneId,
+    String? query,
+  }) async => [];
+
+  @override
+  Future<void> updateScene(dynamic updates) async {}
+  }
 
 void main() {
   testWidgets('ScenesPage renders and filters with mock repository', (

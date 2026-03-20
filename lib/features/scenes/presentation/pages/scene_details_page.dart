@@ -15,6 +15,7 @@ import '../providers/playback_queue_provider.dart';
 import '../providers/scene_details_provider.dart';
 import '../providers/scene_list_provider.dart';
 import '../widgets/scene_video_player.dart';
+import '../widgets/scrape_dialogs.dart';
 
 class SceneDetailsPage extends ConsumerStatefulWidget {
   final String sceneId;
@@ -51,6 +52,15 @@ class _SceneDetailsPageState extends ConsumerState<SceneDetailsPage> {
     context.push('/scene/${randomScene.id}');
   }
 
+  Future<void> _showScrapeDialog(BuildContext context) async {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => ScrapeSourceSelector(sceneId: widget.sceneId),
+    );
+  }
+
   String _formatDuration(double? seconds) {
     if (seconds == null) return '00:00';
     final duration = Duration(seconds: seconds.toInt());
@@ -72,17 +82,27 @@ class _SceneDetailsPageState extends ConsumerState<SceneDetailsPage> {
         title: const Text('Scene Details'),
         actions: [
           sceneAsync.when(
-            data: (scene) => IconButton(
-              icon: const Icon(Icons.queue_play_next),
-              tooltip: 'Add to queue',
-              onPressed: () {
-                ref.read(playbackQueueProvider.notifier).add(scene);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Added "${scene.displayTitle}" to queue'),
-                  ),
-                );
-              },
+            data: (scene) => Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.auto_fix_high),
+                  tooltip: 'Scrape metadata',
+                  onPressed: () => _showScrapeDialog(context),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.queue_play_next),
+                  tooltip: 'Add to queue',
+                  onPressed: () {
+                    ref.read(playbackQueueProvider.notifier).add(scene);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Added "${scene.displayTitle}" to queue'),
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
             loading: () => const SizedBox.shrink(),
             error: (_, _) => const SizedBox.shrink(),

@@ -1,5 +1,6 @@
 import '../entities/scene.dart';
 import '../entities/scene_filter.dart';
+import '../entities/scraper.dart';
 
 abstract class SceneRepository {
   Future<List<Scene>> findScenes({
@@ -15,4 +16,12 @@ abstract class SceneRepository {
     SceneFilter? sceneFilter,
   });
   Future<Scene> getSceneById(String id);
+
+  Future<List<Scraper>> listSceneScrapers();
+  Future<List<ScrapedScene>> scrapeSingleScene({
+    required String scraperId,
+    String? sceneId,
+    String? query,
+  });
+  Future<void> updateScene(dynamic updates);
 }
