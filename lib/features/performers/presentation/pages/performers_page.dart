@@ -12,8 +12,6 @@ import '../../../../core/presentation/theme/app_theme.dart';
 enum _PerformerSortOption {
   name,
   sceneCount,
-  imageCount,
-  galleryCount,
   playCount,
   oCounter,
   rating,
@@ -43,11 +41,9 @@ class _PerformersPageState extends ConsumerState<PerformersPage> {
         _sortOption = switch (sortConfig.sort) {
           'name' => _PerformerSortOption.name,
           'scenes_count' => _PerformerSortOption.sceneCount,
-          'image_count' => _PerformerSortOption.imageCount,
-          'gallery_count' => _PerformerSortOption.galleryCount,
           'play_count' => _PerformerSortOption.playCount,
           'o_counter' => _PerformerSortOption.oCounter,
-          'rating100' => _PerformerSortOption.rating,
+          'rating' => _PerformerSortOption.rating,
           'updated_at' => _PerformerSortOption.lastUpdated,
           'created_at' => _PerformerSortOption.createdAt,
           'random' => _PerformerSortOption.random,
@@ -67,8 +63,6 @@ class _PerformersPageState extends ConsumerState<PerformersPage> {
     final sortKey = switch (option) {
       _PerformerSortOption.name => 'name',
       _PerformerSortOption.sceneCount => 'scenes_count',
-      _PerformerSortOption.imageCount => 'image_count',
-      _PerformerSortOption.galleryCount => 'gallery_count',
       _PerformerSortOption.playCount => 'play_count',
       _PerformerSortOption.oCounter => 'o_counter',
       _PerformerSortOption.rating => 'rating100',
@@ -88,10 +82,6 @@ class _PerformersPageState extends ConsumerState<PerformersPage> {
         return 'Name';
       case _PerformerSortOption.sceneCount:
         return 'Scene Count';
-      case _PerformerSortOption.imageCount:
-        return 'Image Count';
-      case _PerformerSortOption.galleryCount:
-        return 'Gallery Count';
       case _PerformerSortOption.playCount:
         return 'Play Count';
       case _PerformerSortOption.oCounter:
@@ -123,7 +113,7 @@ class _PerformersPageState extends ConsumerState<PerformersPage> {
     }
 
     _lastRandomPerformerId = random.id;
-    context.push('/performer/${random.id}');
+    context.push('/performers/performer/${random.id}');
   }
 
   void _showSortPanel() {
@@ -421,7 +411,7 @@ class _PerformersPageState extends ConsumerState<PerformersPage> {
       ),
       itemBuilder: (context, performer) => PerformerCard(
         performer: performer,
-        onTap: () => context.push('/performer/${performer.id}'),
+        onTap: () => context.push('/performers/performer/${performer.id}'),
       ),
       floatingActionButton: randomNavigationEnabled
           ? performersAsync.maybeWhen(

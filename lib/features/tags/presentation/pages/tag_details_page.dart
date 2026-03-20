@@ -35,7 +35,7 @@ class TagDetailsPage extends ConsumerWidget {
       return;
     }
 
-    context.push('/tag/${randomTag.id}');
+    context.push('/tags/tag/${randomTag.id}');
   }
 
   @override

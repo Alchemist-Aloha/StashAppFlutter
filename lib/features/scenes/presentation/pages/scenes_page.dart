@@ -22,7 +22,7 @@ enum _SceneSortField {
   duration,
   bitrate,
   framerate,
-  filesize,
+  updatedAt,
   random,
 }
 
@@ -53,7 +53,7 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
           'duration' => _SceneSortField.duration,
           'bitrate' => _SceneSortField.bitrate,
           'framerate' => _SceneSortField.framerate,
-          'filesize' => _SceneSortField.filesize,
+          'updated_at' => _SceneSortField.updatedAt,
           'random' => _SceneSortField.random,
           _ => _SceneSortField.date,
         };
@@ -76,7 +76,7 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
       _SceneSortField.duration => 'duration',
       _SceneSortField.bitrate => 'bitrate',
       _SceneSortField.framerate => 'framerate',
-      _SceneSortField.filesize => 'size',
+      _SceneSortField.updatedAt => 'updated_at',
       _SceneSortField.random => 'random',
     };
 
@@ -125,7 +125,7 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
       _SceneSortField.duration => 'Duration',
       _SceneSortField.bitrate => 'Bitrate',
       _SceneSortField.framerate => 'Framerate',
-      _SceneSortField.filesize => 'Filesize',
+      _SceneSortField.updatedAt => 'Update Date',
       _SceneSortField.random => 'Random',
     };
   }

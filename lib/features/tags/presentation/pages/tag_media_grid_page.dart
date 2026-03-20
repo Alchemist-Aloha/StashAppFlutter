@@ -44,7 +44,7 @@ class TagMediaGridPage extends ConsumerWidget {
               itemBuilder: (context, index) {
                 final item = items[index];
                 return InkWell(
-                  onTap: () => context.push('/scene/${item.sceneId}'),
+                  onTap: () => context.push('/scenes/scene/${item.sceneId}'),
                   borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(AppTheme.radiusMedium),

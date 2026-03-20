@@ -11,11 +11,7 @@ import '../../domain/entities/tag.dart';
 enum _TagSortOption {
   name,
   sceneCount,
-  imageCount,
-  performerCount,
-  markerCount,
   parentCount,
-  childCount,
   lastUpdated,
   createdAt,
   random,
@@ -42,11 +38,7 @@ class _TagsPageState extends ConsumerState<TagsPage> {
         _sortOption = switch (sortConfig.sort) {
           'name' => _TagSortOption.name,
           'scenes_count' => _TagSortOption.sceneCount,
-          'image_count' => _TagSortOption.imageCount,
-          'performer_count' => _TagSortOption.performerCount,
-          'marker_count' => _TagSortOption.markerCount,
           'parent_count' => _TagSortOption.parentCount,
-          'child_count' => _TagSortOption.childCount,
           'updated_at' => _TagSortOption.lastUpdated,
           'created_at' => _TagSortOption.createdAt,
           'random' => _TagSortOption.random,
@@ -66,11 +58,7 @@ class _TagsPageState extends ConsumerState<TagsPage> {
     final sortKey = switch (option) {
       _TagSortOption.name => 'name',
       _TagSortOption.sceneCount => 'scenes_count',
-      _TagSortOption.imageCount => 'image_count',
-      _TagSortOption.performerCount => 'performer_count',
-      _TagSortOption.markerCount => 'marker_count',
       _TagSortOption.parentCount => 'parent_count',
-      _TagSortOption.childCount => 'child_count',
       _TagSortOption.lastUpdated => 'updated_at',
       _TagSortOption.createdAt => 'created_at',
       _TagSortOption.random => 'random',
@@ -87,16 +75,8 @@ class _TagsPageState extends ConsumerState<TagsPage> {
         return 'Name';
       case _TagSortOption.sceneCount:
         return 'Scene Count';
-      case _TagSortOption.imageCount:
-        return 'Image Count';
-      case _TagSortOption.performerCount:
-        return 'Performer Count';
-      case _TagSortOption.markerCount:
-        return 'Marker Count';
       case _TagSortOption.parentCount:
         return 'Parent Count';
-      case _TagSortOption.childCount:
-        return 'Child Count';
       case _TagSortOption.lastUpdated:
         return 'Updated At';
       case _TagSortOption.createdAt:
@@ -375,7 +355,7 @@ class _TagsPageState extends ConsumerState<TagsPage> {
     }
 
     _lastRandomTagId = randomTag.id;
-    context.push('/tag/${randomTag.id}');
+    context.push('/tags/tag/${randomTag.id}');
   }
 
   @override
@@ -446,7 +426,7 @@ class _TagsPageState extends ConsumerState<TagsPage> {
           vertical: 4,
         ),
         child: ListTile(
-          onTap: () => context.push('/tag/${tag.id}'),
+          onTap: () => context.push('/tags/tag/${tag.id}'),
           title: Text(
             tag.name,
             style: const TextStyle(fontWeight: FontWeight.bold),

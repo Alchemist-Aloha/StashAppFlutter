@@ -36,7 +36,7 @@ class PerformerDetailsPage extends ConsumerWidget {
       return;
     }
 
-    context.push('/performer/${randomPerformer.id}');
+    context.push('/performers/performer/${randomPerformer.id}');
   }
 
   int? _calculateAge(String? birthdate) {

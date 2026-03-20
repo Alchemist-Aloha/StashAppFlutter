@@ -12,9 +12,6 @@ enum _StudioSortOption {
   name,
   sceneCount,
   performerCount,
-  imageCount,
-  galleryCount,
-  groupCount,
   rating,
   lastUpdated,
   createdAt,
@@ -43,10 +40,7 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
           'name' => _StudioSortOption.name,
           'scenes_count' => _StudioSortOption.sceneCount,
           'performer_count' => _StudioSortOption.performerCount,
-          'image_count' => _StudioSortOption.imageCount,
-          'gallery_count' => _StudioSortOption.galleryCount,
-          'group_count' => _StudioSortOption.groupCount,
-          'rating100' => _StudioSortOption.rating,
+          'rating' => _StudioSortOption.rating,
           'updated_at' => _StudioSortOption.lastUpdated,
           'created_at' => _StudioSortOption.createdAt,
           'random' => _StudioSortOption.random,
@@ -67,10 +61,7 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
       _StudioSortOption.name => 'name',
       _StudioSortOption.sceneCount => 'scenes_count',
       _StudioSortOption.performerCount => 'performer_count',
-      _StudioSortOption.imageCount => 'image_count',
-      _StudioSortOption.galleryCount => 'gallery_count',
-      _StudioSortOption.groupCount => 'group_count',
-      _StudioSortOption.rating => 'rating100',
+      _StudioSortOption.rating => 'rating',
       _StudioSortOption.lastUpdated => 'updated_at',
       _StudioSortOption.createdAt => 'created_at',
       _StudioSortOption.random => 'random',
@@ -89,12 +80,6 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
         return 'Scene Count';
       case _StudioSortOption.performerCount:
         return 'Performer Count';
-      case _StudioSortOption.imageCount:
-        return 'Image Count';
-      case _StudioSortOption.galleryCount:
-        return 'Gallery Count';
-      case _StudioSortOption.groupCount:
-        return 'Group Count';
       case _StudioSortOption.rating:
         return 'Rating';
       case _StudioSortOption.lastUpdated:
@@ -378,7 +363,7 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
     }
 
     _lastRandomStudioId = randomStudio.id;
-    context.push('/studio/${randomStudio.id}');
+    context.push('/studios/studio/${randomStudio.id}');
   }
 
   @override
@@ -450,7 +435,7 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
           vertical: 4,
         ),
         child: ListTile(
-          onTap: () => context.push('/studio/${studio.id}'),
+          onTap: () => context.push('/studios/studio/${studio.id}'),
           title: Text(
             studio.name,
             style: const TextStyle(fontWeight: FontWeight.bold),

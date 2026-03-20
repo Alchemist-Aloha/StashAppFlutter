@@ -35,7 +35,7 @@ class StudioDetailsPage extends ConsumerWidget {
       return;
     }
 
-    context.push('/studio/${randomStudio.id}');
+    context.push('/studios/studio/${randomStudio.id}');
   }
 
   @override

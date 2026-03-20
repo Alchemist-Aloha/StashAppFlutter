@@ -51,7 +51,7 @@ class _SceneDetailsPageState extends ConsumerState<SceneDetailsPage> {
       return;
     }
 
-    context.push('/scene/${randomScene.id}');
+    context.push('/scenes/scene/${randomScene.id}');
   }
 
   String _formatDuration(double? seconds) {
