@@ -21,7 +21,7 @@ class MiniPlayer extends ConsumerWidget {
     final displayTitle = activeScene.displayTitle;
 
     return GestureDetector(
-      onTap: () => context.push('/scene/${activeScene.id}'),
+      onTap: () => context.push('/scenes/scene/${activeScene.id}'),
       child: Container(
         height: 60,
         decoration: BoxDecoration(

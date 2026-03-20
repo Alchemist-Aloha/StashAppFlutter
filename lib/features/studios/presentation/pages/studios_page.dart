@@ -2,12 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/studio_list_provider.dart';
+import '../../../setup/presentation/providers/navigation_customization_provider.dart';
 
 import '../../../../core/presentation/widgets/list_page_scaffold.dart';
 import '../../../../core/presentation/theme/app_theme.dart';
 import '../../domain/entities/studio.dart';
 
-enum _StudioSortOption { name, sceneCount, rating }
+enum _StudioSortOption {
+  name,
+  sceneCount,
+  performerCount,
+  rating,
+  lastUpdated,
+  createdAt,
+  random,
+}
 
 class StudiosPage extends ConsumerStatefulWidget {
   const StudiosPage({super.key});
@@ -30,7 +39,11 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
         _sortOption = switch (sortConfig.sort) {
           'name' => _StudioSortOption.name,
           'scenes_count' => _StudioSortOption.sceneCount,
-          'rating100' => _StudioSortOption.rating,
+          'performer_count' => _StudioSortOption.performerCount,
+          'rating' => _StudioSortOption.rating,
+          'updated_at' => _StudioSortOption.lastUpdated,
+          'created_at' => _StudioSortOption.createdAt,
+          'random' => _StudioSortOption.random,
           _ => _StudioSortOption.name,
         };
         _sortDescending = sortConfig.descending;
@@ -47,7 +60,11 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
     final sortKey = switch (option) {
       _StudioSortOption.name => 'name',
       _StudioSortOption.sceneCount => 'scenes_count',
-      _StudioSortOption.rating => 'rating100',
+      _StudioSortOption.performerCount => 'performer_count',
+      _StudioSortOption.rating => 'rating',
+      _StudioSortOption.lastUpdated => 'updated_at',
+      _StudioSortOption.createdAt => 'created_at',
+      _StudioSortOption.random => 'random',
     };
 
     ref
@@ -61,8 +78,16 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
         return 'Name';
       case _StudioSortOption.sceneCount:
         return 'Scene Count';
+      case _StudioSortOption.performerCount:
+        return 'Performer Count';
       case _StudioSortOption.rating:
         return 'Rating';
+      case _StudioSortOption.lastUpdated:
+        return 'Updated At';
+      case _StudioSortOption.createdAt:
+        return 'Created At';
+      case _StudioSortOption.random:
+        return 'Random';
     }
   }
 
@@ -338,13 +363,14 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
     }
 
     _lastRandomStudioId = randomStudio.id;
-    context.push('/studio/${randomStudio.id}');
+    context.push('/studios/studio/${randomStudio.id}');
   }
 
   @override
   Widget build(BuildContext context) {
     final studiosAsync = ref.watch(studioListProvider);
     final favoritesOnly = ref.watch(studioFavoritesOnlyProvider);
+    final randomNavigationEnabled = ref.watch(randomNavigationEnabledProvider);
     final hasSortOverride =
         _sortOption != _StudioSortOption.name || _sortDescending;
 
@@ -409,7 +435,7 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
           vertical: 4,
         ),
         child: ListTile(
-          onTap: () => context.push('/studio/${studio.id}'),
+          onTap: () => context.push('/studios/studio/${studio.id}'),
           title: Text(
             studio.name,
             style: const TextStyle(fontWeight: FontWeight.bold),
@@ -420,14 +446,16 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
           ),
         ),
       ),
-      floatingActionButton: studiosAsync.maybeWhen(
-        data: (studios) => FloatingActionButton.small(
-          onPressed: _openRandomStudio,
-          tooltip: 'Random studio',
-          child: const Icon(Icons.casino_outlined),
-        ),
-        orElse: () => null,
-      ),
+      floatingActionButton: randomNavigationEnabled
+          ? studiosAsync.maybeWhen(
+              data: (studios) => FloatingActionButton.small(
+                onPressed: _openRandomStudio,
+                tooltip: 'Random studio',
+                child: const Icon(Icons.casino_outlined),
+              ),
+              orElse: () => null,
+            )
+          : null,
     );
   }
 }
