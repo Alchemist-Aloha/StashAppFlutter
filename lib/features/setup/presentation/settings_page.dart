@@ -48,6 +48,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
   bool _preferSceneStreams = true;
   bool _sceneGridLayout = false;
+  bool _sceneTiktokLayout = false;
   bool _autoplayNext = false;
   bool _showVideoDebugInfo = false;
   bool _useDoubleTapSeek = true;
@@ -121,6 +122,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     final apiKey = prefs.getString('server_api_key') ?? '';
     final preferSceneStreams = prefs.getBool(_preferSceneStreamsKey) ?? true;
     final sceneGridLayout = ref.read(sceneGridLayoutProvider);
+    final sceneTiktokLayout = ref.read(sceneTiktokLayoutProvider);
     final autoplayNext = prefs.getBool(_autoplayNextKey) ?? false;
     final showVideoDebugInfo = prefs.getBool(_showVideoDebugInfoKey) ?? false;
     final useDoubleTapSeek = prefs.getBool(_useDoubleTapSeekKey) ?? true;
@@ -133,6 +135,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     _apiKeyController.text = apiKey;
     _preferSceneStreams = preferSceneStreams;
     _sceneGridLayout = sceneGridLayout;
+    _sceneTiktokLayout = sceneTiktokLayout;
     _autoplayNext = autoplayNext;
     _showVideoDebugInfo = showVideoDebugInfo;
     _useDoubleTapSeek = useDoubleTapSeek;
@@ -233,6 +236,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     final prefs = ref.read(sharedPreferencesProvider);
     await prefs.setBool(_preferSceneStreamsKey, _preferSceneStreams);
     await ref.read(sceneGridLayoutProvider.notifier).set(_sceneGridLayout);
+    await ref.read(sceneTiktokLayoutProvider.notifier).set(_sceneTiktokLayout);
     await prefs.setBool(_autoplayNextKey, _autoplayNext);
     await prefs.setBool(_showVideoDebugInfoKey, _showVideoDebugInfo);
     await prefs.setBool(_useDoubleTapSeekKey, _useDoubleTapSeek);
@@ -440,6 +444,18 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                     value: _sceneGridLayout,
                     onChanged: (value) async {
                       setState(() => _sceneGridLayout = value);
+                      await _saveToggleSettings();
+                    },
+                  ),
+                  SwitchListTile.adaptive(
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text('Scenes TikTok Layout'),
+                    subtitle: const Text(
+                      'When on, Scenes page uses a vertical swiping view',
+                    ),
+                    value: _sceneTiktokLayout,
+                    onChanged: (value) async {
+                      setState(() => _sceneTiktokLayout = value);
                       await _saveToggleSettings();
                     },
                   ),

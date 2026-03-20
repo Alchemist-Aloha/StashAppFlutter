@@ -1,0 +1,347 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:video_player/video_player.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../domain/entities/scene.dart';
+import '../providers/scene_list_provider.dart';
+import '../providers/video_player_provider.dart';
+import '../../data/repositories/stream_resolver.dart';
+import '../../../../core/presentation/theme/app_theme.dart';
+import '../../../../core/data/graphql/media_headers_provider.dart';
+
+class FullScreenMode extends Notifier<bool> {
+  @override
+  bool build() => false;
+
+  void toggle() => state = !state;
+  void set(bool value) => state = value;
+}
+
+final fullScreenModeProvider = NotifierProvider<FullScreenMode, bool>(
+  FullScreenMode.new,
+);
+
+class TiktokScenesView extends ConsumerStatefulWidget {
+  const TiktokScenesView({super.key});
+
+  @override
+  ConsumerState<TiktokScenesView> createState() => _TiktokScenesViewState();
+}
+
+class _TiktokScenesViewState extends ConsumerState<TiktokScenesView> {
+  final PageController _pageController = PageController();
+  int _currentIndex = 0;
+
+  // Map of scene ID to controller
+  final Map<String, VideoPlayerController> _controllers = {};
+  
+  // Future that tracks initialization
+  final Map<String, Future<void>> _initFutures = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _pageController.removeListener(_onScroll);
+    _pageController.dispose();
+    for (final controller in _controllers.values) {
+      controller.dispose();
+    }
+    _controllers.clear();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    // Determine the most prominent page
+    if (!_pageController.hasClients) return;
+    
+    final page = _pageController.page;
+    if (page == null) return;
+
+    final newIndex = page.round();
+    if (newIndex != _currentIndex) {
+      setState(() {
+        _currentIndex = newIndex;
+      });
+      _manageControllers();
+    }
+  }
+
+  Future<void> _manageControllers() async {
+    final scenesAsync = ref.read(sceneListProvider);
+    if (!scenesAsync.hasValue) return;
+    
+    final scenes = scenesAsync.value!;
+    if (scenes.isEmpty) return;
+
+    // Load next page if nearing the end
+    if (_currentIndex >= scenes.length - 3) {
+      ref.read(sceneListProvider.notifier).fetchNextPage();
+    }
+
+    final windowStart = (_currentIndex - 1).clamp(0, scenes.length - 1);
+    final windowEnd = (_currentIndex + 2).clamp(0, scenes.length - 1);
+
+    final idsInWindow = <String>{};
+    for (int i = windowStart; i <= windowEnd; i++) {
+      idsInWindow.add(scenes[i].id);
+    }
+
+    // Dispose controllers outside the window
+    final idsToRemove = _controllers.keys.where((id) => !idsInWindow.contains(id)).toList();
+    for (final id in idsToRemove) {
+      _controllers[id]?.dispose();
+      _controllers.remove(id);
+      _initFutures.remove(id);
+    }
+
+    // Initialize missing controllers inside the window
+    for (int i = windowStart; i <= windowEnd; i++) {
+      final scene = scenes[i];
+      if (!_controllers.containsKey(scene.id) && !_initFutures.containsKey(scene.id)) {
+        _initFutures[scene.id] = _initializeController(scene);
+      }
+    }
+
+    // Play current, pause others
+    for (final entry in _controllers.entries) {
+      final id = entry.key;
+      final controller = entry.value;
+      if (id == scenes[_currentIndex].id) {
+        if (!controller.value.isPlaying) {
+          controller.play();
+        }
+      } else {
+        if (controller.value.isPlaying) {
+          controller.pause();
+        }
+      }
+    }
+  }
+
+  Future<void> _initializeController(Scene scene) async {
+    try {
+      final resolver = ref.read(streamResolverProvider.notifier);
+      final choice = await resolver.resolvePreferredStream(scene);
+      if (choice == null) return;
+
+      final headers = ref.read(mediaHeadersProvider);
+      final controller = VideoPlayerController.networkUrl(
+        Uri.parse(choice.url),
+        httpHeaders: headers,
+      );
+
+      _controllers[scene.id] = controller;
+      await controller.initialize();
+      controller.setLooping(true);
+
+      if (mounted) {
+        setState(() {}); // Trigger rebuild to show the first frame
+        
+        final scenesAsync = ref.read(sceneListProvider);
+        if (scenesAsync.hasValue) {
+            final scenes = scenesAsync.value!;
+            if (_currentIndex < scenes.length && scenes[_currentIndex].id == scene.id) {
+                controller.play();
+            }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error initializing tiktok controller for scene ${scene.id}: $e');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final scenesAsync = ref.watch(sceneListProvider);
+
+    return scenesAsync.when(
+      data: (scenes) {
+        if (scenes.isEmpty) {
+          return const Center(child: Text('No scenes found'));
+        }
+
+        // Initialize first batch if needed
+        if (_controllers.isEmpty && _initFutures.isEmpty) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _manageControllers();
+          });
+        }
+
+        return PageView.builder(
+          controller: _pageController,
+          scrollDirection: Axis.vertical,
+          itemCount: scenes.length,
+          itemBuilder: (context, index) {
+            return TiktokSceneItem(
+              scene: scenes[index],
+              controller: _controllers[scenes[index].id],
+            );
+          },
+        );
+      },
+      loading: () => const Center(child: CircularProgressContext()),
+      error: (e, st) => Center(child: Text('Error: $e')),
+    );
+  }
+}
+
+class CircularProgressContext extends StatelessWidget {
+  const CircularProgressContext({super.key});
+  @override
+  Widget build(BuildContext context) => const CircularProgressIndicator();
+}
+
+class TiktokSceneItem extends ConsumerWidget {
+  final Scene scene;
+  final VideoPlayerController? controller;
+
+  const TiktokSceneItem({
+    required this.scene,
+    this.controller,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isFullScreen = ref.watch(fullScreenModeProvider);
+
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        // Video background
+        Container(
+          color: Colors.black,
+          child: controller != null && controller!.value.isInitialized
+              ? GestureDetector(
+                  onTap: () {
+                    if (controller!.value.isPlaying) {
+                      controller!.pause();
+                    } else {
+                      controller!.play();
+                    }
+                  },
+                  child: Center(
+                    child: AspectRatio(
+                      aspectRatio: controller!.value.aspectRatio,
+                      child: VideoPlayer(controller!),
+                    ),
+                  ),
+                )
+              : const Center(child: CircularProgressIndicator()),
+        ),
+
+        // Gradient overlay
+        Positioned(
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: 300,
+          child: IgnorePointer(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter,
+                  colors: [
+                    Colors.black.withOpacity(0.8),
+                    Colors.transparent,
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+
+        // Metadata overlay
+        Positioned(
+          bottom: 20,
+          left: 16,
+          right: 80, // Space for right buttons
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                scene.title.isNotEmpty ? scene.title : 'Scene ${scene.id}',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 8),
+              if (scene.date != null)
+                Text(
+                  scene.date.toString().split(' ')[0],
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 14,
+                  ),
+                ),
+            ],
+          ),
+        ),
+
+        // Right side buttons
+        Positioned(
+          bottom: 20,
+          right: 8,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _OverlayButton(
+                icon: isFullScreen ? Icons.fullscreen_exit : Icons.fullscreen,
+                onTap: () {
+                  final newMode = !isFullScreen;
+                  ref.read(fullScreenModeProvider.notifier).set(newMode);
+                  if (newMode) {
+                    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+                  } else {
+                    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+                  }
+                },
+              ),
+              const SizedBox(height: 16),
+              _OverlayButton(
+                icon: Icons.info_outline,
+                onTap: () {
+                  context.push('/scenes/scene/${scene.id}');
+                },
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _OverlayButton extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onTap;
+
+  const _OverlayButton({required this.icon, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.5),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(icon, color: Colors.white, size: 28),
+      ),
+    );
+  }
+}
