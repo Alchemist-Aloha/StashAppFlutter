@@ -4,7 +4,6 @@ import '../../../../core/data/graphql/url_resolver.dart';
 import '../graphql/scenes.graphql.dart';
 import '../../domain/entities/scene.dart';
 import '../../domain/entities/scene_filter.dart';
-import '../../domain/entities/scraper.dart';
 import '../../domain/repositories/scene_repository.dart';
 
 class GraphQLSceneRepository implements SceneRepository {
@@ -324,91 +323,5 @@ class GraphQLSceneRepository implements SceneRepository {
       tagIds: s.tags.map((t) => t.id).toList(),
       tagNames: s.tags.map((t) => t.name).toList(),
     );
-  }
-
-  @override
-  Future<List<Scraper>> listSceneScrapers() async {
-    final result = await client.query$ListSceneScrapers();
-    if (result.hasException) throw result.exception!;
-
-    return result.parsedData!.listScrapers
-        .map(
-          (s) => Scraper(
-            id: s.id,
-            name: s.name,
-            supportedScrapes: s.scene?.supported_scrapes.map((e) => e.name).toList() ?? [],
-          ),
-        )
-        .toList();
-  }
-
-  @override
-  Future<List<ScrapedScene>> scrapeSingleScene({
-    required String scraperId,
-    String? sceneId,
-    String? query,
-  }) async {
-    final result = await client.query$ScrapeSingleScene(
-      Options$Query$ScrapeSingleScene(
-        variables: Variables$Query$ScrapeSingleScene(
-          source: Input$ScraperSourceInput(scraper_id: scraperId),
-          input: Input$ScrapeSingleSceneInput(
-            scene_id: sceneId,
-            query: query,
-          ),
-        ),
-      ),
-    );
-
-    if (result.hasException) throw result.exception!;
-
-    return result.parsedData!.scrapeSingleScene
-        .map(
-          (s) => ScrapedScene(
-            title: s.title,
-            code: s.code,
-            details: s.details,
-            director: s.director,
-            urls: s.urls ?? [],
-            date: s.date,
-            image: s.image,
-            studio: s.studio != null
-                ? ScrapedEntity(
-                    storedId: s.studio!.stored_id,
-                    name: s.studio!.name,
-                  )
-                : null,
-            tags: (s.tags ?? [])
-                .map(
-                  (t) => ScrapedEntity(
-                    storedId: t.stored_id,
-                    name: t.name,
-                  ),
-                )
-                .toList(),
-            performers: (s.performers ?? [])
-                .map(
-                  (p) => ScrapedEntity(
-                    storedId: p.stored_id,
-                    name: p.name ?? '',
-                  ),
-                )
-                .toList(),
-          ),
-        )
-        .toList();
-  }
-
-  @override
-  Future<void> updateScene(dynamic updates) async {
-    final result = await client.mutate$UpdateScene(
-      Options$Mutation$UpdateScene(
-        variables: Variables$Mutation$UpdateScene(
-          input: updates as Input$SceneUpdateInput,
-        ),
-      ),
-    );
-
-    if (result.hasException) throw result.exception!;
   }
 }
