@@ -7,10 +7,13 @@ class PipMode {
 
   static const MethodChannel _channel = MethodChannel('stash_app_flutter/pip');
 
-  static Future<bool> enterIfAvailable() async {
+  static Future<bool> enterIfAvailable({double? aspectRatio}) async {
     if (!Platform.isAndroid) return false;
     try {
-      final result = await _channel.invokeMethod<bool>('enterPictureInPicture');
+      final result = await _channel.invokeMethod<bool>(
+        'enterPictureInPicture',
+        <String, Object?>{'aspectRatio': aspectRatio},
+      );
       return result ?? false;
     } catch (_) {
       return false;

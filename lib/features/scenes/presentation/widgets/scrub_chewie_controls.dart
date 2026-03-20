@@ -31,6 +31,8 @@ class _ScrubChewieControlsState extends State<ScrubChewieControls>
   static const _controlsTouchSafeHeight = 122.0;
   static const _dragSeekSensitivity = 0.30;
   static const _dragSeekCurveExponent = 1.6;
+  static const _progressUiTickInterval = Duration(milliseconds: 250);
+  static const _dragSeekCommitInterval = Duration(milliseconds: 90);
 
   bool _isScrubbing = false;
   double _scrubMs = 0;
@@ -39,6 +41,9 @@ class _ScrubChewieControlsState extends State<ScrubChewieControls>
   Timer? _hideControlsTimer;
   Duration? _dragSeekStartPosition;
   double _dragSeekAccumulatedDx = 0;
+  DateTime? _lastProgressUiTickAt;
+  DateTime? _lastDragSeekCommitAt;
+  Duration? _dragSeekPendingTarget;
 
   @override
   void didChangeDependencies() {
@@ -91,7 +96,12 @@ class _ScrubChewieControlsState extends State<ScrubChewieControls>
     final controller = _boundVideoController;
     if (controller == null || !controller.value.isPlaying) return;
     if (!(_chewieController?.isFullScreen ?? false)) return;
-    unawaited(PipMode.enterIfAvailable());
+    final ratio = controller.value.aspectRatio;
+    unawaited(
+      PipMode.enterIfAvailable(
+        aspectRatio: ratio.isFinite && ratio > 0 ? ratio : null,
+      ),
+    );
   }
 
   Future<void> _enterPipVideoOnly() async {
@@ -105,12 +115,18 @@ class _ScrubChewieControlsState extends State<ScrubChewieControls>
       await Future<void>.delayed(const Duration(milliseconds: 140));
     }
 
-    await PipMode.enterIfAvailable();
+    final controller = _boundVideoController;
+    final ratio = controller?.value.aspectRatio;
+    await PipMode.enterIfAvailable(
+      aspectRatio:
+          ratio != null && ratio.isFinite && ratio > 0 ? ratio : null,
+    );
   }
 
   void _onVideoTick() {
     if (!mounted) return;
 
+    var shouldRebuild = false;
     final isPlaying = _boundVideoController?.value.isPlaying ?? false;
     if (isPlaying != _wasPlaying) {
       _wasPlaying = isPlaying;
@@ -120,10 +136,25 @@ class _ScrubChewieControlsState extends State<ScrubChewieControls>
         _cancelAutoHide();
         _controlsVisible = true;
       }
+      shouldRebuild = true;
     }
 
-    if (_isScrubbing) return;
-    setState(() {});
+    if (_isScrubbing) {
+      if (shouldRebuild) {
+        setState(() {});
+      }
+      return;
+    }
+
+    final now = DateTime.now();
+    final shouldTickProgress =
+        _lastProgressUiTickAt == null ||
+        now.difference(_lastProgressUiTickAt!) >= _progressUiTickInterval;
+
+    if (shouldTickProgress || shouldRebuild) {
+      _lastProgressUiTickAt = now;
+      setState(() {});
+    }
   }
 
   void _cancelAutoHide() {
@@ -165,6 +196,8 @@ class _ScrubChewieControlsState extends State<ScrubChewieControls>
     if (!controller.value.isInitialized) return;
     _dragSeekStartPosition = controller.value.position;
     _dragSeekAccumulatedDx = 0;
+    _lastDragSeekCommitAt = null;
+    _dragSeekPendingTarget = null;
   }
 
   void _updateDragSeek(
@@ -195,13 +228,29 @@ class _ScrubChewieControlsState extends State<ScrubChewieControls>
       0,
       duration.inMilliseconds.toDouble(),
     );
+    final target = Duration(milliseconds: targetMs.round());
+    _dragSeekPendingTarget = target;
 
-    controller.seekTo(Duration(milliseconds: targetMs.round()));
+    final now = DateTime.now();
+    final shouldCommit =
+        _lastDragSeekCommitAt == null ||
+        now.difference(_lastDragSeekCommitAt!) >= _dragSeekCommitInterval;
+
+    if (shouldCommit) {
+      _lastDragSeekCommitAt = now;
+      controller.seekTo(target);
+    }
   }
 
-  void _endDragSeek() {
+  void _endDragSeek([VideoPlayerController? controller]) {
+    final pendingTarget = _dragSeekPendingTarget;
+    if (controller != null && pendingTarget != null) {
+      controller.seekTo(pendingTarget);
+    }
     _dragSeekStartPosition = null;
     _dragSeekAccumulatedDx = 0;
+    _lastDragSeekCommitAt = null;
+    _dragSeekPendingTarget = null;
   }
 
   String _format(Duration d) {
@@ -297,10 +346,12 @@ class _ScrubChewieControlsState extends State<ScrubChewieControls>
                               _showControlsTemporarily();
                             },
                             onHorizontalDragEnd: (_) {
-                              _endDragSeek();
+                              _endDragSeek(videoController);
                               _showControlsTemporarily();
                             },
-                            onHorizontalDragCancel: _endDragSeek,
+                            onHorizontalDragCancel: () {
+                              _endDragSeek(videoController);
+                            },
                           );
                         },
                       ),

@@ -118,6 +118,7 @@ class PlayerState extends _$PlayerState {
   VideoPlayerController? _videoControllerRef;
   ChewieController? _chewieControllerRef;
   String? _firstFrameLoggedSceneId;
+  String? _completedSceneId;
 
   @override
   GlobalPlayerState build() {
@@ -251,6 +252,7 @@ class PlayerState extends _$PlayerState {
         state.videoPlayerController != null) {
       _videoControllerRef ??= state.videoPlayerController;
       state.videoPlayerController?.play();
+      _completedSceneId = null;
       AppLogStore.instance.add(
         'provider playScene replay-active scene=${scene.id}',
         source: 'player_provider',
@@ -286,6 +288,7 @@ class PlayerState extends _$PlayerState {
     );
     _videoControllerRef = videoController;
     _firstFrameLoggedSceneId = null;
+    _completedSceneId = null;
 
     state = state.copyWith(
       activeScene: scene,
@@ -374,6 +377,7 @@ class PlayerState extends _$PlayerState {
         unawaited(WakelockPlus.disable());
       } else {
         controller.play();
+        _completedSceneId = null;
         state = state.copyWith(isPlaying: true);
         unawaited(WakelockPlus.enable());
       }
@@ -389,12 +393,16 @@ class PlayerState extends _$PlayerState {
     var target = current + delta;
     if (target < Duration.zero) target = Duration.zero;
     if (target > duration) target = duration;
+    if (target < duration) {
+      _completedSceneId = null;
+    }
     controller.seekTo(target);
   }
 
   void stop() {
     unawaited(_disposeControllers());
     unawaited(WakelockPlus.disable());
+    _completedSceneId = null;
     if (!ref.mounted) return;
 
     state = GlobalPlayerState(
@@ -414,6 +422,7 @@ class PlayerState extends _$PlayerState {
         _chewieControllerRef ?? (ref.mounted ? state.chewieController : null);
     _videoControllerRef = null;
     _chewieControllerRef = null;
+    _completedSceneId = null;
 
     videoController?.removeListener(_videoListener);
     chewieController?.dispose();
@@ -439,6 +448,9 @@ class PlayerState extends _$PlayerState {
       }
 
       if (controller.value.isPlaying != state.isPlaying) {
+        if (controller.value.isPlaying) {
+          _completedSceneId = null;
+        }
         state = state.copyWith(isPlaying: controller.value.isPlaying);
         unawaited(
           controller.value.isPlaying
@@ -447,11 +459,22 @@ class PlayerState extends _$PlayerState {
         );
       }
 
-      // Check if finished
-      if (controller.value.position >= controller.value.duration &&
-          controller.value.duration > Duration.zero &&
-          !controller.value.isPlaying) {
-        _handleVideoFinished();
+      final duration = controller.value.duration;
+      if (duration > Duration.zero && activeSceneId != null) {
+        final completionThreshold = duration - const Duration(milliseconds: 200);
+        final atEnd = controller.value.position >=
+            (completionThreshold > Duration.zero
+                ? completionThreshold
+                : Duration.zero);
+
+        if (atEnd && !controller.value.isPlaying) {
+          if (_completedSceneId != activeSceneId) {
+            _completedSceneId = activeSceneId;
+            _handleVideoFinished();
+          }
+        } else if (!atEnd && _completedSceneId == activeSceneId) {
+          _completedSceneId = null;
+        }
       }
     }
   }
