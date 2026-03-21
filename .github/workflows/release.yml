@@ -33,6 +33,15 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
         
+      - name: Create Dummy Keystore for CI
+        if: "!startsWith(github.ref, 'refs/tags/v')"
+        run: |
+          keytool -genkey -v -keystore android/app/debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+          echo "storePassword=android" > android/key.properties
+          echo "keyPassword=android" >> android/key.properties
+          echo "keyAlias=androiddebugkey" >> android/key.properties
+          echo "storeFile=app/debug.keystore" >> android/key.properties
+
       - name: Build APK
         run: flutter build apk --release
         
