@@ -212,25 +212,35 @@ class SceneList extends _$SceneList {
         ? ref.read(sceneOrganizedOnlyProvider)
         : false;
 
-    // Ask backend for random ordering; if needed, retry to avoid returning same id.
-    final attempts = excludeSceneId == null ? 1 : 3;
-    for (var i = 0; i < attempts; i++) {
-      final randomPage = await repository.findScenes(
-        page: 1,
-        perPage: 1,
-        filter: query.isEmpty ? null : query,
-        sort: 'random',
-        descending: true,
-        organized: organizedOnly ? true : null,
-        performerId: performerId,
-        studioId: studioId,
-        tagId: tagId,
-        sceneFilter: filter,
-      );
-      if (randomPage.isEmpty) continue;
-      final candidate = randomPage.first;
-      if (excludeSceneId == null || candidate.id != excludeSceneId) {
-        return candidate;
+    final count = await repository.getSceneCount(
+      filter: query.isEmpty ? null : query,
+      organized: organizedOnly ? true : null,
+      performerId: performerId,
+      studioId: studioId,
+      tagId: tagId,
+      sceneFilter: filter,
+    );
+
+    if (count > 0) {
+      final attempts = excludeSceneId == null ? 1 : 3;
+      final random = Random();
+      for (var i = 0; i < attempts; i++) {
+        final randomOffset = random.nextInt(count) + 1;
+        final randomPage = await repository.findScenes(
+          page: randomOffset,
+          perPage: 1,
+          filter: query.isEmpty ? null : query,
+          organized: organizedOnly ? true : null,
+          performerId: performerId,
+          studioId: studioId,
+          tagId: tagId,
+          sceneFilter: filter,
+        );
+        if (randomPage.isEmpty) continue;
+        final candidate = randomPage.first;
+        if (excludeSceneId == null || candidate.id != excludeSceneId) {
+          return candidate;
+        }
       }
     }
 

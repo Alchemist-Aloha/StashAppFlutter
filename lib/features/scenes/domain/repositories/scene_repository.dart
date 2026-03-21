@@ -15,6 +15,15 @@ abstract class SceneRepository {
     String? tagId,
     SceneFilter? sceneFilter,
   });
+  Future<int> getSceneCount({
+    String? filter,
+    bool? organized,
+    bool? performerFavorite,
+    String? performerId,
+    String? studioId,
+    String? tagId,
+    SceneFilter? sceneFilter,
+  });
   Future<Scene> getSceneById(String id);
   Future<void> updateSceneRating(String id, int rating100);
   Future<void> incrementSceneOCounter(String id);

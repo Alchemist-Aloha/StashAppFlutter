@@ -41,6 +41,17 @@ class MockSceneRepository implements SceneRepository {
   }) async => [];
 
   @override
+  Future<int> getSceneCount({
+    String? filter,
+    bool? organized,
+    bool? performerFavorite,
+    String? performerId,
+    String? studioId,
+    String? tagId,
+    SceneFilter? sceneFilter,
+  }) async => _scenes.length;
+
+  @override
   Future<Scene> getSceneById(String id) => throw UnimplementedError();
 
   @override

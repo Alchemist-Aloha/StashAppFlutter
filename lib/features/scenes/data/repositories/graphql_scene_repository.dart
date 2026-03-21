@@ -15,6 +15,33 @@ class GraphQLSceneRepository implements SceneRepository {
       : Uri.parse('https://localhost/graphql');
 
   @override
+  Future<int> getSceneCount({
+    String? filter,
+    bool? organized,
+    bool? performerFavorite,
+    String? performerId,
+    String? studioId,
+    String? tagId,
+    SceneFilter? sceneFilter,
+  }) async {
+    final result = await _runFindScenes(
+      page: 1,
+      perPage: 1,
+      filter: filter,
+      descending: true,
+      organized: organized,
+      performerFavorite: performerFavorite,
+      performerId: performerId,
+      studioId: studioId,
+      tagId: tagId,
+      sceneFilter: sceneFilter,
+    );
+
+    if (result.hasException) throw result.exception!;
+    return result.parsedData!.findScenes.count;
+  }
+
+  @override
   Future<List<Scene>> findScenes({
     int? page,
     int? perPage,

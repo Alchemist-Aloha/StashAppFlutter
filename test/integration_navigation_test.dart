@@ -66,6 +66,20 @@ class MockSceneRepository implements SceneRepository {
   }
 
   @override
+  Future<int> getSceneCount({
+    String? filter,
+    bool? organized,
+    bool? performerFavorite,
+    String? performerId,
+    String? studioId,
+    String? tagId,
+    SceneFilter? sceneFilter,
+  }) async {
+    final list = await findScenes(filter: filter, sceneFilter: sceneFilter);
+    return list.length;
+  }
+
+  @override
   Future<Scene> getSceneById(String id) async {
     return scenes.firstWhere((s) => s.id == id);
   }

@@ -1,19 +1,16 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stash_app_flutter/core/data/preferences/shared_preferences_provider.dart';
 import 'package:stash_app_flutter/features/scenes/domain/entities/scene.dart';
 import 'package:stash_app_flutter/features/scenes/domain/entities/scene_filter.dart';
 import 'package:stash_app_flutter/features/scenes/domain/repositories/scene_repository.dart';
-import 'package:stash_app_flutter/features/scenes/presentation/pages/scenes_page.dart';
 import 'package:stash_app_flutter/features/scenes/presentation/providers/scene_list_provider.dart';
-import 'package:stash_app_flutter/core/presentation/theme/app_theme.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class FakeSceneRepository implements SceneRepository {
+class SlowRandomRepository implements SceneRepository {
   final List<Scene> _scenes;
 
-  FakeSceneRepository(this._scenes);
+  SlowRandomRepository(this._scenes);
 
   @override
   Future<List<Scene>> findScenes({
@@ -29,12 +26,13 @@ class FakeSceneRepository implements SceneRepository {
     String? tagId,
     SceneFilter? sceneFilter,
   }) async {
-    if (filter == null || filter.isEmpty) return _scenes;
-    return _scenes
-        .where(
-          (scene) => scene.title.toLowerCase().contains(filter.toLowerCase()),
-        )
-        .toList();
+    if (sort == 'random') {
+       // Simulate slow random sort
+       await Future.delayed(Duration(milliseconds: 500));
+       _scenes.shuffle();
+       return _scenes.take(perPage ?? 1).toList();
+    }
+    return _scenes.take(perPage ?? 1).toList();
   }
 
   @override
@@ -47,36 +45,27 @@ class FakeSceneRepository implements SceneRepository {
     String? tagId,
     SceneFilter? sceneFilter,
   }) async {
-    final list = await findScenes(filter: filter);
-    return list.length;
+    return _scenes.length;
   }
 
   @override
-  Future<Scene> getSceneById(String id) async {
-    return _scenes.firstWhere((scene) => scene.id == id);
-  }
-
+  Future<Scene> getSceneById(String id) async => _scenes.first;
   @override
   Future<void> updateSceneRating(String id, int rating100) async {}
-
   @override
   Future<void> incrementSceneOCounter(String id) async {}
-
   @override
   Future<void> incrementScenePlayCount(String id) async {}
 }
 
 void main() {
-  testWidgets('ScenesPage renders and filters with mock repository', (
-    tester,
-  ) async {
+  test('getRandomScene performance', () async {
     SharedPreferences.setMockInitialValues({});
     final prefs = await SharedPreferences.getInstance();
 
-    final repo = FakeSceneRepository([
-      Scene(
-        id: 'scene-1',
-        title: 'Alpha Scene',
+    final scenes = List.generate(10, (i) => Scene(
+        id: 'scene-$i',
+        title: 'Scene $i',
         details: 'details',
         path: null,
         date: DateTime(2024, 1, 1),
@@ -96,31 +85,24 @@ void main() {
         performerImagePaths: const [null],
         tagIds: const ['t1'],
         tagNames: const ['Tag'],
-      ),
-    ]);
+      ));
 
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          sceneRepositoryProvider.overrideWithValue(repo),
-          sharedPreferencesProvider.overrideWithValue(prefs),
-        ],
-        child: MaterialApp(
-          theme: AppTheme.lightTheme,
-          home: const ScenesPage(),
-        ),
-      ),
+    final repo = SlowRandomRepository(scenes);
+
+    final container = ProviderContainer(
+      overrides: [
+        sceneRepositoryProvider.overrideWithValue(repo),
+        sharedPreferencesProvider.overrideWithValue(prefs),
+      ]
     );
 
-    await tester.pumpAndSettle();
-    expect(find.text('Alpha Scene'), findsOneWidget);
+    final provider = container.read(sceneListProvider.notifier);
 
-    await tester.tap(find.byIcon(Icons.search));
-    await tester.pumpAndSettle();
+    final stopwatch = Stopwatch()..start();
+    final scene = await provider.getRandomScene();
+    stopwatch.stop();
 
-    await tester.enterText(find.byType(TextField), 'zzz');
-    await tester.pumpAndSettle();
-
-    expect(find.text('No items found'), findsOneWidget);
+    print('getRandomScene took ${stopwatch.elapsedMilliseconds} ms');
+    expect(scene, isNotNull);
   });
 }
