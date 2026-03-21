@@ -5,10 +5,10 @@ import android.content.res.Configuration
 import android.os.Build
 import android.util.Rational
 import io.flutter.embedding.engine.FlutterEngine
-import io.flutter.embedding.android.FlutterActivity
+import com.ryanheise.audioservice.AudioServiceActivity
 import io.flutter.plugin.common.MethodChannel
 
-class MainActivity : FlutterActivity() {
+class MainActivity : AudioServiceActivity() {
 	private val pipChannel = "stash_app_flutter/pip"
 	private var channel: MethodChannel? = null
 

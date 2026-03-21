@@ -8,6 +8,7 @@ import '../../domain/entities/scene.dart';
 import 'playback_queue_provider.dart';
 import '../../data/repositories/stream_resolver.dart';
 import '../../../../core/utils/pip_mode.dart';
+import '../../../../main.dart'; // To access mediaHandler
 import '../../../../core/data/graphql/media_headers_provider.dart';
 import '../../../../core/data/preferences/shared_preferences_provider.dart';
 import '../../../../core/utils/app_log_store.dart';
@@ -130,6 +131,13 @@ class PlayerState extends _$PlayerState {
     });
 
     PipMode.isInPipMode.addListener(_onPipModeChanged);
+
+    // Link system media controls to our provider
+    mediaHandler?.onPlayCallback = () async => togglePlayPause();
+    mediaHandler?.onPauseCallback = () async => togglePlayPause();
+    mediaHandler?.onStopCallback = () async => stop();
+    mediaHandler?.onSeekCallback = (pos) async => state.videoPlayerController?.seekTo(pos);
+    mediaHandler?.onSkipToNextCallback = () async => playNext();
 
     final prefs = ref.read(sharedPreferencesProvider);
     return GlobalPlayerState(
@@ -282,6 +290,14 @@ class PlayerState extends _$PlayerState {
         startupLatencyMs: initializeElapsedMs,
       );
 
+      mediaHandler?.updateMetadata(
+        id: scene.id,
+        title: scene.title,
+        studio: scene.studioName,
+        thumbnailUri: scene.paths.screenshot,
+        duration: videoController.value.duration,
+      );
+
       AppLogStore.instance.add(
         'provider ready scene=${scene.id} startup=${initializeElapsedMs}ms',
         source: 'player_provider',
@@ -382,6 +398,15 @@ class PlayerState extends _$PlayerState {
               : WakelockPlus.disable(),
         );
       }
+
+      mediaHandler?.updatePlaybackState(
+        isPlaying: controller.value.isPlaying,
+        position: controller.value.position,
+        bufferedPosition: controller.value.buffered.isNotEmpty
+            ? controller.value.buffered.last.end
+            : Duration.zero,
+        speed: controller.value.playbackSpeed,
+      );
 
       // Check if finished
       if (controller.value.position >= controller.value.duration &&

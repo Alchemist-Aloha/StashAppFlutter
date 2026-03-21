@@ -6,13 +6,34 @@ import 'features/navigation/presentation/router.dart';
 import 'core/data/preferences/shared_preferences_provider.dart';
 import 'core/utils/app_log_store.dart';
 import 'core/utils/pip_mode.dart';
+import 'core/utils/media_handler.dart';
+import 'package:audio_service/audio_service.dart';
 
 import 'core/presentation/theme/app_theme.dart';
 import 'core/presentation/theme/theme_mode_provider.dart';
 
+StashMediaHandler? mediaHandler;
+
+StashMediaHandler _buildMediaHandler() => StashMediaHandler();
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   PipMode.initialize();
+  
+  try {
+    mediaHandler = await AudioService.init(
+      builder: _buildMediaHandler,
+      config: const AudioServiceConfig(
+        androidNotificationChannelId: 'com.github.damontecres.stash_app_flutter.channel.audio',
+        androidNotificationChannelName: 'StashFlow Playback',
+        androidNotificationOngoing: false,
+        androidStopForegroundOnPause: true,
+      ),    );
+  } catch (e) {
+    debugPrint('Failed to initialize AudioService: $e');
+    // Fallback or handle gracefully
+  }
+
   final sharedPreferences = await SharedPreferences.getInstance();
 
   final oldDebugPrint = debugPrint;

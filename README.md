@@ -1,4 +1,4 @@
-# 📱 StashAppFlutter
+# 📱 StashFlow
 ### Your Stash library, everywhere.
 
 A mobile-first Flutter client for your **Stash** server. Designed for seamless browsing, effortless discovery, and high-quality playback on the go.

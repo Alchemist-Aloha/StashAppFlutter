@@ -13,6 +13,7 @@ import '../providers/video_player_provider.dart';
 import '../../data/repositories/stream_resolver.dart';
 import '../../../../core/presentation/theme/app_theme.dart';
 import '../../../../core/data/graphql/media_headers_provider.dart';
+import '../../../../main.dart'; // To access mediaHandler
 import 'native_video_controls.dart';
 
 class FullScreenMode extends Notifier<bool> {
@@ -49,6 +50,45 @@ class _TiktokScenesViewState extends ConsumerState<TiktokScenesView> {
     super.initState();
     _pageController.addListener(_onScroll);
     WakelockPlus.enable();
+    
+    // Link system media controls to TikTok controllers
+    mediaHandler?.onPlayCallback = () async {
+      final scenes = ref.read(sceneListProvider).value;
+      if (scenes != null && _currentIndex < scenes.length) {
+        final controller = _controllers[scenes[_currentIndex].id];
+        await controller?.play();
+      }
+    };
+    mediaHandler?.onPauseCallback = () async {
+      final scenes = ref.read(sceneListProvider).value;
+      if (scenes != null && _currentIndex < scenes.length) {
+        final controller = _controllers[scenes[_currentIndex].id];
+        await controller?.pause();
+      }
+    };
+    mediaHandler?.onSkipToNextCallback = () async {
+      if (_pageController.hasClients) {
+        await _pageController.nextPage(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      }
+    };
+    mediaHandler?.onSkipToPreviousCallback = () async {
+      if (_pageController.hasClients) {
+        await _pageController.previousPage(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      }
+    };
+    mediaHandler?.onSeekCallback = (pos) async {
+      final scenes = ref.read(sceneListProvider).value;
+      if (scenes != null && _currentIndex < scenes.length) {
+        final controller = _controllers[scenes[_currentIndex].id];
+        await controller?.seekTo(pos);
+      }
+    };
   }
 
   @override
@@ -61,6 +101,13 @@ class _TiktokScenesViewState extends ConsumerState<TiktokScenesView> {
     }
     _controllers.clear();
     WakelockPlus.disable();
+    // Clear callbacks to avoid calling disposed TikTok controllers
+    mediaHandler?.onPlayCallback = null;
+    mediaHandler?.onPauseCallback = null;
+    mediaHandler?.onSkipToNextCallback = null;
+    mediaHandler?.onSkipToPreviousCallback = null;
+    mediaHandler?.onSeekCallback = null;
+    
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
@@ -143,12 +190,46 @@ class _TiktokScenesViewState extends ConsumerState<TiktokScenesView> {
           }
           controller.play();
         }
+        
+        // Update Media Session
+        final currentScene = scenes[_currentIndex];
+        mediaHandler?.updateMetadata(
+          id: currentScene.id,
+          title: currentScene.title,
+          studio: currentScene.studioName,
+          thumbnailUri: currentScene.paths.screenshot,
+          duration: controller.value.duration,
+        );
+        
+        // Listener for playback state
+        controller.removeListener(_syncMediaSession);
+        controller.addListener(_syncMediaSession);
       } else {
         if (controller.value.isPlaying) {
           controller.pause();
         }
+        controller.removeListener(_syncMediaSession);
       }
     }
+  }
+
+  void _syncMediaSession() {
+    final scenesAsync = ref.read(sceneListProvider);
+    if (!scenesAsync.hasValue) return;
+    final scenes = scenesAsync.value!;
+    if (_currentIndex >= scenes.length) return;
+    
+    final controller = _controllers[scenes[_currentIndex].id];
+    if (controller == null) return;
+
+    mediaHandler?.updatePlaybackState(
+      isPlaying: controller.value.isPlaying,
+      position: controller.value.position,
+      bufferedPosition: controller.value.buffered.isNotEmpty 
+          ? controller.value.buffered.last.end 
+          : Duration.zero,
+      speed: controller.value.playbackSpeed,
+    );
   }
 
   Future<void> _initializeController(Scene scene) async {

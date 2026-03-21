@@ -299,7 +299,7 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
     final hasActiveFilters = filterActive || organizedOnly;
 
     return ListPageScaffold<Scene>(
-      title: 'Stash',
+      title: 'StashFlow',
       searchHint: 'Search scenes...',
       onSearchChanged: _onSearchChanged,
       provider: scenesAsync,
