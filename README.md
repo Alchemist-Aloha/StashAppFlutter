@@ -68,3 +68,5 @@ For architecture, known issues, and onboarding, see:
 - [Developer Guide](docs/DEVELOPER_GUIDE.md)
 - [Troubleshooting](docs/TROUBLESHOOTING.md)
 - [Roadmap](docs/ROADMAP.md)
+
+- [Hosted documentation (Live)](https://alchemist-aloha.github.io/StashFlow/) — Official hosted docs and API reference.
