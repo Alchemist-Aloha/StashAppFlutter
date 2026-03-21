@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -7,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:video_player/video_player.dart';
 import '../../../../core/data/graphql/graphql_client.dart';
+import '../../../../core/data/http/http_client_provider.dart';
 import '../../../../core/data/graphql/media_headers_provider.dart';
 import '../../../../core/data/graphql/url_resolver.dart';
 import '../../../../core/data/preferences/shared_preferences_provider.dart';
@@ -253,8 +253,7 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
       );
     }
 
-    final client = HttpClient();
-    client.connectionTimeout = const Duration(seconds: 3);
+    final client = ref.read(httpClientProvider);
 
     try {
       final req = await client
@@ -278,8 +277,6 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
         succeeded: false,
         latencyMs: stopwatch.elapsedMilliseconds,
       );
-    } finally {
-      client.close(force: true);
     }
   }
 
@@ -290,9 +287,7 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
     } else {
       await Navigator.of(context, rootNavigator: true).push(
         MaterialPageRoute<void>(
-          builder: (context) => FullscreenPlayerPage(
-            scene: widget.scene,
-          ),
+          builder: (context) => FullscreenPlayerPage(scene: widget.scene),
         ),
       );
     }
@@ -302,7 +297,7 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
   Widget build(BuildContext context) {
     final playerState = ref.watch(playerStateProvider);
     final isActive = playerState.activeScene?.id == widget.scene.id;
-    
+
     AppLogStore.instance.add(
       'SceneVideoPlayer build scene=${widget.scene.id} isActive=$isActive hasController=${playerState.videoPlayerController != null}',
       source: 'SceneVideoPlayer',
@@ -375,7 +370,8 @@ class FullscreenPlayerPage extends ConsumerStatefulWidget {
   const FullscreenPlayerPage({required this.scene, super.key});
 
   @override
-  ConsumerState<FullscreenPlayerPage> createState() => _FullscreenPlayerPageState();
+  ConsumerState<FullscreenPlayerPage> createState() =>
+      _FullscreenPlayerPageState();
 }
 
 class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
@@ -443,7 +439,8 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
                 controller: controller,
                 useDoubleTapSeek: playerState.useDoubleTapSeek,
                 enableNativePip: playerState.enableNativePip,
-                onFullScreenToggle: () => Navigator.of(context, rootNavigator: true).pop(),
+                onFullScreenToggle: () =>
+                    Navigator.of(context, rootNavigator: true).pop(),
                 scene: widget.scene,
               ),
             ],

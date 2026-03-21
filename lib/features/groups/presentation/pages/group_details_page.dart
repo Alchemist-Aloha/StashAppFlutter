@@ -15,9 +15,7 @@ class GroupDetailsPage extends ConsumerWidget {
     final groupAsync = ref.watch(groupDetailsProvider(groupId));
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Group Details'),
-      ),
+      appBar: AppBar(title: const Text('Group Details')),
       body: groupAsync.when(
         data: (group) => SingleChildScrollView(
           child: Column(
@@ -31,7 +29,9 @@ class GroupDetailsPage extends ConsumerWidget {
                   child: Icon(
                     Icons.group_work,
                     size: 72,
-                    color: context.colors.onSurfaceVariant.withValues(alpha: 0.5),
+                    color: context.colors.onSurfaceVariant.withValues(
+                      alpha: 0.5,
+                    ),
                   ),
                 ),
               ),
@@ -52,8 +52,11 @@ class GroupDetailsPage extends ConsumerWidget {
                       spacing: AppTheme.spacingSmall,
                       runSpacing: AppTheme.spacingSmall,
                       children: [
-                        if (group.date != null) _buildChip(context, group.date!),
-                        if (group.director != null && group.director!.isNotEmpty) _buildChip(context, 'Director: ${group.director}'),
+                        if (group.date != null)
+                          _buildChip(context, group.date!),
+                        if (group.director != null &&
+                            group.director!.isNotEmpty)
+                          _buildChip(context, 'Director: ${group.director}'),
                         if (group.rating100 != null)
                           _buildChip(
                             context,
@@ -63,14 +66,20 @@ class GroupDetailsPage extends ConsumerWidget {
                           ),
                       ],
                     ),
-                    if (group.synopsis != null && group.synopsis!.isNotEmpty) ...[
+                    if (group.synopsis != null &&
+                        group.synopsis!.isNotEmpty) ...[
                       const Divider(height: 32, color: Colors.grey),
-                      const SectionHeader(title: 'Synopsis', padding: EdgeInsets.zero),
+                      const SectionHeader(
+                        title: 'Synopsis',
+                        padding: EdgeInsets.zero,
+                      ),
                       const SizedBox(height: AppTheme.spacingSmall),
                       Text(
                         group.synopsis!,
                         style: context.textTheme.bodyMedium?.copyWith(
-                          color: context.colors.onSurface.withValues(alpha: 0.8),
+                          color: context.colors.onSurface.withValues(
+                            alpha: 0.8,
+                          ),
                         ),
                       ),
                     ],
@@ -89,9 +98,20 @@ class GroupDetailsPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildChip(BuildContext context, String label, {IconData? icon, Color? iconColor}) {
+  Widget _buildChip(
+    BuildContext context,
+    String label, {
+    IconData? icon,
+    Color? iconColor,
+  }) {
     return Chip(
-      avatar: icon != null ? Icon(icon, size: 16, color: iconColor ?? context.colors.onSurfaceVariant) : null,
+      avatar: icon != null
+          ? Icon(
+              icon,
+              size: 16,
+              color: iconColor ?? context.colors.onSurfaceVariant,
+            )
+          : null,
       label: Text(label, style: context.textTheme.bodySmall),
       backgroundColor: context.colors.surfaceVariant,
       side: BorderSide.none,

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../core/data/graphql/graphql_client.dart';
+import '../../../../core/data/http/http_client_provider.dart';
 import '../../../../core/data/graphql/media_headers_provider.dart';
 import '../../../../core/data/graphql/url_resolver.dart';
 import '../../../../core/utils/app_log_store.dart';
@@ -294,8 +295,7 @@ class StreamResolver extends _$StreamResolver {
     final uri = Uri.tryParse(url);
     if (uri == null) return null;
 
-    final client = HttpClient();
-    client.connectionTimeout = const Duration(seconds: 3);
+    final client = ref.read(httpClientProvider);
 
     try {
       Future<String?> requestAndExtract(
@@ -330,8 +330,6 @@ class StreamResolver extends _$StreamResolver {
       return null;
     } catch (_) {
       return null;
-    } finally {
-      client.close(force: true);
     }
   }
 }

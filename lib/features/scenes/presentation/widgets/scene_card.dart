@@ -125,8 +125,10 @@ class SceneCard extends ConsumerWidget {
                       color: Colors.black.withAlpha(200),
                       child: Text(
                         _formatDuration(duration),
-                        style:
-                            const TextStyle(color: Colors.white, fontSize: 12),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                        ),
                       ),
                     ),
                   ),
@@ -223,8 +225,10 @@ class SceneCard extends ConsumerWidget {
                       color: Colors.black.withAlpha(200),
                       child: Text(
                         _formatDuration(duration),
-                        style:
-                            const TextStyle(color: Colors.white, fontSize: 10),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                        ),
                       ),
                     ),
                   ),

@@ -42,10 +42,7 @@ class GraphQLGroupRepository implements GroupRepository {
           },
           'group_filter': filter != null
               ? {
-                  'name': {
-                    'value': filter,
-                    'modifier': 'EQUALS',
-                  },
+                  'name': {'value': filter, 'modifier': 'EQUALS'},
                 }
               : null,
         },
@@ -77,16 +74,13 @@ class GraphQLGroupRepository implements GroupRepository {
     ''';
 
     final result = await client.query(
-      QueryOptions(
-        document: gql(query),
-        variables: {'id': id},
-      ),
+      QueryOptions(document: gql(query), variables: {'id': id}),
     );
 
     if (result.hasException) throw result.exception!;
     final data = result.data?['findGroup'];
     if (data == null) throw Exception('Group not found');
-    
+
     return Group.fromJson(data as Map<String, dynamic>);
   }
 }

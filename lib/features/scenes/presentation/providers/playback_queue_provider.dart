@@ -56,17 +56,21 @@ class PlaybackQueue extends _$PlaybackQueue {
     if (activeScene == null) return null;
 
     // 1. Check manual queue first
-    final manualIndex = state.manualQueue.indexWhere((s) => s.id == activeScene.id);
+    final manualIndex = state.manualQueue.indexWhere(
+      (s) => s.id == activeScene.id,
+    );
     if (manualIndex != -1 && manualIndex < state.manualQueue.length - 1) {
       return state.manualQueue[manualIndex + 1];
     }
 
     // 2. Fallback to current sequence (query list)
-    final seqIndex = state.currentSequence.indexWhere((s) => s.id == activeScene.id);
+    final seqIndex = state.currentSequence.indexWhere(
+      (s) => s.id == activeScene.id,
+    );
     if (seqIndex != -1 && seqIndex < state.currentSequence.length - 1) {
       return state.currentSequence[seqIndex + 1];
     }
-    
+
     return null;
   }
 

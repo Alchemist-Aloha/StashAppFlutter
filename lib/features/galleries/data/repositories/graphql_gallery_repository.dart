@@ -42,10 +42,7 @@ class GraphQLGalleryRepository implements GalleryRepository {
           },
           'gallery_filter': filter != null
               ? {
-                  'title': {
-                    'value': filter,
-                    'modifier': 'EQUALS',
-                  },
+                  'title': {'value': filter, 'modifier': 'EQUALS'},
                 }
               : null,
         },
@@ -77,16 +74,13 @@ class GraphQLGalleryRepository implements GalleryRepository {
     ''';
 
     final result = await client.query(
-      QueryOptions(
-        document: gql(query),
-        variables: {'id': id},
-      ),
+      QueryOptions(document: gql(query), variables: {'id': id}),
     );
 
     if (result.hasException) throw result.exception!;
     final data = result.data?['findGallery'];
     if (data == null) throw Exception('Gallery not found');
-    
+
     return Gallery.fromJson(data as Map<String, dynamic>);
   }
 }
