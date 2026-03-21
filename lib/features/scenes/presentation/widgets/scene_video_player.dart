@@ -286,20 +286,11 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
   Future<void> _toggleFullScreen() async {
     final playerState = ref.read(playerStateProvider);
     if (playerState.isFullScreen) {
-      Navigator.of(context, rootNavigator: true).pop();
-    } else {
-      await Navigator.of(context, rootNavigator: true).push(
-        MaterialPageRoute<void>(
-          builder: (context) => FullscreenPlayerPage(
-            scene: widget.scene,
-          ),
-        ),
-      );
-      // Ensure state is reset when the pushed route is popped, 
-      // regardless of how it was popped.
-      if (mounted) {
-        ref.read(playerStateProvider.notifier).setFullScreen(false);
+      if (context.mounted) {
+        context.pop();
       }
+    } else {
+      context.push('/scenes/scene/${widget.scene.id}/fullscreen');
     }
   }
 

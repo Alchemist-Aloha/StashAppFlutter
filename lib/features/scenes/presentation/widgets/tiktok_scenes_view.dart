@@ -380,22 +380,12 @@ class _TiktokSceneItemState extends ConsumerState<TiktokSceneItem> {
 
   void _toggleFullScreen() {
     final isFullScreen = ref.read(fullScreenModeProvider);
-    final newMode = !isFullScreen;
-    ref.read(fullScreenModeProvider.notifier).set(newMode);
-    if (newMode) {
-      SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-      SystemChrome.setPreferredOrientations([
-        DeviceOrientation.landscapeLeft,
-        DeviceOrientation.landscapeRight,
-      ]);
+    if (isFullScreen) {
+      if (context.mounted) {
+        context.pop();
+      }
     } else {
-      SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-      SystemChrome.setPreferredOrientations([
-        DeviceOrientation.portraitUp,
-        DeviceOrientation.portraitDown,
-        DeviceOrientation.landscapeLeft,
-        DeviceOrientation.landscapeRight,
-      ]);
+      context.push('/scenes/fullscreen/${widget.scene.id}');
     }
   }
 
