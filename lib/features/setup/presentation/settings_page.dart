@@ -684,7 +684,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               if (value.length == 8) {
                 final colorValue = int.tryParse(value, radix: 16);
                 if (colorValue != null) {
-                  // Don't reset _forceShowCustom while typing if it's already true
+                  // We don't reset _forceShowCustom while typing as we stay in this mode.
                   _seedColor = Color(colorValue);
                   ref.read(appThemeColorProvider.notifier).setThemeColor(_seedColor);
                 }
@@ -698,7 +698,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
   Widget _buildColorSwatch(Color? color) {
     final isSelected = color == null
-        ? (!_presetColors.contains(_seedColor) || _forceShowCustom)
+        ? (_forceShowCustom || !_presetColors.contains(_seedColor))
         : (_seedColor == color && !_forceShowCustom);
     final displayColor = color ?? _seedColor;
 
@@ -709,7 +709,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
           if (color != null) {
             _saveThemeColor(color);
           } else {
-            // Switch to/focus custom mode
+            // Already in custom mode OR switching into it.
             setState(() {
               _forceShowCustom = true;
               if (_customHexController.text.isEmpty) {
