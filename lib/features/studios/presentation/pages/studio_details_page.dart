@@ -151,7 +151,10 @@ class StudioDetailsPage extends ConsumerWidget {
                     ),
                     if (studio.details != null &&
                         studio.details!.trim().isNotEmpty) ...[
-                      Divider(height: 32, color: context.colors.outline.withValues(alpha: 0.2)),
+                      Divider(
+                        height: 32,
+                        color: context.colors.outline.withValues(alpha: 0.2),
+                      ),
                       const SectionHeader(title: 'Details'),
                       Text(
                         studio.details!,
@@ -162,7 +165,10 @@ class StudioDetailsPage extends ConsumerWidget {
                         ),
                       ),
                     ],
-                    Divider(height: 32, color: context.colors.outline.withValues(alpha: 0.2)),
+                    Divider(
+                      height: 32,
+                      color: context.colors.outline.withValues(alpha: 0.2),
+                    ),
                     SectionHeader(
                       title: 'Media',
                       onViewAll: () =>

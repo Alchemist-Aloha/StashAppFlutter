@@ -22,52 +22,52 @@ part 'video_player_provider.g.dart';
 class GlobalPlayerState {
   /// The scene that is currently loaded or playing.
   final Scene? activeScene;
-  
+
   /// The underlying controller from the `video_player` package.
   final VideoPlayerController? videoPlayerController;
-  
+
   /// Whether the video is currently playing.
   final bool isPlaying;
-  
+
   /// Whether the player is currently in full-screen mode.
   final bool isFullScreen;
-  
+
   /// Whether the player is currently in Picture-in-Picture mode.
   final bool isInPipMode;
-  
+
   /// MIME type of the current stream.
   final String? streamMimeType;
-  
+
   /// Display label for the current stream (e.g., "Direct", "Transcoded").
   final String? streamLabel;
-  
+
   /// Source identifier for the current stream.
   final String? streamSource;
-  
+
   /// Latency in milliseconds from initialization start to first frame.
   final int? startupLatencyMs;
-  
+
   /// Whether a network prewarm was attempted for this scene.
   final bool? prewarmAttempted;
-  
+
   /// Whether the prewarm attempt was successful.
   final bool? prewarmSucceeded;
-  
+
   /// Latency of the prewarm attempt in milliseconds.
   final int? prewarmLatencyMs;
-  
+
   /// User preference: whether to automatically play the next scene when current ends.
   final bool autoplayNext;
-  
+
   /// User preference: whether to show technical overlays on the video.
   final bool showVideoDebugInfo;
-  
+
   /// User preference: whether to allow double-tap to seek 10s.
   final bool useDoubleTapSeek;
-  
+
   /// User preference: whether to keep audio playing when the app is backgrounded.
   final bool enableBackgroundPlayback;
-  
+
   /// User preference: whether to trigger native Android PiP on minimize.
   final bool enableNativePip;
 
@@ -165,10 +165,10 @@ class PlayerState extends _$PlayerState {
 
   /// Internal reference used during disposal to ensure we clean up the right controller.
   VideoPlayerController? _videoControllerRef;
-  
+
   /// Tracking ID to avoid redundant logging of the first frame for the same scene.
   String? _firstFrameLoggedSceneId;
-  
+
   /// Mutex-like flag to prevent overlapping "Play Next" transitions,
   /// especially when triggered by multiple listeners (e.g. video finish + UI button).
   bool _isTransitioning = false;
@@ -189,7 +189,8 @@ class PlayerState extends _$PlayerState {
     mediaHandler?.onPlayCallback = () async => togglePlayPause();
     mediaHandler?.onPauseCallback = () async => togglePlayPause();
     mediaHandler?.onStopCallback = () async => stop();
-    mediaHandler?.onSeekCallback = (pos) async => state.videoPlayerController?.seekTo(pos);
+    mediaHandler?.onSeekCallback = (pos) async =>
+        state.videoPlayerController?.seekTo(pos);
     mediaHandler?.onSkipToNextCallback = () async {
       AppLogStore.instance.add(
         'PlayerState mediaHandler.onSkipToNextCallback',
@@ -523,7 +524,7 @@ class PlayerState extends _$PlayerState {
 
       final queueNotifier = ref.read(playbackQueueProvider.notifier);
       final nextScene = queueNotifier.getNextScene();
-      
+
       AppLogStore.instance.add(
         'PlayerState playNext: nextSceneFound=${nextScene?.id}',
         source: 'player_provider',

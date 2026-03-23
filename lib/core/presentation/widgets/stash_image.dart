@@ -1,10 +1,20 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 import '../../data/graphql/media_headers_provider.dart';
 
 class StashImage extends ConsumerWidget {
+  static final CacheManager cacheManager = CacheManager(
+    Config(
+      'stashImageCache',
+      stalePeriod: const Duration(days: 30),
+      maxNrOfCacheObjects: 300,
+      fileService: HttpFileService(),
+    ),
+  );
+
   const StashImage({
     required this.imageUrl,
     this.width,
@@ -22,15 +32,24 @@ class StashImage extends ConsumerWidget {
   final int? memCacheWidth;
   final int? memCacheHeight;
 
+  static final Set<String> _prefetched = <String>{};
+
   static Future<void> prefetch(
     BuildContext context, {
     required String? imageUrl,
     Map<String, String>? headers,
   }) async {
-    if (imageUrl == null || imageUrl.isEmpty) return;
+    if (imageUrl == null || imageUrl.isEmpty || _prefetched.contains(imageUrl)) {
+      return;
+    }
 
+    _prefetched.add(imageUrl);
     try {
-      final provider = CachedNetworkImageProvider(imageUrl, headers: headers);
+      final provider = CachedNetworkImageProvider(
+        imageUrl,
+        headers: headers,
+        cacheManager: cacheManager,
+      );
       await precacheImage(provider, context);
     } catch (_) {
       // ignore prefetch failures; user experience should fall back gracefully.
@@ -55,6 +74,7 @@ class StashImage extends ConsumerWidget {
     return CachedNetworkImage(
       imageUrl: imageUrl!,
       httpHeaders: headers,
+      cacheManager: cacheManager,
       width: width,
       height: height,
       fit: fit,
@@ -73,7 +93,9 @@ class StashImage extends ConsumerWidget {
       width: width,
       height: height,
       color: Colors.grey[800],
-      child: const Center(child: Icon(Icons.broken_image, color: Colors.white54)),
+      child: const Center(
+        child: Icon(Icons.broken_image, color: Colors.white54),
+      ),
     );
   }
 }

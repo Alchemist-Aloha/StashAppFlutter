@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/data/graphql/media_headers_provider.dart';
 import '../../../../core/presentation/widgets/stash_image.dart';
 import '../../../../core/presentation/theme/app_theme.dart';
 import '../../../../core/presentation/widgets/marquee_text.dart';
@@ -13,9 +12,10 @@ class MiniPlayer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final activeScene = ref.watch(playerStateProvider.select((s) => s.activeScene));
+    final activeScene = ref.watch(
+      playerStateProvider.select((s) => s.activeScene),
+    );
     final isPlaying = ref.watch(playerStateProvider.select((s) => s.isPlaying));
-    final mediaHeaders = ref.watch(mediaHeadersProvider);
 
     if (activeScene == null) return const SizedBox.shrink();
 

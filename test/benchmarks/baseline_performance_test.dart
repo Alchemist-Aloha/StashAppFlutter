@@ -35,7 +35,8 @@ void main() {
     // Mock wakelock_plus platform channel to avoid platform errors in tests.
     // Pigeon's BasicMessageChannel for wakelock_plus; provide a mock handler
     // that returns a successful empty response.
-    const wakelockChannelName = 'dev.flutter.pigeon.wakelock_plus_platform_interface.WakelockPlusApi';
+    const wakelockChannelName =
+        'dev.flutter.pigeon.wakelock_plus_platform_interface.WakelockPlusApi';
     final codec = StandardMessageCodec();
     ServicesBinding.instance.defaultBinaryMessenger.setMockMessageHandler(
       wakelockChannelName,
@@ -72,7 +73,9 @@ void main() {
 
     // Measure L1: Cold Launch Time
     stopwatch.stop();
-    debugPrint('BENCHMARK: L1 Cold Launch = ${stopwatch.elapsedMilliseconds}ms');
+    debugPrint(
+      'BENCHMARK: L1 Cold Launch = ${stopwatch.elapsedMilliseconds}ms',
+    );
 
     // N1: Counting network requests
     // (Verification will be manual or through log counting in Task 7)

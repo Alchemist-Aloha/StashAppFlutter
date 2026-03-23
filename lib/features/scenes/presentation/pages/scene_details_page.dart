@@ -123,27 +123,28 @@ class _SceneDetailsPageState extends ConsumerState<SceneDetailsPage> {
   Widget build(BuildContext context) {
     ref.listen(playerStateProvider, (previous, next) {
       final nextScene = next.activeScene;
-      
+
       // Handle full-screen auto-exit
       // Only the page that was active during fullscreen should handle the pop
-      if (previous?.isFullScreen == true && next.isFullScreen == false && previous?.activeScene?.id == widget.sceneId) {
+      if (previous?.isFullScreen == true &&
+          next.isFullScreen == false &&
+          previous?.activeScene?.id == widget.sceneId) {
         if (context.mounted && GoRouter.of(context).canPop()) {
-           AppLogStore.instance.add(
+          AppLogStore.instance.add(
             'SceneDetailsPage [${widget.sceneId}] popping fullscreen view',
             source: 'SceneDetailsPage',
           );
           context.pop();
         }
       }
-      
+
       // Navigate to next scene if:
       // 1. A new scene is active
       // 2. It's different from THIS page's scene
       // 3. THIS page's scene was the one that just finished (previous.activeScene)
-      if (nextScene != null && 
-          nextScene.id != widget.sceneId && 
+      if (nextScene != null &&
+          nextScene.id != widget.sceneId &&
           previous?.activeScene?.id == widget.sceneId) {
-        
         AppLogStore.instance.add(
           'SceneDetailsPage [${widget.sceneId}] navigating to next scene: ${nextScene.id}',
           source: 'SceneDetailsPage',
@@ -157,9 +158,7 @@ class _SceneDetailsPageState extends ConsumerState<SceneDetailsPage> {
     final randomNavigationEnabled = ref.watch(randomNavigationEnabledProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Scene Details'),
-      ),
+      appBar: AppBar(title: const Text('Scene Details')),
       floatingActionButton: randomNavigationEnabled
           ? sceneAsync.maybeWhen(
               data: (_) => FloatingActionButton.small(
@@ -407,7 +406,10 @@ class _SceneDetailsPageState extends ConsumerState<SceneDetailsPage> {
                           ),
                         ],
                       ),
-                      Divider(height: 32, color: context.colors.outline.withValues(alpha: 0.2)),
+                      Divider(
+                        height: 32,
+                        color: context.colors.outline.withValues(alpha: 0.2),
+                      ),
                       if (hasDetails) ...[
                         Row(
                           children: [
@@ -446,7 +448,10 @@ class _SceneDetailsPageState extends ConsumerState<SceneDetailsPage> {
                             ),
                           ),
                         ),
-                        Divider(height: 32, color: context.colors.outline.withValues(alpha: 0.2)),
+                        Divider(
+                          height: 32,
+                          color: context.colors.outline.withValues(alpha: 0.2),
+                        ),
                       ],
                       if (hasTags) ...[
                         Row(
@@ -509,7 +514,10 @@ class _SceneDetailsPageState extends ConsumerState<SceneDetailsPage> {
                             ),
                           ),
                         ),
-                        Divider(height: 32, color: context.colors.outline.withValues(alpha: 0.2)),
+                        Divider(
+                          height: 32,
+                          color: context.colors.outline.withValues(alpha: 0.2),
+                        ),
                       ],
                       if (hasPerformers) ...[
                         Row(
@@ -567,18 +575,19 @@ class _SceneDetailsPageState extends ConsumerState<SceneDetailsPage> {
                             return ListTile(
                               contentPadding: EdgeInsets.zero,
                               leading: hasImage
-                                    ? CircleAvatar(
-                                        backgroundColor:
-                                            context.colors.surfaceVariant,
-                                        foregroundImage: CachedNetworkImageProvider(
-                                          performerImagePath!,
-                                          headers: mediaHeaders,
-                                        ),
-                                        child: const Icon(Icons.person),
-                                      )
-                                    : const CircleAvatar(
-                                        child: Icon(Icons.person),
-                                      ),
+                                  ? CircleAvatar(
+                                      backgroundColor:
+                                          context.colors.surfaceVariant,
+                                      foregroundImage:
+                                          CachedNetworkImageProvider(
+                                            performerImagePath!,
+                                            headers: mediaHeaders,
+                                          ),
+                                      child: const Icon(Icons.person),
+                                    )
+                                  : const CircleAvatar(
+                                      child: Icon(Icons.person),
+                                    ),
                               title: Text(
                                 performerName,
                                 style: context.textTheme.bodyLarge,
@@ -595,7 +604,10 @@ class _SceneDetailsPageState extends ConsumerState<SceneDetailsPage> {
                             );
                           },
                         ),
-                        Divider(height: 32, color: context.colors.outline.withValues(alpha: 0.2)),
+                        Divider(
+                          height: 32,
+                          color: context.colors.outline.withValues(alpha: 0.2),
+                        ),
                       ],
                       if (scene.studioId != null)
                         studioMediaAsync.when(

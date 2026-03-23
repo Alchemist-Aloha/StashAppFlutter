@@ -7,7 +7,7 @@ import '../../domain/entities/scene_title_utils.dart';
 
 /// A card widget that displays a summary of a [Scene].
 ///
-/// This component is used throughout the app in lists and grids to show 
+/// This component is used throughout the app in lists and grids to show
 /// a thumbnail, title, studio, and duration. It supports:
 /// * Two layout modes: [isGrid] = true (compact) and false (full-width list).
 /// * Authenticated image loading using headers from [mediaHeadersProvider].
@@ -23,10 +23,10 @@ class SceneCard extends ConsumerWidget {
 
   /// The scene data to display.
   final Scene scene;
-  
+
   /// Whether to display in a compact grid format or a wide list format.
   final bool isGrid;
-  
+
   /// Callback triggered when the card is tapped.
   final VoidCallback? onTap;
 
@@ -79,11 +79,7 @@ class SceneCard extends ConsumerWidget {
   }
 
   /// Builds the full-width list variant of the card.
-  Widget _buildListCard(
-    BuildContext context,
-    WidgetRef ref,
-    double? duration,
-  ) {
+  Widget _buildListCard(BuildContext context, WidgetRef ref, double? duration) {
     return InkWell(
       onTap: onTap,
       onLongPress: () => _showMenu(context, ref),
@@ -98,7 +94,9 @@ class SceneCard extends ConsumerWidget {
               child: Stack(
                 children: [
                   StashImage(
-                    imageUrl: scene.paths.screenshot ?? 'https://via.placeholder.com/320x180',
+                    imageUrl:
+                        scene.paths.screenshot ??
+                        'https://via.placeholder.com/320x180',
                     width: double.infinity,
                     fit: BoxFit.cover,
                     memCacheWidth: 640,
@@ -114,8 +112,10 @@ class SceneCard extends ConsumerWidget {
                       color: Colors.black.withAlpha(200),
                       child: Text(
                         _formatDuration(duration),
-                        style:
-                            const TextStyle(color: Colors.white, fontSize: 12),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                        ),
                       ),
                     ),
                   ),
@@ -170,11 +170,7 @@ class SceneCard extends ConsumerWidget {
   }
 
   /// Builds the compact grid variant of the card.
-  Widget _buildGridCard(
-    BuildContext context,
-    WidgetRef ref,
-    double? duration,
-  ) {
+  Widget _buildGridCard(BuildContext context, WidgetRef ref, double? duration) {
     return InkWell(
       onTap: onTap,
       onLongPress: () => _showMenu(context, ref),
@@ -189,7 +185,9 @@ class SceneCard extends ConsumerWidget {
               child: Stack(
                 children: [
                   StashImage(
-                    imageUrl: scene.paths.screenshot ?? 'https://via.placeholder.com/320x180',
+                    imageUrl:
+                        scene.paths.screenshot ??
+                        'https://via.placeholder.com/320x180',
                     width: double.infinity,
                     fit: BoxFit.cover,
                     memCacheWidth: 320,
@@ -205,8 +203,10 @@ class SceneCard extends ConsumerWidget {
                       color: Colors.black.withAlpha(200),
                       child: Text(
                         _formatDuration(duration),
-                        style:
-                            const TextStyle(color: Colors.white, fontSize: 10),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                        ),
                       ),
                     ),
                   ),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/data/graphql/media_headers_provider.dart';
+
 import '../../../../core/presentation/widgets/stash_image.dart';
 import '../../../../core/presentation/theme/app_theme.dart';
 import '../providers/studio_media_provider.dart';
@@ -15,7 +15,6 @@ class StudioMediaGridPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final mediaAsync = ref.watch(studioMediaGridProvider(studioId));
-    final mediaHeaders = ref.watch(mediaHeadersProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('All Studio Media')),

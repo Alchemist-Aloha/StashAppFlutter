@@ -14,7 +14,10 @@ import 'core/presentation/theme/app_theme.dart';
 import 'core/presentation/theme/theme_mode_provider.dart';
 import 'core/presentation/theme/theme_color_provider.dart';
 
-const bool isTestMode = bool.fromEnvironment('FLUTTER_TEST', defaultValue: false);
+const bool isTestMode = bool.fromEnvironment(
+  'FLUTTER_TEST',
+  defaultValue: false,
+);
 
 StashMediaHandler? mediaHandler;
 
@@ -24,18 +27,19 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initHiveForFlutter();
   PipMode.initialize();
-  
+
   if (!isTestMode) {
     try {
       mediaHandler = await AudioService.init(
-      builder: _buildMediaHandler,
-      config: const AudioServiceConfig(
-        androidNotificationChannelId: 'com.github.alchemistaloha.stash_app_flutter.channel.audio',
-        androidNotificationChannelName: 'StashFlow Playback',
-        androidNotificationOngoing: false,
-        androidStopForegroundOnPause: true,
-      ),
-    );
+        builder: _buildMediaHandler,
+        config: const AudioServiceConfig(
+          androidNotificationChannelId:
+              'com.github.alchemistaloha.stash_app_flutter.channel.audio',
+          androidNotificationChannelName: 'StashFlow Playback',
+          androidNotificationOngoing: false,
+          androidStopForegroundOnPause: true,
+        ),
+      );
     } catch (e) {
       debugPrint('Failed to initialize AudioService: $e');
       // Fallback or handle gracefully

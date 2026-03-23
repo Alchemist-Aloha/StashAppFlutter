@@ -12,8 +12,6 @@ class PerformerCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    
-
     return InkWell(
       onTap: onTap,
       child: Column(

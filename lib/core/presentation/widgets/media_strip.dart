@@ -49,6 +49,11 @@ class MediaStrip extends StatelessWidget {
             const SizedBox(width: AppTheme.spacingSmall),
         itemBuilder: (context, index) {
           final item = items[index];
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (context.mounted) {
+              StashImage.prefetch(context, imageUrl: item.thumbnailUrl, headers: headers);
+            }
+          });
           return InkWell(
             onTap: item.onTap,
             borderRadius: BorderRadius.circular(AppTheme.radiusMedium),

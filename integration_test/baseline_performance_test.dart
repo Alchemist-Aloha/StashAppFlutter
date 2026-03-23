@@ -40,6 +40,8 @@ void main() {
 
     // Measure L1: Cold Launch Time
     stopwatch.stop();
-    debugPrint('BENCHMARK: L1 Cold Launch = ${stopwatch.elapsedMilliseconds}ms');
+    debugPrint(
+      'BENCHMARK: L1 Cold Launch = ${stopwatch.elapsedMilliseconds}ms',
+    );
   });
 }
