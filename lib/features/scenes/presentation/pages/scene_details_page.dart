@@ -112,6 +112,17 @@ class _SceneDetailsPageState extends ConsumerState<SceneDetailsPage> {
   Widget build(BuildContext context) {
     ref.listen(playerStateProvider, (previous, next) {
       final nextScene = next.activeScene;
+
+      // Handle full-screen auto-exit
+      if (previous?.isFullScreen == true && next.isFullScreen == false) {
+        if (context.mounted && GoRouter.of(context).canPop()) {
+           AppLogStore.instance.add(
+            'SceneDetailsPage popping fullscreen view',
+            source: 'SceneDetailsPage',
+          );
+          context.pop();
+        }
+      }
       
       // Navigate if:
       // 1. We have a next scene

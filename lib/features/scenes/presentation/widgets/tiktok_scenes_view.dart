@@ -493,14 +493,40 @@ class _TiktokSceneItemState extends ConsumerState<TiktokSceneItem> {
     );
   }
 
-  void _toggleFullScreen() {
+  Future<void> _toggleFullScreen() async {
     final isFullScreen = ref.read(fullScreenModeProvider);
     if (isFullScreen) {
       if (context.mounted) {
         context.pop();
       }
     } else {
-      context.push('/scenes/fullscreen/${widget.scene.id}');
+      final playerNotifier = ref.read(playerStateProvider.notifier);
+      final globalState = ref.read(playerStateProvider);
+      final controller = widget.controller;
+
+      if (globalState.activeScene?.id != widget.scene.id && controller != null) {
+        // TikTok has its own controller, but FullscreenPage uses the global one.
+        // We need to tell the global player to take over this scene.
+        final resolver = ref.read(streamResolverProvider.notifier);
+        final choice = await resolver.resolvePreferredStream(widget.scene);
+        if (choice != null) {
+          final headers = ref.read(mediaHeadersProvider);
+          await playerNotifier.playScene(
+            widget.scene,
+            choice.url,
+            mimeType: choice.mimeType,
+            streamLabel: choice.label,
+            streamSource: 'tiktok-fullscreen',
+            httpHeaders: headers,
+          );
+          // Seek to the same position as TikTok's local controller
+          await ref.read(playerStateProvider).videoPlayerController?.seekTo(controller.value.position);
+        }
+      }
+
+      if (context.mounted) {
+        context.push('/scenes/fullscreen/${widget.scene.id}');
+      }
     }
   }
 
