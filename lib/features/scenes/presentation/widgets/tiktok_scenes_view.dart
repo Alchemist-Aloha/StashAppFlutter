@@ -133,6 +133,9 @@ class _TiktokScenesViewState extends ConsumerState<TiktokScenesView> {
         _currentIndex = newIndex;
       });
       
+      // Sync with global playback queue
+      ref.read(playbackQueueProvider.notifier).setIndex(newIndex);
+      
       // Debounce controller management to wait for the swipe to settle
       _manageTimer?.cancel();
       _manageTimer = Timer(const Duration(milliseconds: 150), () {
