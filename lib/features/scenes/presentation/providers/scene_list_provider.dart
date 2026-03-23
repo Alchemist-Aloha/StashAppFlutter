@@ -169,6 +169,14 @@ class SceneFilterState extends _$SceneFilterState {
   }
 }
 
+/// A notifier that manages the primary list of scenes with support for
+/// filtering, sorting, and infinite pagination.
+///
+/// This provider is responsible for:
+/// - Initializing and refreshing the scene list from the [SceneRepository].
+/// - Managing the current page state and loading more scenes as the user scrolls.
+/// - Providing search and filtering capabilities.
+/// - Synchronizing the initial playback sequence with the [playbackQueueProvider].
 @riverpod
 class SceneList extends _$SceneList {
   int _currentPage = 1;
@@ -178,10 +186,13 @@ class SceneList extends _$SceneList {
 
   @override
   FutureOr<List<Scene>> build() async {
+    // Keep the list alive so navigation doesn't reset pagination
     ref.keepAlive();
+    
     _currentPage = 1;
     _hasMore = true;
     _isLoadingMore = false;
+    
     final query = ref.watch(sceneSearchQueryProvider);
     final sortConfig = ref.watch(sceneSortProvider);
     final filter = ref.watch(sceneFilterStateProvider);
@@ -198,7 +209,9 @@ class SceneList extends _$SceneList {
       sceneFilter: filter,
     );
 
-    // Initialize playback queue sequence with initial load
+    // Initialize playback queue sequence with the initial load.
+    // We use index -1 to allow the queue to recover its index if the 
+    // user is already playing something and just refreshed the list.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       AppLogStore.instance.add(
         'SceneList build: initializing playback queue with ${scenes.length} scenes',

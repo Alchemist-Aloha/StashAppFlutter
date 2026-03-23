@@ -15,23 +15,60 @@ import '../../../../core/utils/app_log_store.dart';
 
 part 'video_player_provider.g.dart';
 
+/// Represents the global state of the video player.
+///
+/// This state is shared across the entire application, allowing the mini-player,
+/// full-screen player, and scene detail views to stay in sync.
 class GlobalPlayerState {
+  /// The scene that is currently loaded or playing.
   final Scene? activeScene;
+  
+  /// The underlying controller from the `video_player` package.
   final VideoPlayerController? videoPlayerController;
+  
+  /// Whether the video is currently playing.
   final bool isPlaying;
+  
+  /// Whether the player is currently in full-screen mode.
   final bool isFullScreen;
+  
+  /// Whether the player is currently in Picture-in-Picture mode.
   final bool isInPipMode;
+  
+  /// MIME type of the current stream.
   final String? streamMimeType;
+  
+  /// Display label for the current stream (e.g., "Direct", "Transcoded").
   final String? streamLabel;
+  
+  /// Source identifier for the current stream.
   final String? streamSource;
+  
+  /// Latency in milliseconds from initialization start to first frame.
   final int? startupLatencyMs;
+  
+  /// Whether a network prewarm was attempted for this scene.
   final bool? prewarmAttempted;
+  
+  /// Whether the prewarm attempt was successful.
   final bool? prewarmSucceeded;
+  
+  /// Latency of the prewarm attempt in milliseconds.
   final int? prewarmLatencyMs;
+  
+  /// User preference: whether to automatically play the next scene when current ends.
   final bool autoplayNext;
+  
+  /// User preference: whether to show technical overlays on the video.
   final bool showVideoDebugInfo;
+  
+  /// User preference: whether to allow double-tap to seek 10s.
   final bool useDoubleTapSeek;
+  
+  /// User preference: whether to keep audio playing when the app is backgrounded.
   final bool enableBackgroundPlayback;
+  
+  /// User preference: whether to trigger native Android PiP on minimize.
   final bool enableNativePip;
 
   GlobalPlayerState({
@@ -54,6 +91,8 @@ class GlobalPlayerState {
     this.enableNativePip = false,
   });
 
+  /// Creates a copy of the state with updated fields.
+  /// Use [clearActive] to explicitly reset the active scene and controller.
   GlobalPlayerState copyWith({
     Scene? activeScene,
     VideoPlayerController? videoPlayerController,
@@ -109,6 +148,13 @@ class GlobalPlayerState {
   }
 }
 
+/// A centralized notifier managing the global video player lifecycle.
+///
+/// This class handles:
+/// - Controller initialization and disposal.
+/// - Synchronization with system media controls (MediaSession).
+/// - Handling transitions between scenes (Play Next).
+/// - Managing UI-related playback settings (PiP, Fullscreen).
 @riverpod
 class PlayerState extends _$PlayerState {
   static const _autoplayNextKey = 'autoplay_next';
@@ -117,8 +163,14 @@ class PlayerState extends _$PlayerState {
   static const _enableBackgroundPlaybackKey = 'video_background_playback';
   static const _enableNativePipKey = 'video_native_pip';
 
+  /// Internal reference used during disposal to ensure we clean up the right controller.
   VideoPlayerController? _videoControllerRef;
+  
+  /// Tracking ID to avoid redundant logging of the first frame for the same scene.
   String? _firstFrameLoggedSceneId;
+  
+  /// Mutex-like flag to prevent overlapping "Play Next" transitions,
+  /// especially when triggered by multiple listeners (e.g. video finish + UI button).
   bool _isTransitioning = false;
 
   @override

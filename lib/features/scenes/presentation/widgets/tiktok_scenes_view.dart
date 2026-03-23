@@ -29,6 +29,17 @@ final fullScreenModeProvider = NotifierProvider<FullScreenMode, bool>(
   FullScreenMode.new,
 );
 
+/// A vertical-scrolling "TikTok-style" view for discovering scenes.
+///
+/// This widget manages its own pool of [VideoPlayerController]s to ensure
+/// smooth scrolling and low-latency playback as the user swipes through videos.
+///
+/// Key responsibilities:
+/// - Handling vertical page transitions using [PageView].
+/// - Implementing a "windowing" strategy for video controllers (pre-initializing
+///   neighboring videos and disposing of distant ones).
+/// - Synchronizing with system media controls (MediaSession).
+/// - Providing unique interactions like long-press to speed up.
 class TiktokScenesView extends ConsumerStatefulWidget {
   const TiktokScenesView({super.key});
 
@@ -38,12 +49,14 @@ class TiktokScenesView extends ConsumerStatefulWidget {
 
 class _TiktokScenesViewState extends ConsumerState<TiktokScenesView> {
   final PageController _pageController = PageController();
+  
+  /// The index of the currently visible scene.
   int _currentIndex = 0;
 
-  // Map of scene ID to controller
+  /// Active video controllers indexed by scene ID.
   final Map<String, VideoPlayerController> _controllers = {};
   
-  // Future that tracks initialization
+  /// Initialization futures to prevent redundant setup calls.
   final Map<String, Future<void>> _initFutures = {};
 
   @override
