@@ -58,7 +58,7 @@ final class TagDetailsProvider
   }
 }
 
-String _$tagDetailsHash() => r'765ad0ea0f52ba2d6fe23dd28ff37ac06e2bdf79';
+String _$tagDetailsHash() => r'9205a2ddc99c494894f5d946223de71adafa36d4';
 
 final class TagDetailsFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<Tag>, String> {

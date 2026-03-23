@@ -9,6 +9,141 @@ part of 'graphql_client.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
+@ProviderFor(SharedPreferencesTrigger)
+final sharedPreferencesTriggerProvider = SharedPreferencesTriggerProvider._();
+
+final class SharedPreferencesTriggerProvider
+    extends $NotifierProvider<SharedPreferencesTrigger, int> {
+  SharedPreferencesTriggerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'sharedPreferencesTriggerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$sharedPreferencesTriggerHash();
+
+  @$internal
+  @override
+  SharedPreferencesTrigger create() => SharedPreferencesTrigger();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(int value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<int>(value),
+    );
+  }
+}
+
+String _$sharedPreferencesTriggerHash() =>
+    r'c70cbe660d5fac8026347daace3a579c5c5092b2';
+
+abstract class _$SharedPreferencesTrigger extends $Notifier<int> {
+  int build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<int, int>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<int, int>,
+              int,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
+@ProviderFor(serverUrl)
+final serverUrlProvider = ServerUrlProvider._();
+
+final class ServerUrlProvider
+    extends $FunctionalProvider<String, String, String>
+    with $Provider<String> {
+  ServerUrlProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'serverUrlProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$serverUrlHash();
+
+  @$internal
+  @override
+  $ProviderElement<String> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  String create(Ref ref) {
+    return serverUrl(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String>(value),
+    );
+  }
+}
+
+String _$serverUrlHash() => r'a5b703d1d7a5ed8a0c2bdf6683545bd3fa9b607a';
+
+@ProviderFor(serverApiKey)
+final serverApiKeyProvider = ServerApiKeyProvider._();
+
+final class ServerApiKeyProvider
+    extends $FunctionalProvider<String, String, String>
+    with $Provider<String> {
+  ServerApiKeyProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'serverApiKeyProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$serverApiKeyHash();
+
+  @$internal
+  @override
+  $ProviderElement<String> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  String create(Ref ref) {
+    return serverApiKey(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String>(value),
+    );
+  }
+}
+
+String _$serverApiKeyHash() => r'a7caa4f8a9dc8726451b81345aadcf92f96a60fa';
+
 @ProviderFor(graphqlClient)
 final graphqlClientProvider = GraphqlClientProvider._();
 
@@ -48,4 +183,4 @@ final class GraphqlClientProvider
   }
 }
 
-String _$graphqlClientHash() => r'1aac533e2e53c27358edec72412b7a1640541971';
+String _$graphqlClientHash() => r'cfce73705fd6c81cfbba9a6447a3033445515a7b';

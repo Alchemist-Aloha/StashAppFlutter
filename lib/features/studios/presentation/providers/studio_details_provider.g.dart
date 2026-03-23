@@ -58,7 +58,7 @@ final class StudioDetailsProvider
   }
 }
 
-String _$studioDetailsHash() => r'e1fc4db26828117fca13d4e87fa1afcf8164dafd';
+String _$studioDetailsHash() => r'c847f99de18b21ee6578c3b9f9b118a3a4a72514';
 
 final class StudioDetailsFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<Studio>, String> {

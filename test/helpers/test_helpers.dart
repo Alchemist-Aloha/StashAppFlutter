@@ -167,7 +167,7 @@ class MockTagRepository extends MockRepositoryState<Tag> implements TagRepositor
 Future<void> pumpTestWidget(
   WidgetTester tester, {
   required Widget child,
-  List<Override> overrides = const [],
+  List overrides = const [],
   SharedPreferences? prefs,
 }) async {
   final finalPrefs = prefs ?? await SharedPreferences.getInstance();

@@ -148,7 +148,7 @@ final class StudioListProvider
   StudioList create() => StudioList();
 }
 
-String _$studioListHash() => r'f10a2a0795506fe4518c7e532b53585e338a7130';
+String _$studioListHash() => r'60db17d458128f63c649bca26f876a155328d699';
 
 abstract class _$StudioList extends $AsyncNotifier<List<Studio>> {
   FutureOr<List<Studio>> build();

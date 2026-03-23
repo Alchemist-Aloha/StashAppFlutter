@@ -58,7 +58,7 @@ final class SceneDetailsProvider
   }
 }
 
-String _$sceneDetailsHash() => r'e38832198f88d4dc8bc8411988a19a3121efbec4';
+String _$sceneDetailsHash() => r'992bb3f920a58feed718e4af5577625eeb10773c';
 
 final class SceneDetailsFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<Scene>, String> {
