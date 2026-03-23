@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../domain/entities/scene.dart';
+import '../../../../core/presentation/widgets/stash_image.dart';
 import '../../domain/entities/scene_filter.dart';
 import '../providers/scene_list_provider.dart';
 import '../providers/playback_queue_provider.dart';
@@ -49,6 +50,7 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
   _SceneSortField _sortField = _SceneSortField.date;
   bool _sortDescending = true;
   String? _lastRandomSceneId;
+  bool _didPrefetchInitialScenes = false;
 
   @override
   void initState() {
@@ -323,6 +325,42 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
     
     final hasActiveFilters = filterActive || organizedOnly;
 
+    // Prefetch first N thumbnails once on initial data arrival (avoids
+    // relying on itemBuilder which only runs for built items).
+    scenesAsync.maybeWhen(
+      data: (items) {
+        if (!_didPrefetchInitialScenes && items.isNotEmpty) {
+          _didPrefetchInitialScenes = true;
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            final int kPrefetchDistance = StashImage.defaultPrefetchDistance;
+            final count = items.length < kPrefetchDistance ? items.length : kPrefetchDistance;
+            if (isGridView) {
+              final padding = AppTheme.spacingSmall * 2;
+              const crossAxisCount = 2;
+              final availableWidth = MediaQuery.of(context).size.width - padding;
+              final itemWidth = (availableWidth - AppTheme.spacingSmall) / crossAxisCount;
+              for (var i = 0; i < count; i++) {
+                StashImage.prefetch(
+                  context,
+                  imageUrl: items[i].paths.screenshot,
+                  memCacheWidth: (itemWidth * 2).toInt(),
+                );
+              }
+            } else {
+              for (var i = 0; i < count; i++) {
+                StashImage.prefetch(
+                  context,
+                  imageUrl: items[i].paths.screenshot,
+                  memCacheWidth: 640,
+                );
+              }
+            }
+          });
+        }
+      },
+      orElse: () {},
+    );
+
     return ListPageScaffold<Scene>(
       title: 'StashFlow',
       searchHint: 'Search scenes...',
@@ -391,7 +429,7 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
       itemBuilder: (context, scene) {
         final scenes = scenesAsync.value ?? [];
         final index = scenes.indexWhere((s) => s.id == scene.id);
-        
+
         return SceneCard(
           scene: scene,
           isGrid: isGridView,

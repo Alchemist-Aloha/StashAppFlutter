@@ -23,6 +23,27 @@ class StudioMediaGridPage extends ConsumerWidget {
             return const Center(child: Text('No media available.'));
           }
 
+          final int kPrefetchDistance = StashImage.defaultPrefetchDistance;
+          final padding = 12.0;
+          const crossAxisCount = 2;
+          const crossAxisSpacing = 10.0;
+          const mainAxisSpacing = 10.0;
+          final availableWidth = MediaQuery.of(context).size.width - padding * 2;
+          final itemWidth = (availableWidth - crossAxisSpacing) / crossAxisCount;
+          final itemHeight = itemWidth * (12 / 16);
+
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            final initialCount = items.length < kPrefetchDistance ? items.length : kPrefetchDistance;
+            for (var i = 0; i < initialCount; i++) {
+              StashImage.prefetch(
+                context,
+                imageUrl: items[i].thumbnailUrl,
+                headers: null,
+                memCacheWidth: (itemWidth * 2).toInt(),
+              );
+            }
+          });
+
           return NotificationListener<ScrollNotification>(
             onNotification: (scrollInfo) {
               if (scrollInfo.metrics.pixels >=
@@ -31,6 +52,33 @@ class StudioMediaGridPage extends ConsumerWidget {
                     .read(studioMediaGridProvider(studioId).notifier)
                     .fetchNextPage();
               }
+
+              final offset = scrollInfo.metrics.pixels;
+              final stride = itemHeight + mainAxisSpacing;
+              final visibleRow = ((offset) / stride).floor().clamp(0, (items.length - 1));
+              final visibleIndex = (visibleRow * crossAxisCount).clamp(0, items.length - 1);
+
+              for (var i = 1; i <= kPrefetchDistance; i++) {
+                final ahead = visibleIndex + i;
+                if (ahead < items.length) {
+                  StashImage.prefetch(
+                    context,
+                    imageUrl: items[ahead].thumbnailUrl,
+                    headers: null,
+                    memCacheWidth: (itemWidth * 2).toInt(),
+                  );
+                }
+                final behind = visibleIndex - i;
+                if (behind >= 0) {
+                  StashImage.prefetch(
+                    context,
+                    imageUrl: items[behind].thumbnailUrl,
+                    headers: null,
+                    memCacheWidth: (itemWidth * 2).toInt(),
+                  );
+                }
+              }
+
               return false;
             },
             child: GridView.builder(
