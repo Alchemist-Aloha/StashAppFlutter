@@ -174,6 +174,9 @@ class AppTheme {
       ],
     );
   }
+
+  static final lightTheme = buildTheme(Brightness.light, const Color(0xFF0F766E));
+  static final darkTheme = buildTheme(Brightness.dark, const Color(0xFF0F766E));
 }
 
 extension AppThemeX on BuildContext {
