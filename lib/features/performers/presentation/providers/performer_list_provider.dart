@@ -74,13 +74,20 @@ class PerformerFilterNotifier extends Notifier<PerformerFilterState> {
   @override
   PerformerFilterState build() {
     final prefs = ref.watch(sharedPreferencesProvider);
-    final savedGenders = prefs.getStringList(_genderKey);
-    final legacyGender = prefs.getString(_genderKey);
+    final genderValue = prefs.get(_genderKey);
+
+    List<String> genders = const [];
+    if (genderValue is List<String>) {
+      genders = genderValue;
+    } else if (genderValue is List) {
+      genders = genderValue.cast<String>().toList();
+    } else if (genderValue is String) {
+      genders = [genderValue];
+    }
+
     return PerformerFilterState(
       favoritesOnly: prefs.getBool(_favoritesKey) ?? false,
-      genders:
-          savedGenders ??
-          (legacyGender == null ? const <String>[] : <String>[legacyGender]),
+      genders: genders,
     );
   }
 
