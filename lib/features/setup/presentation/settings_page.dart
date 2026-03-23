@@ -56,7 +56,6 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     Color(0xFFFF9800), // Orange
     Color(0xFFF44336), // Red
     Color(0xFF4CAF50), // Green
-    Color(0xFF9E9E9E), // Grey
   ];
 
   final _customHexController = TextEditingController();
