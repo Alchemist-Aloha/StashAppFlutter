@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/data/graphql/media_headers_provider.dart';
+import '../../../../core/presentation/widgets/stash_image.dart';
 import '../../../../core/presentation/theme/app_theme.dart';
 import '../../../../core/presentation/widgets/marquee_text.dart';
 import '../../../scenes/domain/entities/scene_title_utils.dart';
@@ -37,12 +38,10 @@ class MiniPlayer extends ConsumerWidget {
           children: [
             AspectRatio(
               aspectRatio: 16 / 9,
-              child: Image.network(
-                activeScene.paths.screenshot ?? '',
-                headers: mediaHeaders,
+              child: StashImage(
+                imageUrl: activeScene.paths.screenshot ?? '',
                 fit: BoxFit.cover,
-                cacheWidth: 320,
-                errorBuilder: (c, e, s) => const Icon(Icons.movie),
+                memCacheWidth: 320,
               ),
             ),
             const SizedBox(width: 8),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/data/graphql/media_headers_provider.dart';
+import '../../../../core/presentation/widgets/stash_image.dart';
 import '../../../../core/presentation/theme/app_theme.dart';
 import '../../domain/entities/scene.dart';
 import '../../domain/entities/scene_title_utils.dart';
@@ -70,20 +70,18 @@ class SceneCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final mediaHeaders = ref.watch(mediaHeadersProvider);
     final duration = scene.files.isNotEmpty ? scene.files.first.duration : null;
 
     if (isGrid) {
-      return _buildGridCard(context, ref, mediaHeaders, duration);
+      return _buildGridCard(context, ref, duration);
     }
-    return _buildListCard(context, ref, mediaHeaders, duration);
+    return _buildListCard(context, ref, duration);
   }
 
   /// Builds the full-width list variant of the card.
   Widget _buildListCard(
     BuildContext context,
     WidgetRef ref,
-    Map<String, String> mediaHeaders,
     double? duration,
   ) {
     return InkWell(
@@ -99,19 +97,11 @@ class SceneCard extends ConsumerWidget {
               borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
               child: Stack(
                 children: [
-                  Image.network(
-                    scene.paths.screenshot ??
-                        'https://via.placeholder.com/320x180',
-                    headers: mediaHeaders,
+                  StashImage(
+                    imageUrl: scene.paths.screenshot ?? 'https://via.placeholder.com/320x180',
                     width: double.infinity,
                     fit: BoxFit.cover,
-                    cacheWidth: 640,
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      color: Colors.grey[800],
-                      child: const Center(
-                        child: Icon(Icons.movie, color: Colors.white, size: 48),
-                      ),
-                    ),
+                    memCacheWidth: 640,
                   ),
                   Positioned(
                     bottom: 8,
@@ -183,7 +173,6 @@ class SceneCard extends ConsumerWidget {
   Widget _buildGridCard(
     BuildContext context,
     WidgetRef ref,
-    Map<String, String> mediaHeaders,
     double? duration,
   ) {
     return InkWell(
@@ -199,19 +188,11 @@ class SceneCard extends ConsumerWidget {
               borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
               child: Stack(
                 children: [
-                  Image.network(
-                    scene.paths.screenshot ??
-                        'https://via.placeholder.com/320x180',
-                    headers: mediaHeaders,
+                  StashImage(
+                    imageUrl: scene.paths.screenshot ?? 'https://via.placeholder.com/320x180',
                     width: double.infinity,
                     fit: BoxFit.cover,
-                    cacheWidth: 320,
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      color: Colors.grey[800],
-                      child: const Center(
-                        child: Icon(Icons.movie, color: Colors.white, size: 32),
-                      ),
-                    ),
+                    memCacheWidth: 320,
                   ),
                   Positioned(
                     bottom: 4,

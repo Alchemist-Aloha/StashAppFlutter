@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/data/graphql/media_headers_provider.dart';
+import '../../../../core/presentation/widgets/stash_image.dart';
 import '../providers/performer_media_provider.dart';
 import '../providers/performer_details_provider.dart';
 
@@ -84,18 +85,10 @@ class PerformerDetailsPage extends ConsumerWidget {
                   width: double.infinity,
                   color: context.colors.surfaceVariant,
                   child: performer.imagePath != null
-                      ? Image.network(
-                          performer.imagePath!,
-                          headers: mediaHeaders,
+                      ? StashImage(
+                          imageUrl: performer.imagePath!,
                           fit: BoxFit.contain,
-                          alignment: Alignment.center,
-                          errorBuilder: (context, error, stackTrace) => Icon(
-                            Icons.person,
-                            size: 100,
-                            color: context.colors.onSurfaceVariant.withValues(
-                              alpha: 0.5,
-                            ),
-                          ),
+                          memCacheWidth: 600,
                         )
                       : Icon(
                           Icons.person,

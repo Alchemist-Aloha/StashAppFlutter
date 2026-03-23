@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/data/graphql/media_headers_provider.dart';
+import '../../../../core/presentation/widgets/stash_image.dart';
 import '../../../../core/presentation/theme/app_theme.dart';
 import '../providers/performer_media_provider.dart';
 
@@ -53,17 +54,10 @@ class PerformerMediaGridPage extends ConsumerWidget {
                     child: Stack(
                       fit: StackFit.expand,
                       children: [
-                        Image.network(
-                          item.thumbnailUrl,
-                          headers: mediaHeaders,
+                        StashImage(
+                          imageUrl: item.thumbnailUrl,
                           fit: BoxFit.cover,
-                          errorBuilder: (c, e, s) => Container(
-                            color: context.colors.surfaceVariant,
-                            child: Icon(
-                              Icons.movie,
-                              color: context.colors.onSurfaceVariant,
-                            ),
-                          ),
+                          memCacheWidth: 480,
                         ),
                         Positioned(
                           left: 0,

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/data/graphql/media_headers_provider.dart';
+import '../../../../core/presentation/widgets/stash_image.dart';
 import '../providers/studio_media_provider.dart';
 import '../providers/studio_details_provider.dart';
 
@@ -64,20 +65,10 @@ class StudioDetailsPage extends ConsumerWidget {
                 width: double.infinity,
                 color: context.colors.surfaceVariant,
                 child: studio.imagePath != null && studio.imagePath!.isNotEmpty
-                    ? Image.network(
-                        studio.imagePath!,
-                        headers: mediaHeaders,
+                    ? StashImage(
+                        imageUrl: studio.imagePath!,
                         fit: BoxFit.contain,
-                        alignment: Alignment.center,
-                        errorBuilder: (context, error, stackTrace) => Center(
-                          child: Icon(
-                            Icons.apartment,
-                            size: 72,
-                            color: context.colors.onSurfaceVariant.withValues(
-                              alpha: 0.5,
-                            ),
-                          ),
-                        ),
+                        memCacheWidth: 800,
                       )
                     : Center(
                         child: Icon(

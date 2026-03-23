@@ -362,7 +362,9 @@ class PlayerState extends _$PlayerState {
         source: 'player_provider',
       );
 
-      unawaited(WakelockPlus.enable());
+      if (!isTestMode) {
+        unawaited(WakelockPlus.enable());
+      }
 
       videoController.addListener(_videoListener);
       unawaited(videoController.play());
@@ -386,11 +388,15 @@ class PlayerState extends _$PlayerState {
       if (controller.value.isPlaying) {
         controller.pause();
         state = state.copyWith(isPlaying: false);
-        unawaited(WakelockPlus.disable());
+        if (!isTestMode) {
+          unawaited(WakelockPlus.disable());
+        }
       } else {
         controller.play();
         state = state.copyWith(isPlaying: true);
-        unawaited(WakelockPlus.enable());
+        if (!isTestMode) {
+          unawaited(WakelockPlus.enable());
+        }
       }
     }
   }
@@ -409,7 +415,9 @@ class PlayerState extends _$PlayerState {
 
   void stop() {
     unawaited(_disposeControllers());
-    unawaited(WakelockPlus.disable());
+    if (!isTestMode) {
+      unawaited(WakelockPlus.disable());
+    }
     if (!ref.mounted) return;
 
     state = GlobalPlayerState(
@@ -422,6 +430,11 @@ class PlayerState extends _$PlayerState {
   }
 
   Future<void> _disposeControllers() async {
+    if (isTestMode) {
+      _videoControllerRef = null;
+      return;
+    }
+
     final videoController =
         _videoControllerRef ??
         (ref.mounted ? state.videoPlayerController : null);
@@ -451,11 +464,13 @@ class PlayerState extends _$PlayerState {
 
       if (controller.value.isPlaying != state.isPlaying) {
         state = state.copyWith(isPlaying: controller.value.isPlaying);
-        unawaited(
-          controller.value.isPlaying
-              ? WakelockPlus.enable()
-              : WakelockPlus.disable(),
-        );
+        if (!isTestMode) {
+          unawaited(
+            controller.value.isPlaying
+                ? WakelockPlus.enable()
+                : WakelockPlus.disable(),
+          );
+        }
       }
 
       mediaHandler?.updatePlaybackState(

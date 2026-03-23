@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
+import 'stash_image.dart';
 
 class MediaStripItem {
   const MediaStripItem({
@@ -58,23 +59,12 @@ class MediaStrip extends StatelessWidget {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
-                    child: Image.network(
-                      item.thumbnailUrl,
-                      headers: headers,
+                    child: StashImage(
+                      imageUrl: item.thumbnailUrl,
                       width: itemWidth,
                       height: itemWidth * (9 / 16),
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Container(
-                        width: itemWidth,
-                        height: itemWidth * (9 / 16),
-                        color: context.colors.surfaceVariant,
-                        child: Icon(
-                          Icons.movie,
-                          color: context.colors.onSurfaceVariant.withValues(
-                            alpha: 0.5,
-                          ),
-                        ),
-                      ),
+                      memCacheWidth: (itemWidth * 2).toInt(),
                     ),
                   ),
                   const SizedBox(height: AppTheme.spacingSmall),

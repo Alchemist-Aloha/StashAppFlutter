@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../../../core/data/graphql/media_headers_provider.dart';
 import '../../../../core/presentation/theme/app_theme.dart';
@@ -566,18 +567,18 @@ class _SceneDetailsPageState extends ConsumerState<SceneDetailsPage> {
                             return ListTile(
                               contentPadding: EdgeInsets.zero,
                               leading: hasImage
-                                  ? CircleAvatar(
-                                      backgroundColor:
-                                          context.colors.surfaceVariant,
-                                      foregroundImage: NetworkImage(
-                                        performerImagePath,
-                                        headers: mediaHeaders,
+                                    ? CircleAvatar(
+                                        backgroundColor:
+                                            context.colors.surfaceVariant,
+                                        foregroundImage: CachedNetworkImageProvider(
+                                          performerImagePath!,
+                                          headers: mediaHeaders,
+                                        ),
+                                        child: const Icon(Icons.person),
+                                      )
+                                    : const CircleAvatar(
+                                        child: Icon(Icons.person),
                                       ),
-                                      child: const Icon(Icons.person),
-                                    )
-                                  : const CircleAvatar(
-                                      child: Icon(Icons.person),
-                                    ),
                               title: Text(
                                 performerName,
                                 style: context.textTheme.bodyLarge,
