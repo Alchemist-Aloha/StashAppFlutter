@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'dart:math';
@@ -14,6 +15,30 @@ final tagRepositoryProvider = Provider<TagRepository>((ref) {
   final client = ref.watch(graphqlClientProvider);
   return GraphQLTagRepository(client);
 });
+
+final tagScrollControllerProvider =
+    NotifierProvider<TagScrollController, ScrollController>(
+      TagScrollController.new,
+    );
+
+class TagScrollController extends Notifier<ScrollController> {
+  @override
+  ScrollController build() {
+    final controller = ScrollController();
+    ref.onDispose(controller.dispose);
+    return controller;
+  }
+
+  void scrollToTop() {
+    if (state.hasClients) {
+      state.animateTo(
+        0,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
+  }
+}
 
 @riverpod
 class TagSort extends _$TagSort {

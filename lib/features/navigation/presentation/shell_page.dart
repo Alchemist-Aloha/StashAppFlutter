@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../scenes/presentation/providers/video_player_provider.dart';
 import '../../scenes/presentation/providers/scene_list_provider.dart';
+import '../../performers/presentation/providers/performer_list_provider.dart';
+import '../../studios/presentation/providers/studio_list_provider.dart';
+import '../../tags/presentation/providers/tag_list_provider.dart';
 import '../../scenes/presentation/widgets/tiktok_scenes_view.dart';
 import 'widgets/mini_player.dart';
 
@@ -80,10 +83,23 @@ class ShellPage extends ConsumerWidget {
                     ),
                   ],
                   onDestinationSelected: (index) {
-                    if (index == 0 && navigationShell.currentIndex == 0) {
-                      final isTiktokLayout = ref.read(sceneTiktokLayoutProvider);
-                      if (!isTiktokLayout) {
-                        ref.read(sceneScrollControllerProvider.notifier).scrollToTop();
+                    if (index == navigationShell.currentIndex) {
+                      switch (index) {
+                        case 0:
+                          final isTiktokLayout = ref.read(sceneTiktokLayoutProvider);
+                          if (!isTiktokLayout) {
+                            ref.read(sceneScrollControllerProvider.notifier).scrollToTop();
+                          }
+                          break;
+                        case 1:
+                          ref.read(performerScrollControllerProvider.notifier).scrollToTop();
+                          break;
+                        case 2:
+                          ref.read(studioScrollControllerProvider.notifier).scrollToTop();
+                          break;
+                        case 3:
+                          ref.read(tagScrollControllerProvider.notifier).scrollToTop();
+                          break;
                       }
                     }
                     navigationShell.goBranch(

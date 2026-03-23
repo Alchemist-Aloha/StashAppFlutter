@@ -354,6 +354,7 @@ class _TagsPageState extends ConsumerState<TagsPage> {
     final tagsAsync = ref.watch(tagListProvider);
     final favoritesOnly = ref.watch(tagFavoritesOnlyProvider);
     final randomNavigationEnabled = ref.watch(randomNavigationEnabledProvider);
+    final scrollController = ref.watch(tagScrollControllerProvider);
     final hasSortOverride =
         _sortOption != _TagSortOption.name || _sortDescending;
 
@@ -362,6 +363,7 @@ class _TagsPageState extends ConsumerState<TagsPage> {
       searchHint: 'Search tags...',
       onSearchChanged: _onSearchChanged,
       provider: tagsAsync,
+      scrollController: scrollController,
       onRefresh: () => ref.refresh(tagListProvider.future),
       onFetchNextPage: () => ref.read(tagListProvider.notifier).fetchNextPage(),
       actions: [

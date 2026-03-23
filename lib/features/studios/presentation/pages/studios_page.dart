@@ -370,6 +370,7 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
     final studiosAsync = ref.watch(studioListProvider);
     final favoritesOnly = ref.watch(studioFavoritesOnlyProvider);
     final randomNavigationEnabled = ref.watch(randomNavigationEnabledProvider);
+    final scrollController = ref.watch(studioScrollControllerProvider);
     final hasSortOverride =
         _sortOption != _StudioSortOption.name || _sortDescending;
 
@@ -378,6 +379,7 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
       searchHint: 'Search studios...',
       onSearchChanged: _onSearchChanged,
       provider: studiosAsync,
+      scrollController: scrollController,
       onRefresh: () => ref.refresh(studioListProvider.future),
       onFetchNextPage: () =>
           ref.read(studioListProvider.notifier).fetchNextPage(),

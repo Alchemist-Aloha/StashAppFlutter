@@ -423,6 +423,7 @@ class _PerformersPageState extends ConsumerState<PerformersPage> {
     final performersAsync = ref.watch(performerListProvider);
     final filterState = ref.watch(performerFilterProvider);
     final randomNavigationEnabled = ref.watch(randomNavigationEnabledProvider);
+    final scrollController = ref.watch(performerScrollControllerProvider);
     final hasSortOverride =
         _sortOption != _PerformerSortOption.name || _sortDescending;
 
@@ -431,6 +432,7 @@ class _PerformersPageState extends ConsumerState<PerformersPage> {
       searchHint: 'Search performers...',
       onSearchChanged: _onSearchChanged,
       provider: performersAsync,
+      scrollController: scrollController,
       onRefresh: () => ref.refresh(performerListProvider.future),
       onFetchNextPage: () =>
           ref.read(performerListProvider.notifier).fetchNextPage(),

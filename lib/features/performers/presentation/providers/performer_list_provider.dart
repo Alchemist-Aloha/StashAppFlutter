@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math';
@@ -29,6 +30,30 @@ final performerRepositoryProvider = Provider<PerformerRepository>((ref) {
   final client = ref.watch(graphqlClientProvider);
   return GraphQLPerformerRepository(client);
 });
+
+final performerScrollControllerProvider =
+    NotifierProvider<PerformerScrollController, ScrollController>(
+      PerformerScrollController.new,
+    );
+
+class PerformerScrollController extends Notifier<ScrollController> {
+  @override
+  ScrollController build() {
+    final controller = ScrollController();
+    ref.onDispose(controller.dispose);
+    return controller;
+  }
+
+  void scrollToTop() {
+    if (state.hasClients) {
+      state.animateTo(
+        0,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
+  }
+}
 
 @riverpod
 class PerformerSort extends _$PerformerSort {
