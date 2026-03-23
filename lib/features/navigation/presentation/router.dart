@@ -23,16 +23,24 @@ part 'router.g.dart';
 
 @riverpod
 GoRouter router(Ref ref) {
+  // Use listen to react to configuration changes without rebuilding the router itself.
+  // This prevents the app from resetting to the initial location when settings change.
+  ref.listen(serverUrlProvider, (previous, next) {
+    if ((previous == null || previous.isEmpty) && next.isNotEmpty) {
+      // If we just became configured, we might want to redirect, 
+      // but GoRouter handles redirect logic internally if we notify it.
+    }
+  });
+
+  final serverUrl = ref.read(serverUrlProvider);
+
   return GoRouter(
     initialLocation: '/scenes',
     redirect: (context, state) {
-      final prefs = ref.read(sharedPreferencesProvider);
-      final serverUrl = normalizeGraphqlServerUrl(
-        prefs.getString('server_base_url')?.trim() ?? '',
-      );
-      final apiKey = prefs.getString('server_api_key')?.trim() ?? '';
-
-      final isConfigured = serverUrl.isNotEmpty && apiKey.isNotEmpty;
+      // Re-read inside redirect to get latest values during navigation
+      final currentUrl = ref.read(serverUrlProvider);
+      
+      final isConfigured = currentUrl.isNotEmpty;
       final isSettingsPath =
           state.uri.path == '/settings' ||
           state.uri.path.startsWith('/settings/');

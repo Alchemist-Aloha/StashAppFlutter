@@ -30,23 +30,38 @@ String normalizeGraphqlServerUrl(String url) {
 }
 
 @riverpod
-GraphQLClient graphqlClient(Ref ref) {
-  // Default settings for development/testing. Remove or override in production.
-  const defaultServerUrl = 'http://localhost:9999/graphql';
-  const defaultApiKey = '';
+class SharedPreferencesTrigger extends _$SharedPreferencesTrigger {
+  @override
+  int build() => 0;
+  void trigger() => state++;
+}
 
+@riverpod
+String serverUrl(Ref ref) {
+  ref.watch(sharedPreferencesTriggerProvider);
   final prefs = ref.watch(sharedPreferencesProvider);
   final storedServerUrl = prefs.getString('server_base_url')?.trim() ?? '';
-  final storedApiKey = prefs.getString('server_api_key')?.trim() ?? '';
-  final normalizedServerUrl = normalizeGraphqlServerUrl(storedServerUrl);
+  return normalizeGraphqlServerUrl(storedServerUrl);
+}
 
-  final serverUrl = normalizedServerUrl.isEmpty
-      ? defaultServerUrl
-      : normalizedServerUrl;
-  final apiKey = storedApiKey.isEmpty ? defaultApiKey : storedApiKey;
+@riverpod
+String serverApiKey(Ref ref) {
+  ref.watch(sharedPreferencesTriggerProvider);
+  final prefs = ref.watch(sharedPreferencesProvider);
+  return prefs.getString('server_api_key')?.trim() ?? '';
+}
+
+@riverpod
+GraphQLClient graphqlClient(Ref ref) {
+  final url = ref.watch(serverUrlProvider);
+  if (url.isEmpty) {
+    throw Exception('Server URL not configured');
+  }
+
+  final apiKey = ref.watch(serverApiKeyProvider);
 
   final HttpLink httpLink = HttpLink(
-    serverUrl,
+    url,
     defaultHeaders: {'ApiKey': apiKey},
   );
 

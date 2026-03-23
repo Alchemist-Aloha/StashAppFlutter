@@ -63,7 +63,7 @@ final class PerformerDetailsProvider
   }
 }
 
-String _$performerDetailsHash() => r'9f69dc4a5b3bf4a05c88410cdaf50d463a521567';
+String _$performerDetailsHash() => r'b0ae7af8f3387373144d5a72ecb59b7d1d8c5941';
 
 final class PerformerDetailsFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<Performer>, String> {

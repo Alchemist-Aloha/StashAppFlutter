@@ -4,6 +4,11 @@ import '../../../../core/data/graphql/graphql_client.dart';
 import '../../data/graphql/version.graphql.dart';
 
 final connectionStatusProvider = FutureProvider.autoDispose<String>((ref) async {
+  final url = ref.watch(serverUrlProvider);
+  if (url.isEmpty) {
+    return 'Not Configured';
+  }
+
   final client = ref.watch(graphqlClientProvider);
   
   try {
@@ -17,7 +22,8 @@ final connectionStatusProvider = FutureProvider.autoDispose<String>((ref) async 
       throw result.exception!;
     }
     
-    return result.parsedData?.version.version ?? 'Unknown';
+    final version = result.parsedData?.version.version;
+    return version ?? 'Unknown Version';
   } catch (e) {
     throw Exception('Connection failed: $e');
   }

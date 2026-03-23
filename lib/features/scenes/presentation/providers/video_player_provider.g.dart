@@ -41,7 +41,7 @@ final class PlayerStateProvider
   }
 }
 
-String _$playerStateHash() => r'26da8fca84c4459e93bdebded7feebf74cfee359';
+String _$playerStateHash() => r'753b845ecf30d381942fe33d30fe475bf2dcd8a3';
 
 abstract class _$PlayerState extends $Notifier<GlobalPlayerState> {
   GlobalPlayerState build();

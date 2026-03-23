@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:graphql/client.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/data/graphql/graphql_client.dart';
+import '../../../../core/data/graphql/media_headers_provider.dart';
 import '../../../../core/data/preferences/shared_preferences_provider.dart';
 import '../../../../core/presentation/theme/app_theme.dart';
 import '../../../../core/presentation/theme/theme_mode_provider.dart';
@@ -188,6 +189,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     await prefs.setString('server_base_url', normalizedUrl);
     await prefs.setString('server_api_key', newApiKey);
 
+    ref.read(sharedPreferencesTriggerProvider.notifier).trigger();
+
     _baseUrlController.text = normalizedUrl;
 
     final endpointChanged =
@@ -205,8 +208,11 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
     ref.read(playerStateProvider.notifier).stop();
 
+    ref.invalidate(serverUrlProvider);
+    ref.invalidate(serverApiKeyProvider);
     ref.invalidate(graphqlClientProvider);
     ref.invalidate(connectionStatusProvider);
+    ref.invalidate(mediaHeadersProvider);
 
     ref.invalidate(sceneListProvider);
     ref.invalidate(sceneDetailsProvider);
@@ -325,17 +331,24 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                       _saveServerSettings();
                     },
                   ),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: TextButton.icon(
-                      onPressed: () async {
-                        _baseUrlController.text = '';
-                        _apiKeyController.text = '';
-                        await _saveServerSettings();
-                      },
-                      icon: const Icon(Icons.clear_all),
-                      label: const Text('Clear Server Settings'),
-                    ),
+                  Row(
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: () => _saveServerSettings(),
+                        icon: const Icon(Icons.sync),
+                        label: const Text('Test Connection'),
+                      ),
+                      const SizedBox(width: AppTheme.spacingSmall),
+                      TextButton.icon(
+                        onPressed: () async {
+                          _baseUrlController.text = '';
+                          _apiKeyController.text = '';
+                          await _saveServerSettings();
+                        },
+                        icon: const Icon(Icons.clear_all),
+                        label: const Text('Clear Settings'),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: AppTheme.spacingLarge),
                   _buildSectionHeader('Playback'),

@@ -66,7 +66,7 @@ final class TagMediaProvider
   }
 }
 
-String _$tagMediaHash() => r'd298b1556a042539000a1ba3fec11ca271235ee6';
+String _$tagMediaHash() => r'ef0542d8b22705bd86a00a1a2104137bc6462849';
 
 final class TagMediaFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<List<TagMediaItem>>, String> {
@@ -127,7 +127,7 @@ final class TagMediaGridProvider
   }
 }
 
-String _$tagMediaGridHash() => r'b6842288ae62e01daac1cef2044d827e137eab83';
+String _$tagMediaGridHash() => r'3eb8e123e7c297e0d3118b8c2e50dab01c7c6523';
 
 final class TagMediaGridFamily extends $Family
     with
