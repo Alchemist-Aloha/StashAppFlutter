@@ -170,7 +170,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
     if (!_presetColors.contains(seedColor)) {
       _customHexController.text =
-          seedColor.value.toRadixString(16).padLeft(8, '0').toUpperCase();
+          seedColor.toARGB32().toUnsigned(32).toRadixString(16).padLeft(8, '0').toUpperCase();
     }
 
     setState(() => _loading = false);
@@ -713,9 +713,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               _forceShowCustom = true;
               if (_customHexController.text.isEmpty) {
                 _customHexController.text =
-                    _seedColor.value.toRadixString(16).padLeft(8, '0').toUpperCase();
+                    _seedColor.toARGB32().toUnsigned(32).toRadixString(16).padLeft(8, '0').toUpperCase();
               }
             });
+
             _customHexFocusNode.requestFocus();
           }
         },
