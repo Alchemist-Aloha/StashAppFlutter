@@ -112,25 +112,29 @@ class _SceneDetailsPageState extends ConsumerState<SceneDetailsPage> {
   Widget build(BuildContext context) {
     ref.listen(playerStateProvider, (previous, next) {
       final nextScene = next.activeScene;
-
+      
       // Handle full-screen auto-exit
-      if (previous?.isFullScreen == true && next.isFullScreen == false) {
+      // Only the page that was active during fullscreen should handle the pop
+      if (previous?.isFullScreen == true && next.isFullScreen == false && previous?.activeScene?.id == widget.sceneId) {
         if (context.mounted && GoRouter.of(context).canPop()) {
            AppLogStore.instance.add(
-            'SceneDetailsPage popping fullscreen view',
+            'SceneDetailsPage [${widget.sceneId}] popping fullscreen view',
             source: 'SceneDetailsPage',
           );
           context.pop();
         }
       }
       
-      // Navigate if:
-      // 1. We have a next scene
-      // 2. It's different from our current page's scene
-      // 3. AND we were previously watching the scene that just finished (or we are in autoplay mode)
-      if (nextScene != null && nextScene.id != widget.sceneId) {
+      // Navigate to next scene if:
+      // 1. A new scene is active
+      // 2. It's different from THIS page's scene
+      // 3. THIS page's scene was the one that just finished (previous.activeScene)
+      if (nextScene != null && 
+          nextScene.id != widget.sceneId && 
+          previous?.activeScene?.id == widget.sceneId) {
+        
         AppLogStore.instance.add(
-          'SceneDetailsPage triggering navigation: current=${widget.sceneId} -> next=${nextScene.id}',
+          'SceneDetailsPage [${widget.sceneId}] navigating to next scene: ${nextScene.id}',
           source: 'SceneDetailsPage',
         );
 
