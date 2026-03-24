@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/data/graphql/media_headers_provider.dart';
+import '../../../../core/presentation/widgets/stash_image.dart';
 import '../../../../core/presentation/theme/app_theme.dart';
 import '../providers/performer_media_provider.dart';
 
@@ -14,7 +14,6 @@ class PerformerMediaGridPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final mediaAsync = ref.watch(performerMediaGridProvider(performerId));
-    final mediaHeaders = ref.watch(mediaHeadersProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('All Performer Media')),
@@ -24,6 +23,31 @@ class PerformerMediaGridPage extends ConsumerWidget {
             return const Center(child: Text('No media available.'));
           }
 
+          final int kPrefetchDistance = StashImage.defaultPrefetchDistance;
+          final padding = 12.0;
+          const crossAxisCount = 2;
+          const crossAxisSpacing = 10.0;
+          const mainAxisSpacing = 10.0;
+          final availableWidth =
+              MediaQuery.of(context).size.width - padding * 2;
+          final itemWidth =
+              (availableWidth - crossAxisSpacing) / crossAxisCount;
+          final itemHeight = itemWidth * (12 / 16);
+
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            final initialCount = items.length < kPrefetchDistance
+                ? items.length
+                : kPrefetchDistance;
+            for (var i = 0; i < initialCount; i++) {
+              StashImage.prefetch(
+                context,
+                imageUrl: items[i].thumbnailUrl,
+                headers: null,
+                memCacheWidth: (itemWidth * 2).toInt(),
+              );
+            }
+          });
+
           return NotificationListener<ScrollNotification>(
             onNotification: (scrollInfo) {
               if (scrollInfo.metrics.pixels >=
@@ -32,6 +56,39 @@ class PerformerMediaGridPage extends ConsumerWidget {
                     .read(performerMediaGridProvider(performerId).notifier)
                     .fetchNextPage();
               }
+
+              final offset = scrollInfo.metrics.pixels;
+              final stride = itemHeight + mainAxisSpacing;
+              final visibleRow = ((offset) / stride).floor().clamp(
+                0,
+                (items.length - 1),
+              );
+              final visibleIndex = (visibleRow * crossAxisCount).clamp(
+                0,
+                items.length - 1,
+              );
+
+              for (var i = 1; i <= kPrefetchDistance; i++) {
+                final ahead = visibleIndex + i;
+                if (ahead < items.length) {
+                  StashImage.prefetch(
+                    context,
+                    imageUrl: items[ahead].thumbnailUrl,
+                    headers: null,
+                    memCacheWidth: (itemWidth * 2).toInt(),
+                  );
+                }
+                final behind = visibleIndex - i;
+                if (behind >= 0) {
+                  StashImage.prefetch(
+                    context,
+                    imageUrl: items[behind].thumbnailUrl,
+                    headers: null,
+                    memCacheWidth: (itemWidth * 2).toInt(),
+                  );
+                }
+              }
+
               return false;
             },
             child: GridView.builder(
@@ -53,17 +110,10 @@ class PerformerMediaGridPage extends ConsumerWidget {
                     child: Stack(
                       fit: StackFit.expand,
                       children: [
-                        Image.network(
-                          item.thumbnailUrl,
-                          headers: mediaHeaders,
+                        StashImage(
+                          imageUrl: item.thumbnailUrl,
                           fit: BoxFit.cover,
-                          errorBuilder: (c, e, s) => Container(
-                            color: context.colors.surfaceVariant,
-                            child: Icon(
-                              Icons.movie,
-                              color: context.colors.onSurfaceVariant,
-                            ),
-                          ),
+                          memCacheWidth: 480,
                         ),
                         Positioned(
                           left: 0,

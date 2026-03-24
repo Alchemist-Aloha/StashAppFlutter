@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/data/graphql/media_headers_provider.dart';
+import '../../../../core/presentation/widgets/stash_image.dart';
 import '../providers/performer_media_provider.dart';
 import '../providers/performer_details_provider.dart';
 
@@ -84,18 +85,10 @@ class PerformerDetailsPage extends ConsumerWidget {
                   width: double.infinity,
                   color: context.colors.surfaceVariant,
                   child: performer.imagePath != null
-                      ? Image.network(
-                          performer.imagePath!,
-                          headers: mediaHeaders,
+                      ? StashImage(
+                          imageUrl: performer.imagePath!,
                           fit: BoxFit.contain,
-                          alignment: Alignment.center,
-                          errorBuilder: (context, error, stackTrace) => Icon(
-                            Icons.person,
-                            size: 100,
-                            color: context.colors.onSurfaceVariant.withValues(
-                              alpha: 0.5,
-                            ),
-                          ),
+                          memCacheWidth: 600,
                         )
                       : Icon(
                           Icons.person,
@@ -232,7 +225,7 @@ class PerformerDetailsPage extends ConsumerWidget {
                           }),
                         ),
                       ],
-                        if (performer.urls.isNotEmpty) ...[
+                      if (performer.urls.isNotEmpty) ...[
                         const Divider(height: 32, color: Colors.grey),
                         const SectionHeader(
                           title: 'Links',
@@ -252,23 +245,28 @@ class PerformerDetailsPage extends ConsumerWidget {
                                   if (uri == null) return;
                                   try {
                                     if (await canLaunchUrl(uri)) {
-                                      await launchUrl(uri,
-                                          mode:
-                                              LaunchMode.externalApplication);
+                                      await launchUrl(
+                                        uri,
+                                        mode: LaunchMode.externalApplication,
+                                      );
                                     } else {
                                       if (context.mounted) {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
                                           SnackBar(
-                                              content:
-                                                  Text('Could not open $url')),
+                                            content: Text(
+                                              'Could not open $url',
+                                            ),
+                                          ),
                                         );
                                       }
                                     }
                                   } catch (e) {
                                     if (context.mounted) {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
                                         SnackBar(content: Text('Error: $e')),
                                       );
                                     }
@@ -283,15 +281,17 @@ class PerformerDetailsPage extends ConsumerWidget {
                                       color: context.colors.primary,
                                     ),
                                     const SizedBox(
-                                        width: AppTheme.spacingSmall),
+                                      width: AppTheme.spacingSmall,
+                                    ),
                                     Expanded(
                                       child: Text(
                                         url,
                                         style: context.textTheme.bodyMedium
                                             ?.copyWith(
-                                          color: context.colors.primary,
-                                          decoration: TextDecoration.underline,
-                                        ),
+                                              color: context.colors.primary,
+                                              decoration:
+                                                  TextDecoration.underline,
+                                            ),
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                       ),

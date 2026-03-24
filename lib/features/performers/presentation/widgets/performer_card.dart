@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/data/graphql/media_headers_provider.dart';
+import '../../../../core/presentation/widgets/stash_image.dart';
 import '../../domain/entities/performer.dart';
 import '../../../../core/presentation/theme/app_theme.dart';
 
@@ -12,8 +12,6 @@ class PerformerCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final mediaHeaders = ref.watch(mediaHeadersProvider);
-
     return InkWell(
       onTap: onTap,
       child: Column(
@@ -22,18 +20,10 @@ class PerformerCard extends ConsumerWidget {
             child: ClipOval(
               child: AspectRatio(
                 aspectRatio: 1,
-                child: Image.network(
-                  performer.imagePath ?? '',
-                  headers: mediaHeaders,
+                child: StashImage(
+                  imageUrl: performer.imagePath ?? '',
                   fit: BoxFit.cover,
-                  errorBuilder: (c, e, s) => Container(
-                    color: context.colors.surfaceVariant,
-                    child: Icon(
-                      Icons.person,
-                      size: 48,
-                      color: context.colors.onSurfaceVariant,
-                    ),
-                  ),
+                  memCacheWidth: 200,
                 ),
               ),
             ),

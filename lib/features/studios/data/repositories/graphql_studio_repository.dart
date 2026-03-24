@@ -104,7 +104,7 @@ class GraphQLStudioRepository implements StudioRepository {
       Options$Query$FindStudios(
         fetchPolicy: sort == 'random'
             ? FetchPolicy.noCache
-            : FetchPolicy.cacheFirst,
+            : FetchPolicy.cacheAndNetwork,
         variables: Variables$Query$FindStudios(
           filter: Input$FindFilterType(
             q: filter,
@@ -134,7 +134,10 @@ class GraphQLStudioRepository implements StudioRepository {
   @override
   Future<Studio> getStudioById(String id) async {
     final result = await client.query$FindStudio(
-      Options$Query$FindStudio(variables: Variables$Query$FindStudio(id: id)),
+      Options$Query$FindStudio(
+        fetchPolicy: FetchPolicy.cacheFirst,
+        variables: Variables$Query$FindStudio(id: id),
+      ),
     );
 
     if (result.hasException) throw result.exception!;

@@ -2,9 +2,12 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'dart:io';
+import 'dart:ui' as ui;
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/data/graphql/media_headers_provider.dart';
+import '../../../../core/presentation/widgets/stash_image.dart';
 import '../providers/studio_media_provider.dart';
 import '../providers/studio_details_provider.dart';
 
@@ -59,36 +62,78 @@ class StudioDetailsPage extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                height: 240,
-                width: double.infinity,
-                color: context.colors.surfaceVariant,
-                child: studio.imagePath != null && studio.imagePath!.isNotEmpty
-                    ? Image.network(
-                        studio.imagePath!,
-                        headers: mediaHeaders,
-                        fit: BoxFit.contain,
-                        alignment: Alignment.center,
-                        errorBuilder: (context, error, stackTrace) => Center(
-                          child: Icon(
-                            Icons.apartment,
-                            size: 72,
-                            color: context.colors.onSurfaceVariant.withValues(
-                              alpha: 0.5,
-                            ),
-                          ),
+              if (studio.imagePath != null &&
+                  studio.imagePath!.trim().isNotEmpty)
+                FutureBuilder<bool>(
+                  future: () async {
+                    final path = studio.imagePath!.trim();
+                    try {
+                      // Check cache first for a valid file
+                      final info = await StashImage.cacheManager
+                          .getFileFromCache(path);
+                      if (info != null) {
+                        final file = info.file;
+                        if (await file.exists()) {
+                          final bytes = await file.readAsBytes();
+                          if (bytes.lengthInBytes < 64) return false;
+                          try {
+                            await ui.instantiateImageCodec(bytes);
+                            return true;
+                          } catch (_) {
+                            // corrupted cached file; remove and attempt re-download
+                            await StashImage.cacheManager.removeFile(path);
+                            // try prefetch and recheck
+                          }
+                        }
+                      }
+
+                      // Attempt to prefetch and validate again
+                      try {
+                        await StashImage.prefetch(
+                          context,
+                          imageUrl: path,
+                          headers: mediaHeaders,
+                          memCacheWidth: 800,
+                        );
+                      } catch (_) {}
+
+                      final info2 = await StashImage.cacheManager
+                          .getFileFromCache(path);
+                      if (info2 == null) return false;
+                      final file2 = info2.file;
+                      if (!await file2.exists()) return false;
+                      final bytes2 = await file2.readAsBytes();
+                      if (bytes2.lengthInBytes < 64) return false;
+                      try {
+                        await ui.instantiateImageCodec(bytes2);
+                        return true;
+                      } catch (_) {
+                        await StashImage.cacheManager.removeFile(path);
+                        return false;
+                      }
+                    } catch (_) {
+                      return false;
+                    }
+                  }(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState != ConnectionState.done) {
+                      return const SizedBox.shrink();
+                    }
+                    if (snapshot.hasData && snapshot.data == true) {
+                      return Container(
+                        height: 240,
+                        width: double.infinity,
+                        color: context.colors.surfaceVariant,
+                        child: StashImage(
+                          imageUrl: studio.imagePath!,
+                          fit: BoxFit.contain,
+                          memCacheWidth: 800,
                         ),
-                      )
-                    : Center(
-                        child: Icon(
-                          Icons.apartment,
-                          size: 72,
-                          color: context.colors.onSurfaceVariant.withValues(
-                            alpha: 0.5,
-                          ),
-                        ),
-                      ),
-              ),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
+                ),
               Padding(
                 padding: const EdgeInsets.all(AppTheme.spacingMedium),
                 child: Column(
@@ -160,7 +205,10 @@ class StudioDetailsPage extends ConsumerWidget {
                     ),
                     if (studio.details != null &&
                         studio.details!.trim().isNotEmpty) ...[
-                      Divider(height: 32, color: context.colors.outline.withValues(alpha: 0.2)),
+                      Divider(
+                        height: 32,
+                        color: context.colors.outline.withValues(alpha: 0.2),
+                      ),
                       const SectionHeader(title: 'Details'),
                       Text(
                         studio.details!,
@@ -171,7 +219,10 @@ class StudioDetailsPage extends ConsumerWidget {
                         ),
                       ),
                     ],
-                    Divider(height: 32, color: context.colors.outline.withValues(alpha: 0.2)),
+                    Divider(
+                      height: 32,
+                      color: context.colors.outline.withValues(alpha: 0.2),
+                    ),
                     SectionHeader(
                       title: 'Media',
                       onViewAll: () =>

@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/data/graphql/media_headers_provider.dart';
+import 'package:go_router/go_router.dart';
+import '../../../../core/presentation/widgets/stash_image.dart';
 import '../../../../core/presentation/theme/app_theme.dart';
 import '../../domain/entities/scene.dart';
 import '../../domain/entities/scene_title_utils.dart';
+import '../pages/scene_info_page.dart';
 
 /// A card widget that displays a summary of a [Scene].
 ///
-/// This component is used throughout the app in lists and grids to show 
+/// This component is used throughout the app in lists and grids to show
 /// a thumbnail, title, studio, and duration. It supports:
-/// * Two layout modes: [isGrid] = true (compact) and false (full-width list).
+/// * Three layout modes: Grid (compact), List (full-width), and TikTok (via TiktokScenesView).
 /// * Authenticated image loading using headers from [mediaHeadersProvider].
-/// * Formatting of the scene duration (e.g., 'HH:mm:ss' or 'mm:ss').
-/// * A contextual menu (long-press or more-vert icon).
+/// * Dynamic aspect ratio in List mode to prevent image distortion.
+/// * Consistent "BoxFit.cover" and "double.infinity" dimensions to ensure images
+///   perfectly fill their allocated AspectRatio containers.
 class SceneCard extends ConsumerWidget {
   const SceneCard({
     required this.scene,
@@ -23,35 +26,20 @@ class SceneCard extends ConsumerWidget {
 
   /// The scene data to display.
   final Scene scene;
-  
+
   /// Whether to display in a compact grid format or a wide list format.
   final bool isGrid;
-  
+
   /// Callback triggered when the card is tapped.
   final VoidCallback? onTap;
 
-  /// Displays the contextual action menu for the scene.
+  /// Displays a custom scene info sheet for navigation actions.
   void _showMenu(BuildContext context, WidgetRef ref) {
-    final RenderBox button = context.findRenderObject() as RenderBox;
-    final RenderBox overlay =
-        Navigator.of(context).overlay!.context.findRenderObject() as RenderBox;
-    final RelativeRect position = RelativeRect.fromRect(
-      Rect.fromPoints(
-        button.localToGlobal(Offset.zero, ancestor: overlay),
-        button.localToGlobal(
-          button.size.bottomRight(Offset.zero),
-          ancestor: overlay,
-        ),
-      ),
-      Offset.zero & overlay.size,
-    );
-
-    showMenu(
+    showModalBottomSheet(
       context: context,
-      position: position,
-      items: [
-        // No items for now, or add other items if needed
-      ],
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => SceneInfoSheet(scene: scene),
     );
   }
 
@@ -70,21 +58,32 @@ class SceneCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final mediaHeaders = ref.watch(mediaHeadersProvider);
     final duration = scene.files.isNotEmpty ? scene.files.first.duration : null;
 
+    // Use primary file's aspect ratio if available, default to 16/9.
+    // This ensures the image container in List view adapts to the media,
+    // preventing black bars or forced cropping of portrait/square content.
+    final double? fileAspectRatio = (scene.files.isNotEmpty &&
+            scene.files.first.width != null &&
+            scene.files.first.height != null)
+        ? scene.files.first.width!.toDouble() /
+            scene.files.first.height!.toDouble()
+        : null;
+
     if (isGrid) {
-      return _buildGridCard(context, ref, mediaHeaders, duration);
+      return _buildGridCard(context, ref, duration, fileAspectRatio ?? 16 / 9);
     }
-    return _buildListCard(context, ref, mediaHeaders, duration);
+    return _buildListCard(context, ref, duration, fileAspectRatio ?? 16 / 9);
   }
 
   /// Builds the full-width list variant of the card.
+  ///
+  /// Uses a dynamic [aspectRatio] to match the source media's proportions.
   Widget _buildListCard(
     BuildContext context,
     WidgetRef ref,
-    Map<String, String> mediaHeaders,
     double? duration,
+    double aspectRatio,
   ) {
     return InkWell(
       onTap: onTap,
@@ -94,24 +93,21 @@ class SceneCard extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           AspectRatio(
-            aspectRatio: 16 / 9,
+            // Clamp aspect ratio to prevent extremely tall or wide items from
+            // breaking the list layout flow.
+            aspectRatio: aspectRatio.clamp(0.5, 2.5),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
               child: Stack(
                 children: [
-                  Image.network(
-                    scene.paths.screenshot ??
-                        'https://via.placeholder.com/320x180',
-                    headers: mediaHeaders,
+                  StashImage(
+                    imageUrl: scene.paths.screenshot,
+                    // Use double.infinity for both dimensions with BoxFit.cover
+                    // to ensure the image fills the AspectRatio container completely.
                     width: double.infinity,
+                    height: double.infinity,
                     fit: BoxFit.cover,
-                    cacheWidth: 640,
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      color: Colors.grey[800],
-                      child: const Center(
-                        child: Icon(Icons.movie, color: Colors.white, size: 48),
-                      ),
-                    ),
+                    memCacheWidth: 640,
                   ),
                   Positioned(
                     bottom: 8,
@@ -124,8 +120,10 @@ class SceneCard extends ConsumerWidget {
                       color: Colors.black.withAlpha(200),
                       child: Text(
                         _formatDuration(duration),
-                        style:
-                            const TextStyle(color: Colors.white, fontSize: 12),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                        ),
                       ),
                     ),
                   ),
@@ -180,11 +178,14 @@ class SceneCard extends ConsumerWidget {
   }
 
   /// Builds the compact grid variant of the card.
+  ///
+  /// Forces a 16:9 [aspectRatio] for the image to maintain a uniform grid appearance,
+  /// relying on BoxFit.cover to fill the frame elegantly.
   Widget _buildGridCard(
     BuildContext context,
     WidgetRef ref,
-    Map<String, String> mediaHeaders,
     double? duration,
+    double aspectRatio,
   ) {
     return InkWell(
       onTap: onTap,
@@ -194,24 +195,17 @@ class SceneCard extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           AspectRatio(
-            aspectRatio: 16 / 9,
+            aspectRatio: 16 / 9, // Keep grid items consistent
             child: ClipRRect(
               borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
               child: Stack(
                 children: [
-                  Image.network(
-                    scene.paths.screenshot ??
-                        'https://via.placeholder.com/320x180',
-                    headers: mediaHeaders,
+                  StashImage(
+                    imageUrl: scene.paths.screenshot,
                     width: double.infinity,
+                    height: double.infinity,
                     fit: BoxFit.cover,
-                    cacheWidth: 320,
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      color: Colors.grey[800],
-                      child: const Center(
-                        child: Icon(Icons.movie, color: Colors.white, size: 32),
-                      ),
-                    ),
+                    memCacheWidth: 320,
                   ),
                   Positioned(
                     bottom: 4,
@@ -224,8 +218,10 @@ class SceneCard extends ConsumerWidget {
                       color: Colors.black.withAlpha(200),
                       child: Text(
                         _formatDuration(duration),
-                        style:
-                            const TextStyle(color: Colors.white, fontSize: 10),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                        ),
                       ),
                     ),
                   ),

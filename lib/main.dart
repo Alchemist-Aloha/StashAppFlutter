@@ -8,10 +8,16 @@ import 'core/utils/app_log_store.dart';
 import 'core/utils/pip_mode.dart';
 import 'core/utils/media_handler.dart';
 import 'package:audio_service/audio_service.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 
 import 'core/presentation/theme/app_theme.dart';
 import 'core/presentation/theme/theme_mode_provider.dart';
 import 'core/presentation/theme/theme_color_provider.dart';
+
+const bool isTestMode = bool.fromEnvironment(
+  'FLUTTER_TEST',
+  defaultValue: false,
+);
 
 StashMediaHandler? mediaHandler;
 
@@ -19,20 +25,35 @@ StashMediaHandler _buildMediaHandler() => StashMediaHandler();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  PipMode.initialize();
-  
+  // Increase Flutter's in-memory image cache so more decoded thumbnails stay
+  // resident during aggressive prefetching and fast scrolling.
+  // Tune these values based on available memory and observed behavior.
   try {
-    mediaHandler = await AudioService.init(
-      builder: _buildMediaHandler,
-      config: const AudioServiceConfig(
-        androidNotificationChannelId: 'com.github.alchemistaloha.stash_app_flutter.channel.audio',
-        androidNotificationChannelName: 'StashFlow Playback',
-        androidNotificationOngoing: false,
-        androidStopForegroundOnPause: true,
-      ),    );
-  } catch (e) {
-    debugPrint('Failed to initialize AudioService: $e');
-    // Fallback or handle gracefully
+    PaintingBinding.instance.imageCache.maximumSize = 2000;
+    PaintingBinding.instance.imageCache.maximumSizeBytes =
+        100 * 1024 * 1024; // 100 MB
+  } catch (_) {
+    // Ignore if PaintingBinding isn't available in some test environments.
+  }
+  await initHiveForFlutter();
+  PipMode.initialize();
+
+  if (!isTestMode) {
+    try {
+      mediaHandler = await AudioService.init(
+        builder: _buildMediaHandler,
+        config: const AudioServiceConfig(
+          androidNotificationChannelId:
+              'com.github.alchemistaloha.stash_app_flutter.channel.audio',
+          androidNotificationChannelName: 'StashFlow Playback',
+          androidNotificationOngoing: false,
+          androidStopForegroundOnPause: true,
+        ),
+      );
+    } catch (e) {
+      debugPrint('Failed to initialize AudioService: $e');
+      // Fallback or handle gracefully
+    }
   }
 
   final sharedPreferences = await SharedPreferences.getInstance();

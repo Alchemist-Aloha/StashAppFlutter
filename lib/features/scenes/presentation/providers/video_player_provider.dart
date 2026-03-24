@@ -22,52 +22,52 @@ part 'video_player_provider.g.dart';
 class GlobalPlayerState {
   /// The scene that is currently loaded or playing.
   final Scene? activeScene;
-  
+
   /// The underlying controller from the `video_player` package.
   final VideoPlayerController? videoPlayerController;
-  
+
   /// Whether the video is currently playing.
   final bool isPlaying;
-  
+
   /// Whether the player is currently in full-screen mode.
   final bool isFullScreen;
-  
+
   /// Whether the player is currently in Picture-in-Picture mode.
   final bool isInPipMode;
-  
+
   /// MIME type of the current stream.
   final String? streamMimeType;
-  
+
   /// Display label for the current stream (e.g., "Direct", "Transcoded").
   final String? streamLabel;
-  
+
   /// Source identifier for the current stream.
   final String? streamSource;
-  
+
   /// Latency in milliseconds from initialization start to first frame.
   final int? startupLatencyMs;
-  
+
   /// Whether a network prewarm was attempted for this scene.
   final bool? prewarmAttempted;
-  
+
   /// Whether the prewarm attempt was successful.
   final bool? prewarmSucceeded;
-  
+
   /// Latency of the prewarm attempt in milliseconds.
   final int? prewarmLatencyMs;
-  
+
   /// User preference: whether to automatically play the next scene when current ends.
   final bool autoplayNext;
-  
+
   /// User preference: whether to show technical overlays on the video.
   final bool showVideoDebugInfo;
-  
+
   /// User preference: whether to allow double-tap to seek 10s.
   final bool useDoubleTapSeek;
-  
+
   /// User preference: whether to keep audio playing when the app is backgrounded.
   final bool enableBackgroundPlayback;
-  
+
   /// User preference: whether to trigger native Android PiP on minimize.
   final bool enableNativePip;
 
@@ -165,13 +165,17 @@ class PlayerState extends _$PlayerState {
 
   /// Internal reference used during disposal to ensure we clean up the right controller.
   VideoPlayerController? _videoControllerRef;
-  
+
   /// Tracking ID to avoid redundant logging of the first frame for the same scene.
   String? _firstFrameLoggedSceneId;
-  
+
   /// Mutex-like flag to prevent overlapping "Play Next" transitions,
   /// especially when triggered by multiple listeners (e.g. video finish + UI button).
   bool _isTransitioning = false;
+
+  /// Whether the current controller was "borrowed" (e.g. from TikTok view)
+  /// and should not be disposed by this provider when stopping/switching.
+  bool _isUsingBorrowedController = false;
 
   @override
   GlobalPlayerState build() {
@@ -189,7 +193,8 @@ class PlayerState extends _$PlayerState {
     mediaHandler?.onPlayCallback = () async => togglePlayPause();
     mediaHandler?.onPauseCallback = () async => togglePlayPause();
     mediaHandler?.onStopCallback = () async => stop();
-    mediaHandler?.onSeekCallback = (pos) async => state.videoPlayerController?.seekTo(pos);
+    mediaHandler?.onSeekCallback = (pos) async =>
+        state.videoPlayerController?.seekTo(pos);
     mediaHandler?.onSkipToNextCallback = () async {
       AppLogStore.instance.add(
         'PlayerState mediaHandler.onSkipToNextCallback',
@@ -270,17 +275,21 @@ class PlayerState extends _$PlayerState {
     bool? prewarmAttempted,
     bool? prewarmSucceeded,
     int? prewarmLatencyMs,
+    Duration? initialPosition,
   }) async {
     final allowBackgroundPlayback = state.enableBackgroundPlayback;
 
     AppLogStore.instance.add(
-      'provider playScene begin scene=${scene.id} source=${streamSource ?? '-'} mime=${mimeType ?? '-'}',
+      'provider playScene begin scene=${scene.id} source=${streamSource ?? '-'} mime=${mimeType ?? '-'} initialPos=${initialPosition?.inMilliseconds}ms',
       source: 'player_provider',
     );
 
     if (state.activeScene?.id == scene.id &&
         state.videoPlayerController != null) {
       _videoControllerRef ??= state.videoPlayerController;
+      if (initialPosition != null) {
+        await state.videoPlayerController?.seekTo(initialPosition);
+      }
       state.videoPlayerController?.play();
       AppLogStore.instance.add(
         'provider playScene replay-active scene=${scene.id}',
@@ -305,6 +314,7 @@ class PlayerState extends _$PlayerState {
 
     // Stop current
     await _disposeControllers();
+    _isUsingBorrowedController = false;
     if (!ref.mounted) return;
 
     final stopwatch = Stopwatch()..start();
@@ -337,6 +347,11 @@ class PlayerState extends _$PlayerState {
         await _disposeControllers();
         return;
       }
+
+      if (initialPosition != null) {
+        await videoController.seekTo(initialPosition);
+      }
+
       stopwatch.stop();
       final initializeElapsedMs = stopwatch.elapsedMilliseconds;
       AppLogStore.instance.add(
@@ -362,7 +377,9 @@ class PlayerState extends _$PlayerState {
         source: 'player_provider',
       );
 
-      unawaited(WakelockPlus.enable());
+      if (!isTestMode) {
+        unawaited(WakelockPlus.enable());
+      }
 
       videoController.addListener(_videoListener);
       unawaited(videoController.play());
@@ -380,17 +397,79 @@ class PlayerState extends _$PlayerState {
     }
   }
 
+  /// Takes over an existing [VideoPlayerController] for a given [Scene].
+  ///
+  /// This is used for seamless handoff from TikTok view to immersive views.
+  Future<void> attachController(
+    Scene scene,
+    VideoPlayerController controller, {
+    String? streamMimeType,
+    String? streamLabel,
+    String? streamSource,
+  }) async {
+    if (!ref.mounted) return;
+
+    AppLogStore.instance.add(
+      'provider attachController scene=${scene.id} source=${streamSource ?? '-'}',
+      source: 'player_provider',
+    );
+
+    // If already active, just reuse
+    if (state.activeScene?.id == scene.id &&
+        state.videoPlayerController == controller) {
+      return;
+    }
+
+    // Stop current, but don't dispose the one we are about to attach!
+    if (state.activeScene != null && state.videoPlayerController != controller) {
+       await _disposeControllers();
+    }
+    
+    _videoControllerRef = controller;
+    _firstFrameLoggedSceneId = null;
+    _isUsingBorrowedController = true;
+
+    state = state.copyWith(
+      activeScene: scene,
+      videoPlayerController: controller,
+      isPlaying: controller.value.isPlaying,
+      streamMimeType: streamMimeType,
+      streamLabel: streamLabel,
+      streamSource: streamSource,
+      startupLatencyMs: 0, // Attached, no initialization latency to report
+    );
+
+    mediaHandler?.updateMetadata(
+      id: scene.id,
+      title: scene.title,
+      studio: scene.studioName,
+      thumbnailUri: scene.paths.screenshot,
+      duration: controller.value.duration,
+    );
+
+    if (!isTestMode) {
+      unawaited(WakelockPlus.enable());
+    }
+
+    controller.removeListener(_videoListener);
+    controller.addListener(_videoListener);
+  }
+
   void togglePlayPause() {
     final controller = state.videoPlayerController;
     if (controller != null) {
       if (controller.value.isPlaying) {
         controller.pause();
         state = state.copyWith(isPlaying: false);
-        unawaited(WakelockPlus.disable());
+        if (!isTestMode) {
+          unawaited(WakelockPlus.disable());
+        }
       } else {
         controller.play();
         state = state.copyWith(isPlaying: true);
-        unawaited(WakelockPlus.enable());
+        if (!isTestMode) {
+          unawaited(WakelockPlus.enable());
+        }
       }
     }
   }
@@ -409,7 +488,9 @@ class PlayerState extends _$PlayerState {
 
   void stop() {
     unawaited(_disposeControllers());
-    unawaited(WakelockPlus.disable());
+    if (!isTestMode) {
+      unawaited(WakelockPlus.disable());
+    }
     if (!ref.mounted) return;
 
     state = GlobalPlayerState(
@@ -422,13 +503,31 @@ class PlayerState extends _$PlayerState {
   }
 
   Future<void> _disposeControllers() async {
+    if (isTestMode) {
+      _videoControllerRef = null;
+      _isUsingBorrowedController = false;
+      return;
+    }
+
     final videoController =
         _videoControllerRef ??
         (ref.mounted ? state.videoPlayerController : null);
     _videoControllerRef = null;
 
-    videoController?.removeListener(_videoListener);
-    await videoController?.dispose();
+    if (videoController != null) {
+      videoController.removeListener(_videoListener);
+      
+      if (_isUsingBorrowedController) {
+        AppLogStore.instance.add(
+          'provider skipping dispose of borrowed controller',
+          source: 'player_provider',
+        );
+        _isUsingBorrowedController = false;
+      } else {
+        await videoController.dispose();
+      }
+    }
+    
     await WakelockPlus.disable();
   }
 
@@ -451,11 +550,13 @@ class PlayerState extends _$PlayerState {
 
       if (controller.value.isPlaying != state.isPlaying) {
         state = state.copyWith(isPlaying: controller.value.isPlaying);
-        unawaited(
-          controller.value.isPlaying
-              ? WakelockPlus.enable()
-              : WakelockPlus.disable(),
-        );
+        if (!isTestMode) {
+          unawaited(
+            controller.value.isPlaying
+                ? WakelockPlus.enable()
+                : WakelockPlus.disable(),
+          );
+        }
       }
 
       mediaHandler?.updatePlaybackState(
@@ -507,8 +608,20 @@ class PlayerState extends _$PlayerState {
       );
 
       final queueNotifier = ref.read(playbackQueueProvider.notifier);
+      // If the playback queue hasn't been synchronized with the currently
+      // active scene (index == -1), try to recover by finding the active
+      // scene in the existing sequence. This helps when `setSequence` was
+      // called with -1 to preserve an external index but the queue hasn't
+      // been initialized for this session.
+      if (queueNotifier.state.currentIndex == -1 && state.activeScene?.id != null) {
+        AppLogStore.instance.add(
+          'PlayerState playNext: queue index unset, attempting to find active scene in sequence=${state.activeScene?.id}',
+          source: 'player_provider',
+        );
+        queueNotifier.findAndSetIndex(state.activeScene!.id);
+      }
       final nextScene = queueNotifier.getNextScene();
-      
+
       AppLogStore.instance.add(
         'PlayerState playNext: nextSceneFound=${nextScene?.id}',
         source: 'player_provider',

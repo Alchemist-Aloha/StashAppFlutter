@@ -32,6 +32,7 @@ class GraphQLGroupRepository implements GroupRepository {
 
     final result = await client.query(
       QueryOptions(
+        fetchPolicy: FetchPolicy.cacheAndNetwork,
         document: gql(query),
         variables: {
           'filter': {
@@ -42,10 +43,7 @@ class GraphQLGroupRepository implements GroupRepository {
           },
           'group_filter': filter != null
               ? {
-                  'name': {
-                    'value': filter,
-                    'modifier': 'EQUALS',
-                  },
+                  'name': {'value': filter, 'modifier': 'EQUALS'},
                 }
               : null,
         },
@@ -78,6 +76,7 @@ class GraphQLGroupRepository implements GroupRepository {
 
     final result = await client.query(
       QueryOptions(
+        fetchPolicy: FetchPolicy.cacheFirst,
         document: gql(query),
         variables: {'id': id},
       ),
@@ -86,7 +85,7 @@ class GraphQLGroupRepository implements GroupRepository {
     if (result.hasException) throw result.exception!;
     final data = result.data?['findGroup'];
     if (data == null) throw Exception('Group not found');
-    
+
     return Group.fromJson(data as Map<String, dynamic>);
   }
 }

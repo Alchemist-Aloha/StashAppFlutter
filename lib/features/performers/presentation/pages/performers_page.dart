@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../domain/entities/performer.dart';
+import '../../../../core/presentation/widgets/stash_image.dart';
 import '../providers/performer_list_provider.dart';
 import '../widgets/performer_card.dart';
 import '../../../setup/presentation/providers/navigation_customization_provider.dart';
@@ -488,10 +489,39 @@ class _PerformersPageState extends ConsumerState<PerformersPage> {
         mainAxisSpacing: AppTheme.spacingMedium,
         childAspectRatio: 0.7,
       ),
-      itemBuilder: (context, performer) => PerformerCard(
-        performer: performer,
-        onTap: () => context.push('/performers/performer/${performer.id}'),
-      ),
+      itemBuilder: (context, performer) {
+        // initial prefetch for the grid of performers
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          final int kPrefetchDistance = StashImage.defaultPrefetchDistance;
+          final performers = performersAsync.value ?? [];
+          if (performers.isEmpty) return;
+          final padding = AppTheme.spacingMedium * 2;
+          const crossAxisCount = 3;
+          final availableWidth = MediaQuery.of(context).size.width - padding;
+          final itemWidth =
+              (availableWidth -
+                  (AppTheme.spacingMedium * (crossAxisCount - 1))) /
+              crossAxisCount;
+          final initialCount = performers.length < kPrefetchDistance
+              ? performers.length
+              : kPrefetchDistance;
+          for (var i = 0; i < initialCount; i++) {
+            final avatar = performers[i].imagePath;
+            if (avatar != null && avatar.isNotEmpty) {
+              StashImage.prefetch(
+                context,
+                imageUrl: avatar,
+                memCacheWidth: (itemWidth * 2).toInt(),
+              );
+            }
+          }
+        });
+
+        return PerformerCard(
+          performer: performer,
+          onTap: () => context.push('/performers/performer/${performer.id}'),
+        );
+      },
       floatingActionButton: randomNavigationEnabled
           ? performersAsync.maybeWhen(
               data: (performers) => FloatingActionButton.small(
