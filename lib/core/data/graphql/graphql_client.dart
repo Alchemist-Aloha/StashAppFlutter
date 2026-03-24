@@ -13,7 +13,7 @@ Uri _withGraphqlPathIfMissing(Uri uri) {
 }
 
 /// Normalizes a user-provided server URL to a valid GraphQL endpoint.
-/// 
+///
 /// Ensures the URL has a scheme (defaults to https) and includes the `/graphql` path.
 String normalizeGraphqlServerUrl(String url) {
   final trimmed = url.trim();
@@ -37,7 +37,7 @@ String normalizeGraphqlServerUrl(String url) {
 class SharedPreferencesTrigger extends _$SharedPreferencesTrigger {
   @override
   int build() => 0;
-  
+
   /// Increments the revision counter to trigger dependency rebuilds.
   void trigger() => state++;
 }
@@ -60,9 +60,9 @@ String serverApiKey(Ref ref) {
 }
 
 /// A centralized [GraphQLClient] provider for all feature repositories.
-/// 
+///
 /// This client is automatically re-initialized whenever [serverUrl]
-/// or [serverApiKey] changes. It handles the [HttpLink] setup with the 
+/// or [serverApiKey] changes. It handles the [HttpLink] setup with the
 /// correct `ApiKey` header required by Stash.
 @riverpod
 GraphQLClient graphqlClient(Ref ref) {
@@ -73,13 +73,17 @@ GraphQLClient graphqlClient(Ref ref) {
 
   final apiKey = ref.watch(serverApiKeyProvider);
 
-  final HttpLink httpLink = HttpLink(
-    url,
-    defaultHeaders: {'ApiKey': apiKey},
-  );
+  final HttpLink httpLink = HttpLink(url, defaultHeaders: {'ApiKey': apiKey});
+
+  // Use an in-memory cache during widget tests to avoid requiring Hive
+  // initialization (which `initHiveForFlutter()` normally performs in
+  // `main()`). Tests run with the `FLUTTER_TEST` environment flag.
+  const bool _isTestMode = bool.fromEnvironment('FLUTTER_TEST', defaultValue: false);
 
   return GraphQLClient(
     link: httpLink,
-    cache: GraphQLCache(store: HiveStore()),
+    cache: _isTestMode
+        ? GraphQLCache()
+        : GraphQLCache(store: HiveStore()),
   );
 }

@@ -52,6 +52,12 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
   String? _lastRandomSceneId;
   bool _didPrefetchInitialScenes = false;
 
+  // Visible-range prefetch helpers
+  final GlobalKey _firstItemKey = GlobalKey();
+  double? _measuredItemExtent;
+  bool _didAttachScrollListener = false;
+  ScrollController? _attachedScrollController;
+
   @override
   void initState() {
     super.initState();
@@ -75,6 +81,81 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
       });
       _applyServerSort();
     });
+  }
+
+  @override
+  void dispose() {
+    if (_didAttachScrollListener && _attachedScrollController != null) {
+      try {
+        _attachedScrollController!.removeListener(_onScroll);
+      } catch (_) {}
+    }
+    super.dispose();
+  }
+
+  void _onScroll() {
+    final controller = _attachedScrollController;
+    if (controller == null || !mounted) return;
+
+    final scenes = ref.read(sceneListProvider).value ?? [];
+    if (scenes.isEmpty) return;
+
+    final offset = controller.position.pixels;
+    final int kPrefetchDistance = StashImage.defaultPrefetchDistance;
+
+    if (ref.read(sceneGridLayoutProvider)) {
+      // Grid layout: compute item sizes similarly to the initial prefetch.
+      final padding = AppTheme.spacingSmall * 2;
+      const crossAxisCount = 2;
+      final availableWidth = MediaQuery.of(context).size.width - padding;
+      final itemWidth = (availableWidth - AppTheme.spacingSmall) / crossAxisCount;
+      final itemHeight = itemWidth * (12 / 16);
+      final stride = itemHeight + AppTheme.spacingSmall;
+      final visibleRow = (offset / stride).floor().clamp(0, scenes.length - 1);
+      final visibleIndex = (visibleRow * crossAxisCount).clamp(0, scenes.length - 1);
+
+      for (var i = 1; i <= kPrefetchDistance; i++) {
+        final ahead = visibleIndex + i;
+        if (ahead < scenes.length) {
+          StashImage.prefetch(
+            context,
+            imageUrl: scenes[ahead].paths.screenshot,
+            memCacheWidth: (itemWidth * 2).toInt(),
+          );
+        }
+        final behind = visibleIndex - i;
+        if (behind >= 0) {
+          StashImage.prefetch(
+            context,
+            imageUrl: scenes[behind].paths.screenshot,
+            memCacheWidth: (itemWidth * 2).toInt(),
+          );
+        }
+      }
+    } else {
+      // List layout: use measured extent when available, otherwise a conservative estimate.
+      final stride = _measuredItemExtent ?? 300.0;
+      final visibleIndex = (offset / stride).floor().clamp(0, scenes.length - 1);
+
+      for (var i = 1; i <= kPrefetchDistance; i++) {
+        final ahead = visibleIndex + i;
+        if (ahead < scenes.length) {
+          StashImage.prefetch(
+            context,
+            imageUrl: scenes[ahead].paths.screenshot,
+            memCacheWidth: 640,
+          );
+        }
+        final behind = visibleIndex - i;
+        if (behind >= 0) {
+          StashImage.prefetch(
+            context,
+            imageUrl: scenes[behind].paths.screenshot,
+            memCacheWidth: 640,
+          );
+        }
+      }
+    }
   }
 
   void _onSearchChanged(String query) {
@@ -316,6 +397,16 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
     final isGridView = ref.watch(sceneGridLayoutProvider);
     final scenesAsync = ref.watch(sceneListProvider);
 
+    // Reset initial-prefetch flag when search or filters change so the
+    // initial warm runs for new result sets (prevents relying solely on
+    // per-item warming when user applies a filter/search).
+    ref.listen(sceneSearchQueryProvider, (previous, next) {
+      _didPrefetchInitialScenes = false;
+    });
+    ref.listen(sceneFilterStateProvider, (previous, next) {
+      _didPrefetchInitialScenes = false;
+    });
+
     // Use select for more granular watching where possible
     final filterActive = ref.watch(
       sceneFilterStateProvider.select((s) => s != SceneFilter.empty()),
@@ -436,7 +527,17 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
         final scenes = scenesAsync.value ?? [];
         final index = scenes.indexWhere((s) => s.id == scene.id);
 
-        return SceneCard(
+        // Attach scroll listener once (after controller becomes available).
+        if (!_didAttachScrollListener && scrollController != null) {
+          _didAttachScrollListener = true;
+          _attachedScrollController = scrollController;
+          try {
+            _attachedScrollController!.addListener(_onScroll);
+          } catch (_) {}
+        }
+
+        final sceneCard = SceneCard(
+          key: index == 0 ? _firstItemKey : null,
           scene: scene,
           isGrid: isGridView,
           onTap: () {
@@ -446,6 +547,22 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
             context.push('/scenes/scene/${scene.id}');
           },
         );
+
+        // Measure first item height once to speed up visible-index math for list layout.
+        if (index == 0) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (_measuredItemExtent == null && _firstItemKey.currentContext != null) {
+              final size = _firstItemKey.currentContext!.size;
+              if (size != null) {
+                setState(() {
+                  _measuredItemExtent = size.height;
+                });
+              }
+            }
+          });
+        }
+
+        return sceneCard;
       },
       floatingActionButton: (randomNavigationEnabled && !isTiktokLayout)
           ? scenesAsync.maybeWhen(

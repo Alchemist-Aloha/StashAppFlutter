@@ -103,8 +103,8 @@ class GraphQLStudioRepository implements StudioRepository {
     return client.query$FindStudios(
       Options$Query$FindStudios(
         fetchPolicy: sort == 'random'
-          ? FetchPolicy.noCache
-          : FetchPolicy.cacheAndNetwork,
+            ? FetchPolicy.noCache
+            : FetchPolicy.cacheAndNetwork,
         variables: Variables$Query$FindStudios(
           filter: Input$FindFilterType(
             q: filter,

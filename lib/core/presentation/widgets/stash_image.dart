@@ -19,6 +19,102 @@ class _Shimmer extends StatefulWidget {
   State<_Shimmer> createState() => _ShimmerState();
 }
 
+// Small stateful wrapper which retries a failed cached image load by
+// removing the local cache entry and forcing a re-download. This helps
+// recover from corrupted/partial files that would otherwise produce
+// "invalid image data" Flutter errors.
+class _RetryingCachedImage extends StatefulWidget {
+  const _RetryingCachedImage({
+    required this.imageUrl,
+    this.headers,
+    this.cacheManager,
+    this.width,
+    this.height,
+    this.fit,
+    this.memCacheWidth,
+    this.memCacheHeight,
+    this.maxRetries = 2,
+    super.key,
+  });
+
+  final String imageUrl;
+  final Map<String, String>? headers;
+  final CacheManager? cacheManager;
+  final double? width;
+  final double? height;
+  final BoxFit? fit;
+  final int? memCacheWidth;
+  final int? memCacheHeight;
+  final int maxRetries;
+
+  @override
+  State<_RetryingCachedImage> createState() => _RetryingCachedImageState();
+}
+
+class _RetryingCachedImageState extends State<_RetryingCachedImage> {
+  int _attempt = 0;
+
+  Future<void> _handleError() async {
+    if (_attempt >= widget.maxRetries) return;
+    _attempt++;
+
+    try {
+      // Remove possibly-corrupted cached file and force re-download.
+      if (widget.cacheManager != null) {
+        await widget.cacheManager!.removeFile(widget.imageUrl);
+      }
+    } catch (_) {}
+
+    // Small delay to avoid tight retry loops and allow cache manager state to settle.
+    await Future.delayed(const Duration(milliseconds: 150));
+    if (mounted) setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CachedNetworkImage(
+      key: ValueKey('${widget.imageUrl}::$_attempt'),
+      imageUrl: widget.imageUrl,
+      httpHeaders: widget.headers,
+      cacheManager: widget.cacheManager,
+      width: widget.width,
+      height: widget.height,
+      fit: widget.fit,
+      memCacheWidth: widget.memCacheWidth,
+      memCacheHeight: widget.memCacheHeight,
+      placeholder: (context, url) => Container(
+        color: Colors.grey[900],
+        child: const Center(
+          child: SizedBox(
+            width: 48,
+            height: 48,
+            child: _Shimmer(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: Colors.grey,
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+      errorWidget: (context, url, error) {
+        // Kick off async cleanup + retry; show the standard error UI immediately.
+        _handleError();
+        return Container(
+          width: widget.width,
+          height: widget.height,
+          color: Colors.grey[800],
+          child: const Center(
+            child: Icon(Icons.broken_image, color: Colors.white54),
+          ),
+        );
+      },
+    );
+  }
+}
+
 class _ShimmerState extends State<_Shimmer>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
@@ -97,8 +193,8 @@ class StashImage extends ConsumerWidget {
   final int? memCacheHeight;
 
   static final Set<String> _prefetched = <String>{};
-  static const int defaultPrefetchDistance = 20;
-  static const int _maxConcurrentPrefetch = 4;
+  static const int defaultPrefetchDistance = 10;
+  static const int _maxConcurrentPrefetch = 2;
   static int _ongoingPrefetches = 0;
 
   static Future<void> prefetch(
@@ -112,8 +208,6 @@ class StashImage extends ConsumerWidget {
 
     final dedupeKey = '$imageUrl|w${memCacheWidth ?? 0}h${memCacheHeight ?? 0}';
     if (_prefetched.contains(dedupeKey)) return;
-
-    _prefetched.add(dedupeKey);
     // Throttle concurrent prefetches to avoid saturating network / IO.
     while (_ongoingPrefetches >= _maxConcurrentPrefetch) {
       await Future.delayed(const Duration(milliseconds: 50));
@@ -138,6 +232,9 @@ class StashImage extends ConsumerWidget {
       }
 
       await precacheImage(provider, context);
+      // Mark as prefetched only after successful precache so failures
+      // don't permanently prevent future attempts.
+      _prefetched.add(dedupeKey);
     } catch (_) {
       // ignore prefetch failures; user experience should fall back gracefully.
     } finally {
@@ -166,33 +263,15 @@ class StashImage extends ConsumerWidget {
       }
     });
 
-    return CachedNetworkImage(
+    return _RetryingCachedImage(
       imageUrl: imageUrl!,
-      httpHeaders: headers,
+      headers: headers,
       cacheManager: cacheManager,
       width: width,
       height: height,
       fit: fit,
       memCacheWidth: memCacheWidth,
       memCacheHeight: memCacheHeight,
-      placeholder: (context, url) => Container(
-        color: Colors.grey[900],
-        child: const Center(
-          child: SizedBox(
-            width: 48,
-            height: 48,
-            child: _Shimmer(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: Colors.grey,
-                  shape: BoxShape.circle,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-      errorWidget: (context, url, error) => _buildError(context),
     );
   }
 

@@ -25,6 +25,16 @@ StashMediaHandler _buildMediaHandler() => StashMediaHandler();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Increase Flutter's in-memory image cache so more decoded thumbnails stay
+  // resident during aggressive prefetching and fast scrolling.
+  // Tune these values based on available memory and observed behavior.
+  try {
+    PaintingBinding.instance.imageCache.maximumSize = 2000;
+    PaintingBinding.instance.imageCache.maximumSizeBytes =
+        100 * 1024 * 1024; // 100 MB
+  } catch (_) {
+    // Ignore if PaintingBinding isn't available in some test environments.
+  }
   await initHiveForFlutter();
   PipMode.initialize();
 

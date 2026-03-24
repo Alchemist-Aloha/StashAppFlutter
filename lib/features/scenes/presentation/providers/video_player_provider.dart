@@ -523,6 +523,18 @@ class PlayerState extends _$PlayerState {
       );
 
       final queueNotifier = ref.read(playbackQueueProvider.notifier);
+      // If the playback queue hasn't been synchronized with the currently
+      // active scene (index == -1), try to recover by finding the active
+      // scene in the existing sequence. This helps when `setSequence` was
+      // called with -1 to preserve an external index but the queue hasn't
+      // been initialized for this session.
+      if (queueNotifier.state.currentIndex == -1 && state.activeScene?.id != null) {
+        AppLogStore.instance.add(
+          'PlayerState playNext: queue index unset, attempting to find active scene in sequence=${state.activeScene?.id}',
+          source: 'player_provider',
+        );
+        queueNotifier.findAndSetIndex(state.activeScene!.id);
+      }
       final nextScene = queueNotifier.getNextScene();
 
       AppLogStore.instance.add(
