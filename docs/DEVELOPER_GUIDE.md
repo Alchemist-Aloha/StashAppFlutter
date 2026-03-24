@@ -92,7 +92,8 @@ See [#ui-guideline](#ui-guideline) for current UI standards.
 - `server_base_url`
 - `server_api_key`
 - `prefer_scene_streams`
-- `scene_grid_layout`
+- `scene_grid_layout` (Controls the 2-column grid vs 1-column list)
+- `scene_tiktok_layout` (Enables the infinite scroll vertical video feed)
 
 ## List UX Pattern (current)
 
@@ -101,6 +102,7 @@ See [#ui-guideline](#ui-guideline) for current UI standards.
 - Sort and filter via modal bottom sheets
 - Active sort/filter indicators in app bar actions
 - Random discovery via `FloatingActionButton.small`
+- **Scenes Specific**: Supports three layout modes (1 Column, 2 Column, TikTok) configured via Settings. List view uses dynamic aspect ratios to match media content. Grid view uses a optimized 1.15 aspect ratio for metadata breathing room.
 
 ## GraphQL Source of Truth
 

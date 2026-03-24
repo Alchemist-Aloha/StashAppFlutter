@@ -47,20 +47,35 @@ class ScenesPage extends ConsumerStatefulWidget {
 }
 
 class _ScenesPageState extends ConsumerState<ScenesPage> {
+  /// The current field used for sorting scenes.
   _SceneSortField _sortField = _SceneSortField.date;
+
+  /// Whether the sort is in descending order.
   bool _sortDescending = true;
+
+  /// Remembers the last random scene ID to avoid consecutive duplicates in "Casino mode".
   String? _lastRandomSceneId;
+
+  /// Flag to ensure initial prefetch only runs once per result set.
   bool _didPrefetchInitialScenes = false;
 
   // Visible-range prefetch helpers
+  /// Key used to measure the height of the first item in the list.
   final GlobalKey _firstItemKey = GlobalKey();
+
+  /// The measured height of a single item in list view, used for scroll prefetch math.
   double? _measuredItemExtent;
+
+  /// Tracks if the scroll listener has been successfully attached.
   bool _didAttachScrollListener = false;
+
+  /// Reference to the active scroll controller for listener management.
   ScrollController? _attachedScrollController;
 
   @override
   void initState() {
     super.initState();
+    // Initialize state from persisted providers after the first frame.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final sortConfig = ref.read(sceneSortProvider);
       setState(() {
@@ -85,6 +100,7 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
 
   @override
   void dispose() {
+    // Clean up scroll listener if it was attached.
     if (_didAttachScrollListener && _attachedScrollController != null) {
       try {
         _attachedScrollController!.removeListener(_onScroll);
@@ -93,6 +109,11 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
     super.dispose();
   }
 
+  /// Handles intelligent image prefetching based on scroll position.
+  ///
+  /// This method calculates which items are likely to become visible soon
+  /// and triggers a background prefetch of their thumbnails. It adapts
+  /// its math based on whether the layout is a Grid or a List.
   void _onScroll() {
     final controller = _attachedScrollController;
     if (controller == null || !mounted) return;
@@ -104,14 +125,15 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
     final int kPrefetchDistance = StashImage.defaultPrefetchDistance;
 
     if (ref.read(sceneGridLayoutProvider)) {
-      // Grid layout: compute item sizes similarly to the initial prefetch.
+      // Grid layout: compute item sizes based on viewport width and fixed columns.
       final padding = AppTheme.spacingSmall * 2;
       const crossAxisCount = 2;
       final availableWidth = MediaQuery.of(context).size.width - padding;
       final itemWidth =
           (availableWidth - AppTheme.spacingSmall) / crossAxisCount;
-      final itemHeight = itemWidth * (12 / 16);
-      final stride = itemHeight + AppTheme.spacingSmall;
+      // Note: itemHeight here is an estimate; actual height depends on childAspectRatio.
+      final itemHeight = itemWidth * (1 / 1.15); 
+      final stride = itemHeight + AppTheme.spacingMedium;
       final visibleRow = (offset / stride).floor().clamp(0, scenes.length - 1);
       final visibleIndex = (visibleRow * crossAxisCount).clamp(
         0,
@@ -137,7 +159,7 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
         }
       }
     } else {
-      // List layout: use measured extent when available, otherwise a conservative estimate.
+      // List layout: use measured extent of the first item for precise math.
       final stride = _measuredItemExtent ?? 300.0;
       final visibleIndex = (offset / stride).floor().clamp(
         0,
@@ -165,10 +187,12 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
     }
   }
 
+  /// Updates the search query in the provider, triggering a data refresh.
   void _onSearchChanged(String query) {
     ref.read(sceneSearchQueryProvider.notifier).update(query);
   }
 
+  /// Syncs the local UI sort state with the [sceneListProvider] and triggers a fetch.
   void _applyServerSort() {
     final sortKey = switch (_sortField) {
       _SceneSortField.date => 'date',
@@ -188,6 +212,9 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
         .setSort(sort: sortKey, descending: _sortDescending);
   }
 
+  /// Fetches a random scene from the backend and navigates to its details page.
+  ///
+  /// This "Casino mode" respect the currently active filters and search query.
   Future<void> _openRandomScene() async {
     final randomScene = await ref
         .read(sceneListProvider.notifier)
@@ -210,6 +237,7 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
     context.push('/scenes/scene/${randomScene.id}');
   }
 
+  /// Opens the filter bottom sheet for advanced criteria.
   void _showFilterPanel() {
     showModalBottomSheet(
       context: context,
@@ -219,6 +247,7 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
     );
   }
 
+  /// Returns a human-readable label for a sort field.
   String _sortFieldLabel(_SceneSortField field) {
     return switch (field) {
       _SceneSortField.date => 'Date',
@@ -234,6 +263,7 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
     };
   }
 
+  /// Opens the sort configuration bottom sheet.
   void _showSortPanel() {
     var tempField = _sortField;
     var tempDescending = _sortDescending;

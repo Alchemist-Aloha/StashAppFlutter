@@ -11,10 +11,11 @@ import '../pages/scene_info_page.dart';
 ///
 /// This component is used throughout the app in lists and grids to show
 /// a thumbnail, title, studio, and duration. It supports:
-/// * Two layout modes: [isGrid] = true (compact) and false (full-width list).
+/// * Three layout modes: Grid (compact), List (full-width), and TikTok (via TiktokScenesView).
 /// * Authenticated image loading using headers from [mediaHeadersProvider].
-/// * Formatting of the scene duration (e.g., 'HH:mm:ss' or 'mm:ss').
-/// * A contextual menu (long-press or more-vert icon).
+/// * Dynamic aspect ratio in List mode to prevent image distortion.
+/// * Consistent "BoxFit.cover" and "double.infinity" dimensions to ensure images
+///   perfectly fill their allocated AspectRatio containers.
 class SceneCard extends ConsumerWidget {
   const SceneCard({
     required this.scene,
@@ -60,14 +61,13 @@ class SceneCard extends ConsumerWidget {
     final duration = scene.files.isNotEmpty ? scene.files.first.duration : null;
 
     // Use primary file's aspect ratio if available, default to 16/9.
-    // This ensures the image fills the container perfectly without distortion
-    // (no stretching) and minimizes cropping in list view.
-    final double? fileAspectRatio =
-        (scene.files.isNotEmpty &&
+    // This ensures the image container in List view adapts to the media,
+    // preventing black bars or forced cropping of portrait/square content.
+    final double? fileAspectRatio = (scene.files.isNotEmpty &&
             scene.files.first.width != null &&
             scene.files.first.height != null)
         ? scene.files.first.width!.toDouble() /
-              scene.files.first.height!.toDouble()
+            scene.files.first.height!.toDouble()
         : null;
 
     if (isGrid) {
@@ -77,6 +77,8 @@ class SceneCard extends ConsumerWidget {
   }
 
   /// Builds the full-width list variant of the card.
+  ///
+  /// Uses a dynamic [aspectRatio] to match the source media's proportions.
   Widget _buildListCard(
     BuildContext context,
     WidgetRef ref,
@@ -91,6 +93,8 @@ class SceneCard extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           AspectRatio(
+            // Clamp aspect ratio to prevent extremely tall or wide items from
+            // breaking the list layout flow.
             aspectRatio: aspectRatio.clamp(0.5, 2.5),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
@@ -98,6 +102,8 @@ class SceneCard extends ConsumerWidget {
                 children: [
                   StashImage(
                     imageUrl: scene.paths.screenshot,
+                    // Use double.infinity for both dimensions with BoxFit.cover
+                    // to ensure the image fills the AspectRatio container completely.
                     width: double.infinity,
                     height: double.infinity,
                     fit: BoxFit.cover,
@@ -172,6 +178,9 @@ class SceneCard extends ConsumerWidget {
   }
 
   /// Builds the compact grid variant of the card.
+  ///
+  /// Forces a 16:9 [aspectRatio] for the image to maintain a uniform grid appearance,
+  /// relying on BoxFit.cover to fill the frame elegantly.
   Widget _buildGridCard(
     BuildContext context,
     WidgetRef ref,
