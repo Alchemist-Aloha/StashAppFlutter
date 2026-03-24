@@ -47,7 +47,7 @@ class MockSceneRepository implements SceneRepository {
   }) async => scenes;
 
   @override
-  Future<Scene> getSceneById(String id) async => 
+  Future<Scene> getSceneById(String id) async =>
       scenes.firstWhere((s) => s.id == id);
 
   @override
@@ -60,23 +60,47 @@ class MockSceneRepository implements SceneRepository {
 
 class MockPerformerRepository implements PerformerRepository {
   @override
-  Future<List<Performer>> findPerformers({dynamic page, dynamic perPage, dynamic filter, dynamic sort, dynamic descending = true, dynamic favoritesOnly = false, dynamic genders}) async => [];
+  Future<List<Performer>> findPerformers({
+    dynamic page,
+    dynamic perPage,
+    dynamic filter,
+    dynamic sort,
+    dynamic descending = true,
+    dynamic favoritesOnly = false,
+    dynamic genders,
+  }) async => [];
   @override
   Future<Performer> getPerformerById(String id) => throw UnimplementedError();
   @override
   Future<void> setPerformerFavorite(String id, bool favorite) async {}
 }
+
 class MockStudioRepository implements StudioRepository {
   @override
-  Future<List<Studio>> findStudios({dynamic page, dynamic perPage, dynamic filter, dynamic sort, dynamic descending, dynamic favoritesOnly = false}) async => [];
+  Future<List<Studio>> findStudios({
+    dynamic page,
+    dynamic perPage,
+    dynamic filter,
+    dynamic sort,
+    dynamic descending,
+    dynamic favoritesOnly = false,
+  }) async => [];
   @override
   Future<Studio> getStudioById(String id) => throw UnimplementedError();
   @override
   Future<void> setStudioFavorite(String id, bool favorite) async {}
 }
+
 class MockTagRepository implements TagRepository {
   @override
-  Future<List<Tag>> findTags({dynamic page, dynamic perPage, dynamic filter, dynamic sort, dynamic descending, dynamic favoritesOnly = false}) async => [];
+  Future<List<Tag>> findTags({
+    dynamic page,
+    dynamic perPage,
+    dynamic filter,
+    dynamic sort,
+    dynamic descending,
+    dynamic favoritesOnly = false,
+  }) async => [];
   @override
   Future<Tag> getTagById(String id) => throw UnimplementedError();
   @override
@@ -105,7 +129,7 @@ void main() {
         bitRate: 5000,
         duration: 120.0,
         frameRate: 30.0,
-      )
+      ),
     ],
     paths: const ScenePaths(
       screenshot: 'http://localhost/thumb.jpg',
@@ -142,7 +166,7 @@ void main() {
         bitRate: 5000,
         duration: 100.0,
         frameRate: 30.0,
-      )
+      ),
     ],
     paths: const ScenePaths(
       screenshot: 'http://localhost/thumb2.jpg',
@@ -171,8 +195,12 @@ void main() {
     return ProviderScope(
       overrides: [
         sharedPreferencesProvider.overrideWithValue(prefs),
-        sceneRepositoryProvider.overrideWithValue(MockSceneRepository([testScene, nextScene])),
-        performerRepositoryProvider.overrideWithValue(MockPerformerRepository()),
+        sceneRepositoryProvider.overrideWithValue(
+          MockSceneRepository([testScene, nextScene]),
+        ),
+        performerRepositoryProvider.overrideWithValue(
+          MockPerformerRepository(),
+        ),
         studioRepositoryProvider.overrideWithValue(MockStudioRepository()),
         tagRepositoryProvider.overrideWithValue(MockTagRepository()),
       ],
@@ -180,7 +208,9 @@ void main() {
     );
   }
 
-  testWidgets('Robust Fullscreen Navigation: Standard -> Fullscreen -> Back', (WidgetTester tester) async {
+  testWidgets('Robust Fullscreen Navigation: Standard -> Fullscreen -> Back', (
+    WidgetTester tester,
+  ) async {
     tester.view.physicalSize = const Size(1200, 1600);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(() {
@@ -198,18 +228,20 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
     expect(find.text('Scene Details'), findsOneWidget);
 
-    final container = ProviderScope.containerOf(tester.element(find.byType(SceneDetailsPage)));
-    
+    final container = ProviderScope.containerOf(
+      tester.element(find.byType(SceneDetailsPage)),
+    );
+
     // 2. Trigger Fullscreen navigation manually to avoid flaky UI tap issues in test environment
     // This directly tests the GoRouter route we added and the FullscreenPlayerPage
     final context = tester.element(find.byType(SceneDetailsPage));
     context.push('/scenes/scene/${testScene.id}/fullscreen');
-    
+
     await tester.pump(const Duration(seconds: 1));
     await tester.pump(const Duration(seconds: 1));
 
     // 3. Verify we are in Fullscreen
-    expect(find.text('Initializing player...'), findsOneWidget); 
+    expect(find.text('Initializing player...'), findsOneWidget);
     expect(container.read(playerStateProvider).isFullScreen, isTrue);
 
     // 4. Simulate Back Gesture / Pop
@@ -222,42 +254,53 @@ void main() {
     expect(container.read(playerStateProvider).isFullScreen, isFalse);
   });
 
-  testWidgets('SceneDetailsPage updates route when playback moves via activeScene null transition', (WidgetTester tester) async {
-    tester.view.physicalSize = const Size(1200, 1600);
-    tester.view.devicePixelRatio = 1.0;
-    addTearDown(() {
-      tester.view.resetPhysicalSize();
-      tester.view.resetDevicePixelRatio();
-    });
+  testWidgets(
+    'SceneDetailsPage updates route when playback moves via activeScene null transition',
+    (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(1200, 1600);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
 
-    await tester.pumpWidget(createTestWidget());
-    await tester.pumpAndSettle();
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
 
-    // Open initial scene detail
-    await tester.tap(find.text('Test Scene'));
-    await tester.pumpAndSettle();
+      // Open initial scene detail
+      await tester.tap(find.text('Test Scene'));
+      await tester.pumpAndSettle();
 
-    expect(find.text('Scene Details'), findsOneWidget);
-    expect(find.text('Test Scene'), findsOneWidget);
+      expect(find.text('Scene Details'), findsOneWidget);
+      expect(find.text('Test Scene'), findsOneWidget);
 
-    final container = ProviderScope.containerOf(tester.element(find.byType(SceneDetailsPage)));
-    final playerNotifier = container.read(playerStateProvider.notifier);
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(SceneDetailsPage)),
+      );
+      final playerNotifier = container.read(playerStateProvider.notifier);
 
-    // Simulate exact transition from provider: current->null->next
-    playerNotifier.state = playerNotifier.state.copyWith(activeScene: testScene);
-    await tester.pumpAndSettle();
+      // Simulate exact transition from provider: current->null->next
+      playerNotifier.state = playerNotifier.state.copyWith(
+        activeScene: testScene,
+      );
+      await tester.pumpAndSettle();
 
-    playerNotifier.state = playerNotifier.state.copyWith(activeScene: null);
-    await tester.pumpAndSettle();
+      playerNotifier.state = playerNotifier.state.copyWith(activeScene: null);
+      await tester.pumpAndSettle();
 
-    playerNotifier.state = playerNotifier.state.copyWith(activeScene: nextScene);
-    await tester.pumpAndSettle();
+      playerNotifier.state = playerNotifier.state.copyWith(
+        activeScene: nextScene,
+      );
+      await tester.pumpAndSettle();
 
-    expect(find.text('Next Scene'), findsOneWidget);
-    expect(find.text('Test Scene'), findsNothing);
-  });
+      expect(find.text('Next Scene'), findsOneWidget);
+      expect(find.text('Test Scene'), findsNothing);
+    },
+  );
 
-  testWidgets('Robust Fullscreen Navigation: TikTok -> Fullscreen -> Back', (WidgetTester tester) async {
+  testWidgets('Robust Fullscreen Navigation: TikTok -> Fullscreen -> Back', (
+    WidgetTester tester,
+  ) async {
     tester.view.physicalSize = const Size(1200, 1600);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(() {
@@ -278,13 +321,13 @@ void main() {
     // 2. Trigger Fullscreen navigation manually
     final context = tester.element(find.byType(TiktokScenesView));
     context.push('/scenes/fullscreen/${testScene.id}');
-    
+
     await tester.pump(const Duration(seconds: 1));
     await tester.pump(const Duration(seconds: 1));
 
     // 3. Verify Fullscreen
     expect(find.text('Initializing player...'), findsOneWidget);
-    
+
     // 4. Simulate Back
     await tester.binding.handlePopRoute();
     await tester.pump(const Duration(seconds: 1));
@@ -292,7 +335,9 @@ void main() {
 
     // 5. Verify back in TikTok feed
     expect(find.byType(TiktokScenesView), findsOneWidget);
-    final container = ProviderScope.containerOf(tester.element(find.byType(TiktokScenesView)));
+    final container = ProviderScope.containerOf(
+      tester.element(find.byType(TiktokScenesView)),
+    );
     expect(container.read(playerStateProvider).isFullScreen, isFalse);
   });
 }

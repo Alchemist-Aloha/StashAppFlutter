@@ -138,7 +138,8 @@ class _SceneDetailsPageState extends ConsumerState<SceneDetailsPage> {
   Widget build(BuildContext context) {
     ref.listen(playerStateProvider, (previous, next) {
       final nextScene = next.activeScene;
-      final previousActiveSceneId = previous?.activeScene?.id ?? _lastKnownActiveSceneId;
+      final previousActiveSceneId =
+          previous?.activeScene?.id ?? _lastKnownActiveSceneId;
 
       // Handle full-screen auto-exit
       // Only the page that was active during fullscreen should handle the pop
