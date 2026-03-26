@@ -33,6 +33,8 @@ class ListPageScaffold<T> extends ConsumerStatefulWidget {
     this.hideAppBar = false,
     this.scrollController,
     this.useResponsiveGrid = true,
+    this.mobileCrossAxisCount,
+    this.tabletCrossAxisCount,
   });
 
   /// The page title displayed in the AppBar.
@@ -86,6 +88,12 @@ class ListPageScaffold<T> extends ConsumerStatefulWidget {
   /// Whether to automatically adapt the grid column count for larger screens.
   final bool useResponsiveGrid;
 
+  /// Optional override for the number of columns on mobile.
+  final int? mobileCrossAxisCount;
+
+  /// Optional override for the number of columns on tablet.
+  final int? tabletCrossAxisCount;
+
   @override
   ConsumerState<ListPageScaffold<T>> createState() =>
       _ListPageScaffoldState<T>();
@@ -103,21 +111,34 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
 
   SliverGridDelegate _getResponsiveGridDelegate(BuildContext context) {
     final delegate = widget.gridDelegate!;
-    if (!widget.useResponsiveGrid || Responsive.isMobile(context)) {
+    if (delegate is! SliverGridDelegateWithFixedCrossAxisCount) {
       return delegate;
     }
 
-    if (delegate is SliverGridDelegateWithFixedCrossAxisCount) {
-      return SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        mainAxisSpacing: delegate.mainAxisSpacing,
-        crossAxisSpacing: delegate.crossAxisSpacing,
-        childAspectRatio: delegate.childAspectRatio,
-        mainAxisExtent: delegate.mainAxisExtent,
-      );
+    final width = MediaQuery.sizeOf(context).width;
+    final isMobile = width < Responsive.mobileBreakpoint;
+    final isTablet = width >= Responsive.mobileBreakpoint && width < Responsive.tabletBreakpoint;
+
+    int count = delegate.crossAxisCount;
+
+    if (isMobile && widget.mobileCrossAxisCount != null) {
+      count = widget.mobileCrossAxisCount!;
+    } else if (isTablet && widget.tabletCrossAxisCount != null) {
+      count = widget.tabletCrossAxisCount!;
+    } else if (width >= Responsive.tabletBreakpoint && widget.tabletCrossAxisCount != null) {
+      // Also apply tablet count for desktop if desktop count is not specified
+      count = widget.tabletCrossAxisCount!;
+    } else if (widget.useResponsiveGrid && !isMobile) {
+      count = 3;
     }
 
-    return delegate;
+    return SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: count,
+      mainAxisSpacing: delegate.mainAxisSpacing,
+      crossAxisSpacing: delegate.crossAxisSpacing,
+      childAspectRatio: delegate.childAspectRatio,
+      mainAxisExtent: delegate.mainAxisExtent,
+    );
   }
 
   @override

@@ -64,7 +64,7 @@ void main() {
   );
 
   testWidgets('PerformersPage displays list of performers', (tester) async {
-    tester.view.physicalSize = const Size(1200, 5000);
+    tester.view.physicalSize = const Size(1200, 1600);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(() => tester.view.resetPhysicalSize());
 
@@ -89,7 +89,7 @@ void main() {
   });
 
   testWidgets('PerformersPage search filters list', (tester) async {
-    tester.view.physicalSize = const Size(1200, 5000);
+    tester.view.physicalSize = const Size(1200, 1600);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(() => tester.view.resetPhysicalSize());
 
@@ -125,7 +125,7 @@ void main() {
   });
 
   testWidgets('PerformersPage filters by favorites only', (tester) async {
-    tester.view.physicalSize = const Size(1200, 5000);
+    tester.view.physicalSize = const Size(1200, 1600);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(() => tester.view.resetPhysicalSize());
 
@@ -153,7 +153,8 @@ void main() {
 
     // Tap favorites only switch (scroll if needed)
     final switchFinder = find.byType(SwitchListTile);
-    await tester.tap(switchFinder);
+    await tester.ensureVisible(switchFinder);
+    await tester.tap(switchFinder, warnIfMissed: false);
     await tester.pump(const Duration(milliseconds: 500));
     
     // Apply filter

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:stash_app_flutter/core/presentation/theme/app_theme.dart';
+import 'package:stash_app_flutter/features/performers/presentation/providers/performer_list_provider.dart';
+import 'package:stash_app_flutter/features/performers/domain/entities/performer.dart';
 import 'package:stash_app_flutter/features/navigation/presentation/router.dart';
 import 'package:stash_app_flutter/features/scenes/presentation/widgets/scene_card.dart';
 import 'package:stash_app_flutter/features/scenes/domain/entities/scene.dart';
@@ -350,14 +352,78 @@ void main() {
 
     await pumpApp();
     
-    GridView gridView = tester.widget(find.byType(GridView));
+    GridView gridView = tester.widget(find.byType(GridView).first);
     expect((gridView.gridDelegate as SliverGridDelegateWithFixedCrossAxisCount).crossAxisCount, 2);
 
     // 2. Test Tablet (3 columns)
     tester.view.physicalSize = const Size(1200, 800);
     await pumpApp();
 
-    gridView = tester.widget(find.byType(GridView));
+    gridView = tester.widget(find.byType(GridView).first);
     expect((gridView.gridDelegate as SliverGridDelegateWithFixedCrossAxisCount).crossAxisCount, 3);
+  });
+
+  testWidgets('Integration: Responsive Grid - Performers (Mobile 3 vs Tablet 5)', (
+    WidgetTester tester,
+  ) async {
+    final mockRepo = LocalMockSceneRepository([]);
+    final mockPerformerRepo = MockPerformerRepository()..withData([
+      const Performer(
+        id: 'p1',
+        name: 'Test Performer',
+        urls: [],
+        birthdate: null,
+        aliasList: [],
+        favorite: false,
+        imagePath: '',
+        sceneCount: 0,
+        imageCount: 0,
+        galleryCount: 0,
+        groupCount: 0,
+        tagIds: [],
+        tagNames: [],
+      ),
+    ]);
+
+    Future<void> pumpApp() async {
+      await pumpTestWidget(
+        tester,
+        wrapWithApp: false,
+        overrides: [
+          sceneRepositoryProvider.overrideWithValue(mockRepo),
+          performerRepositoryProvider.overrideWithValue(mockPerformerRepo),
+        ],
+        child: Consumer(
+          builder: (context, ref, _) {
+            final goRouter = ref.watch(routerProvider);
+            return MaterialApp.router(
+              routerConfig: goRouter,
+              theme: AppTheme.darkTheme,
+            );
+          },
+        ),
+      );
+      await tester.pumpAndSettle();
+    }
+
+    // Navigate to Performers
+    tester.view.physicalSize = const Size(400, 800);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(() => tester.view.resetPhysicalSize());
+
+    await pumpApp();
+    await tester.tap(find.text('Performers'));
+    await tester.pumpAndSettle();
+
+    // 1. Test Mobile (3 columns)
+    GridView gridView = tester.widget(find.byType(GridView).first);
+    expect((gridView.gridDelegate as SliverGridDelegateWithFixedCrossAxisCount).crossAxisCount, 3);
+
+    // 2. Test Tablet (5 columns)
+    tester.view.physicalSize = const Size(1600, 800);
+    await pumpApp();
+
+    gridView = tester.widget(find.byType(GridView).first);
+    expect((gridView.gridDelegate as SliverGridDelegateWithFixedCrossAxisCount).crossAxisCount, 5);
   });
 }

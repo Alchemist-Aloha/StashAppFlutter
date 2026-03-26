@@ -484,11 +484,13 @@ class _PerformersPageState extends ConsumerState<PerformersPage> {
         ),
       ],
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: AppTheme.spacingMedium,
-        mainAxisSpacing: AppTheme.spacingMedium,
-        childAspectRatio: 0.7,
+        crossAxisCount: 3,
+        crossAxisSpacing: AppTheme.spacingSmall,
+        mainAxisSpacing: AppTheme.spacingSmall,
+        childAspectRatio: 0.85,
       ),
+      mobileCrossAxisCount: 3,
+      tabletCrossAxisCount: 5,
       itemBuilder: (context, performer) {
         return PerformerCard(
           performer: performer,
