@@ -64,30 +64,32 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
 
     setState(() => _isStarting = true);
     try {
+      if (!mounted) return;
       final resolver = ref.read(streamResolverProvider.notifier);
-      
+
       // Perform a background "prewarm" to fetch stream URL and test connectivity.
       final prewarmResult = await _prewarmStream(widget.scene);
+      if (!mounted) return;
       ref.read(playerStateProvider.notifier).setPrewarmResult(
-        attempted: prewarmResult.attempted,
-        succeeded: prewarmResult.succeeded,
-        latencyMs: prewarmResult.latencyMs,
-      );
+            attempted: prewarmResult.attempted,
+            succeeded: prewarmResult.succeeded,
+            latencyMs: prewarmResult.latencyMs,
+          );
 
       final choice = await resolver.resolvePreferredStream(widget.scene);
       if (choice != null && mounted) {
         final mediaHeaders = ref.read(mediaHeadersProvider);
         await ref.read(playerStateProvider.notifier).playScene(
-          widget.scene,
-          choice.url,
-          mimeType: choice.mimeType,
-          streamLabel: choice.label,
-          streamSource: force ? 'manual-start' : 'auto-start',
-          httpHeaders: mediaHeaders,
-          prewarmAttempted: prewarmResult.attempted,
-          prewarmSucceeded: prewarmResult.succeeded,
-          prewarmLatencyMs: prewarmResult.latencyMs,
-        );
+              widget.scene,
+              choice.url,
+              mimeType: choice.mimeType,
+              streamLabel: choice.label,
+              streamSource: force ? 'manual-start' : 'auto-start',
+              httpHeaders: mediaHeaders,
+              prewarmAttempted: prewarmResult.attempted,
+              prewarmSucceeded: prewarmResult.succeeded,
+              prewarmLatencyMs: prewarmResult.latencyMs,
+            );
       }
     } finally {
       if (mounted) setState(() => _isStarting = false);
@@ -118,6 +120,7 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
     client.connectionTimeout = const Duration(seconds: 5);
 
     try {
+      if (!mounted) return const _PrewarmResult(attempted: false, succeeded: false);
       final resolver = ref.read(streamResolverProvider.notifier);
       final choice = await resolver.resolvePreferredStream(scene);
       if (choice == null) return const _PrewarmResult(attempted: false, succeeded: false);
@@ -125,6 +128,7 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
       final uri = Uri.parse(choice.url);
       final request = await client.getUrl(uri);
       
+      if (!mounted) return const _PrewarmResult(attempted: false, succeeded: false);
       final headers = ref.read(mediaHeadersProvider);
       headers.forEach((key, value) {
         request.headers.add(key, value);
