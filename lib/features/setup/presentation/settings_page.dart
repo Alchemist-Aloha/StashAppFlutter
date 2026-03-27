@@ -73,6 +73,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   bool _showRandomNavigation = true;
   ThemeMode _themeMode = ThemeMode.system;
   bool _loading = true;
+  bool _obscureApiKey = true;
 
   bool _isHostOnlyInput(String raw) {
     final parsed = Uri.tryParse(raw.trim());
@@ -169,8 +170,12 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     _seedColor = seedColor;
 
     if (!_presetColors.contains(seedColor)) {
-      _customHexController.text =
-          seedColor.toARGB32().toUnsigned(32).toRadixString(16).padLeft(8, '0').toUpperCase();
+      _customHexController.text = seedColor
+          .toARGB32()
+          .toUnsigned(32)
+          .toRadixString(16)
+          .padLeft(8, '0')
+          .toUpperCase();
     }
 
     setState(() => _loading = false);
@@ -356,14 +361,26 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                   TextField(
                     controller: _apiKeyController,
                     focusNode: _apiKeyFocusNode,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'API key',
-                      border: OutlineInputBorder(),
+                      border: const OutlineInputBorder(),
                       hintText: 'Paste ApiKey header value',
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscureApiKey
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscureApiKey = !_obscureApiKey;
+                          });
+                        },
+                      ),
                     ),
                     autocorrect: false,
                     enableSuggestions: false,
-                    obscureText: true,
+                    obscureText: _obscureApiKey,
                     textInputAction: TextInputAction.done,
                     onSubmitted: (_) => _saveServerSettings(),
                     onEditingComplete: () {
@@ -519,7 +536,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                   const SizedBox(height: AppTheme.spacingLarge),
                   _buildSectionHeader('Display'),
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingSmall),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: AppTheme.spacingSmall,
+                    ),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -528,17 +547,26 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text('Scenes Layout', style: TextStyle(fontSize: 16)),
+                              const Text(
+                                'Scenes Layout',
+                                style: TextStyle(fontSize: 16),
+                              ),
                               const SizedBox(height: 4),
-                              Text('Choose the default layout for the Scenes page', style: TextStyle(fontSize: 14, color: context.colors.onSurfaceVariant)),
+                              Text(
+                                'Choose the default layout for the Scenes page',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: context.colors.onSurfaceVariant,
+                                ),
+                              ),
                             ],
                           ),
                         ),
                         const SizedBox(width: AppTheme.spacingMedium),
                         DropdownMenu<String>(
                           initialSelection: _sceneTiktokLayout
-                                  ? 'tiktok'
-                                  : (_sceneGridLayout ? 'grid' : 'list'),
+                              ? 'tiktok'
+                              : (_sceneGridLayout ? 'grid' : 'list'),
                           onSelected: (String? value) async {
                             if (value == null) return;
                             setState(() {
@@ -653,9 +681,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                         }
                       } catch (e) {
                         if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Error: $e')),
-                          );
+                          ScaffoldMessenger.of(
+                            context,
+                          ).showSnackBar(SnackBar(content: Text('Error: $e')));
                         }
                       }
                     },
@@ -714,7 +742,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 if (colorValue != null) {
                   // We don't reset _forceShowCustom while typing as we stay in this mode.
                   _seedColor = Color(colorValue);
-                  ref.read(appThemeColorProvider.notifier).setThemeColor(_seedColor);
+                  ref
+                      .read(appThemeColorProvider.notifier)
+                      .setThemeColor(_seedColor);
                 }
               }
             },
@@ -741,8 +771,12 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
             setState(() {
               _forceShowCustom = true;
               if (_customHexController.text.isEmpty) {
-                _customHexController.text =
-                    _seedColor.toARGB32().toUnsigned(32).toRadixString(16).padLeft(8, '0').toUpperCase();
+                _customHexController.text = _seedColor
+                    .toARGB32()
+                    .toUnsigned(32)
+                    .toRadixString(16)
+                    .padLeft(8, '0')
+                    .toUpperCase();
               }
             });
 
@@ -767,18 +801,19 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               ? Icon(
                   Icons.palette_outlined,
                   size: 20,
-                  color:
-                      displayColor.computeLuminance() > 0.5 ? Colors.black : Colors.white,
+                  color: displayColor.computeLuminance() > 0.5
+                      ? Colors.black
+                      : Colors.white,
                 )
               : isSelected
-                  ? Icon(
-                      Icons.check,
-                      size: 20,
-                      color: displayColor.computeLuminance() > 0.5
-                          ? Colors.black
-                          : Colors.white,
-                    )
-                  : null,
+              ? Icon(
+                  Icons.check,
+                  size: 20,
+                  color: displayColor.computeLuminance() > 0.5
+                      ? Colors.black
+                      : Colors.white,
+                )
+              : null,
         ),
       ),
     );
