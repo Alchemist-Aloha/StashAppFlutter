@@ -263,10 +263,10 @@ class GraphQLSceneRepository implements SceneRepository {
   }
 
   @override
-  Future<Scene> getSceneById(String id) async {
+  Future<Scene> getSceneById(String id, {bool refresh = false}) async {
     final result = await client.query$FindScene(
       Options$Query$FindScene(
-        fetchPolicy: FetchPolicy.cacheFirst,
+        fetchPolicy: refresh ? FetchPolicy.networkOnly : FetchPolicy.cacheFirst,
         variables: Variables$Query$FindScene(id: id),
       ),
     );

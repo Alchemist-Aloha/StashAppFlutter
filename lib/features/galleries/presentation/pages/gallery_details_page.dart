@@ -4,6 +4,7 @@ import '../../../../core/presentation/widgets/error_state_view.dart';
 import '../../../../core/presentation/widgets/section_header.dart';
 import '../../../../core/presentation/theme/app_theme.dart';
 import '../providers/gallery_details_provider.dart';
+import '../providers/gallery_list_provider.dart';
 
 class GalleryDetailsPage extends ConsumerWidget {
   final String galleryId;
@@ -19,6 +20,9 @@ class GalleryDetailsPage extends ConsumerWidget {
       body: galleryAsync.when(
         data: (gallery) => RefreshIndicator(
           onRefresh: () async {
+            await ref
+                .read(galleryRepositoryProvider)
+                .getGalleryById(galleryId, refresh: true);
             ref.invalidate(galleryDetailsProvider(galleryId));
             return ref.read(galleryDetailsProvider(galleryId).future);
           },

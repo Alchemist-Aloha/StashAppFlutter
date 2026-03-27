@@ -57,6 +57,9 @@ class TagDetailsPage extends ConsumerWidget {
       body: tagAsync.when(
         data: (tag) => RefreshIndicator(
           onRefresh: () async {
+            await ref
+                .read(tagRepositoryProvider)
+                .getTagById(tagId, refresh: true);
             ref.invalidate(tagDetailsProvider(tagId));
             ref.invalidate(tagMediaProvider(tagId));
             await Future.wait([

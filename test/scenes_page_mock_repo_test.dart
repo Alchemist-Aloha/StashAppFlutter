@@ -40,7 +40,7 @@ class FakeSceneRepository implements SceneRepository {
   }
 
   @override
-  Future<Scene> getSceneById(String id) async {
+  Future<Scene> getSceneById(String id, {bool refresh = false}) async {
     return _scenes.firstWhere((scene) => scene.id == id);
   }
 

@@ -130,10 +130,10 @@ class GraphQLTagRepository implements TagRepository {
   }
 
   @override
-  Future<Tag> getTagById(String id) async {
+  Future<Tag> getTagById(String id, {bool refresh = false}) async {
     final result = await client.query$FindTag(
       Options$Query$FindTag(
-        fetchPolicy: FetchPolicy.cacheFirst,
+        fetchPolicy: refresh ? FetchPolicy.networkOnly : FetchPolicy.cacheFirst,
         variables: Variables$Query$FindTag(id: id),
       ),
     );

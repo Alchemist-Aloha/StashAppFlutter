@@ -59,6 +59,9 @@ class StudioDetailsPage extends ConsumerWidget {
       body: studioAsync.when(
         data: (studio) => RefreshIndicator(
           onRefresh: () async {
+            await ref
+                .read(studioRepositoryProvider)
+                .getStudioById(studioId, refresh: true);
             ref.invalidate(studioDetailsProvider(studioId));
             ref.invalidate(studioMediaProvider(studioId));
             await Future.wait([

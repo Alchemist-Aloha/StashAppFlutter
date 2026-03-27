@@ -4,6 +4,7 @@ import '../../../../core/presentation/widgets/error_state_view.dart';
 import '../../../../core/presentation/widgets/section_header.dart';
 import '../../../../core/presentation/theme/app_theme.dart';
 import '../providers/group_details_provider.dart';
+import '../providers/group_list_provider.dart';
 
 class GroupDetailsPage extends ConsumerWidget {
   final String groupId;
@@ -19,6 +20,9 @@ class GroupDetailsPage extends ConsumerWidget {
       body: groupAsync.when(
         data: (group) => RefreshIndicator(
           onRefresh: () async {
+            await ref
+                .read(groupRepositoryProvider)
+                .getGroupById(groupId, refresh: true);
             ref.invalidate(groupDetailsProvider(groupId));
             return ref.read(groupDetailsProvider(groupId).future);
           },

@@ -253,6 +253,9 @@ class _SceneDetailsPageState extends ConsumerState<SceneDetailsPage> {
           // Mobile View (Default Column)
           return RefreshIndicator(
             onRefresh: () async {
+              await ref
+                  .read(sceneRepositoryProvider)
+                  .getSceneById(widget.sceneId, refresh: true);
               ref.invalidate(sceneDetailsProvider(widget.sceneId));
               return ref.read(sceneDetailsProvider(widget.sceneId).future);
             },

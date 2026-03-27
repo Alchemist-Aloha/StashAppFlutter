@@ -78,6 +78,9 @@ class PerformerDetailsPage extends ConsumerWidget {
           final age = _calculateAge(performer.birthdate);
           return RefreshIndicator(
             onRefresh: () async {
+              await ref
+                  .read(performerRepositoryProvider)
+                  .getPerformerById(performerId, refresh: true);
               ref.invalidate(performerDetailsProvider(performerId));
               ref.invalidate(performerMediaProvider(performerId));
               await Future.wait([

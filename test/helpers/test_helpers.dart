@@ -83,7 +83,7 @@ class MockSceneRepository extends MockRepositoryState<Scene>
   }
 
   @override
-  Future<Scene> getSceneById(String id) async {
+  Future<Scene> getSceneById(String id, {bool refresh = false}) async {
     if (shouldThrow) throw Exception(errorMessage);
     return data.firstWhere((s) => s.id == id);
   }
@@ -157,7 +157,7 @@ class MockPerformerRepository extends MockRepositoryState<Performer>
   }
 
   @override
-  Future<Performer> getPerformerById(String id) async {
+  Future<Performer> getPerformerById(String id, {bool refresh = false}) async {
     if (shouldThrow) throw Exception(errorMessage);
     return data.firstWhere((p) => p.id == id);
   }
@@ -184,7 +184,7 @@ class MockStudioRepository extends MockRepositoryState<Studio>
   }
 
   @override
-  Future<Studio> getStudioById(String id) async {
+  Future<Studio> getStudioById(String id, {bool refresh = false}) async {
     if (shouldThrow) throw Exception(errorMessage);
     return data.firstWhere((s) => s.id == id);
   }
@@ -211,7 +211,7 @@ class MockTagRepository extends MockRepositoryState<Tag>
   }
 
   @override
-  Future<Tag> getTagById(String id) async {
+  Future<Tag> getTagById(String id, {bool refresh = false}) async {
     if (shouldThrow) throw Exception(errorMessage);
     return data.firstWhere((t) => t.id == id);
   }

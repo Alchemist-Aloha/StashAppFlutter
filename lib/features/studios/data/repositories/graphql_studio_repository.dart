@@ -132,10 +132,10 @@ class GraphQLStudioRepository implements StudioRepository {
   }
 
   @override
-  Future<Studio> getStudioById(String id) async {
+  Future<Studio> getStudioById(String id, {bool refresh = false}) async {
     final result = await client.query$FindStudio(
       Options$Query$FindStudio(
-        fetchPolicy: FetchPolicy.cacheFirst,
+        fetchPolicy: refresh ? FetchPolicy.networkOnly : FetchPolicy.cacheFirst,
         variables: Variables$Query$FindStudio(id: id),
       ),
     );

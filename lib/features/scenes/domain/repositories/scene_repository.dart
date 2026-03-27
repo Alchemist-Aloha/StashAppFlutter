@@ -17,7 +17,7 @@ abstract class SceneRepository {
     String? tagId,
     SceneFilter? sceneFilter,
   });
-  Future<Scene> getSceneById(String id);
+  Future<Scene> getSceneById(String id, {bool refresh = false});
   Future<List<Scraper>> listScrapers({required List<String> types});
   Future<List<ScrapedScene>> scrapeSingleScene({
     required String scraperId,

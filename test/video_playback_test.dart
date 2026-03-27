@@ -35,7 +35,7 @@ class MockSceneRepository implements SceneRepository {
   }) async => scenes;
 
   @override
-  Future<Scene> getSceneById(String id) async =>
+  Future<Scene> getSceneById(String id, {bool refresh = false}) async =>
       scenes.firstWhere((s) => s.id == id);
 
   @override

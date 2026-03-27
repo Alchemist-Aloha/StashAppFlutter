@@ -9,6 +9,6 @@ abstract class StudioRepository {
     bool? descending,
     bool favoritesOnly = false,
   });
-  Future<Studio> getStudioById(String id);
+  Future<Studio> getStudioById(String id, {bool refresh = false});
   Future<void> setStudioFavorite(String id, bool favorite);
 }

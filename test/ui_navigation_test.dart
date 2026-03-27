@@ -43,7 +43,7 @@ class MockSceneRepository implements SceneRepository {
   }) async => [];
 
   @override
-  Future<Scene> getSceneById(String id) => throw UnimplementedError();
+  Future<Scene> getSceneById(String id, {bool refresh = false}) => throw UnimplementedError();
 
   @override
   Future<void> updateSceneRating(String id, int rating100) async {}
@@ -96,7 +96,7 @@ class MockPerformerRepository implements PerformerRepository {
   }) async => [];
 
   @override
-  Future<Performer> getPerformerById(String id) => throw UnimplementedError();
+  Future<Performer> getPerformerById(String id, {bool refresh = false}) => throw UnimplementedError();
 
   @override
   Future<void> setPerformerFavorite(String id, bool favorite) async {}
@@ -114,7 +114,7 @@ class MockStudioRepository implements StudioRepository {
   }) async => [];
 
   @override
-  Future<Studio> getStudioById(String id) => throw UnimplementedError();
+  Future<Studio> getStudioById(String id, {bool refresh = false}) => throw UnimplementedError();
 
   @override
   Future<void> setStudioFavorite(String id, bool favorite) async {}
@@ -132,7 +132,8 @@ class MockTagRepository implements TagRepository {
   }) async => [];
 
   @override
-  Future<Tag> getTagById(String id) => throw UnimplementedError();
+  Future<Tag> getTagById(String id, {bool refresh = false}) =>
+      throw UnimplementedError();
 
   @override
   Future<void> setTagFavorite(String id, bool favorite) async {}

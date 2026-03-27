@@ -88,7 +88,7 @@ class LocalMockSceneRepository implements SceneRepository {
   }
 
   @override
-  Future<Scene> getSceneById(String id) async {
+  Future<Scene> getSceneById(String id, {bool refresh = false}) async {
     return scenes.firstWhere((s) => s.id == id);
   }
 
