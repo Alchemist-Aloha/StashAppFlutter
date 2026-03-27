@@ -526,7 +526,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                     contentPadding: EdgeInsets.zero,
                     title: Row(
                       children: [
-                        const Text('Show Scrape Button'),
+                        const Expanded(child: Text('Show Scrape Button')),
                         const SizedBox(width: 8),
                         Container(
                           padding: const EdgeInsets.symmetric(
