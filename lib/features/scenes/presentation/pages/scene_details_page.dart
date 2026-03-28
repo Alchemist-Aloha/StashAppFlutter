@@ -17,7 +17,7 @@ import '../../domain/entities/scene_title_utils.dart';
 import '../../../studios/presentation/providers/studio_media_provider.dart';
 import '../providers/scene_details_provider.dart';
 import '../providers/scene_list_provider.dart';
-import '../widgets/scene_edit_dialog.dart';
+import './scene_edit_page.dart';
 import '../providers/video_player_provider.dart';
 import '../../../setup/presentation/providers/navigation_customization_provider.dart';
 import '../../../setup/presentation/providers/scrape_customization_provider.dart';
@@ -465,9 +465,10 @@ class _SceneDetailsPageState extends ConsumerState<SceneDetailsPage> {
             if (scrapeEnabled)
               FilledButton.tonalIcon(
                 onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (_) => SceneEditDialog(scene: scene),
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => SceneEditPage(scene: scene),
+                    ),
                   );
                 },
                 style: FilledButton.styleFrom(

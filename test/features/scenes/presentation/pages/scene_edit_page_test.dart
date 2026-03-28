@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:stash_app_flutter/features/scenes/domain/entities/scene.dart';
-import 'package:stash_app_flutter/features/scenes/presentation/widgets/scene_edit_dialog.dart';
+import 'package:stash_app_flutter/features/scenes/presentation/pages/scene_edit_page.dart';
 import 'package:stash_app_flutter/features/scenes/presentation/providers/scene_list_provider.dart';
 import 'package:stash_app_flutter/features/scenes/domain/models/scraped_scene.dart';
 import '../../../../helpers/test_helpers.dart';
@@ -49,7 +49,7 @@ void main() {
     tagNames: [],
   );
 
-  testWidgets('SceneEditDialog updates fields and saves', (tester) async {
+  testWidgets('SceneEditPage updates fields and saves', (tester) async {
     tester.view.physicalSize = const Size(1200, 1200);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);
@@ -59,7 +59,7 @@ void main() {
     await pumpTestWidget(
       tester,
       overrides: [sceneRepositoryProvider.overrideWithValue(mockRepo)],
-      child: Scaffold(body: SceneEditDialog(scene: testScene)),
+      child: SceneEditPage(scene: testScene),
     );
     await tester.pumpAndSettle();
 
@@ -80,8 +80,8 @@ void main() {
       'New Details',
     );
 
-    // Tap Save
-    await tester.tap(find.text('Save'));
+    // Tap Save (it's an IconButton in the AppBar now)
+    await tester.tap(find.byIcon(Icons.save));
     await tester.pump(); // Start saving
     await tester.pump(
       const Duration(seconds: 1),
@@ -92,7 +92,7 @@ void main() {
     expect(mockRepo.lastScraped?.details, 'New Details');
   });
 
-  testWidgets('SceneEditDialog adds and removes URLs', (tester) async {
+  testWidgets('SceneEditPage adds and removes URLs', (tester) async {
     tester.view.physicalSize = const Size(1200, 1200);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);
@@ -102,7 +102,7 @@ void main() {
     await pumpTestWidget(
       tester,
       overrides: [sceneRepositoryProvider.overrideWithValue(mockRepo)],
-      child: Scaffold(body: SceneEditDialog(scene: testScene)),
+      child: SceneEditPage(scene: testScene),
     );
     await tester.pumpAndSettle();
 
@@ -125,7 +125,7 @@ void main() {
     expect(find.text('http://example.com'), findsNothing);
 
     // Tap Save
-    await tester.tap(find.text('Save'));
+    await tester.tap(find.byIcon(Icons.save));
     await tester.pumpAndSettle();
 
     expect(mockRepo.lastScraped?.urls, ['http://newurl.com']);
