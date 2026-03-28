@@ -17,6 +17,7 @@ fragment SlimSceneData on Scene {
     preview
     stream
   }
+  urls
   studio {
     id
     name
