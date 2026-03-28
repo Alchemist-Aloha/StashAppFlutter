@@ -9,14 +9,14 @@ A native Android mobile client for your **Stash** server. Designed for seamless 
 ## 📸 Screenshots
 
 <p align="center">
-	<img src="asset/scenes.jpg" alt="Scenes feed" width="280" />
-	<img src="asset/scene_filter.jpg" alt="Scenes filter" width="280" />
-	<img src="asset/scene_sort.jpg" alt="Scenes sort" width="280" />
+	<img src="asset/scenes.jpg" alt="Scenes feed" width="200" />
+	<img src="asset/scene_filter.jpg" alt="Scenes filter" width="200" />
+	<img src="asset/scene_sort.jpg" alt="Scenes sort" width="200" />
 </p>
 <p align="center">
-	<img src="asset/scene_details.jpg" alt="Scene details playback" width="280" />
-	<img src="asset/edit_scene.jpg" alt="Scene details editor" width="280" />
-	<img src="asset/settings.jpg" alt="Setting page" width="280" />
+	<img src="asset/scene_details.jpg" alt="Scene details playback" width="200" />
+	<img src="asset/edit_scene.jpg" alt="Scene details editor" width="200" />
+	<img src="asset/settings.jpg" alt="Setting page" width="200" />
 </p>
 ## ✨ Key Features
 
