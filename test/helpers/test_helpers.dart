@@ -9,6 +9,8 @@ import 'package:stash_app_flutter/core/data/preferences/shared_preferences_provi
 import 'package:stash_app_flutter/features/scenes/domain/entities/scene.dart';
 import 'package:stash_app_flutter/features/scenes/domain/entities/scene_filter.dart';
 import 'package:stash_app_flutter/features/scenes/domain/repositories/scene_repository.dart';
+import 'package:stash_app_flutter/features/scenes/domain/models/scraper.dart';
+import 'package:stash_app_flutter/features/scenes/domain/models/scraped_scene.dart';
 
 import 'package:stash_app_flutter/features/performers/domain/entities/performer.dart';
 import 'package:stash_app_flutter/features/performers/domain/repositories/performer_repository.dart';
@@ -54,16 +56,14 @@ class MockStreamResolver extends StreamResolver {
   @override
   Future<StreamChoice?> resolvePreferredStream(Scene scene) async {
     if (scene.paths.stream != null) {
-      return StreamChoice(
-        url: scene.paths.stream!,
-        mimeType: 'video/mp4',
-      );
+      return StreamChoice(url: scene.paths.stream!, mimeType: 'video/mp4');
     }
     return null;
   }
 }
 
-class MockSceneRepository extends MockRepositoryState<Scene> implements SceneRepository {
+class MockSceneRepository extends MockRepositoryState<Scene>
+    implements SceneRepository {
   @override
   Future<List<Scene>> findScenes({
     int? page,
@@ -83,7 +83,7 @@ class MockSceneRepository extends MockRepositoryState<Scene> implements SceneRep
   }
 
   @override
-  Future<Scene> getSceneById(String id) async {
+  Future<Scene> getSceneById(String id, {bool refresh = false}) async {
     if (shouldThrow) throw Exception(errorMessage);
     return data.firstWhere((s) => s.id == id);
   }
@@ -98,9 +98,51 @@ class MockSceneRepository extends MockRepositoryState<Scene> implements SceneRep
 
   @override
   Future<void> incrementScenePlayCount(String id) async {}
+
+  @override
+  Future<List<Scraper>> listScrapers({required List<String> types}) async {
+    if (shouldThrow) throw Exception(errorMessage);
+    return [];
+  }
+
+  @override
+  Future<List<ScrapedScene>> scrapeSingleScene({
+    required String scraperId,
+    required String sceneId,
+  }) async {
+    if (shouldThrow) throw Exception(errorMessage);
+    return [];
+  }
+
+  @override
+  Future<void> saveScrapedScene({
+    required String sceneId,
+    required ScrapedScene scraped,
+    bool mergeValues = false,
+    List<String>? performerIds,
+    List<String>? tagIds,
+    String? studioId,
+  }) async {
+    if (shouldThrow) throw Exception(errorMessage);
+  }
+
+  @override
+  Future<Map<String, List<Map<String, dynamic>>>> findPerformerCandidates(
+    List<String> queries,
+  ) async {
+    return {};
+  }
+
+  @override
+  Future<Map<String, List<Map<String, dynamic>>>> findTagCandidates(
+    List<String> tags,
+  ) async {
+    return {};
+  }
 }
 
-class MockPerformerRepository extends MockRepositoryState<Performer> implements PerformerRepository {
+class MockPerformerRepository extends MockRepositoryState<Performer>
+    implements PerformerRepository {
   @override
   Future<List<Performer>> findPerformers({
     int? page,
@@ -116,7 +158,7 @@ class MockPerformerRepository extends MockRepositoryState<Performer> implements 
   }
 
   @override
-  Future<Performer> getPerformerById(String id) async {
+  Future<Performer> getPerformerById(String id, {bool refresh = false}) async {
     if (shouldThrow) throw Exception(errorMessage);
     return data.firstWhere((p) => p.id == id);
   }
@@ -127,7 +169,8 @@ class MockPerformerRepository extends MockRepositoryState<Performer> implements 
   }
 }
 
-class MockStudioRepository extends MockRepositoryState<Studio> implements StudioRepository {
+class MockStudioRepository extends MockRepositoryState<Studio>
+    implements StudioRepository {
   @override
   Future<List<Studio>> findStudios({
     int? page,
@@ -142,7 +185,7 @@ class MockStudioRepository extends MockRepositoryState<Studio> implements Studio
   }
 
   @override
-  Future<Studio> getStudioById(String id) async {
+  Future<Studio> getStudioById(String id, {bool refresh = false}) async {
     if (shouldThrow) throw Exception(errorMessage);
     return data.firstWhere((s) => s.id == id);
   }
@@ -153,7 +196,8 @@ class MockStudioRepository extends MockRepositoryState<Studio> implements Studio
   }
 }
 
-class MockTagRepository extends MockRepositoryState<Tag> implements TagRepository {
+class MockTagRepository extends MockRepositoryState<Tag>
+    implements TagRepository {
   @override
   Future<List<Tag>> findTags({
     int? page,
@@ -168,7 +212,7 @@ class MockTagRepository extends MockRepositoryState<Tag> implements TagRepositor
   }
 
   @override
-  Future<Tag> getTagById(String id) async {
+  Future<Tag> getTagById(String id, {bool refresh = false}) async {
     if (shouldThrow) throw Exception(errorMessage);
     return data.firstWhere((t) => t.id == id);
   }
@@ -204,10 +248,7 @@ Future<void> pumpTestWidget(
         ...overrides,
       ],
       child: wrapWithApp
-          ? MaterialApp(
-              theme: AppTheme.darkTheme,
-              home: child,
-            )
+          ? MaterialApp(theme: AppTheme.darkTheme, home: child)
           : child,
     ),
   );
@@ -216,7 +257,7 @@ Future<void> pumpTestWidget(
 /// Extension for common finders
 extension CommonFindersX on CommonFinders {
   Finder loadingSpinner() => byType(CircularProgressIndicator);
-  
+
   Finder errorView({String? message}) {
     if (message != null) {
       return find.descendant(

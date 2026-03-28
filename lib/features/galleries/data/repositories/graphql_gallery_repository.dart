@@ -60,7 +60,7 @@ class GraphQLGalleryRepository implements GalleryRepository {
   }
 
   @override
-  Future<Gallery> getGalleryById(String id) async {
+  Future<Gallery> getGalleryById(String id, {bool refresh = false}) async {
     const query = r'''
       query FindGallery($id: ID!) {
         findGallery(id: $id) {
@@ -76,7 +76,7 @@ class GraphQLGalleryRepository implements GalleryRepository {
 
     final result = await client.query(
       QueryOptions(
-        fetchPolicy: FetchPolicy.cacheFirst,
+        fetchPolicy: refresh ? FetchPolicy.networkOnly : FetchPolicy.cacheFirst,
         document: gql(query),
         variables: {'id': id},
       ),

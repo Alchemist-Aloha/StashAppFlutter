@@ -9,6 +9,8 @@ import 'package:stash_app_flutter/features/scenes/presentation/widgets/scene_car
 import 'package:stash_app_flutter/features/scenes/domain/entities/scene.dart';
 import 'package:stash_app_flutter/features/scenes/domain/entities/scene_filter.dart';
 import 'package:stash_app_flutter/features/scenes/domain/repositories/scene_repository.dart';
+import 'package:stash_app_flutter/features/scenes/domain/models/scraper.dart';
+import 'package:stash_app_flutter/features/scenes/domain/models/scraped_scene.dart';
 import 'package:stash_app_flutter/features/scenes/presentation/providers/scene_list_provider.dart';
 import 'helpers/test_helpers.dart';
 
@@ -30,6 +32,7 @@ Scene createTestScene({
     playCount: 0,
     files: [],
     paths: const ScenePaths(screenshot: null, preview: null, stream: null),
+    urls: [],
     studioId: null,
     studioName: 'Test Studio',
     studioImagePath: null,
@@ -86,7 +89,7 @@ class LocalMockSceneRepository implements SceneRepository {
   }
 
   @override
-  Future<Scene> getSceneById(String id) async {
+  Future<Scene> getSceneById(String id, {bool refresh = false}) async {
     return scenes.firstWhere((s) => s.id == id);
   }
 
@@ -96,6 +99,35 @@ class LocalMockSceneRepository implements SceneRepository {
   Future<void> incrementSceneOCounter(String id) async {}
   @override
   Future<void> incrementScenePlayCount(String id) async {}
+
+  @override
+  Future<List<Scraper>> listScrapers({required List<String> types}) async => [];
+
+  @override
+  Future<List<ScrapedScene>> scrapeSingleScene({
+    required String scraperId,
+    required String sceneId,
+  }) async => [];
+
+  @override
+  Future<void> saveScrapedScene({
+    required String sceneId,
+    required ScrapedScene scraped,
+    bool mergeValues = false,
+    List<String>? performerIds,
+    List<String>? tagIds,
+    String? studioId,
+  }) async {}
+
+  @override
+  Future<Map<String, List<Map<String, dynamic>>>> findPerformerCandidates(
+    List<String> queries,
+  ) async => {};
+
+  @override
+  Future<Map<String, List<Map<String, dynamic>>>> findTagCandidates(
+    List<String> tags,
+  ) async => {};
 }
 
 // Simple test notifiers to override the layout state
@@ -189,14 +221,28 @@ void main() {
     // Re-verify positions
     final sceneCards = find.byType(SceneCard);
     expect(sceneCards, findsNWidgets(2));
-    
-    final firstSceneTitle = tester.widget<Text>(
-      find.descendant(of: sceneCards.at(0), matching: find.textContaining('Scene')).first
-    ).data;
-    final secondSceneTitle = tester.widget<Text>(
-      find.descendant(of: sceneCards.at(1), matching: find.textContaining('Scene')).first
-    ).data;
-    
+
+    final firstSceneTitle = tester
+        .widget<Text>(
+          find
+              .descendant(
+                of: sceneCards.at(0),
+                matching: find.textContaining('Scene'),
+              )
+              .first,
+        )
+        .data;
+    final secondSceneTitle = tester
+        .widget<Text>(
+          find
+              .descendant(
+                of: sceneCards.at(1),
+                matching: find.textContaining('Scene'),
+              )
+              .first,
+        )
+        .data;
+
     expect(firstSceneTitle, 'Zebra Scene');
     expect(secondSceneTitle, 'Apple Scene');
 
@@ -313,7 +359,7 @@ void main() {
     // Ignore overflow errors for this test
     final originalOnError = FlutterError.onError;
     FlutterError.onError = (details) {
-      if (details.exception is FlutterError && 
+      if (details.exception is FlutterError &&
           (details.exception as FlutterError).message.contains('overflowed')) {
         return;
       }
@@ -351,79 +397,97 @@ void main() {
     addTearDown(() => tester.view.resetPhysicalSize());
 
     await pumpApp();
-    
+
     GridView gridView = tester.widget(find.byType(GridView).first);
-    expect((gridView.gridDelegate as SliverGridDelegateWithFixedCrossAxisCount).crossAxisCount, 2);
+    expect(
+      (gridView.gridDelegate as SliverGridDelegateWithFixedCrossAxisCount)
+          .crossAxisCount,
+      2,
+    );
 
     // 2. Test Tablet (3 columns)
     tester.view.physicalSize = const Size(1200, 800);
     await pumpApp();
 
     gridView = tester.widget(find.byType(GridView).first);
-    expect((gridView.gridDelegate as SliverGridDelegateWithFixedCrossAxisCount).crossAxisCount, 3);
+    expect(
+      (gridView.gridDelegate as SliverGridDelegateWithFixedCrossAxisCount)
+          .crossAxisCount,
+      3,
+    );
   });
 
-  testWidgets('Integration: Responsive Grid - Performers (Mobile 3 vs Tablet 5)', (
-    WidgetTester tester,
-  ) async {
-    final mockRepo = LocalMockSceneRepository([]);
-    final mockPerformerRepo = MockPerformerRepository()..withData([
-      const Performer(
-        id: 'p1',
-        name: 'Test Performer',
-        urls: [],
-        birthdate: null,
-        aliasList: [],
-        favorite: false,
-        imagePath: '',
-        sceneCount: 0,
-        imageCount: 0,
-        galleryCount: 0,
-        groupCount: 0,
-        tagIds: [],
-        tagNames: [],
-      ),
-    ]);
+  testWidgets(
+    'Integration: Responsive Grid - Performers (Mobile 3 vs Tablet 5)',
+    (WidgetTester tester) async {
+      final mockRepo = LocalMockSceneRepository([]);
+      final mockPerformerRepo = MockPerformerRepository()
+        ..withData([
+          const Performer(
+            id: 'p1',
+            name: 'Test Performer',
+            urls: [],
+            birthdate: null,
+            aliasList: [],
+            favorite: false,
+            imagePath: '',
+            sceneCount: 0,
+            imageCount: 0,
+            galleryCount: 0,
+            groupCount: 0,
+            tagIds: [],
+            tagNames: [],
+          ),
+        ]);
 
-    Future<void> pumpApp() async {
-      await pumpTestWidget(
-        tester,
-        wrapWithApp: false,
-        overrides: [
-          sceneRepositoryProvider.overrideWithValue(mockRepo),
-          performerRepositoryProvider.overrideWithValue(mockPerformerRepo),
-        ],
-        child: Consumer(
-          builder: (context, ref, _) {
-            final goRouter = ref.watch(routerProvider);
-            return MaterialApp.router(
-              routerConfig: goRouter,
-              theme: AppTheme.darkTheme,
-            );
-          },
-        ),
-      );
+      Future<void> pumpApp() async {
+        await pumpTestWidget(
+          tester,
+          wrapWithApp: false,
+          overrides: [
+            sceneRepositoryProvider.overrideWithValue(mockRepo),
+            performerRepositoryProvider.overrideWithValue(mockPerformerRepo),
+          ],
+          child: Consumer(
+            builder: (context, ref, _) {
+              final goRouter = ref.watch(routerProvider);
+              return MaterialApp.router(
+                routerConfig: goRouter,
+                theme: AppTheme.darkTheme,
+              );
+            },
+          ),
+        );
+        await tester.pumpAndSettle();
+      }
+
+      // Navigate to Performers
+      tester.view.physicalSize = const Size(400, 800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() => tester.view.resetPhysicalSize());
+
+      await pumpApp();
+      await tester.tap(find.text('Performers'));
       await tester.pumpAndSettle();
-    }
 
-    // Navigate to Performers
-    tester.view.physicalSize = const Size(400, 800);
-    tester.view.devicePixelRatio = 1.0;
-    addTearDown(() => tester.view.resetPhysicalSize());
+      // 1. Test Mobile (3 columns)
+      GridView gridView = tester.widget(find.byType(GridView).first);
+      expect(
+        (gridView.gridDelegate as SliverGridDelegateWithFixedCrossAxisCount)
+            .crossAxisCount,
+        3,
+      );
 
-    await pumpApp();
-    await tester.tap(find.text('Performers'));
-    await tester.pumpAndSettle();
+      // 2. Test Tablet (5 columns)
+      tester.view.physicalSize = const Size(1600, 800);
+      await pumpApp();
 
-    // 1. Test Mobile (3 columns)
-    GridView gridView = tester.widget(find.byType(GridView).first);
-    expect((gridView.gridDelegate as SliverGridDelegateWithFixedCrossAxisCount).crossAxisCount, 3);
-
-    // 2. Test Tablet (5 columns)
-    tester.view.physicalSize = const Size(1600, 800);
-    await pumpApp();
-
-    gridView = tester.widget(find.byType(GridView).first);
-    expect((gridView.gridDelegate as SliverGridDelegateWithFixedCrossAxisCount).crossAxisCount, 5);
-  });
+      gridView = tester.widget(find.byType(GridView).first);
+      expect(
+        (gridView.gridDelegate as SliverGridDelegateWithFixedCrossAxisCount)
+            .crossAxisCount,
+        5,
+      );
+    },
+  );
 }

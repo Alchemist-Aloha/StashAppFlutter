@@ -9,6 +9,6 @@ abstract class TagRepository {
     bool? descending,
     bool favoritesOnly = false,
   });
-  Future<Tag> getTagById(String id);
+  Future<Tag> getTagById(String id, {bool refresh = false});
   Future<void> setTagFavorite(String id, bool favorite);
 }

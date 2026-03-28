@@ -8,6 +8,8 @@ import 'package:stash_app_flutter/core/data/preferences/shared_preferences_provi
 import 'package:stash_app_flutter/features/scenes/domain/entities/scene.dart';
 import 'package:stash_app_flutter/features/scenes/domain/entities/scene_filter.dart';
 import 'package:stash_app_flutter/features/scenes/domain/repositories/scene_repository.dart';
+import 'package:stash_app_flutter/features/scenes/domain/models/scraper.dart';
+import 'package:stash_app_flutter/features/scenes/domain/models/scraped_scene.dart';
 import 'package:stash_app_flutter/features/scenes/presentation/providers/scene_list_provider.dart';
 
 import 'package:stash_app_flutter/features/performers/domain/entities/performer.dart';
@@ -41,7 +43,8 @@ class MockSceneRepository implements SceneRepository {
   }) async => [];
 
   @override
-  Future<Scene> getSceneById(String id) => throw UnimplementedError();
+  Future<Scene> getSceneById(String id, {bool refresh = false}) =>
+      throw UnimplementedError();
 
   @override
   Future<void> updateSceneRating(String id, int rating100) async {}
@@ -51,6 +54,35 @@ class MockSceneRepository implements SceneRepository {
 
   @override
   Future<void> incrementScenePlayCount(String id) async {}
+
+  @override
+  Future<List<Scraper>> listScrapers({required List<String> types}) async => [];
+
+  @override
+  Future<List<ScrapedScene>> scrapeSingleScene({
+    required String scraperId,
+    required String sceneId,
+  }) async => [];
+
+  @override
+  Future<void> saveScrapedScene({
+    required String sceneId,
+    required ScrapedScene scraped,
+    bool mergeValues = false,
+    List<String>? performerIds,
+    List<String>? tagIds,
+    String? studioId,
+  }) async {}
+
+  @override
+  Future<Map<String, List<Map<String, dynamic>>>> findPerformerCandidates(
+    List<String> queries,
+  ) async => {};
+
+  @override
+  Future<Map<String, List<Map<String, dynamic>>>> findTagCandidates(
+    List<String> tags,
+  ) async => {};
 }
 
 class MockPerformerRepository implements PerformerRepository {
@@ -66,7 +98,8 @@ class MockPerformerRepository implements PerformerRepository {
   }) async => [];
 
   @override
-  Future<Performer> getPerformerById(String id) => throw UnimplementedError();
+  Future<Performer> getPerformerById(String id, {bool refresh = false}) =>
+      throw UnimplementedError();
 
   @override
   Future<void> setPerformerFavorite(String id, bool favorite) async {}
@@ -84,7 +117,8 @@ class MockStudioRepository implements StudioRepository {
   }) async => [];
 
   @override
-  Future<Studio> getStudioById(String id) => throw UnimplementedError();
+  Future<Studio> getStudioById(String id, {bool refresh = false}) =>
+      throw UnimplementedError();
 
   @override
   Future<void> setStudioFavorite(String id, bool favorite) async {}
@@ -102,7 +136,8 @@ class MockTagRepository implements TagRepository {
   }) async => [];
 
   @override
-  Future<Tag> getTagById(String id) => throw UnimplementedError();
+  Future<Tag> getTagById(String id, {bool refresh = false}) =>
+      throw UnimplementedError();
 
   @override
   Future<void> setTagFavorite(String id, bool favorite) async {}

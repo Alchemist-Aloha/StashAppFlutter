@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import '../../../../core/presentation/widgets/stash_image.dart';
 import '../../../../core/presentation/theme/app_theme.dart';
 import '../../domain/entities/scene.dart';
@@ -63,11 +62,12 @@ class SceneCard extends ConsumerWidget {
     // Use primary file's aspect ratio if available, default to 16/9.
     // This ensures the image container in List view adapts to the media,
     // preventing black bars or forced cropping of portrait/square content.
-    final double? fileAspectRatio = (scene.files.isNotEmpty &&
+    final double? fileAspectRatio =
+        (scene.files.isNotEmpty &&
             scene.files.first.width != null &&
             scene.files.first.height != null)
         ? scene.files.first.width!.toDouble() /
-            scene.files.first.height!.toDouble()
+              scene.files.first.height!.toDouble()
         : null;
 
     if (isGrid) {

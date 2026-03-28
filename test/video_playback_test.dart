@@ -6,6 +6,8 @@ import 'package:stash_app_flutter/core/data/preferences/shared_preferences_provi
 import 'package:stash_app_flutter/features/scenes/domain/entities/scene.dart';
 import 'package:stash_app_flutter/features/scenes/domain/entities/scene_filter.dart';
 import 'package:stash_app_flutter/features/scenes/domain/repositories/scene_repository.dart';
+import 'package:stash_app_flutter/features/scenes/domain/models/scraper.dart';
+import 'package:stash_app_flutter/features/scenes/domain/models/scraped_scene.dart';
 import 'package:stash_app_flutter/features/scenes/presentation/providers/scene_list_provider.dart';
 import 'package:stash_app_flutter/main.dart';
 import 'package:stash_app_flutter/core/data/graphql/media_headers_provider.dart';
@@ -33,7 +35,7 @@ class MockSceneRepository implements SceneRepository {
   }) async => scenes;
 
   @override
-  Future<Scene> getSceneById(String id) async =>
+  Future<Scene> getSceneById(String id, {bool refresh = false}) async =>
       scenes.firstWhere((s) => s.id == id);
 
   @override
@@ -44,6 +46,35 @@ class MockSceneRepository implements SceneRepository {
 
   @override
   Future<void> incrementScenePlayCount(String id) async {}
+
+  @override
+  Future<List<Scraper>> listScrapers({required List<String> types}) async => [];
+
+  @override
+  Future<List<ScrapedScene>> scrapeSingleScene({
+    required String scraperId,
+    required String sceneId,
+  }) async => [];
+
+  @override
+  Future<void> saveScrapedScene({
+    required String sceneId,
+    required ScrapedScene scraped,
+    bool mergeValues = false,
+    List<String>? performerIds,
+    List<String>? tagIds,
+    String? studioId,
+  }) async {}
+
+  @override
+  Future<Map<String, List<Map<String, dynamic>>>> findPerformerCandidates(
+    List<String> queries,
+  ) async => {};
+
+  @override
+  Future<Map<String, List<Map<String, dynamic>>>> findTagCandidates(
+    List<String> tags,
+  ) async => {};
 }
 
 void main() {
@@ -75,6 +106,7 @@ void main() {
         preview: null,
         stream: 'http://test.com/stream.mp4',
       ),
+      urls: [],
       studioId: null,
       studioName: null,
       studioImagePath: null,

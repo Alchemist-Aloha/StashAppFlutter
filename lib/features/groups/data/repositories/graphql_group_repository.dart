@@ -60,7 +60,7 @@ class GraphQLGroupRepository implements GroupRepository {
   }
 
   @override
-  Future<Group> getGroupById(String id) async {
+  Future<Group> getGroupById(String id, {bool refresh = false}) async {
     const query = r'''
       query FindGroup($id: ID!) {
         findGroup(id: $id) {
@@ -76,7 +76,7 @@ class GraphQLGroupRepository implements GroupRepository {
 
     final result = await client.query(
       QueryOptions(
-        fetchPolicy: FetchPolicy.cacheFirst,
+        fetchPolicy: refresh ? FetchPolicy.networkOnly : FetchPolicy.cacheFirst,
         document: gql(query),
         variables: {'id': id},
       ),

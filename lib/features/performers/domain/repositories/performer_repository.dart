@@ -10,6 +10,6 @@ abstract class PerformerRepository {
     bool favoritesOnly = false,
     List<String>? genders,
   });
-  Future<Performer> getPerformerById(String id);
+  Future<Performer> getPerformerById(String id, {bool refresh = false});
   Future<void> setPerformerFavorite(String id, bool favorite);
 }

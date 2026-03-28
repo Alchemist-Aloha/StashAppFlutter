@@ -181,10 +181,10 @@ class GraphQLPerformerRepository implements PerformerRepository {
   }
 
   @override
-  Future<Performer> getPerformerById(String id) async {
+  Future<Performer> getPerformerById(String id, {bool refresh = false}) async {
     final result = await client.query$FindPerformer(
       Options$Query$FindPerformer(
-        fetchPolicy: FetchPolicy.cacheFirst,
+        fetchPolicy: refresh ? FetchPolicy.networkOnly : FetchPolicy.cacheFirst,
         variables: Variables$Query$FindPerformer(id: id),
       ),
     );

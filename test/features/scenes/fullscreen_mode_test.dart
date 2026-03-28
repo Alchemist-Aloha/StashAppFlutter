@@ -33,6 +33,7 @@ void main() {
       preview: null,
       stream: 'http://test.com/stream.mp4',
     ),
+    urls: [],
     studioId: 'st1',
     studioName: 'Test Studio',
     studioImagePath: null,
@@ -45,7 +46,7 @@ void main() {
 
   testWidgets('FullscreenPlayerPage renders and pops', (tester) async {
     final mockRepo = MockSceneRepository()..withData([testScene]);
-    
+
     // Pump a widget that has a navigator
     await pumpTestWidget(
       tester,
@@ -69,19 +70,19 @@ void main() {
         },
       ),
     );
-    
+
     await tester.tap(find.text('Open'));
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
 
     expect(find.byType(FullscreenPlayerPage), findsOneWidget);
-    
+
     // Test popping
     final context = tester.element(find.byType(FullscreenPlayerPage));
     Navigator.of(context).pop();
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
-    
+
     expect(find.byType(FullscreenPlayerPage), findsNothing);
   });
 }
