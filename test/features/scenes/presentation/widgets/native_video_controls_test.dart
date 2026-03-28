@@ -98,6 +98,7 @@ void main() {
     playCount: 0,
     files: [],
     paths: const ScenePaths(screenshot: null, preview: null, stream: null),
+    urls: [],
     studioId: '',
     studioName: '',
     studioImagePath: null,
