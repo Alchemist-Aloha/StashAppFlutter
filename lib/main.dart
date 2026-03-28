@@ -8,8 +8,11 @@ import 'core/utils/app_log_store.dart';
 import 'core/utils/pip_mode.dart';
 import 'core/utils/media_handler.dart';
 import 'package:audio_service/audio_service.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
+import 'core/data/graphql/graphql_client.dart';
+import 'core/data/preferences/secure_storage_provider.dart';
 import 'core/presentation/theme/app_theme.dart';
 import 'core/presentation/theme/theme_mode_provider.dart';
 import 'core/presentation/theme/theme_color_provider.dart';
@@ -58,6 +61,19 @@ Future<void> main() async {
 
   final sharedPreferences = await SharedPreferences.getInstance();
 
+  const secureStorage = FlutterSecureStorage(
+    aOptions: AndroidOptions(encryptedSharedPreferences: true),
+  );
+  String? securedApiKey = await secureStorage.read(key: 'server_api_key');
+  if (securedApiKey == null) {
+    final legacyApiKey = sharedPreferences.getString('server_api_key');
+    if (legacyApiKey != null) {
+      await secureStorage.write(key: 'server_api_key', value: legacyApiKey);
+      await sharedPreferences.remove('server_api_key');
+      securedApiKey = legacyApiKey;
+    }
+  }
+
   final oldDebugPrint = debugPrint;
   debugPrint = (String? message, {int? wrapWidth}) {
     if (message != null) {
@@ -83,6 +99,7 @@ Future<void> main() async {
     ProviderScope(
       overrides: [
         sharedPreferencesProvider.overrideWithValue(sharedPreferences),
+        serverApiKeyInternalProvider.overrideWith((ref) => securedApiKey ?? ''),
       ],
       child: const MyApp(),
     ),

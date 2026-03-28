@@ -5,6 +5,7 @@ import 'package:graphql/client.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/data/graphql/graphql_client.dart';
 import '../../../../core/data/graphql/media_headers_provider.dart';
+import '../../../../core/data/preferences/secure_storage_provider.dart';
 import '../../../../core/data/preferences/shared_preferences_provider.dart';
 import '../../../../core/presentation/theme/app_theme.dart';
 import '../../../../core/presentation/theme/theme_mode_provider.dart';
@@ -141,7 +142,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   Future<void> _load() async {
     final prefs = ref.read(sharedPreferencesProvider);
     final url = prefs.getString('server_base_url') ?? '';
-    final apiKey = prefs.getString('server_api_key') ?? '';
+    final apiKey = ref.read(serverApiKeyProvider);
     final preferSceneStreams = prefs.getBool(_preferSceneStreamsKey) ?? true;
     final sceneGridLayout = ref.read(sceneGridLayoutProvider);
     final sceneTiktokLayout = ref.read(sceneTiktokLayoutProvider);
@@ -224,11 +225,13 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
     final prefs = ref.read(sharedPreferencesProvider);
     final previousUrl = prefs.getString('server_base_url')?.trim() ?? '';
-    final previousApiKey = prefs.getString('server_api_key')?.trim() ?? '';
+    final previousApiKey = ref.read(serverApiKeyProvider).trim();
     final newApiKey = _apiKeyController.text.trim();
 
     await prefs.setString('server_base_url', normalizedUrl);
-    await prefs.setString('server_api_key', newApiKey);
+    await ref.read(secureStorageProvider).write(key: 'server_api_key', value: newApiKey);
+    ref.read(serverApiKeyInternalProvider.notifier).state = newApiKey;
+    await prefs.remove('server_api_key');
 
     ref.read(sharedPreferencesTriggerProvider.notifier).trigger();
 
@@ -401,6 +404,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                         onPressed: () async {
                           _baseUrlController.text = '';
                           _apiKeyController.text = '';
+                          await ref.read(secureStorageProvider).delete(key: 'server_api_key');
+                          ref.read(serverApiKeyInternalProvider.notifier).state = '';
                           await _saveServerSettings();
                         },
                         icon: const Icon(Icons.clear_all),

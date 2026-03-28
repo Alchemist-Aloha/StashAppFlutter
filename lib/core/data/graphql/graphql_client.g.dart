@@ -103,47 +103,6 @@ final class ServerUrlProvider
 
 String _$serverUrlHash() => r'a5b703d1d7a5ed8a0c2bdf6683545bd3fa9b607a';
 
-@ProviderFor(serverApiKey)
-final serverApiKeyProvider = ServerApiKeyProvider._();
-
-final class ServerApiKeyProvider
-    extends $FunctionalProvider<String, String, String>
-    with $Provider<String> {
-  ServerApiKeyProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'serverApiKeyProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$serverApiKeyHash();
-
-  @$internal
-  @override
-  $ProviderElement<String> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  String create(Ref ref) {
-    return serverApiKey(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(String value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<String>(value),
-    );
-  }
-}
-
-String _$serverApiKeyHash() => r'a7caa4f8a9dc8726451b81345aadcf92f96a60fa';
-
 @ProviderFor(graphqlClient)
 final graphqlClientProvider = GraphqlClientProvider._();
 
