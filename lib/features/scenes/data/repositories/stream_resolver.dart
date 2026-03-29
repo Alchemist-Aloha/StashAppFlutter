@@ -237,7 +237,8 @@ class StreamResolver extends _$StreamResolver {
   String _shortUrl(String url) {
     final uri = Uri.tryParse(url);
     if (uri == null) return url;
-    return '${uri.scheme}://${uri.host}${uri.path}';
+    final portPart = uri.hasPort ? ':${uri.port}' : '';
+    return '${uri.scheme}://${uri.host}$portPart${uri.path}';
   }
 
   String? _summarizeException(OperationException? exception) {
