@@ -76,6 +76,7 @@ dev_dependencies:
   riverpod_generator: ^4.0.3
   graphql_codegen: ^3.0.1
   flutter_launcher_icons: ^0.13.1
+  mockito: ^5.6.4
 
 flutter_launcher_icons:
   android: true
