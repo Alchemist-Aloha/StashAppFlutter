@@ -25,6 +25,9 @@ class GraphQLGalleryRepository implements GalleryRepository {
             rating100
             image_count
             details
+            files {
+              path
+            }
           }
         }
       }
@@ -70,6 +73,9 @@ class GraphQLGalleryRepository implements GalleryRepository {
           rating
           image_count
           details
+          files {
+            path
+          }
         }
       }
     ''';

@@ -154,7 +154,7 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
               Padding(
                 padding: const EdgeInsets.all(AppTheme.spacingSmall),
                 child: Text(
-                  gallery.title.isEmpty ? 'Untitled gallery' : gallery.title,
+                  gallery.displayName,
                   style: context.textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
