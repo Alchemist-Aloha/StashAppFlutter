@@ -319,13 +319,18 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Tags'), findsWidgets);
 
-    // Tap Images Tab
-    await tester.tap(find.widgetWithText(NavigationDestination, 'Images'));
+    // Tap Media Tab (Galleries)
+    await tester.tap(find.widgetWithText(NavigationDestination, 'Media'));
+    await tester.pumpAndSettle();
+    expect(find.text('Galleries'), findsWidgets);
+
+    // Navigate to Images via top panel button
+    await tester.tap(find.byIcon(Icons.image));
     await tester.pumpAndSettle();
     expect(find.text('Images'), findsWidgets);
 
-    // Tap Galleries Tab
-    await tester.tap(find.widgetWithText(NavigationDestination, 'Galleries'));
+    // Navigate back to Galleries
+    await tester.tap(find.byTooltip('Back'));
     await tester.pumpAndSettle();
     expect(find.text('Galleries'), findsWidgets);
 

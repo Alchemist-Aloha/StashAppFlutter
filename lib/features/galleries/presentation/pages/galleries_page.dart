@@ -82,7 +82,13 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
 
     return ListPageScaffold<Gallery>(
       title: 'Galleries',
-      actions: const [],
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.image),
+          tooltip: 'All Images',
+          onPressed: () => context.go('/galleries/images'),
+        ),
+      ],
       searchHint: 'Search galleries...',
       onSearchChanged: _onSearchChanged,
       provider: galleriesAsync,
@@ -101,7 +107,7 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
       itemBuilder: (context, gallery) => InkWell(
         onTap: () {
           ref.read(imageFilterStateProvider.notifier).setGalleryId(gallery.id);
-          context.go('/images');
+          context.go('/galleries/images');
         },
         child: Card(
           clipBehavior: Clip.antiAlias,

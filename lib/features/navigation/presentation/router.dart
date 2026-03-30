@@ -177,24 +177,22 @@ GoRouter router(Ref ref) {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: '/images',
-                builder: (context, state) => const ImagesPage(),
-                routes: [
-                  GoRoute(
-                    path: ':id',
-                    builder: (context, state) => ImageFullscreenPage(
-                      imageId: state.pathParameters['id']!,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
                 path: '/galleries',
                 builder: (context, state) => const GalleriesPage(),
+                routes: [
+                  GoRoute(
+                    path: 'images',
+                    builder: (context, state) => const ImagesPage(),
+                    routes: [
+                      GoRoute(
+                        path: ':id',
+                        builder: (context, state) => ImageFullscreenPage(
+                          imageId: state.pathParameters['id']!,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ],
           ),

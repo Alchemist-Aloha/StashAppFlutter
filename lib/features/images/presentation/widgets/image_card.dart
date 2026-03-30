@@ -22,7 +22,7 @@ class ImageCard extends ConsumerWidget {
         : 1.0;
 
     return InkWell(
-      onTap: onTap ?? () => context.push('/media/images/${image.id}'),
+      onTap: onTap ?? () => context.push('/galleries/images/${image.id}'),
       borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
       child: Card(
         margin: EdgeInsets.zero,

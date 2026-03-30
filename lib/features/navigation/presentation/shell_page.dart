@@ -67,9 +67,6 @@ class ShellPage extends ConsumerWidget {
             ref.read(tagScrollControllerProvider.notifier).scrollToTop();
             break;
           case 4:
-            ref.read(imageScrollControllerProvider.notifier).scrollToTop();
-            break;
-          case 5:
             ref.read(galleryScrollControllerProvider.notifier).scrollToTop();
             break;
         }
@@ -85,8 +82,7 @@ class ShellPage extends ConsumerWidget {
       NavigationDestination(icon: Icon(Icons.people), label: 'Performers'),
       NavigationDestination(icon: Icon(Icons.business), label: 'Studios'),
       NavigationDestination(icon: Icon(Icons.local_offer), label: 'Tags'),
-      NavigationDestination(icon: Icon(Icons.image), label: 'Images'),
-      NavigationDestination(icon: Icon(Icons.collections_bookmark), label: 'Galleries'),
+      NavigationDestination(icon: Icon(Icons.perm_media), label: 'Media'),
     ];
 
     final navigationRailDestinations = const [
@@ -107,12 +103,8 @@ class ShellPage extends ConsumerWidget {
         label: Text('Tags'),
       ),
       NavigationRailDestination(
-        icon: Icon(Icons.image),
-        label: Text('Images'),
-      ),
-      NavigationRailDestination(
-        icon: Icon(Icons.collections_bookmark),
-        label: Text('Galleries'),
+        icon: Icon(Icons.perm_media),
+        label: Text('Media'),
       ),
     ];
 
