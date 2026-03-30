@@ -1,4 +1,5 @@
 import 'package:graphql/client.dart';
+import '../../../../core/data/graphql/url_resolver.dart';
 import '../../domain/entities/image.dart';
 import '../../domain/repositories/image_repository.dart';
 
@@ -6,6 +7,10 @@ class GraphQLImageRepository implements ImageRepository {
   final GraphQLClient client;
 
   GraphQLImageRepository(this.client);
+
+  Uri get _graphqlEndpoint => client.link is HttpLink
+      ? (client.link as HttpLink).uri
+      : Uri.parse('http://localhost:9999/graphql');
 
   @override
   Future<List<Image>> findImages({
@@ -26,8 +31,14 @@ class GraphQLImageRepository implements ImageRepository {
             date
             urls
             visual_files {
-              width
-              height
+              ... on ImageFile {
+                width
+                height
+              }
+              ... on VideoFile {
+                width
+                height
+              }
             }
             paths {
               thumbnail
@@ -70,6 +81,23 @@ class GraphQLImageRepository implements ImageRepository {
     return imagesJson.map((i) {
       final map = Map<String, dynamic>.from(i as Map<String, dynamic>);
       map['files'] = map['visual_files'];
+
+      final paths = map['paths'] as Map<String, dynamic>;
+      map['paths'] = {
+        'thumbnail': resolveGraphqlMediaUrl(
+          rawUrl: paths['thumbnail'] as String?,
+          graphqlEndpoint: _graphqlEndpoint,
+        ),
+        'preview': resolveGraphqlMediaUrl(
+          rawUrl: paths['preview'] as String?,
+          graphqlEndpoint: _graphqlEndpoint,
+        ),
+        'image': resolveGraphqlMediaUrl(
+          rawUrl: paths['image'] as String?,
+          graphqlEndpoint: _graphqlEndpoint,
+        ),
+      };
+
       return Image.fromJson(map);
     }).toList();
   }
@@ -85,8 +113,14 @@ class GraphQLImageRepository implements ImageRepository {
           date
           urls
           visual_files {
-            width
-            height
+            ... on ImageFile {
+              width
+              height
+            }
+            ... on VideoFile {
+              width
+              height
+            }
           }
           paths {
             thumbnail
@@ -111,6 +145,23 @@ class GraphQLImageRepository implements ImageRepository {
 
     final map = Map<String, dynamic>.from(data as Map<String, dynamic>);
     map['files'] = map['visual_files'];
+
+    final paths = map['paths'] as Map<String, dynamic>;
+    map['paths'] = {
+      'thumbnail': resolveGraphqlMediaUrl(
+        rawUrl: paths['thumbnail'] as String?,
+        graphqlEndpoint: _graphqlEndpoint,
+      ),
+      'preview': resolveGraphqlMediaUrl(
+        rawUrl: paths['preview'] as String?,
+        graphqlEndpoint: _graphqlEndpoint,
+      ),
+      'image': resolveGraphqlMediaUrl(
+        rawUrl: paths['image'] as String?,
+        graphqlEndpoint: _graphqlEndpoint,
+      ),
+    };
+
     return Image.fromJson(map);
   }
 }

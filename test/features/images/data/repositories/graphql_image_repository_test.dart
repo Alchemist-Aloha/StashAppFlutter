@@ -15,6 +15,7 @@ void main() {
   setUp(() {
     mockClient = MockGraphQLClient();
     repository = GraphQLImageRepository(mockClient);
+    when(mockClient.link).thenReturn(HttpLink('http://localhost:9999/graphql'));
   });
 
   group('GraphQLImageRepository', () {
@@ -53,6 +54,7 @@ void main() {
       expect(result.length, 1);
       expect(result.first.id, '1');
       expect(result.first.title, 'Test Image');
+      expect(result.first.paths.thumbnail, 'http://localhost:9999/thumb.jpg');
     });
 
     test('getImageById returns an image on success', () async {
@@ -85,6 +87,7 @@ void main() {
       expect(result, isA<Image>());
       expect(result.id, '1');
       expect(result.title, 'Test Image');
+      expect(result.paths.thumbnail, 'http://localhost:9999/thumb.jpg');
     });
 
     test('findImages throws exception on GraphQL error', () async {
