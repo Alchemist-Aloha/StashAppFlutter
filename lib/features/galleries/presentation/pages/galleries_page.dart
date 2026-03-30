@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/presentation/widgets/list_page_scaffold.dart';
 import '../../../../core/presentation/theme/app_theme.dart';
 import '../providers/gallery_list_provider.dart';
-import '../../images/presentation/providers/image_list_provider.dart';
+import '../../../images/presentation/providers/image_list_provider.dart';
 import '../../domain/entities/gallery.dart';
 
 enum _GallerySortOption { title }
@@ -79,38 +79,10 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
   @override
   Widget build(BuildContext context) {
     final galleriesAsync = ref.watch(galleryListProvider);
-    final viewType = ref.watch(mediaViewToggleProvider);
 
     return ListPageScaffold<Gallery>(
-      title: 'Media',
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 8.0),
-          child: ToggleButtons(
-            isSelected: [
-              viewType == MediaViewType.images,
-              viewType == MediaViewType.galleries,
-            ],
-            onPressed: (index) {
-              final newType = index == 0
-                  ? MediaViewType.images
-                  : MediaViewType.galleries;
-              ref.read(mediaViewToggleProvider.notifier).setView(newType);
-              if (newType == MediaViewType.images) {
-                context.go('/media/images');
-              } else {
-                context.go('/media/galleries');
-              }
-            },
-            borderRadius: BorderRadius.circular(20),
-            constraints: const BoxConstraints(minHeight: 32, minWidth: 40),
-            children: const [
-              Icon(Icons.image, size: 18),
-              Icon(Icons.folder, size: 18),
-            ],
-          ),
-        ),
-      ],
+      title: 'Galleries',
+      actions: const [],
       searchHint: 'Search galleries...',
       onSearchChanged: _onSearchChanged,
       provider: galleriesAsync,
@@ -129,10 +101,7 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
       itemBuilder: (context, gallery) => InkWell(
         onTap: () {
           ref.read(imageFilterStateProvider.notifier).setGalleryId(gallery.id);
-          ref
-              .read(mediaViewToggleProvider.notifier)
-              .setView(MediaViewType.images);
-          context.go('/media/images');
+          context.go('/images');
         },
         child: Card(
           clipBehavior: Clip.antiAlias,
@@ -141,7 +110,7 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
             children: [
               Expanded(
                 child: Container(
-                  color: context.colors.surfaceContainerHighest,
+                  color: context.colors.cardBackground,
                   child: Stack(
                     alignment: Alignment.center,
                     children: [

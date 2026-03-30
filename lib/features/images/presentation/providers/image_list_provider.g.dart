@@ -229,58 +229,6 @@ abstract class _$ImageFilterState extends $Notifier<({String? galleryId})> {
   }
 }
 
-@ProviderFor(MediaViewToggle)
-final mediaViewToggleProvider = MediaViewToggleProvider._();
-
-final class MediaViewToggleProvider
-    extends $NotifierProvider<MediaViewToggle, MediaViewType> {
-  MediaViewToggleProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'mediaViewToggleProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$mediaViewToggleHash();
-
-  @$internal
-  @override
-  MediaViewToggle create() => MediaViewToggle();
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(MediaViewType value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<MediaViewType>(value),
-    );
-  }
-}
-
-String _$mediaViewToggleHash() => r'7dfb561e69c5cd8d23ecde2730661ef7024d4e6c';
-
-abstract class _$MediaViewToggle extends $Notifier<MediaViewType> {
-  MediaViewType build();
-  @$mustCallSuper
-  @override
-  void runBuild() {
-    final ref = this.ref as $Ref<MediaViewType, MediaViewType>;
-    final element =
-        ref.element
-            as $ClassProviderElement<
-              AnyNotifier<MediaViewType, MediaViewType>,
-              MediaViewType,
-              Object?,
-              Object?
-            >;
-    element.handleCreate(ref, build);
-  }
-}
-
 @ProviderFor(ImageList)
 final imageListProvider = ImageListProvider._();
 

@@ -76,37 +76,6 @@ class ImageFilterState extends _$ImageFilterState {
   void clear() => state = (galleryId: null);
 }
 
-enum MediaViewType { images, galleries }
-
-@riverpod
-class MediaViewToggle extends _$MediaViewToggle {
-  static const _storageKey = 'media_view_type';
-
-  @override
-  MediaViewType build() {
-    final prefs = ref.watch(sharedPreferencesProvider);
-    final value = prefs.getString(_storageKey);
-    if (value == 'galleries') return MediaViewType.galleries;
-    return MediaViewType.images;
-  }
-
-  Future<void> toggle() async {
-    final next = state == MediaViewType.images
-        ? MediaViewType.galleries
-        : MediaViewType.images;
-    state = next;
-    final prefs = ref.read(sharedPreferencesProvider);
-    await prefs.setString(_storageKey, next.name);
-  }
-
-  Future<void> setView(MediaViewType type) async {
-    if (state == type) return;
-    state = type;
-    final prefs = ref.read(sharedPreferencesProvider);
-    await prefs.setString(_storageKey, type.name);
-  }
-}
-
 @riverpod
 class ImageList extends _$ImageList {
   int _currentPage = 1;

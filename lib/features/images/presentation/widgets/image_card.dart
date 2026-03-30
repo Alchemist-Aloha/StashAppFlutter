@@ -33,7 +33,7 @@ class ImageCard extends ConsumerWidget {
         child: AspectRatio(
           aspectRatio: aspectRatio.clamp(0.5, 2.0),
           child: Stack(
-            fit: StackBehavior.expand,
+            fit: StackFit.expand,
             children: [
               StashImage(
                 imageUrl: image.paths.thumbnail ?? image.paths.preview,

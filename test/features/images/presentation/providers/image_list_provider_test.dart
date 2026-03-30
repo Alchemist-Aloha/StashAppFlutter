@@ -45,24 +45,6 @@ void main() {
       expect(result, [image]);
     });
 
-    test('MediaViewToggle persists state', () async {
-      final toggle = container.read(mediaViewToggleProvider.notifier);
-      expect(container.read(mediaViewToggleProvider), MediaViewType.images);
-
-      await toggle.toggle();
-      expect(container.read(mediaViewToggleProvider), MediaViewType.galleries);
-
-      // Create new container to check persistence
-      final sharedPrefs = await SharedPreferences.getInstance();
-      final newContainer = ProviderContainer(
-        overrides: [sharedPreferencesProvider.overrideWithValue(sharedPrefs)],
-      );
-      expect(
-        newContainer.read(mediaViewToggleProvider),
-        MediaViewType.galleries,
-      );
-    });
-
     test('ImageSort persists state', () async {
       final sort = container.read(imageSortProvider.notifier);
       sort.setSort(sort: 'rating', descending: false);

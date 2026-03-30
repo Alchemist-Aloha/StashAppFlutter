@@ -118,7 +118,6 @@ class _ImagesPageState extends ConsumerState<ImagesPage> {
   @override
   Widget build(BuildContext context) {
     final imagesAsync = ref.watch(imageListProvider);
-    final viewType = ref.watch(mediaViewToggleProvider);
     final isMobile = Responsive.isMobile(context);
     final isTablet = Responsive.isTablet(context);
 
@@ -130,35 +129,8 @@ class _ImagesPageState extends ConsumerState<ImagesPage> {
     }
 
     return ListPageScaffold<entity.Image>(
-      title: 'Media',
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 8.0),
-          child: ToggleButtons(
-            isSelected: [
-              viewType == MediaViewType.images,
-              viewType == MediaViewType.galleries,
-            ],
-            onPressed: (index) {
-              final newType = index == 0
-                  ? MediaViewType.images
-                  : MediaViewType.galleries;
-              ref.read(mediaViewToggleProvider.notifier).setView(newType);
-              if (newType == MediaViewType.images) {
-                context.go('/media/images');
-              } else {
-                context.go('/media/galleries');
-              }
-            },
-            borderRadius: BorderRadius.circular(20),
-            constraints: const BoxConstraints(minHeight: 32, minWidth: 40),
-            children: const [
-              Icon(Icons.image, size: 18),
-              Icon(Icons.folder, size: 18),
-            ],
-          ),
-        ),
-      ],
+      title: 'Images',
+      actions: const [],
       searchHint: 'Search images...',
       onSearchChanged: _onSearchChanged,
       provider: imagesAsync,

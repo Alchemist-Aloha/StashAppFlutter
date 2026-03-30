@@ -177,34 +177,24 @@ GoRouter router(Ref ref) {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: '/media',
-                redirect: (context, state) {
-                  if (state.uri.path == '/media') {
-                    final viewType = ref.read(mediaViewToggleProvider);
-                    return viewType == MediaViewType.images
-                        ? '/media/images'
-                        : '/media/galleries';
-                  }
-                  return null;
-                },
+                path: '/images',
+                builder: (context, state) => const ImagesPage(),
                 routes: [
                   GoRoute(
-                    path: 'images',
-                    builder: (context, state) => const ImagesPage(),
-                    routes: [
-                      GoRoute(
-                        path: ':id',
-                        builder: (context, state) => ImageFullscreenPage(
-                          imageId: state.pathParameters['id']!,
-                        ),
-                      ),
-                    ],
-                  ),
-                  GoRoute(
-                    path: 'galleries',
-                    builder: (context, state) => const GalleriesPage(),
+                    path: ':id',
+                    builder: (context, state) => ImageFullscreenPage(
+                      imageId: state.pathParameters['id']!,
+                    ),
                   ),
                 ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/galleries',
+                builder: (context, state) => const GalleriesPage(),
               ),
             ],
           ),
