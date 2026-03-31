@@ -15,20 +15,69 @@ class ImageFullscreenPage extends ConsumerStatefulWidget {
       _ImageFullscreenPageState();
 }
 
-class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
+class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage>
+    with SingleTickerProviderStateMixin {
   late PageController _pageController;
   int _currentIndex = -1;
+  final TransformationController _transformationController =
+      TransformationController();
+  TapDownDetails? _doubleTapDetails;
+
+  late AnimationController _animationController;
+  Animation<Matrix4>? _animation;
+  bool _isZoomed = false;
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 200),
+    )..addListener(() {
+        if (_animation != null) {
+          _transformationController.value = _animation!.value;
+        }
+      });
+
+    _transformationController.addListener(() {
+      final isZoomedNow =
+          _transformationController.value.getMaxScaleOnAxis() > 1.0;
+      if (isZoomedNow != _isZoomed) {
+        setState(() => _isZoomed = isZoomedNow);
+      }
+    });
   }
 
   @override
   void dispose() {
     _pageController.dispose();
+    _transformationController.dispose();
+    _animationController.dispose();
     super.dispose();
+  }
+
+  void _handleDoubleTap() {
+    final Matrix4 initialMatrix = _transformationController.value;
+    final Matrix4 targetMatrix;
+
+    if (initialMatrix != Matrix4.identity()) {
+      targetMatrix = Matrix4.identity();
+    } else {
+      final position = _doubleTapDetails!.localPosition;
+      // Zoom in to 3x
+      targetMatrix = Matrix4.diagonal3Values(3.0, 3.0, 1.0)
+        ..setTranslationRaw(-position.dx * 2, -position.dy * 2, 0.0);
+    }
+
+    _animation = Matrix4Tween(
+      begin: initialMatrix,
+      end: targetMatrix,
+    ).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
+
+    _animationController.forward(from: 0);
   }
 
   void _showInfo(BuildContext context, entity.Image image) {
@@ -87,10 +136,15 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
             children: [
               PageView.builder(
                 controller: _pageController,
+                physics: _isZoomed
+                    ? const NeverScrollableScrollPhysics()
+                    : const AlwaysScrollableScrollPhysics(),
                 scrollDirection: Axis.vertical,
                 itemCount: items.length,
                 onPageChanged: (index) {
                   setState(() => _currentIndex = index);
+                  _transformationController.value = Matrix4.identity();
+
                   // Pre-fetch adjacent images
                   if (index + 1 < items.length) {
                     final next = items[index + 1];
@@ -117,15 +171,20 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
                 },
                 itemBuilder: (context, index) {
                   final image = items[index];
-                  return InteractiveViewer(
-                    minScale: 1.0,
-                    maxScale: 4.0,
-                    child: Center(
-                      child: StashImage(
-                        imageUrl: image.paths.image ?? image.paths.preview,
-                        fit: BoxFit.contain,
-                        width: double.infinity,
-                        height: double.infinity,
+                  return GestureDetector(
+                    onDoubleTapDown: (details) => _doubleTapDetails = details,
+                    onDoubleTap: _handleDoubleTap,
+                    child: InteractiveViewer(
+                      transformationController: _transformationController,
+                      minScale: 1.0,
+                      maxScale: 4.0,
+                      child: Center(
+                        child: StashImage(
+                          imageUrl: image.paths.image ?? image.paths.preview,
+                          fit: BoxFit.contain,
+                          width: double.infinity,
+                          height: double.infinity,
+                        ),
                       ),
                     ),
                   );
