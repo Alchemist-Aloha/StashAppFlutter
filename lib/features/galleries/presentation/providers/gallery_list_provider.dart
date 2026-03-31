@@ -8,6 +8,8 @@ import '../../../../core/data/graphql/graphql_client.dart';
 import '../../../../core/data/preferences/shared_preferences_provider.dart';
 import '../../../../core/utils/pagination.dart';
 
+import '../../domain/entities/gallery_filter.dart';
+
 part 'gallery_list_provider.g.dart';
 
 final galleryRepositoryProvider = Provider<GalleryRepository>((ref) {
@@ -68,6 +70,48 @@ class GallerySearchQuery extends _$GallerySearchQuery {
 }
 
 @riverpod
+class GalleryFilterState extends _$GalleryFilterState {
+  static const _filterKey = 'gallery_filter_state';
+
+  @override
+  GalleryFilter build() {
+    final prefs = ref.watch(sharedPreferencesProvider);
+    final jsonStr = prefs.getString(_filterKey);
+    if (jsonStr != null) {
+      try {
+        // We'll skip complex persistence for now if needed,
+        // but let's provide the structure.
+      } catch (_) {}
+    }
+    return GalleryFilter.empty();
+  }
+
+  void update(GalleryFilter filter) => state = filter;
+
+  Future<void> saveAsDefault() async {
+    // Implementation for saving filter as default if desired.
+  }
+}
+
+@riverpod
+class GalleryOrganizedOnly extends _$GalleryOrganizedOnly {
+  static const _organizedKey = 'gallery_organized_only';
+
+  @override
+  bool build() {
+    final prefs = ref.watch(sharedPreferencesProvider);
+    return prefs.getBool(_organizedKey) ?? false;
+  }
+
+  void set(bool value) => state = value;
+
+  Future<void> saveAsDefault() async {
+    final prefs = ref.read(sharedPreferencesProvider);
+    await prefs.setBool(_organizedKey, state);
+  }
+}
+
+@riverpod
 class GalleryList extends _$GalleryList {
   int _currentPage = 1;
   static const int _perPage = kDefaultPageSize;
@@ -81,13 +125,19 @@ class GalleryList extends _$GalleryList {
     _isLoadingMore = false;
     final query = ref.watch(gallerySearchQueryProvider);
     final sortConfig = ref.watch(gallerySortProvider);
+    final filter = ref.watch(galleryFilterStateProvider);
+    final organizedOnly = ref.watch(galleryOrganizedOnlyProvider);
     final repository = ref.watch(galleryRepositoryProvider);
+
     return repository.findGalleries(
       page: _currentPage,
       perPage: _perPage,
       filter: query.isEmpty ? null : query,
       sort: sortConfig.sort,
       descending: sortConfig.descending,
+      galleryFilter: filter.copyWith(
+        organized: organizedOnly ? true : filter.organized,
+      ),
     );
   }
 
@@ -108,6 +158,8 @@ class GalleryList extends _$GalleryList {
     final repository = ref.read(galleryRepositoryProvider);
     final query = ref.read(gallerySearchQueryProvider);
     final sortConfig = ref.read(gallerySortProvider);
+    final filter = ref.read(galleryFilterStateProvider);
+    final organizedOnly = ref.read(galleryOrganizedOnlyProvider);
 
     try {
       final nextPage = _currentPage + 1;
@@ -117,6 +169,9 @@ class GalleryList extends _$GalleryList {
         filter: query.isEmpty ? null : query,
         sort: sortConfig.sort,
         descending: sortConfig.descending,
+        galleryFilter: filter.copyWith(
+          organized: organizedOnly ? true : filter.organized,
+        ),
       );
 
       if (nextGalleries.isEmpty) {

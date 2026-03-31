@@ -2,6 +2,8 @@ import 'package:graphql/client.dart';
 import '../../domain/entities/gallery.dart';
 import '../../domain/repositories/gallery_repository.dart';
 
+import '../../domain/entities/gallery_filter.dart';
+
 class GraphQLGalleryRepository implements GalleryRepository {
   final GraphQLClient client;
 
@@ -14,6 +16,7 @@ class GraphQLGalleryRepository implements GalleryRepository {
     String? filter,
     String? sort,
     bool? descending,
+    GalleryFilter? galleryFilter,
   }) async {
     const query = r'''
       query FindGalleries($filter: FindFilterType, $gallery_filter: GalleryFilterType) {
@@ -44,11 +47,31 @@ class GraphQLGalleryRepository implements GalleryRepository {
             'sort': sort,
             'direction': descending == true ? 'DESC' : 'ASC',
           },
-          'gallery_filter': filter != null
-              ? {
-                  'title': {'value': filter, 'modifier': 'EQUALS'},
-                }
-              : null,
+          'gallery_filter': {
+            if (filter != null)
+              'title': {'value': filter, 'modifier': 'INCLUDES'},
+            if (galleryFilter?.minRating != null)
+              'rating100': {
+                'value': galleryFilter!.minRating,
+                'modifier': 'GREATER_THAN',
+              },
+            if (galleryFilter?.organized != null)
+              'organized': galleryFilter!.organized,
+            if (galleryFilter?.minImageCount != null ||
+                galleryFilter?.maxImageCount != null)
+              'image_count': {
+                if (galleryFilter?.minImageCount != null)
+                  'value': galleryFilter!.minImageCount,
+                if (galleryFilter?.maxImageCount != null)
+                  'value2': galleryFilter!.maxImageCount,
+                'modifier': galleryFilter?.minImageCount != null &&
+                        galleryFilter?.maxImageCount != null
+                    ? 'BETWEEN'
+                    : (galleryFilter?.minImageCount != null
+                        ? 'GREATER_THAN'
+                        : 'LESS_THAN'),
+              },
+          },
         },
       ),
     );

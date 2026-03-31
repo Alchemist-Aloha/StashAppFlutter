@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../domain/entities/image.dart' as entity;
+import '../../domain/entities/image_filter.dart';
 import '../../domain/repositories/image_repository.dart';
 import '../../data/repositories/graphql_image_repository.dart';
 import '../../../../core/data/graphql/graphql_client.dart';
@@ -70,10 +71,37 @@ class ImageSearchQuery extends _$ImageSearchQuery {
 @riverpod
 class ImageFilterState extends _$ImageFilterState {
   @override
-  ({String? galleryId}) build() => (galleryId: null);
+  ({String? galleryId, ImageFilter filter}) build() {
+    ref.keepAlive();
+    return (galleryId: null, filter: const ImageFilter());
+  }
 
-  void setGalleryId(String? id) => state = (galleryId: id);
-  void clear() => state = (galleryId: null);
+  void setGalleryId(String? id) => state = (galleryId: id, filter: state.filter);
+  void updateFilter(ImageFilter filter) => state = (galleryId: state.galleryId, filter: filter);
+  void clear() => state = (galleryId: null, filter: const ImageFilter());
+  void clearGalleryId() => state = (galleryId: null, filter: state.filter);
+
+  Future<void> saveAsDefault() async {
+    // Implementation for saving filter as default if desired.
+  }
+}
+
+@riverpod
+class ImageOrganizedOnly extends _$ImageOrganizedOnly {
+  static const _organizedKey = 'image_organized_only';
+
+  @override
+  bool build() {
+    final prefs = ref.watch(sharedPreferencesProvider);
+    return prefs.getBool(_organizedKey) ?? false;
+  }
+
+  void set(bool value) => state = value;
+
+  Future<void> saveAsDefault() async {
+    final prefs = ref.read(sharedPreferencesProvider);
+    await prefs.setBool(_organizedKey, state);
+  }
 }
 
 @riverpod
@@ -92,7 +120,8 @@ class ImageList extends _$ImageList {
 
     final query = ref.watch(imageSearchQueryProvider);
     final sortConfig = ref.watch(imageSortProvider);
-    final filter = ref.watch(imageFilterStateProvider);
+    final filterState = ref.watch(imageFilterStateProvider);
+    final organizedOnly = ref.watch(imageOrganizedOnlyProvider);
     final repository = ref.read(imageRepositoryProvider);
 
     return repository.findImages(
@@ -101,7 +130,10 @@ class ImageList extends _$ImageList {
       filter: query.isEmpty ? null : query,
       sort: sortConfig.sort,
       descending: sortConfig.descending,
-      galleryId: filter.galleryId,
+      galleryId: filterState.galleryId,
+      imageFilter: filterState.filter.copyWith(
+        organized: organizedOnly ? true : filterState.filter.organized,
+      ),
     );
   }
 
@@ -122,7 +154,8 @@ class ImageList extends _$ImageList {
     final repository = ref.read(imageRepositoryProvider);
     final query = ref.read(imageSearchQueryProvider);
     final sortConfig = ref.read(imageSortProvider);
-    final filter = ref.read(imageFilterStateProvider);
+    final filterState = ref.read(imageFilterStateProvider);
+    final organizedOnly = ref.read(imageOrganizedOnlyProvider);
 
     try {
       final nextPage = _currentPage + 1;
@@ -132,7 +165,10 @@ class ImageList extends _$ImageList {
         filter: query.isEmpty ? null : query,
         sort: sortConfig.sort,
         descending: sortConfig.descending,
-        galleryId: filter.galleryId,
+        galleryId: filterState.galleryId,
+        imageFilter: filterState.filter.copyWith(
+          organized: organizedOnly ? true : filterState.filter.organized,
+        ),
       );
 
       if (nextImages.isEmpty) {

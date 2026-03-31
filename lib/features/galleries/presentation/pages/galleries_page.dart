@@ -7,7 +7,10 @@ import '../providers/gallery_list_provider.dart';
 import '../../../images/presentation/providers/image_list_provider.dart';
 import '../../domain/entities/gallery.dart';
 
-enum _GallerySortOption { title }
+import '../widgets/gallery_filter_panel.dart';
+import '../../domain/entities/gallery_filter.dart';
+
+enum _GallerySortOption { title, date, rating, imageCount }
 
 class GalleriesPage extends ConsumerStatefulWidget {
   const GalleriesPage({super.key});
@@ -18,6 +21,7 @@ class GalleriesPage extends ConsumerStatefulWidget {
 
 class _GalleriesPageState extends ConsumerState<GalleriesPage> {
   _GallerySortOption _sortOption = _GallerySortOption.title;
+  bool _sortDescending = false;
 
   @override
   void initState() {
@@ -27,10 +31,14 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
       setState(() {
         _sortOption = switch (sortConfig.sort) {
           'title' => _GallerySortOption.title,
+          'date' => _GallerySortOption.date,
+          'rating100' => _GallerySortOption.rating,
+          'image_count' => _GallerySortOption.imageCount,
           _ => _GallerySortOption.title,
         };
+        _sortDescending = sortConfig.descending;
       });
-      _applyServerSort(_sortOption);
+      _applyServerSort();
     });
   }
 
@@ -38,55 +46,244 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
     ref.read(gallerySearchQueryProvider.notifier).update(query);
   }
 
-  void _applyServerSort(_GallerySortOption option) {
-    switch (option) {
-      case _GallerySortOption.title:
-        ref
-            .read(galleryListProvider.notifier)
-            .setSort(sort: 'title', descending: false);
-        break;
-    }
+  void _applyServerSort() {
+    final sortKey = switch (_sortOption) {
+      _GallerySortOption.title => 'title',
+      _GallerySortOption.date => 'date',
+      _GallerySortOption.rating => 'rating100',
+      _GallerySortOption.imageCount => 'image_count',
+    };
+    ref
+        .read(galleryListProvider.notifier)
+        .setSort(sort: sortKey, descending: _sortDescending);
   }
 
-  Widget _buildSortBar() {
-    const options = [(_GallerySortOption.title, 'Title')];
+  String _sortOptionLabel(_GallerySortOption option) {
+    return switch (option) {
+      _GallerySortOption.title => 'Title',
+      _GallerySortOption.date => 'Date',
+      _GallerySortOption.rating => 'Rating',
+      _GallerySortOption.imageCount => 'Image Count',
+    };
+  }
 
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppTheme.spacingMedium,
-        vertical: AppTheme.spacingSmall,
-      ),
-      child: Row(
-        children: [
-          for (final option in options) ...[
-            ChoiceChip(
-              label: Text(option.$2),
-              selected: _sortOption == option.$1,
-              onSelected: (selected) {
-                if (!selected) return;
-                setState(() => _sortOption = option.$1);
-                _applyServerSort(option.$1);
-              },
-            ),
-            const SizedBox(width: AppTheme.spacingSmall),
-          ],
-        ],
-      ),
+  void _showSortPanel() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        _GallerySortOption tempOption = _sortOption;
+        bool tempDescending = _sortDescending;
+
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(AppTheme.spacingLarge),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Sort Galleries',
+                          style: context.textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            setModalState(() {
+                              tempOption = _GallerySortOption.title;
+                              tempDescending = false;
+                            });
+                          },
+                          child: const Text('Reset'),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppTheme.spacingMedium),
+                    Text('Sort Method', style: context.textTheme.labelLarge),
+                    const SizedBox(height: AppTheme.spacingSmall),
+                    Wrap(
+                      spacing: AppTheme.spacingSmall,
+                      runSpacing: AppTheme.spacingSmall,
+                      children: _GallerySortOption.values
+                          .map(
+                            (option) => ChoiceChip(
+                              label: Text(_sortOptionLabel(option)),
+                              selected: tempOption == option,
+                              onSelected: (selected) {
+                                if (!selected) return;
+                                setModalState(() {
+                                  tempOption = option;
+                                });
+                              },
+                            ),
+                          )
+                          .toList(),
+                    ),
+                    const SizedBox(height: AppTheme.spacingMedium),
+                    Text('Direction', style: context.textTheme.labelLarge),
+                    const SizedBox(height: AppTheme.spacingSmall),
+                    SizedBox(
+                      width: double.infinity,
+                      child: SegmentedButton<bool>(
+                        segments: const [
+                          ButtonSegment(
+                            value: true,
+                            label: Text('Descending'),
+                            icon: Icon(Icons.arrow_downward),
+                          ),
+                          ButtonSegment(
+                            value: false,
+                            label: Text('Ascending'),
+                            icon: Icon(Icons.arrow_upward),
+                          ),
+                        ],
+                        selected: {tempDescending},
+                        onSelectionChanged: (value) =>
+                            setModalState(() => tempDescending = value.first),
+                      ),
+                    ),
+                    const SizedBox(height: AppTheme.spacingLarge),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            _sortOption = tempOption;
+                            _sortDescending = tempDescending;
+                          });
+                          _applyServerSort();
+                          Navigator.pop(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: context.colors.primary,
+                          foregroundColor: context.colors.onPrimary,
+                          padding: const EdgeInsets.symmetric(
+                            vertical: AppTheme.spacingMedium,
+                          ),
+                        ),
+                        child: const Text('Apply Sort'),
+                      ),
+                    ),
+                    const SizedBox(height: AppTheme.spacingSmall),
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton(
+                        onPressed: () async {
+                          setState(() {
+                            _sortOption = tempOption;
+                            _sortDescending = tempDescending;
+                          });
+                          _applyServerSort();
+                          await ref
+                              .read(gallerySortProvider.notifier)
+                              .saveAsDefault();
+                          if (context.mounted) {
+                            Navigator.pop(context);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  'Sort preferences saved as default',
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: AppTheme.spacingMedium,
+                          ),
+                        ),
+                        child: const Text('Save as Default'),
+                      ),
+                    ),
+                    const SizedBox(height: AppTheme.spacingMedium),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _showFilterPanel() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => const GalleryFilterPanel(),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final galleriesAsync = ref.watch(galleryListProvider);
+    final filterActive = ref.watch(
+      galleryFilterStateProvider.select((s) => s != GalleryFilter.empty()),
+    );
+    final organizedOnly = ref.watch(galleryOrganizedOnlyProvider);
+    final hasActiveFilters = filterActive || organizedOnly;
 
     return ListPageScaffold<Gallery>(
       title: 'Galleries',
       actions: [
+        Stack(
+          children: [
+            IconButton(
+              icon: const Icon(Icons.sort),
+              tooltip: 'Sort options',
+              onPressed: _showSortPanel,
+            ),
+            if (_sortOption != _GallerySortOption.title || _sortDescending)
+              Positioned(
+                right: 8,
+                top: 8,
+                child: Container(
+                  padding: const EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                    color: context.colors.secondary,
+                    shape: BoxShape.circle,
+                  ),
+                  constraints: const BoxConstraints(minWidth: 8, minHeight: 8),
+                ),
+              ),
+          ],
+        ),
+        Stack(
+          children: [
+            IconButton(
+              icon: const Icon(Icons.filter_list),
+              onPressed: _showFilterPanel,
+            ),
+            if (hasActiveFilters)
+              Positioned(
+                right: 8,
+                top: 8,
+                child: Container(
+                  padding: const EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                    color: context.colors.secondary,
+                    shape: BoxShape.circle,
+                  ),
+                  constraints: const BoxConstraints(minWidth: 8, minHeight: 8),
+                ),
+              ),
+          ],
+        ),
         IconButton(
           icon: const Icon(Icons.image),
           tooltip: 'All Images',
-          onPressed: () => context.go('/galleries/images'),
+          onPressed: () {
+            ref.read(imageFilterStateProvider.notifier).clear();
+            context.go('/galleries/images');
+          },
         ),
       ],
       searchHint: 'Search galleries...',
@@ -95,7 +292,6 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
       onRefresh: () => ref.refresh(galleryListProvider.future),
       onFetchNextPage: () =>
           ref.read(galleryListProvider.notifier).fetchNextPage(),
-      sortBar: _buildSortBar(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         mainAxisSpacing: AppTheme.spacingMedium,

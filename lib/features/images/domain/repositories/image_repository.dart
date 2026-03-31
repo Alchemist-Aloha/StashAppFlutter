@@ -1,4 +1,5 @@
 import '../entities/image.dart';
+import '../entities/image_filter.dart';
 
 abstract class ImageRepository {
   Future<List<Image>> findImages({
@@ -8,6 +9,7 @@ abstract class ImageRepository {
     String? sort,
     bool? descending,
     String? galleryId,
+    ImageFilter? imageFilter,
   });
   Future<Image> getImageById(String id, {bool refresh = false});
 }

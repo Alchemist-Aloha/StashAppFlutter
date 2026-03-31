@@ -181,7 +181,11 @@ abstract class _$ImageSearchQuery extends $Notifier<String> {
 final imageFilterStateProvider = ImageFilterStateProvider._();
 
 final class ImageFilterStateProvider
-    extends $NotifierProvider<ImageFilterState, ({String? galleryId})> {
+    extends
+        $NotifierProvider<
+          ImageFilterState,
+          ({ImageFilter filter, String? galleryId})
+        > {
   ImageFilterStateProvider._()
     : super(
         from: null,
@@ -201,27 +205,90 @@ final class ImageFilterStateProvider
   ImageFilterState create() => ImageFilterState();
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(({String? galleryId}) value) {
+  Override overrideWithValue(({ImageFilter filter, String? galleryId}) value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<({String? galleryId})>(value),
+      providerOverride:
+          $SyncValueProvider<({ImageFilter filter, String? galleryId})>(value),
     );
   }
 }
 
-String _$imageFilterStateHash() => r'a84520046b8de9575e4a2706db54ddfe09f1a815';
+String _$imageFilterStateHash() => r'c43d353209193b53fe600e3a1f62bac785573fba';
 
-abstract class _$ImageFilterState extends $Notifier<({String? galleryId})> {
-  ({String? galleryId}) build();
+abstract class _$ImageFilterState
+    extends $Notifier<({ImageFilter filter, String? galleryId})> {
+  ({ImageFilter filter, String? galleryId}) build();
   @$mustCallSuper
   @override
   void runBuild() {
-    final ref = this.ref as $Ref<({String? galleryId}), ({String? galleryId})>;
+    final ref =
+        this.ref
+            as $Ref<
+              ({ImageFilter filter, String? galleryId}),
+              ({ImageFilter filter, String? galleryId})
+            >;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<({String? galleryId}), ({String? galleryId})>,
-              ({String? galleryId}),
+              AnyNotifier<
+                ({ImageFilter filter, String? galleryId}),
+                ({ImageFilter filter, String? galleryId})
+              >,
+              ({ImageFilter filter, String? galleryId}),
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
+@ProviderFor(ImageOrganizedOnly)
+final imageOrganizedOnlyProvider = ImageOrganizedOnlyProvider._();
+
+final class ImageOrganizedOnlyProvider
+    extends $NotifierProvider<ImageOrganizedOnly, bool> {
+  ImageOrganizedOnlyProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'imageOrganizedOnlyProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$imageOrganizedOnlyHash();
+
+  @$internal
+  @override
+  ImageOrganizedOnly create() => ImageOrganizedOnly();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$imageOrganizedOnlyHash() =>
+    r'ed1087d6b5fa2d7a8fd089810851ef4643cd438e';
+
+abstract class _$ImageOrganizedOnly extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
               Object?,
               Object?
             >;
@@ -253,7 +320,7 @@ final class ImageListProvider
   ImageList create() => ImageList();
 }
 
-String _$imageListHash() => r'90728386ed63d98a117524317c8fc347970cab4b';
+String _$imageListHash() => r'1b425d88e550b395a863c1cf67f380baef55cd34';
 
 abstract class _$ImageList extends $AsyncNotifier<List<entity.Image>> {
   FutureOr<List<entity.Image>> build();

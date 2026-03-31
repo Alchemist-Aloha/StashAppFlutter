@@ -3,6 +3,8 @@ import '../../../../core/data/graphql/url_resolver.dart';
 import '../../domain/entities/image.dart';
 import '../../domain/repositories/image_repository.dart';
 
+import '../../domain/entities/image_filter.dart';
+
 class GraphQLImageRepository implements ImageRepository {
   final GraphQLClient client;
 
@@ -20,6 +22,7 @@ class GraphQLImageRepository implements ImageRepository {
     String? sort,
     bool? descending,
     String? galleryId,
+    ImageFilter? imageFilter,
   }) async {
     const query = r'''
       query FindImages($filter: FindFilterType, $image_filter: ImageFilterType) {
@@ -67,6 +70,25 @@ class GraphQLImageRepository implements ImageRepository {
             if (galleryId != null)
               'galleries': {
                 'value': [galleryId],
+                'modifier': 'INCLUDES',
+              },
+            if (imageFilter?.minRating != null)
+              'rating100': {
+                'value': imageFilter!.minRating,
+                'modifier': 'GREATER_THAN',
+              },
+            if (imageFilter?.organized != null)
+              'organized': imageFilter!.organized,
+            if (imageFilter?.resolutions != null &&
+                imageFilter!.resolutions!.isNotEmpty)
+              'resolution': {
+                'value': imageFilter.resolutions!.first,
+                'modifier': 'EQUALS',
+              },
+            if (imageFilter?.orientations != null &&
+                imageFilter!.orientations!.isNotEmpty)
+              'orientation': {
+                'value': imageFilter.orientations!,
                 'modifier': 'INCLUDES',
               },
           },

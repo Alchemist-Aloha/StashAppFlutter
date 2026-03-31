@@ -9,6 +9,9 @@ import '../providers/image_list_provider.dart';
 import '../widgets/image_card.dart';
 import '../../domain/entities/image.dart' as entity;
 
+import '../widgets/image_filter_panel.dart';
+import '../../domain/entities/image_filter.dart';
+
 enum _ImageSortOption { date, rating, title }
 
 class ImagesPage extends ConsumerStatefulWidget {
@@ -20,6 +23,7 @@ class ImagesPage extends ConsumerStatefulWidget {
 
 class _ImagesPageState extends ConsumerState<ImagesPage> {
   _ImageSortOption _sortOption = _ImageSortOption.date;
+  bool _sortDescending = true;
 
   @override
   void initState() {
@@ -33,6 +37,7 @@ class _ImagesPageState extends ConsumerState<ImagesPage> {
           'title' => _ImageSortOption.title,
           _ => _ImageSortOption.date,
         };
+        _sortDescending = sortConfig.descending;
       });
     });
   }
@@ -41,77 +46,177 @@ class _ImagesPageState extends ConsumerState<ImagesPage> {
     ref.read(imageSearchQueryProvider.notifier).update(query);
   }
 
-  void _applyServerSort(_ImageSortOption option) {
-    switch (option) {
-      case _ImageSortOption.date:
-        ref
-            .read(imageListProvider.notifier)
-            .setSort(sort: 'date', descending: true);
-        break;
-      case _ImageSortOption.rating:
-        ref
-            .read(imageListProvider.notifier)
-            .setSort(sort: 'rating100', descending: true);
-        break;
-      case _ImageSortOption.title:
-        ref
-            .read(imageListProvider.notifier)
-            .setSort(sort: 'title', descending: false);
-        break;
-    }
+  void _applyServerSort() {
+    final sortKey = switch (_sortOption) {
+      _ImageSortOption.date => 'date',
+      _ImageSortOption.rating => 'rating100',
+      _ImageSortOption.title => 'title',
+    };
+    ref
+        .read(imageListProvider.notifier)
+        .setSort(sort: sortKey, descending: _sortDescending);
   }
 
-  Widget _buildSortBar() {
-    final filter = ref.watch(imageFilterStateProvider);
-    const options = [
-      (_ImageSortOption.date, 'Date'),
-      (_ImageSortOption.rating, 'Rating'),
-      (_ImageSortOption.title, 'Title'),
-    ];
+  String _sortOptionLabel(_ImageSortOption option) {
+    return switch (option) {
+      _ImageSortOption.date => 'Date',
+      _ImageSortOption.rating => 'Rating',
+      _ImageSortOption.title => 'Title',
+    };
+  }
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppTheme.spacingMedium,
-            vertical: AppTheme.spacingSmall,
-          ),
-          child: Row(
-            children: [
-              for (final option in options) ...[
-                ChoiceChip(
-                  label: Text(option.$2),
-                  selected: _sortOption == option.$1,
-                  onSelected: (selected) {
-                    if (!selected) return;
-                    setState(() => _sortOption = option.$1);
-                    _applyServerSort(option.$1);
-                  },
+  void _showSortPanel() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        _ImageSortOption tempOption = _sortOption;
+        bool tempDescending = _sortDescending;
+
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(AppTheme.spacingLarge),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Sort Images',
+                          style: context.textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            setModalState(() {
+                              tempOption = _ImageSortOption.date;
+                              tempDescending = true;
+                            });
+                          },
+                          child: const Text('Reset'),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppTheme.spacingMedium),
+                    Text('Sort Method', style: context.textTheme.labelLarge),
+                    const SizedBox(height: AppTheme.spacingSmall),
+                    Wrap(
+                      spacing: AppTheme.spacingSmall,
+                      runSpacing: AppTheme.spacingSmall,
+                      children: _ImageSortOption.values
+                          .map(
+                            (option) => ChoiceChip(
+                              label: Text(_sortOptionLabel(option)),
+                              selected: tempOption == option,
+                              onSelected: (selected) {
+                                if (!selected) return;
+                                setModalState(() {
+                                  tempOption = option;
+                                });
+                              },
+                            ),
+                          )
+                          .toList(),
+                    ),
+                    const SizedBox(height: AppTheme.spacingMedium),
+                    Text('Direction', style: context.textTheme.labelLarge),
+                    const SizedBox(height: AppTheme.spacingSmall),
+                    SizedBox(
+                      width: double.infinity,
+                      child: SegmentedButton<bool>(
+                        segments: const [
+                          ButtonSegment(
+                            value: true,
+                            label: Text('Descending'),
+                            icon: Icon(Icons.arrow_downward),
+                          ),
+                          ButtonSegment(
+                            value: false,
+                            label: Text('Ascending'),
+                            icon: Icon(Icons.arrow_upward),
+                          ),
+                        ],
+                        selected: {tempDescending},
+                        onSelectionChanged: (value) =>
+                            setModalState(() => tempDescending = value.first),
+                      ),
+                    ),
+                    const SizedBox(height: AppTheme.spacingLarge),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            _sortOption = tempOption;
+                            _sortDescending = tempDescending;
+                          });
+                          _applyServerSort();
+                          Navigator.pop(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: context.colors.primary,
+                          foregroundColor: context.colors.onPrimary,
+                          padding: const EdgeInsets.symmetric(
+                            vertical: AppTheme.spacingMedium,
+                          ),
+                        ),
+                        child: const Text('Apply Sort'),
+                      ),
+                    ),
+                    const SizedBox(height: AppTheme.spacingSmall),
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton(
+                        onPressed: () async {
+                          setState(() {
+                            _sortOption = tempOption;
+                            _sortDescending = tempDescending;
+                          });
+                          _applyServerSort();
+                          await ref
+                              .read(imageSortProvider.notifier)
+                              .saveAsDefault();
+                          if (context.mounted) {
+                            Navigator.pop(context);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  'Sort preferences saved as default',
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: AppTheme.spacingMedium,
+                          ),
+                        ),
+                        child: const Text('Save as Default'),
+                      ),
+                    ),
+                    const SizedBox(height: AppTheme.spacingMedium),
+                  ],
                 ),
-                const SizedBox(width: AppTheme.spacingSmall),
-              ],
-            ],
-          ),
-        ),
-        if (filter.galleryId != null)
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppTheme.spacingMedium,
-            ),
-            child: Row(
-              children: [
-                InputChip(
-                  label: const Text('Filtered by Gallery'),
-                  onDeleted: () {
-                    ref.read(imageFilterStateProvider.notifier).clear();
-                  },
-                ),
-              ],
-            ),
-          ),
-      ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _showFilterPanel() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => const ImageFilterPanel(),
     );
   }
 
@@ -120,6 +225,15 @@ class _ImagesPageState extends ConsumerState<ImagesPage> {
     final imagesAsync = ref.watch(imageListProvider);
     final isMobile = Responsive.isMobile(context);
     final isTablet = Responsive.isTablet(context);
+
+    final filterState = ref.watch(imageFilterStateProvider);
+    final filterActive = ref.watch(
+      imageFilterStateProvider.select(
+        (s) => s.filter != const ImageFilter(),
+      ),
+    );
+    final organizedOnly = ref.watch(imageOrganizedOnlyProvider);
+    final hasActiveFilters = filterActive || organizedOnly;
 
     int crossAxisCount = 2;
     if (isTablet) {
@@ -130,14 +244,75 @@ class _ImagesPageState extends ConsumerState<ImagesPage> {
 
     return ListPageScaffold<entity.Image>(
       title: 'Images',
-      actions: const [],
+      actions: [
+        Stack(
+          children: [
+            IconButton(
+              icon: const Icon(Icons.sort),
+              tooltip: 'Sort options',
+              onPressed: _showSortPanel,
+            ),
+            if (_sortOption != _ImageSortOption.date || !_sortDescending)
+              Positioned(
+                right: 8,
+                top: 8,
+                child: Container(
+                  padding: const EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                    color: context.colors.secondary,
+                    shape: BoxShape.circle,
+                  ),
+                  constraints: const BoxConstraints(minWidth: 8, minHeight: 8),
+                ),
+              ),
+          ],
+        ),
+        Stack(
+          children: [
+            IconButton(
+              icon: const Icon(Icons.filter_list),
+              onPressed: _showFilterPanel,
+            ),
+            if (hasActiveFilters)
+              Positioned(
+                right: 8,
+                top: 8,
+                child: Container(
+                  padding: const EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                    color: context.colors.secondary,
+                    shape: BoxShape.circle,
+                  ),
+                  constraints: const BoxConstraints(minWidth: 8, minHeight: 8),
+                ),
+              ),
+          ],
+        ),
+      ],
       searchHint: 'Search images...',
       onSearchChanged: _onSearchChanged,
       provider: imagesAsync,
       onRefresh: () => ref.refresh(imageListProvider.future),
       onFetchNextPage: () =>
           ref.read(imageListProvider.notifier).fetchNextPage(),
-      sortBar: _buildSortBar(),
+      sortBar: filterState.galleryId != null
+          ? Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppTheme.spacingMedium,
+              vertical: AppTheme.spacingSmall,
+            ),
+            child: Row(
+              children: [
+                InputChip(
+                  label: const Text('Filtered by Gallery'),
+                  onDeleted: () {
+                    ref.read(imageFilterStateProvider.notifier).clearGalleryId();
+                  },
+                ),
+              ],
+            ),
+          )
+          : null,
       customBody: imagesAsync.when(
         data: (items) {
           if (items.isEmpty) {
