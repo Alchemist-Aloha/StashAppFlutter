@@ -256,6 +256,8 @@ class MockGalleryRepository implements GalleryRepository {
     bool? descending,
     GalleryFilter? galleryFilter,
     String? performerId,
+    String? studioId,
+    String? tagId,
   }) async {
     return [const Gallery(id: '1', title: 'Test Gallery', imageCount: 1)];
   }

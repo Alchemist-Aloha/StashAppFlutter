@@ -20,6 +20,8 @@ class GraphQLGalleryRepository implements GalleryRepository {
     bool? descending,
     GalleryFilter? galleryFilter,
     String? performerId,
+    String? studioId,
+    String? tagId,
   }) async {
     final result = await client.query$FindGalleries(
       Options$Query$FindGalleries(
@@ -40,6 +42,18 @@ class GraphQLGalleryRepository implements GalleryRepository {
             performers: performerId != null
                 ? Input$MultiCriterionInput(
                     value: [performerId],
+                    modifier: Enum$CriterionModifier.INCLUDES,
+                  )
+                : null,
+            studios: studioId != null
+                ? Input$HierarchicalMultiCriterionInput(
+                    value: [studioId],
+                    modifier: Enum$CriterionModifier.INCLUDES,
+                  )
+                : null,
+            tags: tagId != null
+                ? Input$HierarchicalMultiCriterionInput(
+                    value: [tagId],
                     modifier: Enum$CriterionModifier.INCLUDES,
                   )
                 : null,

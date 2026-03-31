@@ -10,6 +10,8 @@ abstract class GalleryRepository {
     bool? descending,
     GalleryFilter? galleryFilter,
     String? performerId,
+    String? studioId,
+    String? tagId,
   });
   Future<Gallery> getGalleryById(String id, {bool refresh = false});
 }
