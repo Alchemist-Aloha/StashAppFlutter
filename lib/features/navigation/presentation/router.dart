@@ -7,6 +7,7 @@ import '../../scenes/presentation/pages/scene_details_page.dart';
 import '../../performers/presentation/pages/performers_page.dart';
 import '../../performers/presentation/pages/performer_details_page.dart';
 import '../../performers/presentation/pages/performer_media_grid_page.dart';
+import '../../performers/presentation/pages/performer_galleries_grid_page.dart';
 import '../../studios/presentation/pages/studios_page.dart';
 import '../../studios/presentation/pages/studio_details_page.dart';
 import '../../studios/presentation/pages/studio_media_grid_page.dart';
@@ -122,6 +123,12 @@ GoRouter router(Ref ref) {
                           performerId: state.pathParameters['id']!,
                         ),
                       ),
+                      GoRoute(
+                        path: 'galleries',
+                        builder: (context, state) => PerformerGalleriesGridPage(
+                          performerId: state.pathParameters['id']!,
+                        ),
+                      ),
                     ],
                   ),
                 ],
@@ -219,6 +226,12 @@ GoRouter router(Ref ref) {
           GoRoute(
             path: 'media',
             builder: (context, state) => PerformerMediaGridPage(
+              performerId: state.pathParameters['id']!,
+            ),
+          ),
+          GoRoute(
+            path: 'galleries',
+            builder: (context, state) => PerformerGalleriesGridPage(
               performerId: state.pathParameters['id']!,
             ),
           ),

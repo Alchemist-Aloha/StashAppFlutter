@@ -388,7 +388,12 @@ class PerformerDetailsPage extends ConsumerWidget {
                           ),
                         ),
                         const SizedBox(height: AppTheme.spacingMedium),
-                        const SectionHeader(title: 'Galleries'),
+                        SectionHeader(
+                          title: 'Galleries',
+                          onViewAll: () => context.push(
+                            '/performers/performer/${performer.id}/galleries',
+                          ),
+                        ),
                         galleriesAsync.when(
                           data: (galleryItems) {
                             if (galleryItems.isEmpty) {
@@ -411,9 +416,14 @@ class PerformerDetailsPage extends ConsumerWidget {
                                       id: item.galleryId,
                                       title: item.title,
                                       thumbnailUrl: item.thumbnailUrl,
-                                      onTap: () => context.push(
-                                        '/galleries/gallery/${item.galleryId}',
-                                      ),
+                                      onTap: () {
+                                        ref
+                                            .read(
+                                              imageFilterStateProvider.notifier,
+                                            )
+                                            .setGalleryId(item.galleryId);
+                                        context.push('/galleries/images');
+                                      },
                                     ),
                                   )
                                   .toList(),
