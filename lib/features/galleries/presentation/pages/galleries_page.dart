@@ -242,7 +242,7 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
           : normalizedServerUrl,
     );
     return resolveGraphqlMediaUrl(
-      rawUrl: '/gallery/${gallery.id}/thumbnail',
+      rawUrl: gallery.coverPath ?? '/gallery/${gallery.id}/thumbnail',
       graphqlEndpoint: endpoint,
     );
   }

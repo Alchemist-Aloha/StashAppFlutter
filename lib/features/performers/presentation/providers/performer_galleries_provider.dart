@@ -46,7 +46,7 @@ FutureOr<List<PerformerGalleryItem>> performerGalleries(
           galleryId: gallery.id,
           title: gallery.displayName,
           thumbnailUrl: resolveGraphqlMediaUrl(
-            rawUrl: '/gallery/${gallery.id}/thumbnail', // Standard Stash thumbnail path
+            rawUrl: gallery.coverPath ?? '/gallery/${gallery.id}/thumbnail',
             graphqlEndpoint: endpoint,
           ),
         ),
@@ -97,10 +97,10 @@ class PerformerGalleriesGrid extends _$PerformerGalleriesGrid {
           (gallery) => PerformerGalleryItem(
             galleryId: gallery.id,
             title: gallery.displayName,
-            thumbnailUrl: resolveGraphqlMediaUrl(
-              rawUrl: '/gallery/${gallery.id}/thumbnail',
-              graphqlEndpoint: endpoint,
-            ),
+          thumbnailUrl: resolveGraphqlMediaUrl(
+            rawUrl: gallery.coverPath ?? '/gallery/${gallery.id}/thumbnail',
+            graphqlEndpoint: endpoint,
+          ),
           ),
         )
         .toList();

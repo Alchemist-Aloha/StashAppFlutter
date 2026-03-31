@@ -32,6 +32,9 @@ class GraphQLGalleryRepository implements GalleryRepository {
             files {
               path
             }
+            paths {
+              cover
+            }
           }
         }
       }
@@ -103,6 +106,9 @@ class GraphQLGalleryRepository implements GalleryRepository {
           details
           files {
             path
+          }
+          paths {
+            cover
           }
         }
       }
