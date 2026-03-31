@@ -18,8 +18,9 @@ class ImageFullscreenPage extends ConsumerStatefulWidget {
 
 class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
   late ExtendedPageController _pageController;
-  int _currentIndex = -1;
+  int _currentIndex = 0;
   bool _showOverlays = true;
+  bool _initialPageSet = false;
 
   @override
   void initState() {
@@ -37,6 +38,39 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
     setState(() {
       _showOverlays = !_showOverlays;
     });
+  }
+
+  void _prefetchAdjacent(
+    List<entity.Image> items,
+    int index,
+    Map<String, String> headers,
+  ) {
+    if (!mounted || items.isEmpty) return;
+
+    // Prefetch 2 ahead and 2 behind
+    for (int i = 1; i <= 2; i++) {
+      final ahead = index + i;
+      if (ahead < items.length) {
+        final url = items[ahead].paths.image ?? items[ahead].paths.preview;
+        if (url != null && url.isNotEmpty) {
+          precacheImage(
+            ExtendedNetworkImageProvider(url, headers: headers, cache: true),
+            context,
+          );
+        }
+      }
+
+      final behind = index - i;
+      if (behind >= 0) {
+        final url = items[behind].paths.image ?? items[behind].paths.preview;
+        if (url != null && url.isNotEmpty) {
+          precacheImage(
+            ExtendedNetworkImageProvider(url, headers: headers, cache: true),
+            context,
+          );
+        }
+      }
+    }
   }
 
   void _showInfo(BuildContext context, entity.Image image) {
@@ -88,10 +122,19 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
       backgroundColor: Colors.black,
       body: imagesAsync.when(
         data: (items) {
-          if (_currentIndex == -1) {
+          if (!_initialPageSet) {
             _currentIndex = items.indexWhere((i) => i.id == widget.imageId);
             if (_currentIndex == -1) _currentIndex = 0;
-            _pageController = ExtendedPageController(initialPage: _currentIndex);
+            _pageController.dispose();
+            _pageController = ExtendedPageController(
+              initialPage: _currentIndex,
+            );
+            _initialPageSet = true;
+
+            // Prefetch initial adjacent images
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _prefetchAdjacent(items, _currentIndex, headers);
+            });
           }
 
           return Stack(
@@ -100,10 +143,13 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
                 controller: _pageController,
                 scrollDirection: Axis.vertical,
                 itemCount: items.length,
+                physics: const BouncingScrollPhysics(),
                 onPageChanged: (index) {
                   setState(() => _currentIndex = index);
+                  _prefetchAdjacent(items, index, headers);
+
                   // Load more if near end
-                  if (index >= items.length - 2) {
+                  if (index >= items.length - 5) {
                     ref.read(imageListProvider.notifier).fetchNextPage();
                   }
                 },
@@ -113,7 +159,11 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
 
                   if (imageUrl == null || imageUrl.isEmpty) {
                     return const Center(
-                      child: Icon(Icons.broken_image, color: Colors.white54, size: 64),
+                      child: Icon(
+                        Icons.broken_image,
+                        color: Colors.white54,
+                        size: 64,
+                      ),
                     );
                   }
 
@@ -123,15 +173,12 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
                     fit: BoxFit.contain,
                     mode: ExtendedImageMode.gesture,
                     cache: true,
-                    // Use the custom cache manager from StashImage if possible, 
-                    // though extended_image uses its own internal cache.
-                    // We can also leverage the pre-fetching logic.
                     initGestureConfigHandler: (state) {
                       return GestureConfig(
                         minScale: 0.9,
                         animationMinScale: 0.7,
-                        maxScale: 4.0,
-                        animationMaxScale: 4.5,
+                        maxScale: 5.0,
+                        animationMaxScale: 6.0,
                         speed: 1.0,
                         initialScale: 1.0,
                         inPageView: true,
@@ -158,9 +205,17 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
                     loadStateChanged: (ExtendedImageState state) {
                       switch (state.extendedImageLoadState) {
                         case LoadState.loading:
-                          return const Center(child: CircularProgressIndicator());
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
                         case LoadState.completed:
-                          return null; // default image
+                          // Wrap the completed image in a detector for overlay toggling
+                          // This ensures it doesn't block swipes because it's part of the page item
+                          return GestureDetector(
+                            behavior: HitTestBehavior.translucent,
+                            onTap: _toggleOverlays,
+                            child: state.completedWidget,
+                          );
                         case LoadState.failed:
                           return GestureDetector(
                             onTap: () => state.reLoadImage(),
@@ -168,9 +223,16 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Icon(Icons.broken_image, color: Colors.white54, size: 64),
+                                  Icon(
+                                    Icons.broken_image,
+                                    color: Colors.white54,
+                                    size: 64,
+                                  ),
                                   SizedBox(height: 16),
-                                  Text('Failed to load. Tap to retry.', style: TextStyle(color: Colors.white70)),
+                                  Text(
+                                    'Failed to load. Tap to retry.',
+                                    style: TextStyle(color: Colors.white70),
+                                  ),
                                 ],
                               ),
                             ),
@@ -179,11 +241,6 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
                     },
                   );
                 },
-              ),
-              // Interaction layer to toggle overlays
-              GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onTap: _toggleOverlays,
               ),
               // Overlays
               if (_showOverlays) ...[
