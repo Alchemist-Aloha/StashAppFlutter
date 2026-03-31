@@ -16,6 +16,7 @@ import '../../tags/presentation/pages/tag_media_grid_page.dart';
 import '../../images/presentation/pages/images_page.dart';
 import '../../images/presentation/pages/image_fullscreen_page.dart';
 import '../../galleries/presentation/pages/galleries_page.dart';
+import '../../galleries/presentation/pages/gallery_details_page.dart';
 import '../../images/presentation/providers/image_list_provider.dart';
 import '../../setup/presentation/pages/settings/settings_hub_page.dart';
 import '../../setup/presentation/pages/settings/server_settings_page.dart';
@@ -181,6 +182,12 @@ GoRouter router(Ref ref) {
                 builder: (context, state) => const GalleriesPage(),
                 routes: [
                   GoRoute(
+                    path: 'gallery/:id',
+                    builder: (context, state) => GalleryDetailsPage(
+                      galleryId: state.pathParameters['id']!,
+                    ),
+                  ),
+                  GoRoute(
                     path: 'images',
                     builder: (context, state) => const ImagesPage(),
                     routes: [
@@ -240,6 +247,11 @@ GoRouter router(Ref ref) {
                 TagMediaGridPage(tagId: state.pathParameters['id']!),
           ),
         ],
+      ),
+      GoRoute(
+        path: '/gallery/:id',
+        builder: (context, state) =>
+            GalleryDetailsPage(galleryId: state.pathParameters['id']!),
       ),
       GoRoute(
         path: '/settings',
