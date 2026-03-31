@@ -7,6 +7,9 @@ import '../providers/gallery_list_provider.dart';
 import '../../../images/presentation/providers/image_list_provider.dart';
 import '../../domain/entities/gallery.dart';
 
+import '../widgets/gallery_card.dart';
+import '../../../../core/presentation/widgets/grid_utils.dart';
+
 import '../widgets/gallery_filter_panel.dart';
 import '../../domain/entities/gallery_filter.dart';
 import '../../../../core/data/graphql/url_resolver.dart';
@@ -318,78 +321,15 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
       onRefresh: () => ref.refresh(galleryListProvider.future),
       onFetchNextPage: () =>
           ref.read(galleryListProvider.notifier).fetchNextPage(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: AppTheme.spacingMedium,
-        crossAxisSpacing: AppTheme.spacingMedium,
-        childAspectRatio: 1.0,
-      ),
-      mobileCrossAxisCount: 2,
-      tabletCrossAxisCount: 4,
-      itemBuilder: (context, gallery) => InkWell(
+      gridDelegate: GridUtils.createDelegate(),
+      padding: GridUtils.defaultPadding,
+      itemBuilder: (context, gallery) => GalleryCard(
+        gallery: gallery,
+        thumbnailUrl: _getThumbnailUrl(gallery),
         onTap: () {
           ref.read(imageFilterStateProvider.notifier).setGalleryId(gallery.id);
           context.go('/galleries/images');
         },
-        child: Card(
-          clipBehavior: Clip.antiAlias,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Expanded(
-                child: Container(
-                  color: context.colors.cardBackground,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      StashImage(
-                        imageUrl: _getThumbnailUrl(gallery),
-                        fit: BoxFit.cover,
-                        memCacheWidth: 400,
-                      ),
-                      if (gallery.imageCount != null && gallery.imageCount! > 0)
-                        Positioned(
-                          right: 8,
-                          top: 8,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 6,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: context.colors.primary.withValues(
-                                alpha: 0.8,
-                              ),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Text(
-                              '${gallery.imageCount}',
-                              style: context.textTheme.labelSmall?.copyWith(
-                                color: context.colors.onPrimary,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(AppTheme.spacingSmall),
-                child: Text(
-                  gallery.displayName,
-                  style: context.textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
