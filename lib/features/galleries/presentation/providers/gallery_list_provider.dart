@@ -45,7 +45,7 @@ class GallerySort extends _$GallerySort {
   @override
   ({String? sort, bool descending}) build() {
     final prefs = ref.watch(sharedPreferencesProvider);
-    final sort = prefs.getString(_sortKey) ?? 'title';
+    final sort = prefs.getString(_sortKey) ?? 'path';
     final descending = prefs.getBool(_descKey) ?? false;
     return (sort: sort, descending: descending);
   }

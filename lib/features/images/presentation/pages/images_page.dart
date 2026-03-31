@@ -12,7 +12,7 @@ import '../../domain/entities/image.dart' as entity;
 import '../widgets/image_filter_panel.dart';
 import '../../domain/entities/image_filter.dart';
 
-enum _ImageSortOption { date, rating, title, random }
+enum _ImageSortOption { date, rating, title, path, random }
 
 class ImagesPage extends ConsumerStatefulWidget {
   const ImagesPage({super.key});
@@ -22,8 +22,8 @@ class ImagesPage extends ConsumerStatefulWidget {
 }
 
 class _ImagesPageState extends ConsumerState<ImagesPage> {
-  _ImageSortOption _sortOption = _ImageSortOption.date;
-  bool _sortDescending = true;
+  _ImageSortOption _sortOption = _ImageSortOption.path;
+  bool _sortDescending = false;
 
   @override
   void initState() {
@@ -35,8 +35,9 @@ class _ImagesPageState extends ConsumerState<ImagesPage> {
           'date' => _ImageSortOption.date,
           'rating100' => _ImageSortOption.rating,
           'title' => _ImageSortOption.title,
+          'path' => _ImageSortOption.path,
           'random' => _ImageSortOption.random,
-          _ => _ImageSortOption.date,
+          _ => _ImageSortOption.path,
         };
         _sortDescending = sortConfig.descending;
       });
@@ -50,8 +51,9 @@ class _ImagesPageState extends ConsumerState<ImagesPage> {
   void _applyServerSort() {
     final sortKey = switch (_sortOption) {
       _ImageSortOption.date => 'date',
-      _ImageSortOption.rating => 'rating100',
+      _ImageSortOption.rating => 'rating',
       _ImageSortOption.title => 'title',
+      _ImageSortOption.path => 'path',
       _ImageSortOption.random => 'random',
     };
     ref
@@ -64,6 +66,7 @@ class _ImagesPageState extends ConsumerState<ImagesPage> {
       _ImageSortOption.date => 'Date',
       _ImageSortOption.rating => 'Rating',
       _ImageSortOption.title => 'Title',
+      _ImageSortOption.path => 'Filepath',
       _ImageSortOption.random => 'Random',
     };
   }
@@ -97,8 +100,8 @@ class _ImagesPageState extends ConsumerState<ImagesPage> {
                         TextButton(
                           onPressed: () {
                             setModalState(() {
-                              tempOption = _ImageSortOption.date;
-                              tempDescending = true;
+                              tempOption = _ImageSortOption.path;
+                              tempDescending = false;
                             });
                           },
                           child: const Text('Reset'),
@@ -255,7 +258,7 @@ class _ImagesPageState extends ConsumerState<ImagesPage> {
               tooltip: 'Sort options',
               onPressed: _showSortPanel,
             ),
-            if (_sortOption != _ImageSortOption.date || !_sortDescending)
+            if (_sortOption != _ImageSortOption.path || _sortDescending)
               Positioned(
                 right: 8,
                 top: 8,

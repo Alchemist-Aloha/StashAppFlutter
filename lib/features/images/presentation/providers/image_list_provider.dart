@@ -44,8 +44,8 @@ class ImageSort extends _$ImageSort {
   @override
   ({String? sort, bool descending}) build() {
     final prefs = ref.watch(sharedPreferencesProvider);
-    final sort = prefs.getString(_sortKey) ?? 'date';
-    final descending = prefs.getBool(_descKey) ?? true;
+    final sort = prefs.getString(_sortKey) ?? 'path';
+    final descending = prefs.getBool(_descKey) ?? false;
     return (sort: sort, descending: descending);
   }
 

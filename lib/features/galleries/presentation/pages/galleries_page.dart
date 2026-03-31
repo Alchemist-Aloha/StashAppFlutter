@@ -10,7 +10,7 @@ import '../../domain/entities/gallery.dart';
 import '../widgets/gallery_filter_panel.dart';
 import '../../domain/entities/gallery_filter.dart';
 
-enum _GallerySortOption { title, date, rating, imageCount, random }
+enum _GallerySortOption { title, date, rating, imageCount, path, random }
 
 class GalleriesPage extends ConsumerStatefulWidget {
   const GalleriesPage({super.key});
@@ -20,7 +20,7 @@ class GalleriesPage extends ConsumerStatefulWidget {
 }
 
 class _GalleriesPageState extends ConsumerState<GalleriesPage> {
-  _GallerySortOption _sortOption = _GallerySortOption.title;
+  _GallerySortOption _sortOption = _GallerySortOption.path;
   bool _sortDescending = false;
 
   @override
@@ -34,8 +34,9 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
           'date' => _GallerySortOption.date,
           'rating100' => _GallerySortOption.rating,
           'image_count' => _GallerySortOption.imageCount,
+          'path' => _GallerySortOption.path,
           'random' => _GallerySortOption.random,
-          _ => _GallerySortOption.title,
+          _ => _GallerySortOption.path,
         };
         _sortDescending = sortConfig.descending;
       });
@@ -51,8 +52,9 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
     final sortKey = switch (_sortOption) {
       _GallerySortOption.title => 'title',
       _GallerySortOption.date => 'date',
-      _GallerySortOption.rating => 'rating100',
-      _GallerySortOption.imageCount => 'image_count',
+      _GallerySortOption.rating => 'rating',
+      _GallerySortOption.imageCount => 'images_count',
+      _GallerySortOption.path => 'path',
       _GallerySortOption.random => 'random',
     };
     ref
@@ -66,6 +68,7 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
       _GallerySortOption.date => 'Date',
       _GallerySortOption.rating => 'Rating',
       _GallerySortOption.imageCount => 'Image Count',
+      _GallerySortOption.path => 'Filepath',
       _GallerySortOption.random => 'Random',
     };
   }
@@ -99,7 +102,7 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
                         TextButton(
                           onPressed: () {
                             setModalState(() {
-                              tempOption = _GallerySortOption.title;
+                              tempOption = _GallerySortOption.path;
                               tempDescending = false;
                             });
                           },
@@ -244,7 +247,7 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
               tooltip: 'Sort options',
               onPressed: _showSortPanel,
             ),
-            if (_sortOption != _GallerySortOption.title || _sortDescending)
+            if (_sortOption != _GallerySortOption.path || _sortDescending)
               Positioned(
                 right: 8,
                 top: 8,
