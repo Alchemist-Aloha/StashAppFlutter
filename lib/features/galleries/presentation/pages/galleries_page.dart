@@ -14,7 +14,6 @@ import '../widgets/gallery_filter_panel.dart';
 import '../../domain/entities/gallery_filter.dart';
 import '../../../../core/data/graphql/url_resolver.dart';
 import '../../../../core/data/preferences/shared_preferences_provider.dart';
-import '../../../../core/presentation/widgets/stash_image.dart';
 import '../../../../core/data/graphql/graphql_client.dart';
 
 enum _GallerySortOption { title, date, rating, imageCount, path, random }
