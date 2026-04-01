@@ -134,33 +134,35 @@ class _ShimmerState extends State<_Shimmer>
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, child) {
-        return ShaderMask(
-          shaderCallback: (bounds) {
-            final double progress = _controller.value;
-            final double center = progress * 2 - 0.5; // move across
-            return LinearGradient(
-              begin: Alignment(-1, 0),
-              end: Alignment(1, 0),
-              colors: [
-                Colors.grey.shade800,
-                Colors.grey.shade700,
-                Colors.grey.shade800,
-              ],
-              stops: [
-                (center - 0.3).clamp(0.0, 1.0),
-                center.clamp(0.0, 1.0),
-                (center + 0.3).clamp(0.0, 1.0),
-              ],
-            ).createShader(bounds);
-          },
-          blendMode: BlendMode.srcATop,
-          child: widget.child,
-        );
-      },
-      child: widget.child,
+    return RepaintBoundary(
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, child) {
+          return ShaderMask(
+            shaderCallback: (bounds) {
+              final double progress = _controller.value;
+              final double center = progress * 2 - 0.5; // move across
+              return LinearGradient(
+                begin: Alignment(-1, 0),
+                end: Alignment(1, 0),
+                colors: [
+                  Colors.grey.shade800,
+                  Colors.grey.shade700,
+                  Colors.grey.shade800,
+                ],
+                stops: [
+                  (center - 0.3).clamp(0.0, 1.0),
+                  center.clamp(0.0, 1.0),
+                  (center + 0.3).clamp(0.0, 1.0),
+                ],
+              ).createShader(bounds);
+            },
+            blendMode: BlendMode.srcATop,
+            child: widget.child,
+          );
+        },
+        child: widget.child,
+      ),
     );
   }
 }

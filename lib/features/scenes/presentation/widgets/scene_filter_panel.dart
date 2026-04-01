@@ -39,13 +39,14 @@ class _SceneFilterPanelState extends ConsumerState<SceneFilterPanel> {
               top: Radius.circular(AppTheme.radiusExtraLarge),
             ),
           ),
-          child: SingleChildScrollView(
-            padding: EdgeInsets.only(
-              bottom: bottomInset + safeBottom + AppTheme.spacingLarge,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+          child: RepaintBoundary(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.only(
+                bottom: bottomInset + safeBottom + AppTheme.spacingLarge,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -243,8 +244,9 @@ class _SceneFilterPanelState extends ConsumerState<SceneFilterPanel> {
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildResolutionChip(String value, String label) {
     final isSelected = _tempFilter.resolutions?.contains(value) ?? false;

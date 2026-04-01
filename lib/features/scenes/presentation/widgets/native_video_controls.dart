@@ -356,216 +356,224 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                       onTap:
                           () {}, // Block background toggle when interacting with controls
                       behavior: HitTestBehavior.opaque,
-                      child: Container(
-                        decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              Color(0x00000000),
-                              Color(0x88000000),
-                              Color(0xCC000000),
-                            ],
-                            stops: [0.0, 0.45, 1.0],
-                          ),
-                        ),
-                        padding: const EdgeInsets.fromLTRB(12, 18, 12, 8),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            SliderTheme(
-                              data: SliderTheme.of(context).copyWith(
-                                trackHeight: 4,
-                                thumbShape: const RoundSliderThumbShape(
-                                  enabledThumbRadius: 7,
-                                ),
-                                overlayShape: const RoundSliderOverlayShape(
-                                  overlayRadius: 14,
-                                ),
-                                activeTrackColor: const Color(0xFFECECEC),
-                                inactiveTrackColor: const Color(0x55FFFFFF),
-                                thumbColor: Colors.white,
-                              ),
-                              child: Slider(
-                                min: 0,
-                                max: durationMs.toDouble(),
-                                value: sliderValue,
-                                onChangeStart: (v) {
-                                  _cancelAutoHide();
-                                  setState(() {
-                                    _isScrubbing = true;
-                                    _scrubMs = v;
-                                    _controlsVisible = true;
-                                  });
-                                },
-                                onChanged: (v) {
-                                  setState(() => _scrubMs = v);
-                                },
-                                onChangeEnd: (v) {
-                                  final target = Duration(
-                                    milliseconds: v.round(),
-                                  );
-                                  widget.controller.seekTo(target);
-                                  setState(() {
-                                    _isScrubbing = false;
-                                    _scrubMs = 0;
-                                  });
-                                  _scheduleAutoHide();
-                                },
-                              ),
+                      child: RepaintBoundary(
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Color(0x00000000),
+                                Color(0x88000000),
+                                Color(0xCC000000),
+                              ],
+                              stops: [0.0, 0.45, 1.0],
                             ),
-                            const SizedBox(height: 2),
-                            Row(
-                              children: [
-                                Material(
-                                  color: const Color(0x30FFFFFF),
-                                  shape: const CircleBorder(),
-                                  child: IconButton(
-                                    iconSize: 24,
-                                    icon: Icon(
-                                      value.isPlaying
-                                          ? Icons.pause_rounded
-                                          : Icons.play_arrow_rounded,
-                                      color: Colors.white,
-                                    ),
-                                    onPressed: () {
-                                      if (value.isPlaying) {
-                                        widget.controller.pause();
-                                      } else {
-                                        widget.controller.play();
-                                      }
-                                      _showControlsTemporarily();
-                                    },
+                          ),
+                          padding: const EdgeInsets.fromLTRB(12, 18, 12, 8),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SliderTheme(
+                                data: SliderTheme.of(context).copyWith(
+                                  trackHeight: 4,
+                                  thumbShape: const RoundSliderThumbShape(
+                                    enabledThumbRadius: 7,
                                   ),
+                                  overlayShape: const RoundSliderOverlayShape(
+                                    overlayRadius: 14,
+                                  ),
+                                  activeTrackColor: const Color(0xFFECECEC),
+                                  inactiveTrackColor: const Color(0x55FFFFFF),
+                                  thumbColor: Colors.white,
                                 ),
-                                if (nextScene != null && !isFullScreen) ...[
-                                  const SizedBox(width: 8),
+                                child: Slider(
+                                  min: 0,
+                                  max: durationMs.toDouble(),
+                                  value: sliderValue,
+                                  onChangeStart: (v) {
+                                    _cancelAutoHide();
+                                    setState(() {
+                                      _isScrubbing = true;
+                                      _scrubMs = v;
+                                      _controlsVisible = true;
+                                    });
+                                  },
+                                  onChanged: (v) {
+                                    setState(() => _scrubMs = v);
+                                  },
+                                  onChangeEnd: (v) {
+                                    final target = Duration(
+                                      milliseconds: v.round(),
+                                    );
+                                    widget.controller.seekTo(target);
+                                    setState(() {
+                                      _isScrubbing = false;
+                                      _scrubMs = 0;
+                                    });
+                                    _scheduleAutoHide();
+                                  },
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Row(
+                                children: [
                                   Material(
                                     color: const Color(0x30FFFFFF),
                                     shape: const CircleBorder(),
                                     child: IconButton(
                                       iconSize: 24,
-                                      icon: const Icon(
-                                        Icons.skip_next_rounded,
+                                      icon: Icon(
+                                        value.isPlaying
+                                            ? Icons.pause_rounded
+                                            : Icons.play_arrow_rounded,
                                         color: Colors.white,
                                       ),
                                       onPressed: () {
-                                        ref
-                                            .read(playerStateProvider.notifier)
-                                            .playNext();
+                                        if (value.isPlaying) {
+                                          widget.controller.pause();
+                                        } else {
+                                          widget.controller.play();
+                                        }
                                         _showControlsTemporarily();
                                       },
                                     ),
                                   ),
-                                ],
-                                const SizedBox(width: 8),
-                                Text(
-                                  '${_format(Duration(milliseconds: sliderValue.round()))} / ${_format(duration)}',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                const Spacer(),
-                                PopupMenuButton<double>(
-                                  tooltip: 'Playback speed',
-                                  initialValue: playbackSpeed,
-                                  color: const Color(0xEE1C1C1C),
-                                  onSelected: (speed) async {
-                                    await widget.controller.setPlaybackSpeed(
-                                      speed,
-                                    );
-                                    _showControlsTemporarily();
-                                  },
-                                  itemBuilder: (context) {
-                                    return _playbackSpeeds
-                                        .map(
-                                          (speed) => PopupMenuItem<double>(
-                                            value: speed,
-                                            child: Row(
-                                              children: [
-                                                Icon(
-                                                  speed == playbackSpeed
-                                                      ? Icons.check_circle
-                                                      : Icons.circle_outlined,
-                                                  size: 16,
-                                                  color: speed == playbackSpeed
-                                                      ? Colors.white
-                                                      : Colors.white70,
-                                                ),
-                                                const SizedBox(width: 8),
-                                                Text(
-                                                  _formatSpeed(speed),
-                                                  style: const TextStyle(
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        )
-                                        .toList();
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                      vertical: 6,
-                                    ),
-                                    decoration: BoxDecoration(
+                                  if (nextScene != null && !isFullScreen) ...[
+                                    const SizedBox(width: 8),
+                                    Material(
                                       color: const Color(0x30FFFFFF),
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: Text(
-                                      _formatSpeed(playbackSpeed),
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600,
+                                      shape: const CircleBorder(),
+                                      child: IconButton(
+                                        iconSize: 24,
+                                        icon: const Icon(
+                                          Icons.skip_next_rounded,
+                                          color: Colors.white,
+                                        ),
+                                        onPressed: () {
+                                          ref
+                                              .read(
+                                                playerStateProvider.notifier,
+                                              )
+                                              .playNext();
+                                          _showControlsTemporarily();
+                                        },
                                       ),
                                     ),
-                                  ),
-                                ),
-                                const SizedBox(width: 6),
-                                if (widget.enableNativePip &&
-                                    Platform.isAndroid)
-                                  IconButton(
-                                    tooltip: 'Picture-in-Picture',
-                                    icon: const Icon(
-                                      Icons.picture_in_picture_alt_outlined,
+                                  ],
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    '${_format(Duration(milliseconds: sliderValue.round()))} / ${_format(duration)}',
+                                    style: const TextStyle(
                                       color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
                                     ),
-                                    onPressed: () async {
-                                      if (!isFullScreen) {
-                                        widget.onFullScreenToggle?.call();
-                                        // Small delay to allow transition
-                                        await Future.delayed(
-                                          const Duration(milliseconds: 150),
-                                        );
-                                      }
-                                      await PipMode.enterIfAvailable(
-                                        aspectRatio:
-                                            widget.controller.value.aspectRatio,
+                                  ),
+                                  const Spacer(),
+                                  PopupMenuButton<double>(
+                                    tooltip: 'Playback speed',
+                                    initialValue: playbackSpeed,
+                                    color: const Color(0xEE1C1C1C),
+                                    onSelected: (speed) async {
+                                      await widget.controller.setPlaybackSpeed(
+                                        speed,
                                       );
                                       _showControlsTemporarily();
                                     },
+                                    itemBuilder: (context) {
+                                      return _playbackSpeeds
+                                          .map(
+                                            (speed) => PopupMenuItem<double>(
+                                              value: speed,
+                                              child: Row(
+                                                children: [
+                                                  Icon(
+                                                    speed == playbackSpeed
+                                                        ? Icons.check_circle
+                                                        : Icons.circle_outlined,
+                                                    size: 16,
+                                                    color:
+                                                        speed == playbackSpeed
+                                                            ? Colors.white
+                                                            : Colors.white70,
+                                                  ),
+                                                  const SizedBox(width: 8),
+                                                  Text(
+                                                    _formatSpeed(speed),
+                                                    style: const TextStyle(
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          )
+                                          .toList();
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 6,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0x30FFFFFF),
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: Text(
+                                        _formatSpeed(playbackSpeed),
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                IconButton(
-                                  tooltip: 'Toggle Fullscreen',
-                                  icon: Icon(
-                                    isFullScreen
-                                        ? Icons.fullscreen_exit_rounded
-                                        : Icons.fullscreen_rounded,
-                                    color: Colors.white,
+                                  const SizedBox(width: 6),
+                                  if (widget.enableNativePip &&
+                                      Platform.isAndroid)
+                                    IconButton(
+                                      tooltip: 'Picture-in-Picture',
+                                      icon: const Icon(
+                                        Icons.picture_in_picture_alt_outlined,
+                                        color: Colors.white,
+                                      ),
+                                      onPressed: () async {
+                                        if (!isFullScreen) {
+                                          widget.onFullScreenToggle?.call();
+                                          // Small delay to allow transition
+                                          await Future.delayed(
+                                            const Duration(milliseconds: 150),
+                                          );
+                                        }
+                                        await PipMode.enterIfAvailable(
+                                          aspectRatio:
+                                              widget
+                                                  .controller
+                                                  .value
+                                                  .aspectRatio,
+                                        );
+                                        _showControlsTemporarily();
+                                      },
+                                    ),
+                                  IconButton(
+                                    tooltip: 'Toggle Fullscreen',
+                                    icon: Icon(
+                                      isFullScreen
+                                          ? Icons.fullscreen_exit_rounded
+                                          : Icons.fullscreen_rounded,
+                                      color: Colors.white,
+                                    ),
+                                    onPressed: () {
+                                      widget.onFullScreenToggle?.call();
+                                      _showControlsTemporarily();
+                                    },
                                   ),
-                                  onPressed: () {
-                                    widget.onFullScreenToggle?.call();
-                                    _showControlsTemporarily();
-                                  },
-                                ),
-                              ],
-                            ),
-                          ],
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
