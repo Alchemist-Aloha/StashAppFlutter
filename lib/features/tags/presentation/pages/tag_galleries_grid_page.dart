@@ -5,7 +5,9 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/presentation/widgets/list_page_scaffold.dart';
 import '../../../../core/presentation/widgets/grid_utils.dart';
 import '../../../../core/presentation/widgets/grid_card.dart';
+import '../../../../core/presentation/providers/layout_settings_provider.dart';
 import '../providers/tag_galleries_provider.dart';
+import '../../../performers/presentation/providers/performer_galleries_provider.dart';
 import '../../../images/presentation/providers/image_list_provider.dart';
 
 /// A grid page showing all galleries for a specific tag.
@@ -17,21 +19,25 @@ class TagGalleriesGridPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final galleriesAsync = ref.watch(tagGalleriesGridProvider(tagId));
+    final isGridView = ref.watch(tagGalleriesGridLayoutProvider);
 
-    return ListPageScaffold(
+    return ListPageScaffold<PerformerGalleryItem>(
       title: 'Tag Galleries',
       searchHint: 'Search galleries...',
       onSearchChanged: (_) {},
       provider: galleriesAsync,
+      imageUrlBuilder: (item) => item.thumbnailUrl,
       onRefresh: () => ref.refresh(tagGalleriesGridProvider(tagId).future),
       onFetchNextPage: () => ref
           .read(tagGalleriesGridProvider(tagId).notifier)
           .fetchNextPage(),
-      gridDelegate: GridUtils.createDelegate(),
-      padding: GridUtils.defaultPadding,
-      itemBuilder: (context, item) => GridCard(
+      gridDelegate: isGridView ? GridUtils.createDelegate() : null,
+      padding: isGridView ? GridUtils.defaultPadding : EdgeInsets.zero,
+      itemBuilder: (context, item, memCacheWidth, memCacheHeight) => GridCard(
         title: item.title,
         imageUrl: item.thumbnailUrl,
+        isGrid: isGridView,
+        memCacheWidth: memCacheWidth,
         onTap: () {
           ref
               .read(imageFilterStateProvider.notifier)

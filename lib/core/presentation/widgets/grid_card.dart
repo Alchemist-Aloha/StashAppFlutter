@@ -13,6 +13,9 @@ class GridCard extends StatelessWidget {
     this.imageUrl,
     this.onTap,
     this.badge,
+    this.isGrid = true,
+    this.memCacheWidth,
+    this.memCacheHeight,
     super.key,
   });
 
@@ -31,8 +34,24 @@ class GridCard extends StatelessWidget {
   /// An optional label shown in a badge over the image.
   final String? badge;
 
+  /// Whether to display in a compact grid format or a wide list format.
+  final bool isGrid;
+
+  /// Optional memory cache width for image optimization.
+  final int? memCacheWidth;
+
+  /// Optional memory cache height for image optimization.
+  final int? memCacheHeight;
+
   @override
   Widget build(BuildContext context) {
+    if (isGrid) {
+      return _buildGridCard(context);
+    }
+    return _buildListCard(context);
+  }
+
+  Widget _buildGridCard(BuildContext context) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
@@ -49,7 +68,8 @@ class GridCard extends StatelessWidget {
                   StashImage(
                     imageUrl: imageUrl,
                     fit: BoxFit.cover,
-                    memCacheWidth: 400,
+                    memCacheWidth: memCacheWidth,
+                    memCacheHeight: memCacheHeight,
                   ),
                   if (badge != null)
                     Positioned(
@@ -104,6 +124,80 @@ class GridCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildListCard(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AspectRatio(
+            aspectRatio: 16 / 9,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  StashImage(
+                    imageUrl: imageUrl,
+                    fit: BoxFit.cover,
+                    memCacheWidth: memCacheWidth,
+                    memCacheHeight: memCacheHeight,
+                  ),
+                  if (badge != null)
+                    Positioned(
+                      right: 12,
+                      top: 12,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: context.colors.primary.withValues(alpha: 0.8),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          badge!,
+                          style: context.textTheme.labelMedium?.copyWith(
+                            color: context.colors.onPrimary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(AppTheme.spacingMedium),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                if (subtitle != null)
+                  Text(
+                    subtitle!,
+                    style: Theme.of(context).textTheme.bodySmall,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
               ],
             ),
           ),

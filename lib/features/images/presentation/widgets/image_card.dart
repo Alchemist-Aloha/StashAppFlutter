@@ -6,10 +6,16 @@ import '../../../../core/presentation/theme/app_theme.dart';
 import '../../domain/entities/image.dart' as entity;
 
 class ImageCard extends ConsumerWidget {
-  const ImageCard({required this.image, this.onTap, super.key});
+  const ImageCard({
+    required this.image,
+    this.onTap,
+    this.memCacheWidth,
+    super.key,
+  });
 
   final entity.Image image;
   final VoidCallback? onTap;
+  final int? memCacheWidth;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -40,6 +46,7 @@ class ImageCard extends ConsumerWidget {
                 width: double.infinity,
                 height: double.infinity,
                 fit: BoxFit.cover,
+                memCacheWidth: memCacheWidth,
               ),
               if (image.rating100 != null && image.rating100! > 0)
                 Positioned(
@@ -63,7 +70,7 @@ class ImageCard extends ConsumerWidget {
                           (image.rating100! / 20).toStringAsFixed(1),
                           style: const TextStyle(
                             color: Colors.white,
-                            fontSize: 10,
+                            fontSize: 9,
                             fontWeight: FontWeight.bold,
                           ),
                         ),

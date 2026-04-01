@@ -117,36 +117,38 @@ class MediaStrip extends StatelessWidget {
               }
             });
 
-            return InkWell(
-              onTap: item.onTap,
-              borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
-              child: SizedBox(
-                width: itemWidth,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(
-                        AppTheme.radiusMedium,
+            return RepaintBoundary(
+              child: InkWell(
+                onTap: item.onTap,
+                borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
+                child: SizedBox(
+                  width: itemWidth,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(
+                          AppTheme.radiusMedium,
+                        ),
+                        child: StashImage(
+                          imageUrl: item.thumbnailUrl,
+                          width: itemWidth,
+                          height: itemWidth * (9 / 16),
+                          fit: BoxFit.cover,
+                          memCacheWidth: (itemWidth * 2).toInt(),
+                        ),
                       ),
-                      child: StashImage(
-                        imageUrl: item.thumbnailUrl,
-                        width: itemWidth,
-                        height: itemWidth * (9 / 16),
-                        fit: BoxFit.cover,
-                        memCacheWidth: (itemWidth * 2).toInt(),
+                      const SizedBox(height: AppTheme.spacingSmall),
+                      Text(
+                        item.title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: context.textTheme.bodySmall?.copyWith(
+                          color: context.colors.onSurface,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: AppTheme.spacingSmall),
-                    Text(
-                      item.title,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: context.textTheme.bodySmall?.copyWith(
-                        color: context.colors.onSurface,
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             );

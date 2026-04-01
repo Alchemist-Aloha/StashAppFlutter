@@ -277,6 +277,7 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
   @override
   Widget build(BuildContext context) {
     final galleriesAsync = ref.watch(galleryListProvider);
+    final isGridView = ref.watch(galleryGridLayoutProvider);
     final filterActive = ref.watch(
       galleryFilterStateProvider.select((s) => s != GalleryFilter.empty()),
     );
@@ -287,6 +288,7 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
     return ListPageScaffold<Gallery>(
       title: 'Galleries',
       scrollController: ref.watch(galleryScrollControllerProvider),
+      imageUrlBuilder: _getThumbnailUrl,
       actions: [
         Stack(
           children: [
@@ -346,16 +348,21 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
       onRefresh: () => ref.refresh(galleryListProvider.future),
       onFetchNextPage: () =>
           ref.read(galleryListProvider.notifier).fetchNextPage(),
-      gridDelegate: GridUtils.createDelegate(),
-      padding: GridUtils.defaultPadding,
-      itemBuilder: (context, gallery) => GalleryCard(
-        gallery: gallery,
-        thumbnailUrl: _getThumbnailUrl(gallery),
-        onTap: () {
-          ref.read(imageFilterStateProvider.notifier).setGalleryId(gallery.id);
-          context.go('/galleries/images');
-        },
-      ),
+      gridDelegate: isGridView ? GridUtils.createDelegate() : null,
+      padding: isGridView ? GridUtils.defaultPadding : EdgeInsets.zero,
+      itemBuilder: (context, gallery, memCacheWidth, memCacheHeight) =>
+          GalleryCard(
+            gallery: gallery,
+            isGrid: isGridView,
+            thumbnailUrl: _getThumbnailUrl(gallery),
+            memCacheWidth: memCacheWidth,
+            onTap: () {
+              ref.read(imageFilterStateProvider.notifier).setGalleryId(
+                gallery.id,
+              );
+              context.go('/galleries/images');
+            },
+          ),
       floatingActionButton: randomNavigationEnabled
           ? galleriesAsync.maybeWhen(
               data: (galleries) => FloatingActionButton.small(

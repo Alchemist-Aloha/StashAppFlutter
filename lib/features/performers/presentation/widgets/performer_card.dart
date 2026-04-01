@@ -7,8 +7,14 @@ import '../../../../core/presentation/theme/app_theme.dart';
 class PerformerCard extends ConsumerWidget {
   final Performer performer;
   final VoidCallback? onTap;
+  final int? memCacheWidth;
 
-  const PerformerCard({required this.performer, this.onTap, super.key});
+  const PerformerCard({
+    required this.performer,
+    this.onTap,
+    this.memCacheWidth,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -23,9 +29,10 @@ class PerformerCard extends ConsumerWidget {
             Expanded(
               child: LayoutBuilder(
                 builder: (context, constraints) {
-                  final size = constraints.maxWidth < constraints.maxHeight
-                      ? constraints.maxWidth
-                      : constraints.maxHeight;
+                  final size =
+                      constraints.maxWidth < constraints.maxHeight
+                          ? constraints.maxWidth
+                          : constraints.maxHeight;
                   return Center(
                     child: SizedBox(
                       width: size,
@@ -34,7 +41,7 @@ class PerformerCard extends ConsumerWidget {
                         child: StashImage(
                           imageUrl: performer.imagePath ?? '',
                           fit: BoxFit.cover,
-                          memCacheWidth: 300,
+                          memCacheWidth: memCacheWidth ?? 300,
                         ),
                       ),
                     ),
@@ -50,17 +57,9 @@ class PerformerCard extends ConsumerWidget {
                 fontWeight: FontWeight.bold,
                 fontSize: 12,
               ),
+              textAlign: TextAlign.center,
               maxLines: 1,
-              textAlign: TextAlign.center,
               overflow: TextOverflow.ellipsis,
-            ),
-            Text(
-              '${performer.sceneCount} scenes',
-              style: TextStyle(
-                color: context.colors.onSurfaceVariant,
-                fontSize: 10,
-              ),
-              textAlign: TextAlign.center,
             ),
           ],
         ),

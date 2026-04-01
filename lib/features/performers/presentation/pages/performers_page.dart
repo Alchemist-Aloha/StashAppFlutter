@@ -433,6 +433,7 @@ class _PerformersPageState extends ConsumerState<PerformersPage> {
       onSearchChanged: _onSearchChanged,
       provider: performersAsync,
       scrollController: scrollController,
+      imageUrlBuilder: (performer) => performer.imagePath,
       onRefresh: () => ref.refresh(performerListProvider.future),
       onFetchNextPage: () =>
           ref.read(performerListProvider.notifier).fetchNextPage(),
@@ -490,12 +491,14 @@ class _PerformersPageState extends ConsumerState<PerformersPage> {
       ),
       mobileCrossAxisCount: 3,
       tabletCrossAxisCount: 5,
-      itemBuilder: (context, performer) {
+      itemBuilder: (context, performer, memCacheWidth, memCacheHeight) {
         return PerformerCard(
           performer: performer,
+          memCacheWidth: memCacheWidth,
           onTap: () => context.push('/performers/performer/${performer.id}'),
         );
       },
+
       floatingActionButton: randomNavigationEnabled
           ? performersAsync.maybeWhen(
               data: (performers) => FloatingActionButton.small(
