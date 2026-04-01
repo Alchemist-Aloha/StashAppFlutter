@@ -109,7 +109,11 @@ class ShellPage extends ConsumerWidget {
 
     Widget bodyContent = Column(
       children: [
-        Expanded(child: navigationShell),
+        Expanded(
+          child: RepaintBoundary(
+            child: navigationShell,
+          ),
+        ),
         if (!hideMiniPlayer) const MiniPlayer(),
       ],
     );

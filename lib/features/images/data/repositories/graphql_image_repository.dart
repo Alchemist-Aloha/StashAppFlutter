@@ -134,4 +134,28 @@ class GraphQLImageRepository implements ImageRepository {
 
     return Image.fromJson(map);
   }
+
+  @override
+  /// Sends a direct `imageUpdate` GraphQL mutation for `rating100`.
+  ///
+  /// This method intentionally uses a lightweight inline mutation because only
+  /// the rating field needs to be updated from the fullscreen viewer flow.
+  /// Callers should update local list/detail state separately after success.
+  Future<void> updateImageRating(String id, int rating100) async {
+    final result = await client.mutate(
+      MutationOptions(
+        document: gql(r'''
+          mutation UpdateImageRating($id: ID!, $rating: Int!) {
+            imageUpdate(input: { id: $id, rating100: $rating }) {
+              id
+              rating100
+            }
+          }
+        '''),
+        variables: {'id': id, 'rating': rating100},
+      ),
+    );
+
+    if (result.hasException) throw result.exception!;
+  }
 }

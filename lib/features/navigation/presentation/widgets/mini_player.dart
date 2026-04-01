@@ -34,53 +34,55 @@ class MiniPlayer extends ConsumerWidget {
             ),
           ),
         ),
-        child: Row(
-          children: [
-            AspectRatio(
-              aspectRatio: 16 / 9,
-              child: StashImage(
-                imageUrl: activeScene.paths.screenshot ?? '',
-                fit: BoxFit.cover,
-                memCacheWidth: 320,
+        child: RepaintBoundary(
+          child: Row(
+            children: [
+              AspectRatio(
+                aspectRatio: 16 / 9,
+                child: StashImage(
+                  imageUrl: activeScene.paths.screenshot ?? '',
+                  fit: BoxFit.cover,
+                  memCacheWidth: 320,
+                ),
               ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  MarqueeText(
-                    text: displayTitle,
-                    style: context.textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: context.colors.onSurface,
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    MarqueeText(
+                      text: displayTitle,
+                      style: context.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: context.colors.onSurface,
+                      ),
                     ),
-                  ),
-                  Text(
-                    activeScene.studioName ?? '',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: context.textTheme.bodySmall?.copyWith(
-                      color: context.colors.onSurface.withValues(alpha: 0.75),
+                    Text(
+                      activeScene.studioName ?? '',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: context.textTheme.bodySmall?.copyWith(
+                        color: context.colors.onSurface.withValues(alpha: 0.75),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            IconButton(
-              onPressed: () =>
-                  ref.read(playerStateProvider.notifier).togglePlayPause(),
-              icon: Icon(
-                isPlaying ? Icons.pause : Icons.play_arrow,
-                color: context.colors.onSurface,
+              IconButton(
+                onPressed: () =>
+                    ref.read(playerStateProvider.notifier).togglePlayPause(),
+                icon: Icon(
+                  isPlaying ? Icons.pause : Icons.play_arrow,
+                  color: context.colors.onSurface,
+                ),
               ),
-            ),
-            IconButton(
-              onPressed: () => ref.read(playerStateProvider.notifier).stop(),
-              icon: Icon(Icons.close, color: context.colors.onSurface),
-            ),
-          ],
+              IconButton(
+                onPressed: () => ref.read(playerStateProvider.notifier).stop(),
+                icon: Icon(Icons.close, color: context.colors.onSurface),
+              ),
+            ],
+          ),
         ),
       ),
     );
