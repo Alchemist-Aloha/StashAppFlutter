@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../domain/entities/image.dart' as entity;
 import '../providers/image_list_provider.dart';
 import '../../../../core/data/graphql/media_headers_provider.dart';
+import '../../../../core/utils/responsive.dart';
 
 class ImageFullscreenPage extends ConsumerStatefulWidget {
   final String imageId;
@@ -81,6 +82,92 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
     return 'Untitled';
   }
 
+  Widget _buildOverlayHeader(
+    BuildContext context,
+    String displayTitle,
+    int itemCount,
+    double maxOverlayWidth,
+    double horizontalPadding,
+  ) {
+    return Positioned(
+      top: 0,
+      left: 0,
+      right: 0,
+      child: SafeArea(
+        bottom: false,
+        child: Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: maxOverlayWidth),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+              child: Container(
+                padding: const EdgeInsets.only(
+                  top: 8,
+                  bottom: 16,
+                  left: 8,
+                  right: 8,
+                ),
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Colors.black54, Colors.transparent],
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.arrow_back, color: Colors.white),
+                      onPressed: () => context.pop(),
+                    ),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        displayTitle,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          shadows: [
+                            Shadow(
+                              offset: Offset(0, 1),
+                              blurRadius: 4,
+                              color: Colors.black,
+                            ),
+                          ],
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black45,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        '${_currentIndex + 1} / $itemCount',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final imagesAsync = ref.watch(imageListProvider);
@@ -108,184 +195,137 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
           final currentImage = items.isNotEmpty ? items[_currentIndex] : null;
           final displayTitle = _getDisplayTitle(currentImage);
 
-          return Stack(
-            children: [
-              ExtendedImageGesturePageView.builder(
-                controller: _pageController,
-                scrollDirection: Axis.vertical,
-                itemCount: items.length,
-                physics: const BouncingScrollPhysics(),
-                onPageChanged: (index) {
-                  setState(() => _currentIndex = index);
-                  _prefetchAdjacent(items, index, headers);
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              final isWideLayout =
+                  constraints.maxWidth >= Responsive.tabletBreakpoint;
+              final scrollDirection =
+                  isWideLayout ? Axis.horizontal : Axis.vertical;
+              final maxOverlayWidth = isWideLayout ? 720.0 : constraints.maxWidth;
+              final horizontalPadding = isWideLayout ? 24.0 : 8.0;
 
-                  // Load more if near end
-                  if (index >= items.length - 5) {
-                    ref.read(imageListProvider.notifier).fetchNextPage();
-                  }
-                },
-                itemBuilder: (context, index) {
-                  final image = items[index];
-                  final imageUrl = image.paths.image ?? image.paths.preview;
+              return Stack(
+                children: [
+                  ExtendedImageGesturePageView.builder(
+                    controller: _pageController,
+                    scrollDirection: scrollDirection,
+                    itemCount: items.length,
+                    physics: const BouncingScrollPhysics(),
+                    onPageChanged: (index) {
+                      setState(() => _currentIndex = index);
+                      _prefetchAdjacent(items, index, headers);
 
-                  if (imageUrl == null || imageUrl.isEmpty) {
-                    return const Center(
-                      child: Icon(
-                        Icons.broken_image,
-                        color: Colors.white54,
-                        size: 64,
-                      ),
-                    );
-                  }
+                      // Load more if near end
+                      if (index >= items.length - 5) {
+                        ref.read(imageListProvider.notifier).fetchNextPage();
+                      }
+                    },
+                    itemBuilder: (context, index) {
+                      final image = items[index];
+                      final imageUrl = image.paths.image ?? image.paths.preview;
 
-                  return RepaintBoundary(
-                    child: ExtendedImage.network(
-                      imageUrl,
-                      headers: headers,
-                      fit: BoxFit.contain,
-                      mode: ExtendedImageMode.gesture,
-                      cache: true,
-                      initGestureConfigHandler: (state) {
-                        return GestureConfig(
-                          minScale: 0.9,
-                          animationMinScale: 0.7,
-                          maxScale: 5.0,
-                          animationMaxScale: 6.0,
-                          speed: 1.0,
-                          inertialSpeed: 100.0,
-                          initialScale: 1.0,
-                          inPageView: true,
-                          initialAlignment: InitialAlignment.center,
+                      if (imageUrl == null || imageUrl.isEmpty) {
+                        return const Center(
+                          child: Icon(
+                            Icons.broken_image,
+                            color: Colors.white54,
+                            size: 64,
+                          ),
                         );
-                      },
-                      onDoubleTap: (ExtendedImageGestureState state) {
-                        final pointerDownPosition = state.pointerDownPosition;
-                        final begin = state.gestureDetails!.totalScale;
-                        double end;
+                      }
 
-                        // Double tap to zoom
-                        if (begin == 1.0) {
-                          end = 3.0;
-                        } else {
-                          end = 1.0;
-                        }
+                      return RepaintBoundary(
+                        child: ExtendedImage.network(
+                          imageUrl,
+                          headers: headers,
+                          fit: BoxFit.contain,
+                          mode: ExtendedImageMode.gesture,
+                          cache: true,
+                          initGestureConfigHandler: (state) {
+                            return GestureConfig(
+                              minScale: 0.9,
+                              animationMinScale: 0.7,
+                              maxScale: 5.0,
+                              animationMaxScale: 6.0,
+                              speed: 1.0,
+                              inertialSpeed: 100.0,
+                              initialScale: 1.0,
+                              inPageView: true,
+                              initialAlignment: InitialAlignment.center,
+                            );
+                          },
+                          onDoubleTap: (ExtendedImageGestureState state) {
+                            final pointerDownPosition = state.pointerDownPosition;
+                            final begin = state.gestureDetails!.totalScale;
+                            double end;
 
-                        state.handleDoubleTap(
-                          scale: end,
-                          doubleTapPosition: pointerDownPosition,
-                        );
-                      },
-                      loadStateChanged: (ExtendedImageState state) {
-                        switch (state.extendedImageLoadState) {
-                          case LoadState.loading:
-                            return const Center(
-                              child: CircularProgressIndicator(),
+                            // Double tap to zoom
+                            if (begin == 1.0) {
+                              end = 3.0;
+                            } else {
+                              end = 1.0;
+                            }
+
+                            state.handleDoubleTap(
+                              scale: end,
+                              doubleTapPosition: pointerDownPosition,
                             );
-                          case LoadState.completed:
-                            // Wrap the completed image in a detector for overlay toggling
-                            // This ensures it doesn't block swipes because it's part of the page item
-                            return GestureDetector(
-                              behavior: HitTestBehavior.translucent,
-                              onTap: _toggleOverlays,
-                              child: state.completedWidget,
-                            );
-                          case LoadState.failed:
-                            return GestureDetector(
-                              onTap: () => state.reLoadImage(),
-                              child: const Center(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      Icons.broken_image,
-                                      color: Colors.white54,
-                                      size: 64,
+                          },
+                          loadStateChanged: (ExtendedImageState state) {
+                            switch (state.extendedImageLoadState) {
+                              case LoadState.loading:
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              case LoadState.completed:
+                                // Wrap the completed image in a detector for overlay toggling
+                                // This ensures it doesn't block swipes because it's part of the page item
+                                return GestureDetector(
+                                  behavior: HitTestBehavior.translucent,
+                                  onTap: _toggleOverlays,
+                                  child: state.completedWidget,
+                                );
+                              case LoadState.failed:
+                                return GestureDetector(
+                                  onTap: () => state.reLoadImage(),
+                                  child: const Center(
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.broken_image,
+                                          color: Colors.white54,
+                                          size: 64,
+                                        ),
+                                        SizedBox(height: 16),
+                                        Text(
+                                          'Failed to load. Tap to retry.',
+                                          style: TextStyle(
+                                            color: Colors.white70,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    SizedBox(height: 16),
-                                    Text(
-                                      'Failed to load. Tap to retry.',
-                                      style: TextStyle(color: Colors.white70),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                        }
-                      },
-                    ),
-                  );
-                },
-              ),
-              // Overlays
-              if (_showOverlays) ...[
-                // Header with Back button, Title, and Index
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  child: Container(
-                    padding: EdgeInsets.only(
-                      top: MediaQuery.paddingOf(context).top + 8,
-                      bottom: 16,
-                      left: 8,
-                      right: 16,
-                    ),
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [Colors.black54, Colors.transparent],
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.arrow_back, color: Colors.white),
-                          onPressed: () => context.pop(),
+                                  ),
+                                );
+                            }
+                          },
                         ),
-                        Expanded(
-                          child: Text(
-                            displayTitle,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              shadows: [
-                                Shadow(
-                                  offset: Offset(0, 1),
-                                  blurRadius: 4,
-                                  color: Colors.black,
-                                ),
-                              ],
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.black45,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            '${_currentIndex + 1} / ${items.length}',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                      );
+                    },
                   ),
-                ),
-              ],
-            ],
+                  if (_showOverlays) ...[
+                    _buildOverlayHeader(
+                      context,
+                      displayTitle,
+                      items.length,
+                      maxOverlayWidth,
+                      horizontalPadding,
+                    ),
+                  ],
+                ],
+              );
+            },
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
