@@ -34,10 +34,11 @@ class StudioGalleriesGridPage extends ConsumerWidget {
           .fetchNextPage(),
       gridDelegate: isGridView ? GridUtils.createDelegate() : null,
       padding: isGridView ? GridUtils.defaultPadding : EdgeInsets.zero,
-      itemBuilder: (context, item) => GridCard(
+      itemBuilder: (context, item, memCacheWidth, memCacheHeight) => GridCard(
         title: item.title,
         imageUrl: item.thumbnailUrl,
         isGrid: isGridView,
+        memCacheWidth: memCacheWidth,
         onTap: () {
           ref
               .read(imageFilterStateProvider.notifier)

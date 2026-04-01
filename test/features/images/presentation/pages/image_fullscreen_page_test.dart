@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
@@ -87,7 +88,10 @@ void main() {
 
       expect(find.text('1 / 2'), findsOneWidget);
 
-      await tester.drag(find.byType(PageView), const Offset(0, -1000));
+      await tester.drag(
+        find.byType(ExtendedImageGesturePageView),
+        const Offset(0, -1000),
+      );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
     });

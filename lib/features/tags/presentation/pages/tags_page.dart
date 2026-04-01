@@ -414,7 +414,7 @@ class _TagsPageState extends ConsumerState<TagsPage> {
         ),
       ],
       padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingSmall),
-      itemBuilder: (context, tag) => Card(
+      itemBuilder: (context, tag, memCacheWidth, memCacheHeight) => Card(
         margin: const EdgeInsets.symmetric(
           horizontal: AppTheme.spacingMedium,
           vertical: 4,

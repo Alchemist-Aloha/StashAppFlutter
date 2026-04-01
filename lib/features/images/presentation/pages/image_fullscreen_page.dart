@@ -2,13 +2,14 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/data/graphql/media_headers_provider.dart';
-import '../../../../core/presentation/theme/app_theme.dart';
-import '../providers/image_list_provider.dart';
+import '../../../../core/presentation/widgets/stash_image.dart';
 import '../../domain/entities/image.dart' as entity;
+import '../providers/image_list_provider.dart';
+import '../../../../core/data/graphql/media_headers_provider.dart';
 
 class ImageFullscreenPage extends ConsumerStatefulWidget {
   final String imageId;
+
   const ImageFullscreenPage({required this.imageId, super.key});
 
   @override
@@ -19,8 +20,8 @@ class ImageFullscreenPage extends ConsumerStatefulWidget {
 class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
   late ExtendedPageController _pageController;
   int _currentIndex = 0;
-  bool _showOverlays = true;
   bool _initialPageSet = false;
+  bool _showOverlays = true;
 
   @override
   void initState() {
@@ -35,9 +36,7 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
   }
 
   void _toggleOverlays() {
-    setState(() {
-      _showOverlays = !_showOverlays;
-    });
+    setState(() => _showOverlays = !_showOverlays);
   }
 
   void _prefetchAdjacent(
@@ -45,25 +44,11 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
     int index,
     Map<String, String> headers,
   ) {
-    if (!mounted || items.isEmpty) return;
-
-    // Prefetch 2 ahead and 2 behind
-    for (int i = 1; i <= 2; i++) {
-      final ahead = index + i;
-      if (ahead < items.length) {
-        final url = items[ahead].paths.image ?? items[ahead].paths.preview;
-        if (url != null && url.isNotEmpty) {
-          precacheImage(
-            ExtendedNetworkImageProvider(url, headers: headers, cache: true),
-            context,
-          );
-        }
-      }
-
-      final behind = index - i;
-      if (behind >= 0) {
-        final url = items[behind].paths.image ?? items[behind].paths.preview;
-        if (url != null && url.isNotEmpty) {
+    // Prefetch next 2 and previous 1
+    for (var i = 1; i <= 2; i++) {
+      if (index + i < items.length) {
+        final url = items[index + i].paths.image ?? items[index + i].paths.preview;
+        if (url != null) {
           precacheImage(
             ExtendedNetworkImageProvider(url, headers: headers, cache: true),
             context,
@@ -71,37 +56,52 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
         }
       }
     }
+    if (index - 1 >= 0) {
+      final url = items[index - 1].paths.image ?? items[index - 1].paths.preview;
+      if (url != null) {
+        precacheImage(
+          ExtendedNetworkImageProvider(url, headers: headers, cache: true),
+          context,
+        );
+      }
+    }
   }
 
-  void _showInfo(BuildContext context, entity.Image image) {
+  void _showInfoSheet(BuildContext context, entity.Image image) {
     showModalBottomSheet(
       context: context,
-      builder: (context) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(AppTheme.spacingMedium),
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+        ),
+        padding: const EdgeInsets.all(24),
+        child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                image.title?.isNotEmpty == true
-                    ? image.title!
-                    : (image.files.isNotEmpty
-                        ? image.files.first.path
-                        : 'Untitled Image'),
-                style: context.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                image.title ??
+                    (image.files.isNotEmpty ? image.files.first.path : null) ??
+                    'Untitled',
+                style: Theme.of(context).textTheme.headlineSmall,
               ),
               const SizedBox(height: 8),
-              if (image.date != null) Text('Date: ${image.date}'),
+              if (image.date != null)
+                Text(
+                  'Date: ${image.date}',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
               if (image.rating100 != null)
                 Text(
                   'Rating: ${(image.rating100! / 20).toStringAsFixed(1)} Stars',
                 ),
               const SizedBox(height: 16),
               if (image.urls.isNotEmpty) ...[
-                Text('URLs:', style: context.textTheme.labelLarge),
+                Text('URLs:', style: Theme.of(context).textTheme.labelLarge),
                 ...image.urls.map(
                   (url) => Text(url, style: const TextStyle(fontSize: 12)),
                 ),
@@ -167,78 +167,81 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
                     );
                   }
 
-                  return ExtendedImage.network(
-                    imageUrl,
-                    headers: headers,
-                    fit: BoxFit.contain,
-                    mode: ExtendedImageMode.gesture,
-                    cache: true,
-                    initGestureConfigHandler: (state) {
-                      return GestureConfig(
-                        minScale: 0.9,
-                        animationMinScale: 0.7,
-                        maxScale: 5.0,
-                        animationMaxScale: 6.0,
-                        speed: 1.0,
-                        initialScale: 1.0,
-                        inPageView: true,
-                        initialAlignment: InitialAlignment.center,
-                      );
-                    },
-                    onDoubleTap: (ExtendedImageGestureState state) {
-                      final pointerDownPosition = state.pointerDownPosition;
-                      final begin = state.gestureDetails!.totalScale;
-                      double end;
+                  return RepaintBoundary(
+                    child: ExtendedImage.network(
+                      imageUrl,
+                      headers: headers,
+                      fit: BoxFit.contain,
+                      mode: ExtendedImageMode.gesture,
+                      cache: true,
+                      initGestureConfigHandler: (state) {
+                        return GestureConfig(
+                          minScale: 0.9,
+                          animationMinScale: 0.7,
+                          maxScale: 5.0,
+                          animationMaxScale: 6.0,
+                          speed: 1.0,
+                          inertialSpeed: 100.0,
+                          initialScale: 1.0,
+                          inPageView: true,
+                          initialAlignment: InitialAlignment.center,
+                        );
+                      },
+                      onDoubleTap: (ExtendedImageGestureState state) {
+                        final pointerDownPosition = state.pointerDownPosition;
+                        final begin = state.gestureDetails!.totalScale;
+                        double end;
 
-                      // Double tap to zoom
-                      if (begin == 1.0) {
-                        end = 3.0;
-                      } else {
-                        end = 1.0;
-                      }
+                        // Double tap to zoom
+                        if (begin == 1.0) {
+                          end = 3.0;
+                        } else {
+                          end = 1.0;
+                        }
 
-                      state.handleDoubleTap(
-                        scale: end,
-                        doubleTapPosition: pointerDownPosition,
-                      );
-                    },
-                    loadStateChanged: (ExtendedImageState state) {
-                      switch (state.extendedImageLoadState) {
-                        case LoadState.loading:
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        case LoadState.completed:
-                          // Wrap the completed image in a detector for overlay toggling
-                          // This ensures it doesn't block swipes because it's part of the page item
-                          return GestureDetector(
-                            behavior: HitTestBehavior.translucent,
-                            onTap: _toggleOverlays,
-                            child: state.completedWidget,
-                          );
-                        case LoadState.failed:
-                          return GestureDetector(
-                            onTap: () => state.reLoadImage(),
-                            child: const Center(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    Icons.broken_image,
-                                    color: Colors.white54,
-                                    size: 64,
-                                  ),
-                                  SizedBox(height: 16),
-                                  Text(
-                                    'Failed to load. Tap to retry.',
-                                    style: TextStyle(color: Colors.white70),
-                                  ),
-                                ],
+                        state.handleDoubleTap(
+                          scale: end,
+                          doubleTapPosition: pointerDownPosition,
+                        );
+                      },
+                      loadStateChanged: (ExtendedImageState state) {
+                        switch (state.extendedImageLoadState) {
+                          case LoadState.loading:
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          case LoadState.completed:
+                            // Wrap the completed image in a detector for overlay toggling
+                            // This ensures it doesn't block swipes because it's part of the page item
+                            return GestureDetector(
+                              behavior: HitTestBehavior.translucent,
+                              onTap: _toggleOverlays,
+                              child: state.completedWidget,
+                            );
+                          case LoadState.failed:
+                            return GestureDetector(
+                              onTap: () => state.reLoadImage(),
+                              child: const Center(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.broken_image,
+                                      color: Colors.white54,
+                                      size: 64,
+                                    ),
+                                    SizedBox(height: 16),
+                                    Text(
+                                      'Failed to load. Tap to retry.',
+                                      style: TextStyle(color: Colors.white70),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          );
-                      }
-                    },
+                            );
+                        }
+                      },
+                    ),
                   );
                 },
               ),
@@ -250,19 +253,16 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
                   child: IconButton(
                     icon: const Icon(Icons.arrow_back, color: Colors.white),
                     onPressed: () => context.pop(),
-                    style: IconButton.styleFrom(backgroundColor: Colors.black26),
                   ),
                 ),
                 Positioned(
                   top: MediaQuery.paddingOf(context).top + 8,
                   right: 16,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: Colors.black26,
+                      color: Colors.black45,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
@@ -275,12 +275,30 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
                   ),
                 ),
                 Positioned(
-                  bottom: MediaQuery.paddingOf(context).bottom + 16,
-                  right: 16,
-                  child: IconButton(
-                    icon: const Icon(Icons.info_outline, color: Colors.white),
-                    onPressed: () => _showInfo(context, items[_currentIndex]),
-                    style: IconButton.styleFrom(backgroundColor: Colors.black26),
+                  bottom: MediaQuery.paddingOf(context).bottom + 24,
+                  right: 24,
+                  child: Column(
+                    children: [
+                      FloatingActionButton(
+                        heroTag: 'img_info',
+                        onPressed:
+                            () => _showInfoSheet(context, items[_currentIndex]),
+                        backgroundColor: Colors.white24,
+                        child: const Icon(
+                          Icons.info_outline,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      FloatingActionButton(
+                        heroTag: 'img_share',
+                        onPressed: () {
+                          // TODO: Implement share
+                        },
+                        backgroundColor: Colors.white24,
+                        child: const Icon(Icons.share, color: Colors.white),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -288,12 +306,7 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) => Center(
-          child: Text(
-            'Error: $err',
-            style: const TextStyle(color: Colors.white),
-          ),
-        ),
+        error: (e, s) => Center(child: Text('Error: $e')),
       ),
     );
   }

@@ -21,7 +21,7 @@ void main() {
             searchHint: 'Search...',
             onSearchChanged: (_) {},
             provider: const AsyncValue.loading(),
-            itemBuilder: (context, item) => Text(item),
+            itemBuilder: (context, item, mw, mh) => Text(item),
           ),
         ),
       );
@@ -40,7 +40,7 @@ void main() {
             onSearchChanged: (_) {},
             provider: const AsyncValue.data([]),
             emptyMessage: emptyMessage,
-            itemBuilder: (context, item) => Text(item),
+            itemBuilder: (context, item, mw, mh) => Text(item),
           ),
         ),
       );
@@ -56,7 +56,7 @@ void main() {
             searchHint: 'Search...',
             onSearchChanged: (_) {},
             provider: AsyncValue.error('An error occurred', StackTrace.empty),
-            itemBuilder: (context, item) => Text(item),
+            itemBuilder: (context, item, mw, mh) => Text(item),
           ),
         ),
       );
@@ -76,7 +76,7 @@ void main() {
             searchHint: 'Search...',
             onSearchChanged: (_) {},
             provider: AsyncValue.data(items),
-            itemBuilder: (context, item) => ListTile(title: Text(item)),
+            itemBuilder: (context, item, mw, mh) => ListTile(title: Text(item)),
           ),
         ),
       );
@@ -102,7 +102,7 @@ void main() {
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
             ),
-            itemBuilder: (context, item) => GridTile(child: Text(item)),
+            itemBuilder: (context, item, mw, mh) => GridTile(child: Text(item)),
           ),
         ),
       );
@@ -124,7 +124,7 @@ void main() {
             searchHint: 'Search hint...',
             onSearchChanged: (val) => searchQuery = val,
             provider: const AsyncValue.loading(),
-            itemBuilder: (context, item) => Text(item),
+            itemBuilder: (context, item, mw, mh) => Text(item),
           ),
         ),
       );
@@ -170,7 +170,7 @@ void main() {
             onSearchChanged: (_) {},
             provider: const AsyncValue.loading(),
             sortBar: const Text('Custom Sort Bar'),
-            itemBuilder: (context, item) => Text(item),
+            itemBuilder: (context, item, mw, mh) => Text(item),
           ),
         ),
       );
@@ -192,7 +192,7 @@ void main() {
               onPressed: null,
               child: Icon(Icons.add),
             ),
-            itemBuilder: (context, item) => Text(item),
+            itemBuilder: (context, item, mw, mh) => Text(item),
           ),
         ),
       );

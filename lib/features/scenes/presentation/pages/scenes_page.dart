@@ -403,13 +403,15 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
             )
           : null,
       padding: isGridView ? GridUtils.defaultPadding : EdgeInsets.zero,
-      itemBuilder: (context, scene) {
+      itemBuilder: (context, scene, memCacheWidth, memCacheHeight) {
         final scenes = scenesAsync.value ?? [];
         final index = scenes.indexWhere((s) => s.id == scene.id);
 
         return SceneCard(
           scene: scene,
           isGrid: isGridView,
+          memCacheWidth: memCacheWidth,
+          memCacheHeight: memCacheHeight,
           onTap: () {
             if (index != -1) {
               ref.read(playbackQueueProvider.notifier).setIndex(index);

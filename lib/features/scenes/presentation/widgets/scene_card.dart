@@ -20,6 +20,8 @@ class SceneCard extends ConsumerWidget {
     required this.scene,
     this.isGrid = false,
     this.onTap,
+    this.memCacheWidth,
+    this.memCacheHeight,
     super.key,
   });
 
@@ -31,6 +33,12 @@ class SceneCard extends ConsumerWidget {
 
   /// Callback triggered when the card is tapped.
   final VoidCallback? onTap;
+
+  /// Optional memory cache width for image optimization.
+  final int? memCacheWidth;
+
+  /// Optional memory cache height for image optimization.
+  final int? memCacheHeight;
 
   /// Displays a custom scene info sheet for navigation actions.
   void _showMenu(BuildContext context, WidgetRef ref) {
@@ -102,12 +110,13 @@ class SceneCard extends ConsumerWidget {
                 children: [
                   StashImage(
                     imageUrl: scene.paths.screenshot,
+                    memCacheWidth: memCacheWidth,
+                    memCacheHeight: memCacheHeight,
                     // Use double.infinity for both dimensions with BoxFit.cover
                     // to ensure the image fills the AspectRatio container completely.
                     width: double.infinity,
                     height: double.infinity,
                     fit: BoxFit.cover,
-                    memCacheWidth: 640,
                   ),
                   Positioned(
                     bottom: 8,
@@ -202,10 +211,11 @@ class SceneCard extends ConsumerWidget {
                 children: [
                   StashImage(
                     imageUrl: scene.paths.screenshot,
+                    memCacheWidth: memCacheWidth,
+                    memCacheHeight: memCacheHeight,
                     width: double.infinity,
                     height: double.infinity,
                     fit: BoxFit.cover,
-                    memCacheWidth: 320,
                   ),
                   Positioned(
                     bottom: 4,

@@ -431,7 +431,7 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
         ),
       ],
       padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingSmall),
-      itemBuilder: (context, studio) => Card(
+      itemBuilder: (context, studio, memCacheWidth, memCacheHeight) => Card(
         margin: const EdgeInsets.symmetric(
           horizontal: AppTheme.spacingMedium,
           vertical: 4,

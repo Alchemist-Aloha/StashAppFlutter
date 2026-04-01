@@ -88,7 +88,7 @@ class _GroupsPageState extends ConsumerState<GroupsPage> {
       onFetchNextPage: () =>
           ref.read(groupListProvider.notifier).fetchNextPage(),
       sortBar: _buildSortBar(),
-      itemBuilder: (context, group) => Card(
+      itemBuilder: (context, group, memCacheWidth, memCacheHeight) => Card(
         margin: const EdgeInsets.symmetric(
           horizontal: AppTheme.spacingMedium,
           vertical: 4,

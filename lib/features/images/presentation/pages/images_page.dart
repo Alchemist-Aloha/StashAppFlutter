@@ -368,7 +368,17 @@ class _ImagesPageState extends ConsumerState<ImagesPage> {
               itemBuilder: (context, index) {
                 final items = imagesAsync.value ?? [];
                 if (index >= items.length) return const SizedBox.shrink();
-                return ImageCard(image: items[index]);
+
+                final screenWidth = MediaQuery.sizeOf(context).width;
+                final memCacheWidth =
+                    (screenWidth / crossAxisCount * 1.5).toInt();
+
+                return RepaintBoundary(
+                  child: ImageCard(
+                    image: items[index],
+                    memCacheWidth: memCacheWidth,
+                  ),
+                );
               },
               childCount: imagesAsync.value?.length ?? 0,
             ),

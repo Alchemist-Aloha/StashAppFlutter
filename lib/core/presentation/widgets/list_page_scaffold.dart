@@ -44,6 +44,7 @@ class ListPageScaffold<T> extends ConsumerStatefulWidget {
     this.imageUrlBuilder,
     this.memCacheWidthBuilder,
     this.prefetchDistance = StashImage.defaultPrefetchDistance,
+    this.itemExtent,
   });
 
   /// The page title displayed in the AppBar.
@@ -65,7 +66,13 @@ class ListPageScaffold<T> extends ConsumerStatefulWidget {
   final AsyncValue<List<T>> provider;
 
   /// Builder function for individual list/grid items.
-  final Widget Function(BuildContext context, T item)? itemBuilder;
+  /// Receives the [item] and optional [memCacheWidth] / [memCacheHeight] for optimization.
+  final Widget Function(
+    BuildContext context,
+    T item,
+    int? memCacheWidth,
+    int? memCacheHeight,
+  )? itemBuilder;
 
   /// Optional custom body to replace the default list/grid view.
   final Widget? customBody;
@@ -118,6 +125,10 @@ class ListPageScaffold<T> extends ConsumerStatefulWidget {
   /// Distance (in items) to prefetch ahead and behind the visible range.
   final int prefetchDistance;
 
+  /// Optional fixed extent (height for list, or main axis extent for grid if applicable) for items.
+  /// For list view, this enables [ListView.itemExtent] optimization.
+  final double? itemExtent;
+
   @override
   ConsumerState<ListPageScaffold<T>> createState() =>
       _ListPageScaffoldState<T>();
@@ -130,6 +141,7 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
   // Prefetch state
   bool _didPrefetchInitial = false;
   double? _measuredItemExtent;
+  int? _lastVisibleIndexPrefetched;
   final GlobalKey _firstItemKey = GlobalKey();
 
   @override
@@ -206,7 +218,18 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
       if (widget.memCacheWidthBuilder != null) {
         memCacheWidth = widget.memCacheWidthBuilder!(context, isGrid);
       } else {
-        memCacheWidth = isGrid ? 400 : 640;
+        final screenWidth = MediaQuery.sizeOf(context).width;
+        if (isGrid) {
+          final delegate =
+              _getResponsiveGridDelegate(context)
+                  as SliverGridDelegateWithFixedCrossAxisCount;
+          // Target roughly 1.5x the display width in pixels for the cache to balance
+          // quality and memory. We assume a typical device pixel ratio of 2.0-3.0.
+          memCacheWidth = (screenWidth / delegate.crossAxisCount * 1.5).toInt();
+        } else {
+          // For full-width list items, cap at a reasonable thumbnail width.
+          memCacheWidth = screenWidth > 600 ? 600 : screenWidth.toInt();
+        }
       }
 
       for (int i = 0; i < count; i++) {
@@ -236,7 +259,15 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
     if (widget.memCacheWidthBuilder != null) {
       memCacheWidth = widget.memCacheWidthBuilder!(context, isGrid);
     } else {
-      memCacheWidth = isGrid ? 400 : 640;
+      final screenWidth = MediaQuery.sizeOf(context).width;
+      if (isGrid) {
+        final delegate =
+            _getResponsiveGridDelegate(context)
+                as SliverGridDelegateWithFixedCrossAxisCount;
+        memCacheWidth = (screenWidth / delegate.crossAxisCount * 1.5).toInt();
+      } else {
+        memCacheWidth = screenWidth > 600 ? 600 : screenWidth.toInt();
+      }
     }
 
     if (isGrid) {
@@ -263,6 +294,9 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
         0,
         items.length - 1,
       );
+
+      if (visibleIndex == _lastVisibleIndexPrefetched) return;
+      _lastVisibleIndexPrefetched = visibleIndex;
 
       for (var i = 1; i <= prefetchDistance; i++) {
         final ahead = visibleIndex + i;
@@ -291,11 +325,14 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
         }
       }
     } else {
-      final stride = _measuredItemExtent ?? 300.0;
+      final stride = widget.itemExtent ?? _measuredItemExtent ?? 300.0;
       final visibleIndex = (offset / stride).floor().clamp(
         0,
         items.length - 1,
       );
+
+      if (visibleIndex == _lastVisibleIndexPrefetched) return;
+      _lastVisibleIndexPrefetched = visibleIndex;
 
       for (var i = 1; i <= prefetchDistance; i++) {
         final ahead = visibleIndex + i;
@@ -449,9 +486,41 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
                                 }
                               });
                             }
-                            return KeyedSubtree(
-                              key: index == 0 ? _firstItemKey : null,
-                              child: widget.itemBuilder!(context, items[index]),
+                            final isGrid = widget.gridDelegate != null;
+                            int? memCacheWidth;
+                            if (widget.memCacheWidthBuilder != null) {
+                              memCacheWidth = widget.memCacheWidthBuilder!(
+                                context,
+                                isGrid,
+                              );
+                            } else {
+                              final screenWidth =
+                                  MediaQuery.sizeOf(context).width;
+                              if (isGrid) {
+                                final delegate =
+                                    _getResponsiveGridDelegate(context)
+                                        as SliverGridDelegateWithFixedCrossAxisCount;
+                                memCacheWidth =
+                                    (screenWidth /
+                                            delegate.crossAxisCount *
+                                            1.5)
+                                        .toInt();
+                              } else {
+                                memCacheWidth =
+                                    screenWidth > 600 ? 600 : screenWidth.toInt();
+                              }
+                            }
+
+                            return RepaintBoundary(
+                              child: KeyedSubtree(
+                                key: index == 0 ? _firstItemKey : null,
+                                child: widget.itemBuilder!(
+                                  context,
+                                  items[index],
+                                  memCacheWidth,
+                                  null,
+                                ),
+                              ),
                             );
                           },
                         )
@@ -459,8 +528,11 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
                           controller: widget.scrollController,
                           padding: widget.padding,
                           itemCount: items.length,
+                          itemExtent: widget.itemExtent,
                           itemBuilder: (context, index) {
-                            if (index == 0 && widget.imageUrlBuilder != null) {
+                            if (index == 0 &&
+                                widget.imageUrlBuilder != null &&
+                                widget.itemExtent == null) {
                               WidgetsBinding.instance.addPostFrameCallback((_) {
                                 if (_measuredItemExtent == null &&
                                     _firstItemKey.currentContext != null) {
@@ -474,9 +546,41 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
                                 }
                               });
                             }
-                            return KeyedSubtree(
-                              key: index == 0 ? _firstItemKey : null,
-                              child: widget.itemBuilder!(context, items[index]),
+                            final isGrid = widget.gridDelegate != null;
+                            int? memCacheWidth;
+                            if (widget.memCacheWidthBuilder != null) {
+                              memCacheWidth = widget.memCacheWidthBuilder!(
+                                context,
+                                isGrid,
+                              );
+                            } else {
+                              final screenWidth =
+                                  MediaQuery.sizeOf(context).width;
+                              if (isGrid) {
+                                final delegate =
+                                    _getResponsiveGridDelegate(context)
+                                        as SliverGridDelegateWithFixedCrossAxisCount;
+                                memCacheWidth =
+                                    (screenWidth /
+                                            delegate.crossAxisCount *
+                                            1.5)
+                                        .toInt();
+                              } else {
+                                memCacheWidth =
+                                    screenWidth > 600 ? 600 : screenWidth.toInt();
+                              }
+                            }
+
+                            return RepaintBoundary(
+                              child: KeyedSubtree(
+                                key: index == 0 ? _firstItemKey : null,
+                                child: widget.itemBuilder!(
+                                  context,
+                                  items[index],
+                                  memCacheWidth,
+                                  null,
+                                ),
+                              ),
                             );
                           },
                         ));

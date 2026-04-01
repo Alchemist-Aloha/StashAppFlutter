@@ -491,12 +491,14 @@ class _PerformersPageState extends ConsumerState<PerformersPage> {
       ),
       mobileCrossAxisCount: 3,
       tabletCrossAxisCount: 5,
-      itemBuilder: (context, performer) {
+      itemBuilder: (context, performer, memCacheWidth, memCacheHeight) {
         return PerformerCard(
           performer: performer,
+          memCacheWidth: memCacheWidth,
           onTap: () => context.push('/performers/performer/${performer.id}'),
         );
       },
+
       floatingActionButton: randomNavigationEnabled
           ? performersAsync.maybeWhen(
               data: (performers) => FloatingActionButton.small(

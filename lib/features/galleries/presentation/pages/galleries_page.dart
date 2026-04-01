@@ -350,15 +350,19 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
           ref.read(galleryListProvider.notifier).fetchNextPage(),
       gridDelegate: isGridView ? GridUtils.createDelegate() : null,
       padding: isGridView ? GridUtils.defaultPadding : EdgeInsets.zero,
-      itemBuilder: (context, gallery) => GalleryCard(
-        gallery: gallery,
-        isGrid: isGridView,
-        thumbnailUrl: _getThumbnailUrl(gallery),
-        onTap: () {
-          ref.read(imageFilterStateProvider.notifier).setGalleryId(gallery.id);
-          context.go('/galleries/images');
-        },
-      ),
+      itemBuilder: (context, gallery, memCacheWidth, memCacheHeight) =>
+          GalleryCard(
+            gallery: gallery,
+            isGrid: isGridView,
+            thumbnailUrl: _getThumbnailUrl(gallery),
+            memCacheWidth: memCacheWidth,
+            onTap: () {
+              ref.read(imageFilterStateProvider.notifier).setGalleryId(
+                gallery.id,
+              );
+              context.go('/galleries/images');
+            },
+          ),
       floatingActionButton: randomNavigationEnabled
           ? galleriesAsync.maybeWhen(
               data: (galleries) => FloatingActionButton.small(
