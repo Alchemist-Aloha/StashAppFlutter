@@ -67,50 +67,19 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
     }
   }
 
-  void _showInfoSheet(BuildContext context, entity.Image image) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (context) => Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-        ),
-        padding: const EdgeInsets.all(24),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                image.title ??
-                    (image.files.isNotEmpty ? image.files.first.path : null) ??
-                    'Untitled',
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-              const SizedBox(height: 8),
-              if (image.date != null)
-                Text(
-                  'Date: ${image.date}',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-              if (image.rating100 != null)
-                Text(
-                  'Rating: ${(image.rating100! / 20).toStringAsFixed(1)} Stars',
-                ),
-              const SizedBox(height: 16),
-              if (image.urls.isNotEmpty) ...[
-                Text('URLs:', style: Theme.of(context).textTheme.labelLarge),
-                ...image.urls.map(
-                  (url) => Text(url, style: const TextStyle(fontSize: 12)),
-                ),
-              ],
-            ],
-          ),
-        ),
-      ),
-    );
+  String _getDisplayTitle(entity.Image? image) {
+    if (image == null) return '';
+    if (image.title != null && image.title!.trim().isNotEmpty) {
+      return image.title!.trim();
+    }
+    if (image.files.isNotEmpty) {
+      final path = image.files.first.path;
+      if (path.isNotEmpty) {
+        final segments = path.replaceAll('\\', '/').split('/');
+        return segments.lastWhere((s) => s.isNotEmpty, orElse: () => path);
+      }
+    }
+    return 'Untitled';
   }
 
   @override
@@ -136,6 +105,9 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
               _prefetchAdjacent(items, _currentIndex, headers);
             });
           }
+
+          final currentImage = items.isNotEmpty ? items[_currentIndex] : null;
+          final displayTitle = _getDisplayTitle(currentImage);
 
           return Stack(
             children: [
@@ -247,58 +219,70 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
               ),
               // Overlays
               if (_showOverlays) ...[
+                // Header with Back button, Title, and Index
                 Positioned(
-                  top: MediaQuery.paddingOf(context).top + 8,
-                  left: 16,
-                  child: IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.white),
-                    onPressed: () => context.pop(),
-                  ),
-                ),
-                Positioned(
-                  top: MediaQuery.paddingOf(context).top + 8,
-                  right: 16,
+                  top: 0,
+                  left: 0,
+                  right: 0,
                   child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: Colors.black45,
-                      borderRadius: BorderRadius.circular(20),
+                    padding: EdgeInsets.only(
+                      top: MediaQuery.paddingOf(context).top + 8,
+                      bottom: 16,
+                      left: 8,
+                      right: 16,
                     ),
-                    child: Text(
-                      '${_currentIndex + 1} / ${items.length}',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [Colors.black54, Colors.transparent],
                       ),
                     ),
-                  ),
-                ),
-                Positioned(
-                  bottom: MediaQuery.paddingOf(context).bottom + 24,
-                  right: 24,
-                  child: Column(
-                    children: [
-                      FloatingActionButton(
-                        heroTag: 'img_info',
-                        onPressed:
-                            () => _showInfoSheet(context, items[_currentIndex]),
-                        backgroundColor: Colors.white24,
-                        child: const Icon(
-                          Icons.info_outline,
-                          color: Colors.white,
+                    child: Row(
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.arrow_back, color: Colors.white),
+                          onPressed: () => context.pop(),
                         ),
-                      ),
-                      const SizedBox(height: 16),
-                      FloatingActionButton(
-                        heroTag: 'img_share',
-                        onPressed: () {
-                          // TODO: Implement share
-                        },
-                        backgroundColor: Colors.white24,
-                        child: const Icon(Icons.share, color: Colors.white),
-                      ),
-                    ],
+                        Expanded(
+                          child: Text(
+                            displayTitle,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              shadows: [
+                                Shadow(
+                                  offset: Offset(0, 1),
+                                  blurRadius: 4,
+                                  color: Colors.black,
+                                ),
+                              ],
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.black45,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            '${_currentIndex + 1} / ${items.length}',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
