@@ -61,9 +61,7 @@ Future<void> main() async {
 
   final sharedPreferences = await SharedPreferences.getInstance();
 
-  const secureStorage = FlutterSecureStorage(
-    aOptions: AndroidOptions(encryptedSharedPreferences: true),
-  );
+  const secureStorage = FlutterSecureStorage();
 
   // Migrate API key from SharedPreferences to Secure Storage if needed.
   if (sharedPreferences.containsKey('server_api_key')) {
@@ -102,7 +100,7 @@ Future<void> main() async {
       overrides: [
         sharedPreferencesProvider.overrideWithValue(sharedPreferences),
         secureStorageProvider.overrideWithValue(secureStorage),
-        serverApiKeyInternalProvider.overrideWith((ref) => initialApiKey),
+        initialServerApiKeyProvider.overrideWithValue(initialApiKey),
       ],
       child: const MyApp(),
     ),

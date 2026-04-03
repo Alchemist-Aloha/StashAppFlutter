@@ -113,6 +113,112 @@ final class ServerUrlProvider
 
 String _$serverUrlHash() => r'a5b703d1d7a5ed8a0c2bdf6683545bd3fa9b607a';
 
+/// Provider for the initial Stash server API Key value.
+
+@ProviderFor(initialServerApiKey)
+final initialServerApiKeyProvider = InitialServerApiKeyProvider._();
+
+/// Provider for the initial Stash server API Key value.
+
+final class InitialServerApiKeyProvider
+    extends $FunctionalProvider<String, String, String>
+    with $Provider<String> {
+  /// Provider for the initial Stash server API Key value.
+  InitialServerApiKeyProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'initialServerApiKeyProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$initialServerApiKeyHash();
+
+  @$internal
+  @override
+  $ProviderElement<String> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  String create(Ref ref) {
+    return initialServerApiKey(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String>(value),
+    );
+  }
+}
+
+String _$initialServerApiKeyHash() =>
+    r'090052ea2e4c162f38073aac73ef9003167844eb';
+
+/// StateNotifier for the internal Stash server API Key value.
+
+@ProviderFor(ServerApiKeyInternal)
+final serverApiKeyInternalProvider = ServerApiKeyInternalProvider._();
+
+/// StateNotifier for the internal Stash server API Key value.
+final class ServerApiKeyInternalProvider
+    extends $NotifierProvider<ServerApiKeyInternal, String> {
+  /// StateNotifier for the internal Stash server API Key value.
+  ServerApiKeyInternalProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'serverApiKeyInternalProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$serverApiKeyInternalHash();
+
+  @$internal
+  @override
+  ServerApiKeyInternal create() => ServerApiKeyInternal();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String>(value),
+    );
+  }
+}
+
+String _$serverApiKeyInternalHash() =>
+    r'6220cdfb4a630c965ab73c867377538e39c4a2ac';
+
+/// StateNotifier for the internal Stash server API Key value.
+
+abstract class _$ServerApiKeyInternal extends $Notifier<String> {
+  String build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<String, String>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<String, String>,
+              String,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
 /// Provider for the Stash server API Key.
 
 @ProviderFor(serverApiKey)

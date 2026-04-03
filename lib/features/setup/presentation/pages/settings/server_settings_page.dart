@@ -150,7 +150,7 @@ class _ServerSettingsPageState extends ConsumerState<ServerSettingsPage> {
     } else {
       await secureStorage.write(key: 'server_api_key', value: newApiKey);
     }
-    ref.read(serverApiKeyInternalProvider.notifier).state = newApiKey;
+    ref.read(serverApiKeyInternalProvider.notifier).update(newApiKey);
 
     ref.read(sharedPreferencesTriggerProvider.notifier).trigger();
 
