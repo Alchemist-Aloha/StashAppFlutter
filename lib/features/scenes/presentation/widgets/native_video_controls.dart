@@ -9,6 +9,7 @@ import '../../../../core/utils/pip_mode.dart';
 import '../../../../core/presentation/theme/app_theme.dart';
 import '../../../../core/utils/app_log_store.dart';
 import '../../domain/entities/scene.dart';
+import '../../domain/entities/scene_title_utils.dart';
 import '../providers/video_player_provider.dart';
 import '../providers/playback_queue_provider.dart';
 
@@ -45,9 +46,14 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
   double _scrubMs = 0;
   bool _controlsVisible = true;
   bool _wasPlaying = false;
+  bool _wasPlayingBeforeScrub = false;
   Timer? _hideControlsTimer;
   Duration? _dragSeekStartPosition;
+  Duration? _dragSeekTarget;
   double _dragSeekAccumulatedDx = 0;
+  bool _dragSeekShouldResumePlayback = false;
+  int? _seekFeedbackSeconds;
+  Timer? _seekFeedbackTimer;
 
   @override
   void initState() {
@@ -85,6 +91,7 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
     );
     WidgetsBinding.instance.removeObserver(this);
     _cancelAutoHide();
+    _seekFeedbackTimer?.cancel();
     widget.controller.removeListener(_onVideoTick);
     super.dispose();
   }
@@ -167,10 +174,43 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
     if (!widget.controller.value.isInitialized) return;
     final current = widget.controller.value.position;
     final duration = widget.controller.value.duration;
+    final wasPlaying = widget.controller.value.isPlaying;
     var target = current + Duration(seconds: seconds);
     if (target < Duration.zero) target = Duration.zero;
     if (target > duration) target = duration;
-    widget.controller.seekTo(target);
+    unawaited(
+      _seekToKeepingPlayback(target, keepPlayingAfterSeek: wasPlaying),
+    );
+    _showSeekFeedback(seconds, transient: true);
+  }
+
+  Future<void> _seekToKeepingPlayback(
+    Duration target, {
+    required bool keepPlayingAfterSeek,
+  }) async {
+    await widget.controller.seekTo(target);
+    if (!mounted || !keepPlayingAfterSeek) return;
+    if (!widget.controller.value.isPlaying) {
+      await widget.controller.play();
+    }
+  }
+
+  void _showSeekFeedback(int seconds, {bool transient = false}) {
+    if (!mounted) return;
+    _seekFeedbackTimer?.cancel();
+
+    if (_seekFeedbackSeconds != seconds) {
+      setState(() => _seekFeedbackSeconds = seconds);
+    } else if (_seekFeedbackSeconds == null) {
+      setState(() => _seekFeedbackSeconds = seconds);
+    }
+
+    if (transient) {
+      _seekFeedbackTimer = Timer(const Duration(milliseconds: 700), () {
+        if (!mounted) return;
+        setState(() => _seekFeedbackSeconds = null);
+      });
+    }
   }
 
   void _beginDragSeek() {
@@ -180,7 +220,10 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
 
     if (!widget.controller.value.isInitialized) return;
     _dragSeekStartPosition = widget.controller.value.position;
+    _dragSeekTarget = null;
     _dragSeekAccumulatedDx = 0;
+    _dragSeekShouldResumePlayback = widget.controller.value.isPlaying;
+    _seekFeedbackTimer?.cancel();
 
     AppLogStore.instance.add(
       'NativeVideoControls beginDragSeek scene=${widget.scene.id}',
@@ -217,12 +260,36 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
       duration.inMilliseconds.toDouble(),
     );
 
-    widget.controller.seekTo(Duration(milliseconds: targetMs.round()));
+    _dragSeekTarget = Duration(milliseconds: targetMs.round());
+
+    final signedDeltaSeconds =
+        ((_dragSeekTarget!.inMilliseconds - startPosition.inMilliseconds) / 1000)
+            .round();
+    _showSeekFeedback(signedDeltaSeconds);
   }
 
   void _endDragSeek() {
+    if (_dragSeekTarget != null) {
+      unawaited(
+        _seekToKeepingPlayback(
+          _dragSeekTarget!,
+          keepPlayingAfterSeek: _dragSeekShouldResumePlayback,
+        ),
+      );
+    } else if (_dragSeekShouldResumePlayback && !widget.controller.value.isPlaying) {
+      unawaited(widget.controller.play());
+    }
+
+    _seekFeedbackTimer?.cancel();
+    _seekFeedbackTimer = Timer(const Duration(milliseconds: 700), () {
+      if (!mounted) return;
+      setState(() => _seekFeedbackSeconds = null);
+    });
+
     _dragSeekStartPosition = null;
+    _dragSeekTarget = null;
     _dragSeekAccumulatedDx = 0;
+    _dragSeekShouldResumePlayback = false;
   }
 
   String _format(Duration d) {
@@ -256,6 +323,73 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       padding: const EdgeInsets.all(10),
       minimumSize: const Size(44, 44),
+    );
+  }
+
+  Widget _buildSeekFeedbackOverlay(ColorScheme colorScheme) {
+    final seconds = _seekFeedbackSeconds;
+    final isVisible = seconds != null;
+    final effectiveSeconds = seconds ?? 0;
+    final isForward = effectiveSeconds > 0;
+    final isBackward = effectiveSeconds < 0;
+
+    final icon = isForward
+        ? Icons.fast_forward_rounded
+        : isBackward
+        ? Icons.fast_rewind_rounded
+        : Icons.drag_indicator_rounded;
+    final label = isForward
+        ? '+${effectiveSeconds}s'
+        : isBackward
+        ? '${effectiveSeconds}s'
+        : '0s';
+
+    return IgnorePointer(
+      child: AnimatedOpacity(
+        opacity: isVisible ? 1 : 0,
+        duration: const Duration(milliseconds: 170),
+        curve: Curves.easeOutCubic,
+        child: AnimatedScale(
+          scale: isVisible ? 1 : 0.94,
+          duration: const Duration(milliseconds: 170),
+          curve: Curves.easeOutCubic,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+            decoration: ShapeDecoration(
+              color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.92),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24),
+                side: BorderSide(
+                  color: colorScheme.outlineVariant.withValues(alpha: 0.65),
+                ),
+              ),
+              shadows: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.22),
+                  blurRadius: 18,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icon, size: 20, color: colorScheme.primary),
+                const SizedBox(width: 8),
+                Text(
+                  label,
+                  style: TextStyle(
+                    color: colorScheme.onSurface,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.2,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -324,11 +458,15 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                 ),
               ),
 
+              Positioned.fill(
+                child: Center(child: _buildSeekFeedbackOverlay(colorScheme)),
+              ),
+
               // Layer 1: UI Overlays
               // Debug Info (Follows controls visibility or always visible if you prefer)
               if (playerState.showVideoDebugInfo)
                 Positioned(
-                  top: 8,
+                  top: isFullScreen ? 60 : 8,
                   left: 8,
                   child: IgnorePointer(
                     child: AnimatedOpacity(
@@ -365,18 +503,43 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                 Positioned(
                   top: 8,
                   left: 8,
+                  right: 8,
                   child: SafeArea(
                     child: AnimatedOpacity(
                       opacity: _controlsVisible ? 1 : 0,
                       duration: const Duration(milliseconds: 180),
-                      child: IconButton(
-                        tooltip: 'Exit Fullscreen',
-                        style: _controlButtonStyle(colorScheme),
-                        icon: const Icon(Icons.arrow_back_rounded),
-                        onPressed: () {
-                          widget.onFullScreenToggle?.call();
-                          _showControlsTemporarily();
-                        },
+                      child: Row(
+                        children: [
+                          IconButton(
+                            tooltip: 'Exit Fullscreen',
+                            style: _controlButtonStyle(colorScheme),
+                            icon: const Icon(Icons.arrow_back_rounded),
+                            onPressed: () {
+                              widget.onFullScreenToggle?.call();
+                              _showControlsTemporarily();
+                            },
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              widget.scene.displayTitle,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                shadows: [
+                                  Shadow(
+                                    blurRadius: 4,
+                                    color: Colors.black54,
+                                    offset: Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -447,6 +610,7 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                                     max: durationMs.toDouble(),
                                     value: sliderValue,
                                     onChangeStart: (v) {
+                                      _wasPlayingBeforeScrub = value.isPlaying;
                                       _cancelAutoHide();
                                       setState(() {
                                         _isScrubbing = true;
@@ -461,11 +625,18 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                                       final target = Duration(
                                         milliseconds: v.round(),
                                       );
-                                      widget.controller.seekTo(target);
+                                      unawaited(() async {
+                                        await _seekToKeepingPlayback(
+                                          target,
+                                          keepPlayingAfterSeek:
+                                              _wasPlayingBeforeScrub,
+                                        );
+                                      }());
                                       setState(() {
                                         _isScrubbing = false;
                                         _scrubMs = 0;
                                       });
+                                      _wasPlayingBeforeScrub = false;
                                       _scheduleAutoHide();
                                     },
                                   ),
