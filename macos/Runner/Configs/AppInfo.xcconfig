@@ -5,10 +5,10 @@
 // 'flutter create' template.
 
 // The application's name. By default this is also the title of the Flutter window.
-PRODUCT_NAME = stash_app_flutter
+PRODUCT_NAME = StashFlow
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.github.alchemistaloha.stashAppFlutter
+PRODUCT_BUNDLE_IDENTIFIER = com.github.alchemistaloha.stashflow
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2026 com.github.alchemistaloha. All rights reserved.
