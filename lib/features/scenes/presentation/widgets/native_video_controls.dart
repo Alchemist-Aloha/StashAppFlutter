@@ -564,12 +564,12 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                         behavior: HitTestBehavior.opaque,
                         child: RepaintBoundary(
                           child: Container(
-                            margin: const EdgeInsets.fromLTRB(8, 0, 8, 8),
-                            padding: const EdgeInsets.fromLTRB(12, 10, 12, 8),
+                            margin: const EdgeInsets.fromLTRB(6, 0, 6, 6),
+                            padding: const EdgeInsets.fromLTRB(10, 8, 10, 6),
                             decoration: BoxDecoration(
                               color: colorScheme.surface.withValues(alpha: 0.62),
                               borderRadius: BorderRadius.circular(
-                                AppTheme.radiusLarge,
+                                AppTheme.radiusMedium,
                               ),
                               border: Border.all(
                                 color: colorScheme.outlineVariant.withValues(
@@ -581,9 +581,9 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Container(
-                                  width: 34,
-                                  height: 4,
-                                  margin: const EdgeInsets.only(bottom: 8),
+                                  width: 28,
+                                  height: 3,
+                                  margin: const EdgeInsets.only(bottom: 6),
                                   decoration: BoxDecoration(
                                     color: colorScheme.onSurfaceVariant
                                         .withValues(alpha: 0.55),
@@ -592,12 +592,12 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                                 ),
                                 SliderTheme(
                                   data: SliderTheme.of(context).copyWith(
-                                    trackHeight: 4,
+                                    trackHeight: 3,
                                     thumbShape: const RoundSliderThumbShape(
-                                      enabledThumbRadius: 7,
+                                      enabledThumbRadius: 6,
                                     ),
                                     overlayShape: const RoundSliderOverlayShape(
-                                      overlayRadius: 14,
+                                      overlayRadius: 12,
                                     ),
                                     activeTrackColor: colorScheme.primary,
                                     inactiveTrackColor: colorScheme
