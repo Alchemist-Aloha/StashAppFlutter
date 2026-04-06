@@ -167,6 +167,18 @@ class _InterfaceSettingsPageState extends ConsumerState<InterfaceSettingsPage> {
                             await _saveSettings();
                           },
                         ),
+                        const Divider(height: AppTheme.spacingLarge),
+                        ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          title: const Text('Customize Tabs'),
+                          subtitle: const Text(
+                            'Reorder or hide navigation menu items',
+                          ),
+                          trailing: const Icon(Icons.chevron_right),
+                          onTap: () {
+                            context.push('/settings/interface/navigation');
+                          },
+                        ),
                       ],
                     ),
                   ),

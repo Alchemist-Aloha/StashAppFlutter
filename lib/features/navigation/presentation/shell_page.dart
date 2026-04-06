@@ -10,6 +10,7 @@ import '../../studios/presentation/providers/studio_list_provider.dart';
 import '../../tags/presentation/providers/tag_list_provider.dart';
 import '../../galleries/presentation/providers/gallery_list_provider.dart';
 import '../../scenes/presentation/widgets/tiktok_scenes_view.dart';
+import '../../setup/presentation/providers/navigation_tabs_provider.dart';
 import 'widgets/mini_player.dart';
 
 class ShellPage extends ConsumerStatefulWidget {
@@ -81,6 +82,18 @@ class _ShellPageState extends ConsumerState<ShellPage> {
     final isTiktokLayout = ref.watch(sceneTiktokLayoutProvider);
     final isMobile = Responsive.isMobile(context);
 
+    final allTabs = ref.watch(navigationTabsProvider);
+    final visibleTabs = allTabs.where((t) => t.visible).toList();
+
+    // Map branch index to UI index for the NavigationBar/Rail
+    final branchToUiMap = <int, int>{};
+    for (var i = 0; i < visibleTabs.length; i++) {
+      final branchIndex = visibleTabs[i].type.index;
+      branchToUiMap[branchIndex] = i;
+    }
+
+    final currentUiIndex = branchToUiMap[navigationShell.currentIndex] ?? 0;
+
     final onScenesPage = currentPath == '/scenes';
 
     final hideMiniPlayer =
@@ -90,65 +103,57 @@ class _ShellPageState extends ConsumerState<ShellPage> {
         isFullScreen ||
         (isTiktokLayout && onScenesPage);
 
-    void onDestinationSelected(int index) {
-      if (index == navigationShell.currentIndex) {
-        switch (index) {
-          case 0:
+    void onDestinationSelected(int uiIndex) {
+      final tab = visibleTabs[uiIndex];
+      final branchIndex = tab.type.index;
+
+      if (branchIndex == navigationShell.currentIndex) {
+        switch (tab.type) {
+          case NavigationTabType.scenes:
             final isTiktokLayout = ref.read(sceneTiktokLayoutProvider);
             if (!isTiktokLayout) {
               ref.read(sceneScrollControllerProvider.notifier).scrollToTop();
             }
             break;
-          case 1:
+          case NavigationTabType.performers:
             ref.read(performerScrollControllerProvider.notifier).scrollToTop();
             break;
-          case 2:
+          case NavigationTabType.studios:
             ref.read(studioScrollControllerProvider.notifier).scrollToTop();
             break;
-          case 3:
+          case NavigationTabType.tags:
             ref.read(tagScrollControllerProvider.notifier).scrollToTop();
             break;
-          case 4:
+          case NavigationTabType.galleries:
             ref.read(galleryScrollControllerProvider.notifier).scrollToTop();
             break;
         }
       }
       navigationShell.goBranch(
-        index,
-        initialLocation: index == navigationShell.currentIndex,
+        branchIndex,
+        initialLocation: branchIndex == navigationShell.currentIndex,
       );
     }
 
-    final navigationDestinations = const [
-      NavigationDestination(icon: Icon(Icons.video_library), label: 'Scenes'),
-      NavigationDestination(icon: Icon(Icons.people), label: 'Performers'),
-      NavigationDestination(icon: Icon(Icons.business), label: 'Studios'),
-      NavigationDestination(icon: Icon(Icons.local_offer), label: 'Tags'),
-      NavigationDestination(icon: Icon(Icons.perm_media), label: 'Galleries'),
-    ];
+    final navigationDestinations =
+        visibleTabs
+            .map(
+              (t) => NavigationDestination(
+                icon: Icon(t.type.icon),
+                label: t.type.label,
+              ),
+            )
+            .toList();
 
-    final navigationRailDestinations = const [
-      NavigationRailDestination(
-        icon: Icon(Icons.video_library),
-        label: Text('Scenes'),
-      ),
-      NavigationRailDestination(
-        icon: Icon(Icons.people),
-        label: Text('Performers'),
-      ),
-      NavigationRailDestination(
-        icon: Icon(Icons.business),
-        label: Text('Studios'),
-      ),
-      NavigationRailDestination(
-        icon: Icon(Icons.local_offer),
-        label: Text('Tags'),
-      ),
-      NavigationRailDestination(
-        icon: Icon(Icons.perm_media),
-        label: Text('Galleries'),
-      ),
-    ];
+    final navigationRailDestinations =
+        visibleTabs
+            .map(
+              (t) => NavigationRailDestination(
+                icon: Icon(t.type.icon),
+                label: Text(t.type.label),
+              ),
+            )
+            .toList();
 
     Widget bodyContent = Column(
       children: [
@@ -165,7 +170,7 @@ class _ShellPageState extends ConsumerState<ShellPage> {
       bodyContent = Row(
         children: [
           NavigationRail(
-            selectedIndex: navigationShell.currentIndex,
+            selectedIndex: currentUiIndex,
             onDestinationSelected: onDestinationSelected,
             labelType: NavigationRailLabelType.all,
             destinations: navigationRailDestinations,
@@ -187,7 +192,7 @@ class _ShellPageState extends ConsumerState<ShellPage> {
                   children: [
                     Expanded(
                       child: NavigationBar(
-                        selectedIndex: navigationShell.currentIndex,
+                        selectedIndex: currentUiIndex,
                         destinations: navigationDestinations,
                         onDestinationSelected: onDestinationSelected,
                       ),
