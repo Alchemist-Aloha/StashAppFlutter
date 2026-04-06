@@ -52,19 +52,6 @@ GoRouter router(Ref ref) {
   return GoRouter(
     initialLocation: '/scenes',
     redirect: (context, state) {
-      // Re-read inside redirect to get latest values during navigation
-      final currentUrl = ref.read(serverUrlProvider);
-
-      final isConfigured = currentUrl.isNotEmpty;
-      final isSettingsPath =
-          state.uri.path == '/settings' ||
-          state.uri.path.startsWith('/settings/');
-
-      // Force redirection to settings if the server URL is missing
-      if (!isConfigured && !isSettingsPath) {
-        return '/settings';
-      }
-
       return null;
     },
     routes: [
