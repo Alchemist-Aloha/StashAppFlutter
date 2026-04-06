@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:stash_app_flutter/core/presentation/theme/app_theme.dart';
+import 'package:stash_app_flutter/core/data/graphql/graphql_client.dart';
 
-class SettingsPageShell extends StatelessWidget {
+class SettingsPageShell extends ConsumerWidget {
   const SettingsPageShell({
     super.key,
     required this.title,
@@ -14,9 +17,28 @@ class SettingsPageShell extends StatelessWidget {
   final double maxContentWidth;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final serverUrl = ref.watch(serverUrlProvider);
+    final canGoToLibrary = serverUrl.isNotEmpty;
+    
+    // Use maybeOf to avoid throwing in tests that don't provide a GoRouter
+    final router = GoRouter.maybeOf(context);
+    final canPop = router?.canPop() ?? false;
+
+    Widget? leading;
+    if (!canPop && canGoToLibrary) {
+      leading = IconButton(
+        icon: const Icon(Icons.close_rounded),
+        tooltip: 'Close Settings',
+        onPressed: () => context.go('/scenes'),
+      );
+    }
+
     return Scaffold(
-      appBar: AppBar(title: Text(title)),
+      appBar: AppBar(
+        title: Text(title),
+        leading: leading,
+      ),
       body: SafeArea(
         child: Align(
           alignment: Alignment.topCenter,

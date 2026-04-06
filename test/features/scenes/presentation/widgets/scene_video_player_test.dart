@@ -88,10 +88,10 @@ void main() {
     expect(find.byType(Container), findsWidgets);
 
     // The play button should be visible since this scene is not active.
-    final iconFinder = find.byIcon(Icons.play_arrow);
+    final iconFinder = find.byIcon(Icons.play_arrow_rounded);
     expect(iconFinder, findsOneWidget);
     expect(
-      find.ancestor(of: iconFinder, matching: find.byType(IconButton)),
+      find.ancestor(of: iconFinder, matching: find.byType(FilledButton)),
       findsOneWidget,
     );
   });

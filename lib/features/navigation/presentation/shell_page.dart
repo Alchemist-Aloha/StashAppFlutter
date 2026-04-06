@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/utils/responsive.dart';
+import '../../../core/data/graphql/graphql_client.dart';
 import '../../scenes/presentation/providers/video_player_provider.dart';
 import '../../scenes/presentation/providers/scene_list_provider.dart';
 import '../../performers/presentation/providers/performer_list_provider.dart';
@@ -11,9 +12,50 @@ import '../../galleries/presentation/providers/gallery_list_provider.dart';
 import '../../scenes/presentation/widgets/tiktok_scenes_view.dart';
 import 'widgets/mini_player.dart';
 
-class ShellPage extends ConsumerWidget {
+class ShellPage extends ConsumerStatefulWidget {
   final StatefulNavigationShell navigationShell;
   const ShellPage({required this.navigationShell, super.key});
+
+  @override
+  ConsumerState<ShellPage> createState() => _ShellPageState();
+}
+
+class _ShellPageState extends ConsumerState<ShellPage> {
+  bool _dialogShown = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkServerConfiguration();
+    });
+  }
+
+  void _checkServerConfiguration() {
+    final serverUrl = ref.read(serverUrlProvider);
+    if (serverUrl.isEmpty && !_dialogShown && mounted) {
+      _dialogShown = true;
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          title: const Text('Setup Required'),
+          content: const Text(
+            'To get started, you need to configure your Stash server connection details.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                context.push('/settings/server');
+              },
+              child: const Text('Configure Now'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
 
   String? _extractSceneIdFromPath(String path) {
     if (path.startsWith('/scenes/scene/')) {
@@ -28,7 +70,8 @@ class ShellPage extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
+    final navigationShell = widget.navigationShell;
     final currentPath = GoRouterState.of(context).uri.path;
     final playerState = ref.watch(playerStateProvider);
     final activeSceneId = playerState.activeScene?.id;
@@ -140,7 +183,6 @@ class ShellPage extends ConsumerWidget {
         bottomNavigationBar: (isFullScreen || !isMobile)
             ? null
             : SafeArea(
-                top: false,
                 child: Row(
                   children: [
                     Expanded(
