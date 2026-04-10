@@ -465,30 +465,32 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
 
                 final isGrid = widget.gridDelegate != null;
                 int? memCacheWidth;
-                if (widget.itemBuilder != null) {
-                  if (widget.memCacheWidthBuilder != null) {
-                    memCacheWidth = widget.memCacheWidthBuilder!(
-                      context,
-                      isGrid,
-                    );
-                  } else {
-                    final screenWidth = MediaQuery.sizeOf(context).width;
-                    if (isGrid) {
-                      final delegate =
-                          _getResponsiveGridDelegate(context)
-                              as SliverGridDelegateWithFixedCrossAxisCount;
-                      memCacheWidth =
-                          (screenWidth / delegate.crossAxisCount * 1.5).toInt();
-                    } else {
-                      memCacheWidth =
-                          screenWidth > 600 ? 600 : screenWidth.toInt();
-                    }
-                  }
-                }
 
                 Widget body =
                     widget.customBody ??
-                    (widget.gridDelegate != null
+                    Builder(builder: (context) {
+                      if (widget.itemBuilder != null) {
+                        if (widget.memCacheWidthBuilder != null) {
+                          memCacheWidth = widget.memCacheWidthBuilder!(
+                            context,
+                            isGrid,
+                          );
+                        } else {
+                          final screenWidth = MediaQuery.sizeOf(context).width;
+                          if (isGrid) {
+                            final delegate =
+                                _getResponsiveGridDelegate(context)
+                                    as SliverGridDelegateWithFixedCrossAxisCount;
+                            memCacheWidth =
+                                (screenWidth / delegate.crossAxisCount * 1.5).toInt();
+                          } else {
+                            memCacheWidth =
+                                screenWidth > 600 ? 600 : screenWidth.toInt();
+                          }
+                        }
+                      }
+
+                      return widget.gridDelegate != null
                         ? GridView.builder(
                           controller: widget.scrollController,
                           padding: widget.padding,
@@ -559,7 +561,8 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
                               ),
                             );
                           },
-                        ));
+                        );
+                    });
 
                 if (widget.onRefresh != null) {
                   body = RefreshIndicator(

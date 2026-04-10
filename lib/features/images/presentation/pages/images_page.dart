@@ -361,26 +361,29 @@ class _ImagesPageState extends ConsumerState<ImagesPage> {
         slivers: [
           SliverPadding(
             padding: const EdgeInsets.all(AppTheme.spacingSmall),
-            sliver: SliverMasonryGrid.count(
-              crossAxisCount: crossAxisCount,
-              mainAxisSpacing: AppTheme.spacingSmall,
-              crossAxisSpacing: AppTheme.spacingSmall,
-              itemBuilder: (context, index) {
-                final items = imagesAsync.value ?? [];
-                if (index >= items.length) return const SizedBox.shrink();
-
+            sliver: Builder(
+              builder: (context) {
                 final screenWidth = MediaQuery.sizeOf(context).width;
-                final memCacheWidth =
-                    (screenWidth / crossAxisCount * 1.5).toInt();
+                final memCacheWidth = (screenWidth / crossAxisCount * 1.5).toInt();
 
-                return RepaintBoundary(
-                  child: ImageCard(
-                    image: items[index],
-                    memCacheWidth: memCacheWidth,
-                  ),
+                return SliverMasonryGrid.count(
+                  crossAxisCount: crossAxisCount,
+                  mainAxisSpacing: AppTheme.spacingSmall,
+                  crossAxisSpacing: AppTheme.spacingSmall,
+                  itemBuilder: (context, index) {
+                    final items = imagesAsync.value ?? [];
+                    if (index >= items.length) return const SizedBox.shrink();
+
+                    return RepaintBoundary(
+                      child: ImageCard(
+                        image: items[index],
+                        memCacheWidth: memCacheWidth,
+                      ),
+                    );
+                  },
+                  childCount: imagesAsync.value?.length ?? 0,
                 );
               },
-              childCount: imagesAsync.value?.length ?? 0,
             ),
           ),
         ],
