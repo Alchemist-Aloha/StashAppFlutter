@@ -1,7 +1,7 @@
 # 📱 StashFlow
 ### Your Stash library, everywhere.
 
-A native Android mobile client for your **Stash** server. Designed for seamless browsing, effortless discovery, and high-quality playback on the go.
+A modern, multi-platform client for your **Stash** server. Designed for seamless browsing, effortless discovery, and high-quality playback across **Android**, **Desktop** (Windows, macOS, Linux), and the [**Web**](https://alchemist-aloha.github.io/StashFlow/).
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-1.8.0-green.svg)](pubspec.yaml)
@@ -18,11 +18,16 @@ A native Android mobile client for your **Stash** server. Designed for seamless 
 	<img src="asset/edit_scene.jpg" alt="Scene details editor" width="220" />
 	<img src="asset/settings.jpg" alt="Setting page" width="220" />
 </p>
+
 ## ✨ Key Features
 
-### 🧭 Interface & Navigation
+### 🌍 Multi-Platform Support
+- 📱 **Android:** Full-featured mobile experience with PiP and background audio.
+- 💻 **Desktop:** Native performance on Windows, macOS, and Linux with keyboard shortcuts and window management.
+- 🌐 **Web:** Access your library from any modern browser without installation.
 
-- 📱 **Adaptive UI:** Optimized for phones and tablets, including a side **Navigation Rail** and intelligent grids that scale up to 5 columns.
+### 🧭 Interface & Navigation
+- 📱 **Adaptive UI:** Responsive design that transitions from mobile-first layouts to expansive desktop views, including a side **Navigation Rail** and intelligent grids that scale up to 5+ columns.
 - 📱 **Flexible Layouts:** Switch between **Grid/List** and **TikTok-style** vertical discovery layouts.
 - 🎲 **Discovery Tools:** Use floating "Random" actions and "Surprise Me" entries to quickly explore your library.
 
@@ -57,9 +62,17 @@ A native Android mobile client for your **Stash** server. Designed for seamless 
 
 ## 🚀 Getting Started
 
+### 📱 Android
 1. **Download:** Grab the latest APK from the [Releases](https://github.com/Alchemist-Aloha/StashFlow/releases) page.
 2. **Connect:** Open the app ➔ Settings ➔ Enter your **Server URL** and **API Key**.
-3. **Browse:** Your library will automatically sync and be ready for action.
+
+### 💻 Desktop (Windows, macOS, Linux)
+1. **Download:** Download the appropriate installer for your OS from the [Releases](https://github.com/Alchemist-Aloha/StashFlow/releases) page.
+2. **Setup:** Install and launch ➔ Enter your **Server URL** and **API Key** in Settings.
+
+### 🌐 Web
+1. **Access:** Visit the [Live Web App](https://alchemist-aloha.github.io/StashFlow/) (if hosted) or host your own build.
+2. **Configure:** Enter your Stash server details in the connection prompt. Enable local network access. 
 
 ### ⚙️ Runtime Settings
 Tailor your experience in the app settings:
