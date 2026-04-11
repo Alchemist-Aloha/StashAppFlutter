@@ -12,6 +12,10 @@ jobs:
   build:
     name: Build ${{ matrix.target }}
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
     strategy:
       fail-fast: false
       matrix:
@@ -78,7 +82,7 @@ jobs:
           elif [ "${{ matrix.target }}" = "linux" ]; then
             flutter build linux --release
           elif [ "${{ matrix.target }}" = "web" ]; then
-            flutter build web --release
+            flutter build web --release --base-href /StashFlow/
           elif [ "${{ matrix.target }}" = "macos" ]; then
             flutter build macos --release
           fi
@@ -104,6 +108,16 @@ jobs:
           cd build/web
           zip -r ../../StashFlow-web-nightly.zip .
         shell: bash
+
+      - name: Deploy to GitHub Pages
+        if: matrix.target == 'web'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build/web
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
+          commit_message: "Deploy Nightly to GitHub Pages: ${{ github.sha }}"
 
       - name: Package macOS
         if: matrix.target == 'macos'
