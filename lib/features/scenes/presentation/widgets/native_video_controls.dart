@@ -739,8 +739,7 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                                           ),
                                         ),
                                         const SizedBox(width: 8),
-                                        if (widget.scene.captions.isNotEmpty ||
-                                            (widget.scene.paths.vtt?.trim().isNotEmpty ?? false))
+                                        if (widget.scene.captions.isNotEmpty)
                                           PopupMenuButton<String?>(
                                             tooltip: 'Select subtitle',
                                             icon: Icon(
@@ -832,64 +831,6 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                                                   ),
                                                 ),
                                               ];
-                                                if (widget
-                                                    .scene
-                                                    .captions
-                                                    .isEmpty &&
-                                                  (widget.scene.paths.vtt
-                                                      ?.trim()
-                                                      .isNotEmpty ??
-                                                    false)) {
-                                                // Fallback to "Default" if we have a path but no explicit caption metadata
-                                                final isSelected =
-                                                    (playerState.selectedSubtitleLanguage ==
-                                                            '' ||
-                                                        playerState
-                                                                .selectedSubtitleLanguage ==
-                                                            null) &&
-                                                    (playerState.selectedSubtitleType ==
-                                                            null ||
-                                                        playerState
-                                                                .selectedSubtitleType ==
-                                                            '');
-
-                                                // Note: if selectedSubtitleLanguage is null, it might be auto-selected
-                                                // but for the UI we show it as selected if it matches the 'Default' criteria.
-
-                                                items.add(
-                                                  PopupMenuItem<String?>(
-                                                    value: ':',
-                                                    child: Row(
-                                                      children: [
-                                                        Icon(
-                                                          isSelected
-                                                              ? Icons
-                                                                    .check_circle
-                                                              : Icons
-                                                                    .circle_outlined,
-                                                          size: 16,
-                                                          color: isSelected
-                                                              ? colorScheme
-                                                                    .primary
-                                                              : colorScheme
-                                                                    .onSurfaceVariant,
-                                                        ),
-                                                        const SizedBox(
-                                                          width: 8,
-                                                        ),
-                                                        Text(
-                                                          'Default',
-                                                          style: TextStyle(
-                                                            color: colorScheme
-                                                                .onSurface,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                );
-                                              }
-
                                               for (final c
                                                   in widget.scene.captions) {
                                                 final selectedLang =

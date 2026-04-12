@@ -117,25 +117,22 @@ void main() {
   );
 
   testWidgets(
-    'shows subtitle button and Default option when vtt path is present',
+    'hides subtitle button when only vtt path is present',
     (tester) async {
       final scene = _buildScene(captions: const [], vttPath: '/api/vtt');
       await _pumpControls(tester, scene: scene);
 
-      expect(find.byIcon(Icons.subtitles_rounded), findsOneWidget);
-
-      await tester.tap(find.byIcon(Icons.subtitles_rounded));
-      await tester.pumpAndSettle();
-
-      expect(find.text('None'), findsOneWidget);
-      expect(find.text('Default'), findsOneWidget);
+      expect(find.byIcon(Icons.subtitles_rounded), findsNothing);
     },
   );
 
   testWidgets(
     'hides subtitle button when only caption endpoint exists but no vtt/metadata',
     (tester) async {
-      final scene = _buildScene(captions: const [], captionPath: '/api/caption');
+      final scene = _buildScene(
+        captions: const [],
+        captionPath: '/api/caption',
+      );
       await _pumpControls(tester, scene: scene);
 
       expect(find.byIcon(Icons.subtitles_rounded), findsNothing);
@@ -164,7 +161,10 @@ void main() {
   testWidgets('marks None as selected when subtitle language is null', (
     tester,
   ) async {
-    final scene = _buildScene(captions: const [], vttPath: '/api/vtt');
+    final scene = _buildScene(
+      captions: const [VideoCaption(languageCode: 'en', captionType: 'srt')],
+      vttPath: '/api/vtt',
+    );
     await _pumpControls(
       tester,
       scene: scene,
@@ -178,7 +178,10 @@ void main() {
     await tester.tap(find.byIcon(Icons.subtitles_rounded));
     await tester.pumpAndSettle();
 
-    final noneRow = find.ancestor(of: find.text('None'), matching: find.byType(Row));
+    final noneRow = find.ancestor(
+      of: find.text('None'),
+      matching: find.byType(Row),
+    );
     expect(
       find.descendant(of: noneRow, matching: find.byIcon(Icons.check_circle)),
       findsOneWidget,
@@ -211,7 +214,10 @@ void main() {
       matching: find.byType(Row),
     );
     expect(
-      find.descendant(of: unknownRow, matching: find.byIcon(Icons.check_circle)),
+      find.descendant(
+        of: unknownRow,
+        matching: find.byIcon(Icons.check_circle),
+      ),
       findsOneWidget,
     );
   });
@@ -271,9 +277,7 @@ Future<void> _pumpControls(
             playerState ?? GlobalPlayerState(activeScene: scene),
           ),
         ),
-        playbackQueueProvider.overrideWith(
-          () => _MockPlaybackQueueNotifier(),
-        ),
+        playbackQueueProvider.overrideWith(() => _MockPlaybackQueueNotifier()),
       ],
       child: MaterialApp(
         home: Scaffold(

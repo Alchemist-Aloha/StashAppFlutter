@@ -439,7 +439,6 @@ class PlayerState extends _$PlayerState {
     final hasCaptionPath = scene.paths.caption?.trim().isNotEmpty ?? false;
     final hasVttPath = scene.paths.vtt?.trim().isNotEmpty ?? false;
     final hasSubtitleSource = hasCaptionPath || hasVttPath;
-    final hasUnnamedSubtitleSource = hasVttPath;
     String? autoLang;
     String? autoType;
 
@@ -451,10 +450,6 @@ class PlayerState extends _$PlayerState {
         if (scene.captions.length == 1) {
           autoLang = scene.captions.first.languageCode;
           autoType = scene.captions.first.captionType;
-        } else if (scene.captions.isEmpty && hasUnnamedSubtitleSource) {
-          // If no metadata but a path exists, it's effectively "the only one"
-          autoLang = '';
-          autoType = '';
         }
       } else if (defaultLang != 'none') {
         // 1. Try matching default language
@@ -464,11 +459,6 @@ class PlayerState extends _$PlayerState {
         if (matches.isNotEmpty) {
           autoLang = matches.first.languageCode;
           autoType = matches.first.captionType;
-        } else if (scene.captions.isEmpty && hasUnnamedSubtitleSource) {
-          // 2. Generic fallback if we have a path but no explicit caption metadata.
-          // We assume the user wants it if they have a non-'none' default language.
-          autoLang = '';
-          autoType = '';
         }
       }
     }
