@@ -546,10 +546,12 @@ class PlayerState extends _$PlayerState {
 
     final stopwatch = Stopwatch()..start();
 
-    state = state.copyWith(
+    state = GlobalPlayerState(
       activeScene: scene,
       videoPlayerController: videoController,
       isPlaying: false,
+      isFullScreen: state.isFullScreen, // Preserve fullscreen state across scenes
+      isInPipMode: state.isInPipMode, // Preserve PiP state across scenes
       streamMimeType: mimeType,
       streamLabel: streamLabel,
       streamSource: streamSource,
@@ -557,9 +559,19 @@ class PlayerState extends _$PlayerState {
       prewarmAttempted: prewarmAttempted,
       prewarmSucceeded: prewarmSucceeded,
       prewarmLatencyMs: prewarmLatencyMs,
+      autoplayNext: state.autoplayNext,
+      showVideoDebugInfo: state.showVideoDebugInfo,
+      useDoubleTapSeek: state.useDoubleTapSeek,
+      enableBackgroundPlayback: state.enableBackgroundPlayback,
+      enableNativePip: state.enableNativePip,
       selectedSubtitleLanguage: effectiveSubtitleLanguage,
       selectedSubtitleType: effectiveSubtitleType,
+      defaultSubtitleLanguage: state.defaultSubtitleLanguage,
+      subtitleFontSize: state.subtitleFontSize,
+      subtitlePositionBottomRatio: state.subtitlePositionBottomRatio,
+      subtitleTextAlignment: state.subtitleTextAlignment,
     );
+
 
     try {
       await videoController.initialize();
@@ -660,6 +672,8 @@ class PlayerState extends _$PlayerState {
       activeScene: scene,
       videoPlayerController: controller,
       isPlaying: controller.value.isPlaying,
+      isFullScreen: state.isFullScreen, // Preserve fullscreen
+      isInPipMode: state.isInPipMode, // Preserve PiP
       streamMimeType: streamMimeType,
       streamLabel: streamLabel,
       streamSource: streamSource,

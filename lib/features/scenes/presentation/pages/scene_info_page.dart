@@ -26,8 +26,9 @@ class SceneInfoPage extends ConsumerWidget {
             if (scene.details != null && scene.details!.isNotEmpty) ...[
               Text(
                 'Details',
-                style: theme.textTheme.titleMedium
-                    ?.copyWith(fontWeight: FontWeight.bold),
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: 8),
               Text(scene.details!, style: theme.textTheme.bodyMedium),
@@ -36,8 +37,9 @@ class SceneInfoPage extends ConsumerWidget {
             if (scene.performerNames.isNotEmpty) ...[
               Text(
                 'Performers',
-                style: theme.textTheme.titleMedium
-                    ?.copyWith(fontWeight: FontWeight.bold),
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: 8),
               ListView.builder(
@@ -46,14 +48,13 @@ class SceneInfoPage extends ConsumerWidget {
                 itemCount: scene.performerNames.length,
                 itemBuilder: (context, index) {
                   final performerName = scene.performerNames[index];
-                  final performerId =
-                      index < scene.performerIds.length
-                          ? scene.performerIds[index]
-                          : null;
+                  final performerId = index < scene.performerIds.length
+                      ? scene.performerIds[index]
+                      : null;
                   final performerImagePath =
                       index < scene.performerImagePaths.length
-                          ? scene.performerImagePaths[index]
-                          : null;
+                      ? scene.performerImagePaths[index]
+                      : null;
                   final hasImage =
                       performerImagePath != null &&
                       performerImagePath.trim().isNotEmpty;
@@ -75,9 +76,7 @@ class SceneInfoPage extends ConsumerWidget {
                                   ),
                             child: const Icon(Icons.person),
                           )
-                        : const CircleAvatar(
-                            child: Icon(Icons.person),
-                          ),
+                        : const CircleAvatar(child: Icon(Icons.person)),
                     title: Text(
                       performerName.isNotEmpty
                           ? performerName
@@ -85,12 +84,11 @@ class SceneInfoPage extends ConsumerWidget {
                       style: theme.textTheme.bodyLarge,
                     ),
                     trailing: const Icon(Icons.chevron_right),
-                    onTap:
-                        performerId != null && performerId.trim().isNotEmpty
-                            ? () {
-                                // Navigate to performer page if needed
-                              }
-                            : null,
+                    onTap: performerId != null && performerId.trim().isNotEmpty
+                        ? () {
+                            // Navigate to performer page if needed
+                          }
+                        : null,
                   );
                 },
               ),

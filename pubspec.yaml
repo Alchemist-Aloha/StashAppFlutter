@@ -63,6 +63,7 @@ dependencies:
   fvp: ^0.35.2
   package_info_plus: ^9.0.1
   pub_semver: ^2.2.0
+  window_manager: ^0.5.1
 
 dev_dependencies:
   flutter_test:

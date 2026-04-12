@@ -32,46 +32,48 @@ class SupportSettingsPage extends ConsumerWidget {
           const SizedBox(height: AppTheme.spacingLarge),
 
           // Update check section
-          ref.watch(appUpdateProvider).when(
-            data: (updateInfo) {
-              if (updateInfo != null && updateInfo.isUpdateAvailable) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SettingsSectionCard(
-                      title: 'Update Available',
-                      subtitle: 'A newer version is available on GitHub',
-                      child: SettingsActionCard(
-                        icon: Icons.system_update_rounded,
-                        title: 'Update to ${updateInfo.latestVersion}',
-                        subtitle:
-                            'New features and improvements are waiting for you.',
-                        trailing: const Icon(
-                          Icons.open_in_new_rounded,
-                          size: 18,
+          ref
+              .watch(appUpdateProvider)
+              .when(
+                data: (updateInfo) {
+                  if (updateInfo != null && updateInfo.isUpdateAvailable) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SettingsSectionCard(
+                          title: 'Update Available',
+                          subtitle: 'A newer version is available on GitHub',
+                          child: SettingsActionCard(
+                            icon: Icons.system_update_rounded,
+                            title: 'Update to ${updateInfo.latestVersion}',
+                            subtitle:
+                                'New features and improvements are waiting for you.',
+                            trailing: const Icon(
+                              Icons.open_in_new_rounded,
+                              size: 18,
+                            ),
+                            onTap: () async {
+                              final url = Uri.parse(updateInfo.releaseUrl);
+                              try {
+                                if (await canLaunchUrl(url)) {
+                                  await launchUrl(
+                                    url,
+                                    mode: LaunchMode.externalApplication,
+                                  );
+                                }
+                              } catch (_) {}
+                            },
+                          ),
                         ),
-                        onTap: () async {
-                          final url = Uri.parse(updateInfo.releaseUrl);
-                          try {
-                            if (await canLaunchUrl(url)) {
-                              await launchUrl(
-                                url,
-                                mode: LaunchMode.externalApplication,
-                              );
-                            }
-                          } catch (_) {}
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: AppTheme.spacingLarge),
-                  ],
-                );
-              }
-              return const SizedBox.shrink();
-            },
-            loading: () => const SizedBox.shrink(),
-            error: (_, _) => const SizedBox.shrink(),
-          ),
+                        const SizedBox(height: AppTheme.spacingLarge),
+                      ],
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
+                loading: () => const SizedBox.shrink(),
+                error: (_, _) => const SizedBox.shrink(),
+              ),
 
           SettingsSectionCard(
             title: 'Diagnostics',
@@ -89,26 +91,28 @@ class SupportSettingsPage extends ConsumerWidget {
             subtitle: 'Project and source information',
             child: Column(
               children: [
-                ref.watch(appVersionProvider).when(
-                  data: (version) => SettingsActionCard(
-                    icon: Icons.info_outline_rounded,
-                    title: 'Version',
-                    subtitle: 'StashFlow $version',
-                    onTap: () {},
-                  ),
-                  loading: () => SettingsActionCard(
-                    icon: Icons.info_outline_rounded,
-                    title: 'Version',
-                    subtitle: 'Loading version info...',
-                    onTap: () {},
-                  ),
-                  error: (err, stack) => SettingsActionCard(
-                    icon: Icons.info_outline_rounded,
-                    title: 'Version',
-                    subtitle: 'Version info unavailable',
-                    onTap: () {},
-                  ),
-                ),
+                ref
+                    .watch(appVersionProvider)
+                    .when(
+                      data: (version) => SettingsActionCard(
+                        icon: Icons.info_outline_rounded,
+                        title: 'Version',
+                        subtitle: 'StashFlow $version',
+                        onTap: () {},
+                      ),
+                      loading: () => SettingsActionCard(
+                        icon: Icons.info_outline_rounded,
+                        title: 'Version',
+                        subtitle: 'Loading version info...',
+                        onTap: () {},
+                      ),
+                      error: (err, stack) => SettingsActionCard(
+                        icon: Icons.info_outline_rounded,
+                        title: 'Version',
+                        subtitle: 'Version info unavailable',
+                        onTap: () {},
+                      ),
+                    ),
                 const SizedBox(height: AppTheme.spacingSmall),
                 SettingsActionCard(
                   icon: Icons.code_rounded,
@@ -136,9 +140,9 @@ class SupportSettingsPage extends ConsumerWidget {
                       }
                     } catch (e) {
                       if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Error: $e')),
-                        );
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(SnackBar(content: Text('Error: $e')));
                       }
                     }
                   },

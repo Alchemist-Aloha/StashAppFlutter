@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:video_player/video_player.dart';
+import 'package:window_manager/window_manager.dart';
 
 import '../../domain/entities/scene.dart';
 import '../providers/video_player_provider.dart';
@@ -368,10 +369,18 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
   Future<void> _enterFullScreen() async {
     try {
       await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-      await SystemChrome.setPreferredOrientations([
-        DeviceOrientation.landscapeLeft,
-        DeviceOrientation.landscapeRight,
-      ]);
+
+      if (!kIsWeb &&
+          (defaultTargetPlatform == TargetPlatform.windows ||
+              defaultTargetPlatform == TargetPlatform.linux ||
+              defaultTargetPlatform == TargetPlatform.macOS)) {
+        await windowManager.setFullScreen(true);
+      } else {
+        await SystemChrome.setPreferredOrientations([
+          DeviceOrientation.landscapeLeft,
+          DeviceOrientation.landscapeRight,
+        ]);
+      }
     } catch (e) {
       AppLogStore.instance.add(
         'FullscreenPlayerPage [${widget.sceneId}] error entering fullscreen: $e',
@@ -396,14 +405,36 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
     // Reset orientation and show system UI.
     // These are async but don't need to be awaited for the state change.
     unawaited(SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge));
-    unawaited(
-      SystemChrome.setPreferredOrientations([
-        DeviceOrientation.portraitUp,
-        DeviceOrientation.portraitDown,
-        DeviceOrientation.landscapeLeft,
-        DeviceOrientation.landscapeRight,
-      ]),
-    );
+
+    if (!kIsWeb &&
+        (defaultTargetPlatform == TargetPlatform.windows ||
+            defaultTargetPlatform == TargetPlatform.linux ||
+            defaultTargetPlatform == TargetPlatform.macOS)) {
+      unawaited(windowManager.setFullScreen(false));
+    } else {
+      unawaited(
+        SystemChrome.setPreferredOrientations([
+          DeviceOrientation.portraitUp,
+          DeviceOrientation.portraitDown,
+          DeviceOrientation.landscapeLeft,
+          DeviceOrientation.landscapeRight,
+        ]),
+      );
+    }
+  }
+
+  /// Toggles between inline and immersive fullscreen mode.
+  Future<void> _toggleFullScreen() async {
+    if (!mounted || _isPopping) return;
+
+    final router = GoRouter.maybeOf(context);
+
+    // If we are in FullscreenPlayerPage, the toggle button always exits.
+    _isPopping = true;
+    // Update state immediately before popping.
+    // _exitFullScreen will also be called via deactivate() for extra safety.
+    ref.read(playerStateProvider.notifier).setFullScreen(false);
+    router?.pop();
   }
 
   @override
@@ -508,18 +539,7 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
                       controller: controller,
                       useDoubleTapSeek: playerState.useDoubleTapSeek,
                       enableNativePip: playerState.enableNativePip,
-                      onFullScreenToggle: () {
-                        // If we are in FullscreenPlayerPage, the toggle button always exits.
-                        if (!_isPopping) {
-                          _isPopping = true;
-                          // Update state immediately before popping.
-                          // _exitFullScreen will also be called via deactivate() for extra safety.
-                          ref
-                              .read(playerStateProvider.notifier)
-                              .setFullScreen(false);
-                          router?.pop();
-                        }
-                      },
+                      onFullScreenToggle: _toggleFullScreen,
                       scene: scene,
                     ),
                   ],

@@ -2,10 +2,12 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:extended_image/extended_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:window_manager/window_manager.dart';
 import 'package:stash_app_flutter/core/data/preferences/shared_preferences_provider.dart';
 import 'package:stash_app_flutter/features/galleries/presentation/providers/gallery_list_provider.dart';
 import 'package:stash_app_flutter/features/galleries/presentation/providers/gallery_details_provider.dart';
@@ -51,13 +53,37 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
   void initState() {
     super.initState();
     _pageController = ExtendedPageController();
+    _enterFullScreen();
   }
 
   @override
   void dispose() {
     _stopSlideshow();
     _pageController.dispose();
+    _exitFullScreen();
     super.dispose();
+  }
+
+  Future<void> _enterFullScreen() async {
+    try {
+      await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+      if (!kIsWeb &&
+          (defaultTargetPlatform == TargetPlatform.windows ||
+              defaultTargetPlatform == TargetPlatform.linux ||
+              defaultTargetPlatform == TargetPlatform.macOS)) {
+        await windowManager.setFullScreen(true);
+      }
+    } catch (_) {}
+  }
+
+  void _exitFullScreen() {
+    unawaited(SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge));
+    if (!kIsWeb &&
+        (defaultTargetPlatform == TargetPlatform.windows ||
+            defaultTargetPlatform == TargetPlatform.linux ||
+            defaultTargetPlatform == TargetPlatform.macOS)) {
+      unawaited(windowManager.setFullScreen(false));
+    }
   }
 
   void _toggleOverlays() {
@@ -772,8 +798,9 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
                 });
               }
 
-              final currentImage =
-                  items.isNotEmpty ? items[_currentIndex] : null;
+              final currentImage = items.isNotEmpty
+                  ? items[_currentIndex]
+                  : null;
               final displayTitle = _getDisplayTitle(currentImage);
               final totalItemCount =
                   galleryDetailsAsync?.maybeWhen(
