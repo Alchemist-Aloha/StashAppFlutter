@@ -206,6 +206,7 @@ class _PlaybackSettingsPageState extends ConsumerState<PlaybackSettingsPage> {
   Widget _buildDefaultSubtitleSelector() {
     final languages = [
       ('none', 'None (Disabled)'),
+      ('auto', 'Auto (If only one)'),
       ('en', 'English'),
       ('zh', 'Chinese'),
       ('de', 'German'),

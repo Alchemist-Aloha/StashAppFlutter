@@ -262,7 +262,8 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
                     ),
                   ),
                 ),
-                if (playerState.selectedSubtitleLanguage != null)
+                if (playerState.selectedSubtitleLanguage != null &&
+                    playerState.selectedSubtitleLanguage != 'none')
                   ValueListenableBuilder(
                     valueListenable: controller,
                     builder: (context, value, child) {
@@ -465,7 +466,8 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
                         ),
                       ),
                     ),
-                    if (playerState.selectedSubtitleLanguage != null)
+                    if (playerState.selectedSubtitleLanguage != null &&
+                    playerState.selectedSubtitleLanguage != 'none')
                       ValueListenableBuilder(
                         valueListenable: controller,
                         builder: (context, value, child) {

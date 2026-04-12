@@ -332,10 +332,13 @@ class PlayerState extends _$PlayerState {
       source: 'player_provider',
     );
 
-    // If we're disabling subtitles, we might still need to reload to clear them
-    // unless we use a dummy empty caption file.
-    if (languageCode == null) {
-      state = state.copyWith(clearSubtitle: true);
+    // If we're disabling subtitles, we set it to 'none' to distinguish from 
+    // the null (unselected) state which triggers default auto-selection.
+    if (languageCode == null || languageCode == 'none') {
+      state = state.copyWith(
+        selectedSubtitleLanguage: 'none',
+        selectedSubtitleType: null,
+      );
     } else {
       state = state.copyWith(
         selectedSubtitleLanguage: languageCode,
@@ -436,9 +439,20 @@ class PlayerState extends _$PlayerState {
     String? autoLang;
     String? autoType;
 
+    // If we haven't manually selected a subtitle for this session yet
     if (!force && state.selectedSubtitleLanguage == null) {
       final defaultLang = state.defaultSubtitleLanguage;
-      if (defaultLang != 'none') {
+      if (defaultLang == 'auto') {
+        // 'auto' mode: select if and only if exactly one subtitle is available
+        if (scene.captions.length == 1) {
+          autoLang = scene.captions.first.languageCode;
+          autoType = scene.captions.first.captionType;
+        } else if (scene.captions.isEmpty && scene.paths.caption != null) {
+          // If no metadata but a path exists, it's effectively "the only one"
+          autoLang = '';
+          autoType = '';
+        }
+      } else if (defaultLang != 'none') {
         // 1. Try matching default language
         final matches = scene.captions.where(
           (c) => c.languageCode.toLowerCase() == defaultLang.toLowerCase(),
@@ -446,12 +460,9 @@ class PlayerState extends _$PlayerState {
         if (matches.isNotEmpty) {
           autoLang = matches.first.languageCode;
           autoType = matches.first.captionType;
-        } else if (scene.captions.isNotEmpty) {
-          // 2. Use first available if default not found
-          autoLang = scene.captions.first.languageCode;
-          autoType = scene.captions.first.captionType;
-        } else if (scene.paths.caption != null) {
-          // 3. Generic fallback
+        } else if (scene.captions.isEmpty && scene.paths.caption != null) {
+          // 2. Generic fallback if we have a path but no explicit caption metadata.
+          // We assume the user wants it if they have a non-'none' default language.
           autoLang = '';
           autoType = '';
         }
@@ -462,46 +473,12 @@ class PlayerState extends _$PlayerState {
         autoLang ?? state.selectedSubtitleLanguage;
     final effectiveSubtitleType = autoType ?? state.selectedSubtitleType;
 
-    if (!force &&
-        state.activeScene?.id == scene.id &&
-        state.videoPlayerController != null) {
-      _videoControllerRef ??= state.videoPlayerController;
-      if (initialPosition != null) {
-        await state.videoPlayerController?.seekTo(initialPosition);
-      }
-      state.videoPlayerController?.play();
-      AppLogStore.instance.add(
-        'provider playScene replay-active scene=${scene.id}',
-        source: 'player_provider',
-      );
-      state = state.copyWith(
-        isPlaying: true,
-        streamMimeType: mimeType,
-        streamLabel: streamLabel,
-        streamSource: streamSource,
-        prewarmAttempted: prewarmAttempted,
-        prewarmSucceeded: prewarmSucceeded,
-        prewarmLatencyMs: prewarmLatencyMs,
-        selectedSubtitleLanguage: effectiveSubtitleLanguage,
-        selectedSubtitleType: effectiveSubtitleType,
-      );
-      return;
-    }
-
-    // Detach the currently rendered player widget before disposing native players.
-    if (state.activeScene != null) {
-      state = state.copyWith(clearActive: true, isPlaying: false);
-    }
-
-    // Stop current
-    await _disposeControllers();
-    _isUsingBorrowedController = false;
-    if (!ref.mounted) return;
-
-    final stopwatch = Stopwatch()..start();
-
+    // ...
+    // Later in playScene, when creating the controller:
     Future<ClosedCaptionFile>? closedCaptionFile;
-    if (effectiveSubtitleLanguage != null && scene.paths.caption != null) {
+    if (effectiveSubtitleLanguage != null &&
+        effectiveSubtitleLanguage != 'none' &&
+        scene.paths.caption != null) {
       final lang = effectiveSubtitleLanguage;
       final type = effectiveSubtitleType;
       final baseCaptionUrl = scene.paths.caption!;
@@ -541,6 +518,8 @@ class PlayerState extends _$PlayerState {
     );
     _videoControllerRef = videoController;
     _firstFrameLoggedSceneId = null;
+
+    final stopwatch = Stopwatch()..start();
 
     state = state.copyWith(
       activeScene: scene,

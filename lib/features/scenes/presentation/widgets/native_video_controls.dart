@@ -730,9 +730,8 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                                             icon: Icon(
                                               Icons.subtitles_rounded,
                                               size: 20,
-                                              color: playerState
-                                                          .selectedSubtitleLanguage !=
-                                                      null
+                                              color: playerState.selectedSubtitleLanguage != null &&
+                                                      playerState.selectedSubtitleLanguage != 'none'
                                                   ? colorScheme.primary
                                                   : colorScheme.onSurface,
                                             ),
@@ -748,15 +747,7 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                                                     .read(
                                                       playerStateProvider.notifier,
                                                     )
-                                                    .setSubtitle(null);
-                                              } else if (value == 'auto') {
-                                                // To re-trigger auto logic, we clear current selection and re-play
-                                                await ref
-                                                    .read(
-                                                      playerStateProvider.notifier,
-                                                    )
-                                                    .setSubtitle(null);
-                                                // The next playScene will apply auto logic
+                                                    .setSubtitle('none');
                                               } else {
                                                 final parts = value.split(':');
                                                 final lang = parts[0];
@@ -774,49 +765,22 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                                               if (mounted) {
                                                 _showControlsTemporarily();
                                               }
-                                            },                                            itemBuilder: (context) {
+                                            },
+                                            itemBuilder: (context) {
                                               final items =
                                                   <PopupMenuEntry<String?>>[
-                                                PopupMenuItem<String?>(
-                                                  value: 'auto',
-                                                  child: Row(
-                                                    children: [
-                                                      Icon(
-                                                        playerState.selectedSubtitleLanguage ==
-                                                                null
-                                                            ? Icons.check_circle
-                                                            : Icons.circle_outlined,
-                                                        size: 16,
-                                                        color: playerState
-                                                                    .selectedSubtitleLanguage ==
-                                                                null
-                                                            ? colorScheme.primary
-                                                            : colorScheme
-                                                                .onSurfaceVariant,
-                                                      ),
-                                                      const SizedBox(width: 8),
-                                                      Text(
-                                                        'Auto',
-                                                        style: TextStyle(
-                                                          color:
-                                                              colorScheme.onSurface,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
                                                 PopupMenuItem<String?>(
                                                   value: 'none',
                                                   child: Row(
                                                     children: [
                                                       Icon(
-                                                        playerState.selectedSubtitleLanguage ==
-                                                                null &&
-                                                                playerState.selectedSubtitleType == null
-                                                            ? Icons.circle_outlined // Should not happen with new auto logic
+                                                        playerState.selectedSubtitleLanguage == 'none'
+                                                            ? Icons.check_circle
                                                             : Icons.circle_outlined,
                                                         size: 16,
-                                                        color: colorScheme.onSurfaceVariant,
+                                                        color: playerState.selectedSubtitleLanguage == 'none'
+                                                            ? colorScheme.primary
+                                                            : colorScheme.onSurfaceVariant,
                                                       ),
                                                       const SizedBox(width: 8),
                                                       Text(
@@ -834,15 +798,14 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                                                   widget.scene.paths.caption !=
                                                       null) {
                                                 // Fallback to "Default" if we have a path but no explicit caption metadata
-                                                final isSelected = playerState
-                                                            .selectedSubtitleLanguage ==
-                                                        '' &&
-                                                    (playerState
-                                                            .selectedSubtitleType ==
-                                                        null ||
-                                                    playerState
-                                                            .selectedSubtitleType ==
-                                                        '');
+                                                final isSelected = (playerState.selectedSubtitleLanguage == '' ||
+                                                        playerState.selectedSubtitleLanguage == null) &&
+                                                    (playerState.selectedSubtitleType == null ||
+                                                        playerState.selectedSubtitleType == '');
+                                                
+                                                // Note: if selectedSubtitleLanguage is null, it might be auto-selected
+                                                // but for the UI we show it as selected if it matches the 'Default' criteria.
+                                                
                                                 items.add(
                                                   PopupMenuItem<String?>(
                                                     value: ':',
