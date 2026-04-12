@@ -774,11 +774,13 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                                                   child: Row(
                                                     children: [
                                                       Icon(
-                                                        playerState.selectedSubtitleLanguage == 'none'
+                                                        (playerState.selectedSubtitleLanguage == null ||
+                                                                playerState.selectedSubtitleLanguage == 'none')
                                                             ? Icons.check_circle
                                                             : Icons.circle_outlined,
                                                         size: 16,
-                                                        color: playerState.selectedSubtitleLanguage == 'none'
+                                                        color: (playerState.selectedSubtitleLanguage == null ||
+                                                                playerState.selectedSubtitleLanguage == 'none')
                                                             ? colorScheme.primary
                                                             : colorScheme.onSurfaceVariant,
                                                       ),
@@ -799,7 +801,7 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                                                       null) {
                                                 // Fallback to "Default" if we have a path but no explicit caption metadata
                                                 final isSelected = (playerState.selectedSubtitleLanguage == '' ||
-                                                        playerState.selectedSubtitleLanguage == null) &&
+                                                  playerState.selectedSubtitleLanguage == null) &&
                                                     (playerState.selectedSubtitleType == null ||
                                                         playerState.selectedSubtitleType == '');
                                                 
@@ -837,12 +839,19 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
 
                                               for (final c
                                                   in widget.scene.captions) {
-                                                final isSelected = playerState
-                                                            .selectedSubtitleLanguage ==
-                                                        c.languageCode &&
-                                                    playerState
-                                                            .selectedSubtitleType ==
-                                                        c.captionType;
+                                                final selectedLang =
+                                                  playerState.selectedSubtitleLanguage ?? '';
+                                                final selectedType =
+                                                  playerState.selectedSubtitleType ?? '';
+                                                final captionLang = c.languageCode;
+                                                final captionType = c.captionType;
+                                                final isUnknownLangSelection =
+                                                  (selectedLang.isEmpty || selectedLang == '00') &&
+                                                  (captionLang.isEmpty || captionLang == '00');
+                                                final isSelected =
+                                                  (selectedLang == captionLang || isUnknownLangSelection) &&
+                                                  (selectedType == captionType ||
+                                                    (selectedType.isEmpty && isUnknownLangSelection));
                                                 final label =
                                                     c.languageCode == '00' ||
                                                             c.languageCode.isEmpty

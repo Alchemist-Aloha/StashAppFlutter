@@ -469,8 +469,17 @@ class PlayerState extends _$PlayerState {
       }
     }
 
+    // Represent "subtitles disabled" explicitly as 'none' for consistent UI
+    // selection state in subtitle menus.
+    if (!force &&
+      state.selectedSubtitleLanguage == null &&
+      state.defaultSubtitleLanguage == 'none') {
+      autoLang = 'none';
+      autoType = null;
+    }
+
     final effectiveSubtitleLanguage =
-        autoLang ?? state.selectedSubtitleLanguage;
+      autoLang ?? state.selectedSubtitleLanguage;
     final effectiveSubtitleType = autoType ?? state.selectedSubtitleType;
 
     // ...
