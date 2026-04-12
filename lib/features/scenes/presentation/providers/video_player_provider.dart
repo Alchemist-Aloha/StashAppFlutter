@@ -332,7 +332,7 @@ class PlayerState extends _$PlayerState {
       source: 'player_provider',
     );
 
-    // If we're disabling subtitles, we set it to 'none' to distinguish from 
+    // If we're disabling subtitles, we set it to 'none' to distinguish from
     // the null (unselected) state which triggers default auto-selection.
     if (languageCode == null || languageCode == 'none') {
       state = state.copyWith(
@@ -368,7 +368,7 @@ class PlayerState extends _$PlayerState {
         initialPosition: currentPosition,
         force: true,
       );
-      
+
       if (!isPlaying) {
         state.videoPlayerController?.pause();
       }
@@ -472,14 +472,14 @@ class PlayerState extends _$PlayerState {
     // Represent "subtitles disabled" explicitly as 'none' for consistent UI
     // selection state in subtitle menus.
     if (!force &&
-      state.selectedSubtitleLanguage == null &&
-      state.defaultSubtitleLanguage == 'none') {
+        state.selectedSubtitleLanguage == null &&
+        state.defaultSubtitleLanguage == 'none') {
       autoLang = 'none';
       autoType = null;
     }
 
     final effectiveSubtitleLanguage =
-      autoLang ?? state.selectedSubtitleLanguage;
+        autoLang ?? state.selectedSubtitleLanguage;
     final effectiveSubtitleType = autoType ?? state.selectedSubtitleType;
 
     // ...
@@ -807,7 +807,10 @@ class PlayerState extends _$PlayerState {
     }
   }
 
-  Future<ClosedCaptionFile> _loadSubtitles(String url, {String? fallbackVttUrl}) async {
+  Future<ClosedCaptionFile> _loadSubtitles(
+    String url, {
+    String? fallbackVttUrl,
+  }) async {
     final apiKey = ref.read(serverApiKeyProvider);
     final headers = ref.read(mediaHeadersProvider);
     final authenticatedUrl = appendApiKey(url, apiKey);
@@ -818,31 +821,36 @@ class PlayerState extends _$PlayerState {
     );
 
     try {
-      final requestHeaders = {
-        ...headers,
-        'Accept': 'text/vtt, */*',
-      };
+      final requestHeaders = {...headers, 'Accept': 'text/vtt, */*'};
 
-      var response = await http.get(Uri.parse(authenticatedUrl), headers: requestHeaders);
-      
+      var response = await http.get(
+        Uri.parse(authenticatedUrl),
+        headers: requestHeaders,
+      );
+
       AppLogStore.instance.add(
         'PlayerState _loadSubtitles: status=${response.statusCode} len=${response.bodyBytes.length} type=${response.headers['content-type']}',
         source: 'player_provider',
       );
 
       // Fallback 1: If lang=00 returned empty, try without lang parameter
-      if (response.statusCode == 200 && response.bodyBytes.isEmpty && authenticatedUrl.contains('lang=00')) {
+      if (response.statusCode == 200 &&
+          response.bodyBytes.isEmpty &&
+          authenticatedUrl.contains('lang=00')) {
         final uri = Uri.parse(authenticatedUrl);
         final params = Map<String, String>.from(uri.queryParameters);
         params.remove('lang');
         final fallbackUrl = uri.replace(queryParameters: params).toString();
-        
+
         AppLogStore.instance.add(
           'PlayerState _loadSubtitles: empty response for lang=00, trying fallback: $fallbackUrl',
           source: 'player_provider',
         );
-        response = await http.get(Uri.parse(fallbackUrl), headers: requestHeaders);
-        
+        response = await http.get(
+          Uri.parse(fallbackUrl),
+          headers: requestHeaders,
+        );
+
         AppLogStore.instance.add(
           'PlayerState _loadSubtitles fallback: status=${response.statusCode} len=${response.bodyBytes.length}',
           source: 'player_provider',
@@ -850,13 +858,19 @@ class PlayerState extends _$PlayerState {
       }
 
       // Fallback 2: If still empty and we have a vtt path, try that
-      if (response.statusCode == 200 && response.bodyBytes.isEmpty && fallbackVttUrl != null && fallbackVttUrl != url) {
+      if (response.statusCode == 200 &&
+          response.bodyBytes.isEmpty &&
+          fallbackVttUrl != null &&
+          fallbackVttUrl != url) {
         final authFallbackVtt = appendApiKey(fallbackVttUrl, apiKey);
         AppLogStore.instance.add(
           'PlayerState _loadSubtitles: empty response, trying vtt fallback: $authFallbackVtt',
           source: 'player_provider',
         );
-        response = await http.get(Uri.parse(authFallbackVtt), headers: requestHeaders);
+        response = await http.get(
+          Uri.parse(authFallbackVtt),
+          headers: requestHeaders,
+        );
         AppLogStore.instance.add(
           'PlayerState _loadSubtitles vtt fallback: status=${response.statusCode} len=${response.bodyBytes.length}',
           source: 'player_provider',
@@ -875,7 +889,7 @@ class PlayerState extends _$PlayerState {
 
         // Use utf8.decode with allowMalformed: true to be resilient
         final content = utf8.decode(bytes, allowMalformed: true);
-        
+
         if (content.trim().isEmpty) {
           AppLogStore.instance.add(
             'PlayerState _loadSubtitles: received only whitespace',
@@ -884,10 +898,10 @@ class PlayerState extends _$PlayerState {
           return WebVTTCaptionFile('');
         }
 
-        final preview = content.length > 100 
-            ? content.substring(0, 100).replaceAll('\n', ' ') 
+        final preview = content.length > 100
+            ? content.substring(0, 100).replaceAll('\n', ' ')
             : content.replaceAll('\n', ' ');
-        
+
         AppLogStore.instance.add(
           'PlayerState _loadSubtitles: success, length=${content.length}, preview="$preview"',
           source: 'player_provider',
@@ -896,7 +910,7 @@ class PlayerState extends _$PlayerState {
         final isVtt = content.contains('WEBVTT');
         // SRT often starts with 1 and a newline, or has --> but not WEBVTT
         final isSrt = !isVtt && content.contains('-->');
-        
+
         ClosedCaptionFile captionFile;
         if (isSrt) {
           AppLogStore.instance.add(
@@ -911,12 +925,12 @@ class PlayerState extends _$PlayerState {
           );
           captionFile = WebVTTCaptionFile(content);
         }
-        
+
         AppLogStore.instance.add(
           'PlayerState _loadSubtitles: parsed ${captionFile.captions.length} captions',
           source: 'player_provider',
         );
-        
+
         return captionFile;
       } else {
         throw Exception('Failed to load subtitles: ${response.statusCode}');

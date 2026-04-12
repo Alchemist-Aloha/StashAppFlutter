@@ -438,10 +438,10 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
       child: CallbackShortcuts(
         bindings: {
           const SingleActivator(LogicalKeyboardKey.space): _togglePlay,
-          const SingleActivator(LogicalKeyboardKey.arrowLeft):
-              () => _seekRelativeSeconds(-_gestureSeekSeconds),
-          const SingleActivator(LogicalKeyboardKey.arrowRight):
-              () => _seekRelativeSeconds(_gestureSeekSeconds),
+          const SingleActivator(LogicalKeyboardKey.arrowLeft): () =>
+              _seekRelativeSeconds(-_gestureSeekSeconds),
+          const SingleActivator(LogicalKeyboardKey.arrowRight): () =>
+              _seekRelativeSeconds(_gestureSeekSeconds),
         },
         child: Focus(
           autofocus: true,
@@ -483,7 +483,9 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                   ),
 
                   Positioned.fill(
-                    child: Center(child: _buildSeekFeedbackOverlay(colorScheme)),
+                    child: Center(
+                      child: _buildSeekFeedbackOverlay(colorScheme),
+                    ),
                   ),
 
                   // Layer 1: UI Overlays
@@ -589,7 +591,12 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                             child: RepaintBoundary(
                               child: Container(
                                 margin: const EdgeInsets.fromLTRB(6, 0, 6, 6),
-                                padding: const EdgeInsets.fromLTRB(10, 8, 10, 6),
+                                padding: const EdgeInsets.fromLTRB(
+                                  10,
+                                  8,
+                                  10,
+                                  6,
+                                ),
                                 decoration: BoxDecoration(
                                   color: colorScheme.surface.withValues(
                                     alpha: 0.62,
@@ -598,9 +605,8 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                                     AppTheme.radiusMedium,
                                   ),
                                   border: Border.all(
-                                    color: colorScheme.outlineVariant.withValues(
-                                      alpha: 0.35,
-                                    ),
+                                    color: colorScheme.outlineVariant
+                                        .withValues(alpha: 0.35),
                                   ),
                                 ),
                                 child: Column(
@@ -613,7 +619,9 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                                       decoration: BoxDecoration(
                                         color: colorScheme.onSurfaceVariant
                                             .withValues(alpha: 0.55),
-                                        borderRadius: BorderRadius.circular(999),
+                                        borderRadius: BorderRadius.circular(
+                                          999,
+                                        ),
                                       ),
                                     ),
                                     SliderTheme(
@@ -622,9 +630,10 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                                         thumbShape: const RoundSliderThumbShape(
                                           enabledThumbRadius: 6,
                                         ),
-                                        overlayShape: const RoundSliderOverlayShape(
-                                          overlayRadius: 12,
-                                        ),
+                                        overlayShape:
+                                            const RoundSliderOverlayShape(
+                                              overlayRadius: 12,
+                                            ),
                                         activeTrackColor: colorScheme.primary,
                                         inactiveTrackColor: colorScheme
                                             .onSurfaceVariant
@@ -636,7 +645,8 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                                         max: durationMs.toDouble(),
                                         value: sliderValue,
                                         onChangeStart: (v) {
-                                          _wasPlayingBeforeScrub = value.isPlaying;
+                                          _wasPlayingBeforeScrub =
+                                              value.isPlaying;
                                           _cancelAutoHide();
                                           setState(() {
                                             _isScrubbing = true;
@@ -674,7 +684,9 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                                           tooltip: value.isPlaying
                                               ? 'Pause'
                                               : 'Play',
-                                          style: _controlButtonStyle(colorScheme),
+                                          style: _controlButtonStyle(
+                                            colorScheme,
+                                          ),
                                           iconSize: 20,
                                           icon: Icon(
                                             value.isPlaying
@@ -690,11 +702,14 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                                             _showControlsTemporarily();
                                           },
                                         ),
-                                        if (nextScene != null && !isFullScreen) ...[
+                                        if (nextScene != null &&
+                                            !isFullScreen) ...[
                                           const SizedBox(width: 8),
                                           IconButton(
                                             tooltip: 'Skip Next',
-                                            style: _controlButtonStyle(colorScheme),
+                                            style: _controlButtonStyle(
+                                              colorScheme,
+                                            ),
                                             iconSize: 20,
                                             icon: const Icon(
                                               Icons.skip_next_rounded,
@@ -702,7 +717,8 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                                             onPressed: () {
                                               ref
                                                   .read(
-                                                    playerStateProvider.notifier,
+                                                    playerStateProvider
+                                                        .notifier,
                                                   )
                                                   .playNext();
                                               _showControlsTemporarily();
@@ -730,32 +746,43 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                                             icon: Icon(
                                               Icons.subtitles_rounded,
                                               size: 20,
-                                              color: playerState.selectedSubtitleLanguage != null &&
-                                                      playerState.selectedSubtitleLanguage != 'none'
+                                              color:
+                                                  playerState.selectedSubtitleLanguage !=
+                                                          null &&
+                                                      playerState
+                                                              .selectedSubtitleLanguage !=
+                                                          'none'
                                                   ? colorScheme.primary
                                                   : colorScheme.onSurface,
                                             ),
-                                            style: _controlButtonStyle(colorScheme),
-                                            initialValue:
-                                                playerState.selectedSubtitleLanguage,
-                                            color: colorScheme.surfaceContainerHigh,
+                                            style: _controlButtonStyle(
+                                              colorScheme,
+                                            ),
+                                            initialValue: playerState
+                                                .selectedSubtitleLanguage,
+                                            color: colorScheme
+                                                .surfaceContainerHigh,
                                             surfaceTintColor:
                                                 colorScheme.surfaceTint,
                                             onSelected: (value) async {
-                                              if (value == null || value == 'none') {
+                                              if (value == null ||
+                                                  value == 'none') {
                                                 await ref
                                                     .read(
-                                                      playerStateProvider.notifier,
+                                                      playerStateProvider
+                                                          .notifier,
                                                     )
                                                     .setSubtitle('none');
                                               } else {
                                                 final parts = value.split(':');
                                                 final lang = parts[0];
-                                                final type =
-                                                    parts.length > 1 ? parts[1] : '';
+                                                final type = parts.length > 1
+                                                    ? parts[1]
+                                                    : '';
                                                 await ref
                                                     .read(
-                                                      playerStateProvider.notifier,
+                                                      playerStateProvider
+                                                          .notifier,
                                                     )
                                                     .setSubtitle(
                                                       lang,
@@ -767,47 +794,66 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                                               }
                                             },
                                             itemBuilder: (context) {
-                                              final items =
-                                                  <PopupMenuEntry<String?>>[
+                                              final items = <PopupMenuEntry<String?>>[
                                                 PopupMenuItem<String?>(
                                                   value: 'none',
                                                   child: Row(
                                                     children: [
                                                       Icon(
-                                                        (playerState.selectedSubtitleLanguage == null ||
-                                                                playerState.selectedSubtitleLanguage == 'none')
+                                                        (playerState.selectedSubtitleLanguage ==
+                                                                    null ||
+                                                                playerState
+                                                                        .selectedSubtitleLanguage ==
+                                                                    'none')
                                                             ? Icons.check_circle
-                                                            : Icons.circle_outlined,
+                                                            : Icons
+                                                                  .circle_outlined,
                                                         size: 16,
-                                                        color: (playerState.selectedSubtitleLanguage == null ||
-                                                                playerState.selectedSubtitleLanguage == 'none')
-                                                            ? colorScheme.primary
-                                                            : colorScheme.onSurfaceVariant,
+                                                        color:
+                                                            (playerState.selectedSubtitleLanguage ==
+                                                                    null ||
+                                                                playerState
+                                                                        .selectedSubtitleLanguage ==
+                                                                    'none')
+                                                            ? colorScheme
+                                                                  .primary
+                                                            : colorScheme
+                                                                  .onSurfaceVariant,
                                                       ),
                                                       const SizedBox(width: 8),
                                                       Text(
                                                         'None',
                                                         style: TextStyle(
-                                                          color:
-                                                              colorScheme.onSurface,
+                                                          color: colorScheme
+                                                              .onSurface,
                                                         ),
                                                       ),
                                                     ],
                                                   ),
                                                 ),
                                               ];
-                                              if (widget.scene.captions.isEmpty &&
+                                              if (widget
+                                                      .scene
+                                                      .captions
+                                                      .isEmpty &&
                                                   widget.scene.paths.caption !=
                                                       null) {
                                                 // Fallback to "Default" if we have a path but no explicit caption metadata
-                                                final isSelected = (playerState.selectedSubtitleLanguage == '' ||
-                                                  playerState.selectedSubtitleLanguage == null) &&
-                                                    (playerState.selectedSubtitleType == null ||
-                                                        playerState.selectedSubtitleType == '');
-                                                
+                                                final isSelected =
+                                                    (playerState.selectedSubtitleLanguage ==
+                                                            '' ||
+                                                        playerState
+                                                                .selectedSubtitleLanguage ==
+                                                            null) &&
+                                                    (playerState.selectedSubtitleType ==
+                                                            null ||
+                                                        playerState
+                                                                .selectedSubtitleType ==
+                                                            '');
+
                                                 // Note: if selectedSubtitleLanguage is null, it might be auto-selected
                                                 // but for the UI we show it as selected if it matches the 'Default' criteria.
-                                                
+
                                                 items.add(
                                                   PopupMenuItem<String?>(
                                                     value: ':',
@@ -815,15 +861,20 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                                                       children: [
                                                         Icon(
                                                           isSelected
-                                                              ? Icons.check_circle
-                                                              : Icons.circle_outlined,
+                                                              ? Icons
+                                                                    .check_circle
+                                                              : Icons
+                                                                    .circle_outlined,
                                                           size: 16,
                                                           color: isSelected
-                                                              ? colorScheme.primary
+                                                              ? colorScheme
+                                                                    .primary
                                                               : colorScheme
-                                                                  .onSurfaceVariant,
+                                                                    .onSurfaceVariant,
                                                         ),
-                                                        const SizedBox(width: 8),
+                                                        const SizedBox(
+                                                          width: 8,
+                                                        ),
                                                         Text(
                                                           'Default',
                                                           style: TextStyle(
@@ -840,23 +891,35 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                                               for (final c
                                                   in widget.scene.captions) {
                                                 final selectedLang =
-                                                  playerState.selectedSubtitleLanguage ?? '';
+                                                    playerState
+                                                        .selectedSubtitleLanguage ??
+                                                    '';
                                                 final selectedType =
-                                                  playerState.selectedSubtitleType ?? '';
-                                                final captionLang = c.languageCode;
-                                                final captionType = c.captionType;
+                                                    playerState
+                                                        .selectedSubtitleType ??
+                                                    '';
+                                                final captionLang =
+                                                    c.languageCode;
+                                                final captionType =
+                                                    c.captionType;
                                                 final isUnknownLangSelection =
-                                                  (selectedLang.isEmpty || selectedLang == '00') &&
-                                                  (captionLang.isEmpty || captionLang == '00');
+                                                    (selectedLang.isEmpty ||
+                                                        selectedLang == '00') &&
+                                                    (captionLang.isEmpty ||
+                                                        captionLang == '00');
                                                 final isSelected =
-                                                  (selectedLang == captionLang || isUnknownLangSelection) &&
-                                                  (selectedType == captionType ||
-                                                    (selectedType.isEmpty && isUnknownLangSelection));
+                                                    (selectedLang ==
+                                                            captionLang ||
+                                                        isUnknownLangSelection) &&
+                                                    (selectedType ==
+                                                            captionType ||
+                                                        (selectedType.isEmpty &&
+                                                            isUnknownLangSelection));
                                                 final label =
                                                     c.languageCode == '00' ||
-                                                            c.languageCode.isEmpty
-                                                        ? 'Unknown (${c.captionType})'
-                                                        : '${c.languageCode.toUpperCase()} (${c.captionType})';
+                                                        c.languageCode.isEmpty
+                                                    ? 'Unknown (${c.captionType})'
+                                                    : '${c.languageCode.toUpperCase()} (${c.captionType})';
 
                                                 items.add(
                                                   PopupMenuItem<String?>(
@@ -866,15 +929,20 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                                                       children: [
                                                         Icon(
                                                           isSelected
-                                                              ? Icons.check_circle
-                                                              : Icons.circle_outlined,
+                                                              ? Icons
+                                                                    .check_circle
+                                                              : Icons
+                                                                    .circle_outlined,
                                                           size: 16,
                                                           color: isSelected
-                                                              ? colorScheme.primary
+                                                              ? colorScheme
+                                                                    .primary
                                                               : colorScheme
-                                                                  .onSurfaceVariant,
+                                                                    .onSurfaceVariant,
                                                         ),
-                                                        const SizedBox(width: 8),
+                                                        const SizedBox(
+                                                          width: 8,
+                                                        ),
                                                         Text(
                                                           label,
                                                           style: TextStyle(
@@ -894,8 +962,10 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                                         PopupMenuButton<double>(
                                           tooltip: 'Playback speed',
                                           initialValue: playbackSpeed,
-                                          color: colorScheme.surfaceContainerHigh,
-                                          surfaceTintColor: colorScheme.surfaceTint,
+                                          color:
+                                              colorScheme.surfaceContainerHigh,
+                                          surfaceTintColor:
+                                              colorScheme.surfaceTint,
                                           onSelected: (speed) async {
                                             await widget.controller
                                                 .setPlaybackSpeed(speed);
@@ -904,23 +974,30 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                                           itemBuilder: (context) {
                                             return _playbackSpeeds
                                                 .map(
-                                                  (speed) => PopupMenuItem<double>(
+                                                  (
+                                                    speed,
+                                                  ) => PopupMenuItem<double>(
                                                     value: speed,
                                                     child: Row(
                                                       children: [
                                                         Icon(
                                                           speed == playbackSpeed
-                                                              ? Icons.check_circle
+                                                              ? Icons
+                                                                    .check_circle
                                                               : Icons
                                                                     .circle_outlined,
                                                           size: 16,
                                                           color:
-                                                              speed == playbackSpeed
-                                                              ? colorScheme.primary
+                                                              speed ==
+                                                                  playbackSpeed
+                                                              ? colorScheme
+                                                                    .primary
                                                               : colorScheme
                                                                     .onSurfaceVariant,
                                                         ),
-                                                        const SizedBox(width: 8),
+                                                        const SizedBox(
+                                                          width: 8,
+                                                        ),
                                                         Text(
                                                           _formatSpeed(speed),
                                                           style: TextStyle(
@@ -943,9 +1020,8 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                                               color: colorScheme
                                                   .surfaceContainerHigh
                                                   .withValues(alpha: 0.6),
-                                              borderRadius: BorderRadius.circular(
-                                                10,
-                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
                                             ),
                                             child: Text(
                                               _formatSpeed(playbackSpeed),
@@ -963,15 +1039,21 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                                             Platform.isAndroid)
                                           IconButton(
                                             tooltip: 'Picture-in-Picture',
-                                            style: _controlButtonStyle(colorScheme),
+                                            style: _controlButtonStyle(
+                                              colorScheme,
+                                            ),
                                             icon: const Icon(
-                                              Icons.picture_in_picture_alt_outlined,
+                                              Icons
+                                                  .picture_in_picture_alt_outlined,
                                             ),
                                             onPressed: () async {
                                               if (!isFullScreen) {
-                                                widget.onFullScreenToggle?.call();
+                                                widget.onFullScreenToggle
+                                                    ?.call();
                                                 await Future.delayed(
-                                                  const Duration(milliseconds: 150),
+                                                  const Duration(
+                                                    milliseconds: 150,
+                                                  ),
                                                 );
                                               }
                                               await PipMode.enterIfAvailable(
@@ -985,7 +1067,9 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                                           ),
                                         IconButton(
                                           tooltip: 'Toggle Fullscreen',
-                                          style: _controlButtonStyle(colorScheme),
+                                          style: _controlButtonStyle(
+                                            colorScheme,
+                                          ),
                                           icon: Icon(
                                             isFullScreen
                                                 ? Icons.fullscreen_exit_rounded
