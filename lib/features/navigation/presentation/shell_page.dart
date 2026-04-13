@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/utils/responsive.dart';
+import '../../../core/presentation/providers/desktop_capabilities_provider.dart';
 import '../../../core/data/graphql/graphql_client.dart';
 import '../../scenes/presentation/providers/video_player_provider.dart';
 import '../../scenes/presentation/providers/scene_list_provider.dart';
@@ -294,6 +296,34 @@ class _ShellPageState extends ConsumerState<ShellPage> {
           const VerticalDivider(thickness: 1, width: 1),
           Expanded(child: bodyContent),
         ],
+      );
+    }
+
+    if (ref.watch(desktopCapabilitiesProvider)) {
+      final Map<ShortcutActivator, VoidCallback> bindings = {};
+      final digitKeys = [
+        LogicalKeyboardKey.digit1,
+        LogicalKeyboardKey.digit2,
+        LogicalKeyboardKey.digit3,
+        LogicalKeyboardKey.digit4,
+        LogicalKeyboardKey.digit5,
+        LogicalKeyboardKey.digit6,
+        LogicalKeyboardKey.digit7,
+        LogicalKeyboardKey.digit8,
+        LogicalKeyboardKey.digit9,
+      ];
+      for (int i = 0; i < visibleTabs.length && i < digitKeys.length; i++) {
+        final index = i;
+        bindings[SingleActivator(digitKeys[i])] =
+            () => onDestinationSelected(index);
+      }
+
+      bodyContent = CallbackShortcuts(
+        bindings: bindings,
+        child: Focus(
+          autofocus: true,
+          child: bodyContent,
+        ),
       );
     }
 
