@@ -77,7 +77,7 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
       _scheduleAutoHide();
     }
 
-    ref.listenManual(desktopSettingsProvider, (previous, next) {
+    ref.listenManual<DesktopSettings>(desktopSettingsProvider, (previous, next) {
       if (previous?.volume != next.volume || previous?.isMuted != next.isMuted) {
         _showVolumeOverlay();
       }

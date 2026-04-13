@@ -15,9 +15,11 @@ class DesktopSettings {
   }
 }
 
-class DesktopSettingsNotifier extends StateNotifier<DesktopSettings> {
-  DesktopSettingsNotifier() : super(DesktopSettings()) {
+class DesktopSettingsNotifier extends Notifier<DesktopSettings> {
+  @override
+  DesktopSettings build() {
     _loadSettings();
+    return DesktopSettings();
   }
 
   Future<void> _loadSettings() async {
@@ -44,6 +46,6 @@ class DesktopSettingsNotifier extends StateNotifier<DesktopSettings> {
 }
 
 final desktopSettingsProvider =
-    StateNotifierProvider<DesktopSettingsNotifier, DesktopSettings>((ref) {
+    NotifierProvider<DesktopSettingsNotifier, DesktopSettings>(() {
   return DesktopSettingsNotifier();
 });
