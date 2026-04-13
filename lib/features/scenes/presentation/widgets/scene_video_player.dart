@@ -345,6 +345,7 @@ class FullscreenPlayerPage extends ConsumerStatefulWidget {
 
 class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
   bool _isPopping = false;
+  bool _wasMaximizedBeforeFullscreen = false;
 
   @override
   void initState() {
@@ -377,7 +378,20 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
           (defaultTargetPlatform == TargetPlatform.windows ||
               defaultTargetPlatform == TargetPlatform.linux ||
               defaultTargetPlatform == TargetPlatform.macOS)) {
+        _wasMaximizedBeforeFullscreen = await windowManager.isMaximized();
+
+        // Some desktop window managers can keep title bar chrome visible when
+        // entering fullscreen directly from a maximized state.
+        if (_wasMaximizedBeforeFullscreen) {
+          await windowManager.unmaximize();
+        }
+
         await windowManager.setFullScreen(true);
+
+        // Retry once if the first transition did not stick.
+        if (!await windowManager.isFullScreen()) {
+          await windowManager.setFullScreen(true);
+        }
 
         // On Windows, toggling fullscreen can sometimes trigger a pause in the native player
         // due to window state changes or focus loss during the transition.
@@ -426,6 +440,12 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
             defaultTargetPlatform == TargetPlatform.macOS)) {
       unawaited(() async {
         await windowManager.setFullScreen(false);
+
+        // Restore maximized state when leaving fullscreen if we started there.
+        if (_wasMaximizedBeforeFullscreen) {
+          await windowManager.maximize();
+          _wasMaximizedBeforeFullscreen = false;
+        }
 
         // On Windows, toggling fullscreen can sometimes trigger a pause in the native player
         // due to window state changes or focus loss during the transition.
