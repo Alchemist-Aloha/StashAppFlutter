@@ -52,3 +52,5 @@ android/upload-keystore.jks
 
 /docs/superpowers/
 .vscode/
+# Git worktrees
+.worktrees/
