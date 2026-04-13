@@ -345,6 +345,7 @@ class FullscreenPlayerPage extends ConsumerStatefulWidget {
 
 class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
   bool _isPopping = false;
+  bool _wasMaximizedBeforeFullscreen = false;
 
   @override
   void initState() {
@@ -367,6 +368,9 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
   }
 
   Future<void> _enterFullScreen() async {
+    final controller = ref.read(playerStateProvider).videoPlayerController;
+    final wasPlaying = controller?.value.isPlaying ?? false;
+
     try {
       await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 
@@ -374,7 +378,28 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
           (defaultTargetPlatform == TargetPlatform.windows ||
               defaultTargetPlatform == TargetPlatform.linux ||
               defaultTargetPlatform == TargetPlatform.macOS)) {
+        _wasMaximizedBeforeFullscreen = await windowManager.isMaximized();
+
+        // Some desktop window managers can keep title bar chrome visible when
+        // entering fullscreen directly from a maximized state.
+        if (_wasMaximizedBeforeFullscreen) {
+          await windowManager.unmaximize();
+        }
+
         await windowManager.setFullScreen(true);
+
+        // Retry once if the first transition did not stick.
+        if (!await windowManager.isFullScreen()) {
+          await windowManager.setFullScreen(true);
+        }
+
+        // On Windows, toggling fullscreen can sometimes trigger a pause in the native player
+        // due to window state changes or focus loss during the transition.
+        if (wasPlaying && defaultTargetPlatform == TargetPlatform.windows) {
+          if (controller != null && !controller.value.isPlaying) {
+            unawaited(controller.play());
+          }
+        }
       } else {
         await SystemChrome.setPreferredOrientations([
           DeviceOrientation.landscapeLeft,
@@ -394,6 +419,9 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
   }
 
   void _exitFullScreen() {
+    final controller = ref.read(playerStateProvider).videoPlayerController;
+    final wasPlaying = controller?.value.isPlaying ?? false;
+
     // Reset state early so parent pages (like ShellPage) rebuild correctly.
     // We use a post-frame callback to avoid "Tried to modify a provider while
     // the widget tree was building" errors during route transitions.
@@ -410,7 +438,23 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
         (defaultTargetPlatform == TargetPlatform.windows ||
             defaultTargetPlatform == TargetPlatform.linux ||
             defaultTargetPlatform == TargetPlatform.macOS)) {
-      unawaited(windowManager.setFullScreen(false));
+      unawaited(() async {
+        await windowManager.setFullScreen(false);
+
+        // Restore maximized state when leaving fullscreen if we started there.
+        if (_wasMaximizedBeforeFullscreen) {
+          await windowManager.maximize();
+          _wasMaximizedBeforeFullscreen = false;
+        }
+
+        // On Windows, toggling fullscreen can sometimes trigger a pause in the native player
+        // due to window state changes or focus loss during the transition.
+        if (wasPlaying && defaultTargetPlatform == TargetPlatform.windows) {
+          if (controller != null && !controller.value.isPlaying) {
+            await controller.play();
+          }
+        }
+      }());
     } else {
       unawaited(
         SystemChrome.setPreferredOrientations([

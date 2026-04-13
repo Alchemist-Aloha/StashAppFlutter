@@ -50,4 +50,6 @@ gha-creds-*.json
 android/key.properties
 android/upload-keystore.jks
 
-/docs/superpowers/
+.vscode/
+# Git worktrees
+.worktrees/

@@ -16,6 +16,7 @@ import '../../../../core/data/graphql/media_headers_provider.dart';
 import '../../../../core/data/graphql/url_resolver.dart';
 import '../../../../core/data/preferences/shared_preferences_provider.dart';
 import '../../../../core/utils/app_log_store.dart';
+import '../../../../core/presentation/providers/desktop_settings_provider.dart';
 
 part 'video_player_provider.g.dart';
 
@@ -411,6 +412,28 @@ class PlayerState extends _$PlayerState {
     state = state.copyWith(isFullScreen: value);
   }
 
+  Future<void> setVolume(double volume) async {
+    await ref.read(desktopSettingsProvider.notifier).setVolume(volume);
+    final desktopSettings = ref.read(desktopSettingsProvider);
+    final controller = state.videoPlayerController;
+    if (controller != null) {
+      await controller.setVolume(
+        desktopSettings.isMuted ? 0 : desktopSettings.volume,
+      );
+    }
+  }
+
+  Future<void> toggleMute() async {
+    await ref.read(desktopSettingsProvider.notifier).toggleMute();
+    final desktopSettings = ref.read(desktopSettingsProvider);
+    final controller = state.videoPlayerController;
+    if (controller != null) {
+      await controller.setVolume(
+        desktopSettings.isMuted ? 0 : desktopSettings.volume,
+      );
+    }
+  }
+
   /// Proactively resolve the stream URL for the next scene in the queue
   /// and store it in the StreamResolver cache.
   void _prewarmNext() {
@@ -616,6 +639,11 @@ class PlayerState extends _$PlayerState {
         unawaited(WakelockPlus.enable());
       }
 
+      final desktopSettings = ref.read(desktopSettingsProvider);
+      await videoController.setVolume(
+        desktopSettings.isMuted ? 0 : desktopSettings.volume,
+      );
+
       videoController.addListener(_videoListener);
       unawaited(videoController.play());
 
@@ -694,6 +722,11 @@ class PlayerState extends _$PlayerState {
     if (!isTestMode) {
       unawaited(WakelockPlus.enable());
     }
+
+    final desktopSettings = ref.read(desktopSettingsProvider);
+    unawaited(controller.setVolume(
+      desktopSettings.isMuted ? 0 : desktopSettings.volume,
+    ));
 
     controller.removeListener(_videoListener);
     controller.addListener(_videoListener);
@@ -922,7 +955,7 @@ class PlayerState extends _$PlayerState {
         }
 
         // Use utf8.decode with allowMalformed: true to be resilient
-        final content = utf8.decode(bytes, allowMalformed: true);
+        var content = utf8.decode(bytes, allowMalformed: true);
 
         if (content.trim().isEmpty) {
           AppLogStore.instance.add(
@@ -931,6 +964,9 @@ class PlayerState extends _$PlayerState {
           );
           return WebVTTCaptionFile('');
         }
+
+        // Filter out thumbnail/storyboard lines (e.g. sprite.jpg#xywh=...)
+        content = _filterSubtitleContent(content);
 
         final preview = content.length > 100
             ? content.substring(0, 100).replaceAll('\n', ' ')
@@ -977,6 +1013,23 @@ class PlayerState extends _$PlayerState {
       // Return empty file on error to avoid breaking playback
       return WebVTTCaptionFile('');
     }
+  }
+
+  /// Filters out common storyboard/thumbnail lines (like sprite.jpg#xywh=...)
+  /// from VTT/SRT content to prevent them from being rendered as text captions.
+  String _filterSubtitleContent(String content) {
+    if (!content.contains('#xywh')) return content;
+
+    final lines = content.split('\n');
+    final filteredLines = lines.where((line) {
+      final trimmed = line.trim();
+      // Filter out lines containing the storyboard fragment identifier.
+      // These are typically of the form: "thumbnail.jpg#xywh=0,0,160,90"
+      if (trimmed.contains('#xywh')) return false;
+      return true;
+    });
+
+    return filteredLines.join('\n');
   }
 
   Future<void> playNext() async {
