@@ -7,6 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:video_player/video_player.dart';
+import 'package:flutter/gestures.dart';
+import '../../../../core/presentation/providers/desktop_capabilities_provider.dart';
+import '../../../../core/presentation/providers/desktop_settings_provider.dart';
 import '../../../../core/utils/pip_mode.dart';
 import '../../../../core/presentation/theme/app_theme.dart';
 import '../../../../core/utils/app_log_store.dart';
@@ -49,6 +52,7 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
   bool _controlsVisible = true;
   bool _wasPlaying = false;
   bool _wasPlayingBeforeScrub = false;
+  bool _showVolumeSlider = false;
   Timer? _hideControlsTimer;
   Duration? _dragSeekStartPosition;
   Duration? _dragSeekTarget;
@@ -407,6 +411,69 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
     );
   }
 
+  Widget _buildDesktopVolumeControl(
+    BuildContext context,
+    ColorScheme colorScheme,
+  ) {
+    final desktopSettings = ref.watch(desktopSettingsProvider);
+    final isMuted = desktopSettings.isMuted;
+    final volume = desktopSettings.volume;
+
+    IconData iconData = Icons.volume_up_rounded;
+    if (isMuted || volume == 0) {
+      iconData = Icons.volume_off_rounded;
+    } else if (volume < 0.5) {
+      iconData = Icons.volume_down_rounded;
+    }
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _showVolumeSlider = true),
+      onExit: (_) => setState(() => _showVolumeSlider = false),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+            tooltip: isMuted ? 'Unmute' : 'Mute',
+            style: _controlButtonStyle(colorScheme),
+            iconSize: 20,
+            icon: Icon(iconData),
+            onPressed: () {
+              ref.read(playerStateProvider.notifier).toggleMute();
+              _showControlsTemporarily();
+            },
+          ),
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            width: _showVolumeSlider ? 100 : 0,
+            curve: Curves.easeInOut,
+            child: Visibility(
+              visible: _showVolumeSlider,
+              child: SliderTheme(
+                data: SliderTheme.of(context).copyWith(
+                  trackHeight: 2,
+                  thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
+                  overlayShape: const RoundSliderOverlayShape(overlayRadius: 12),
+                  activeTrackColor: colorScheme.primary,
+                  inactiveTrackColor: colorScheme.onSurfaceVariant.withValues(
+                    alpha: 0.25,
+                  ),
+                  thumbColor: colorScheme.primary,
+                ),
+                child: Slider(
+                  value: volume,
+                  onChanged: (v) {
+                    ref.read(playerStateProvider.notifier).setVolume(v);
+                    _showControlsTemporarily();
+                  },
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -439,9 +506,25 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
         bindings: {
           const SingleActivator(LogicalKeyboardKey.space): _togglePlay,
           const SingleActivator(LogicalKeyboardKey.arrowLeft): () =>
-              _seekRelativeSeconds(-_gestureSeekSeconds),
+              _seekRelativeSeconds(-5),
           const SingleActivator(LogicalKeyboardKey.arrowRight): () =>
-              _seekRelativeSeconds(_gestureSeekSeconds),
+              _seekRelativeSeconds(5),
+          const SingleActivator(LogicalKeyboardKey.keyJ): () =>
+              _seekRelativeSeconds(-10),
+          const SingleActivator(LogicalKeyboardKey.keyL): () =>
+              _seekRelativeSeconds(10),
+          const SingleActivator(LogicalKeyboardKey.keyF): () =>
+              widget.onFullScreenToggle?.call(),
+          const SingleActivator(LogicalKeyboardKey.keyM): () =>
+              ref.read(playerStateProvider.notifier).toggleMute(),
+          const SingleActivator(LogicalKeyboardKey.arrowUp): () {
+            final currentVol = ref.read(desktopSettingsProvider).volume;
+            ref.read(playerStateProvider.notifier).setVolume(currentVol + 0.05);
+          },
+          const SingleActivator(LogicalKeyboardKey.arrowDown): () {
+            final currentVol = ref.read(desktopSettingsProvider).volume;
+            ref.read(playerStateProvider.notifier).setVolume(currentVol - 0.05);
+          },
         },
         child: Focus(
           autofocus: true,
@@ -451,34 +534,57 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                 children: [
                   // Layer 0: Background Gesture Area (Handles toggle and seek)
                   Positioned.fill(
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: _toggleControls,
-                      onDoubleTapDown: widget.useDoubleTapSeek
-                          ? (details) {
-                              if (details.localPosition.dx <
-                                  constraints.maxWidth / 2) {
-                                _seekRelativeSeconds(-_gestureSeekSeconds);
-                              } else {
-                                _seekRelativeSeconds(_gestureSeekSeconds);
+                    child: Listener(
+                      onPointerSignal: (pointerSignal) {
+                        if (pointerSignal is PointerScrollEvent) {
+                          final currentVol =
+                              ref.read(desktopSettingsProvider).volume;
+                          if (pointerSignal.scrollDelta.dy < 0) {
+                            ref
+                                .read(playerStateProvider.notifier)
+                                .setVolume(currentVol + 0.05);
+                          } else {
+                            ref
+                                .read(playerStateProvider.notifier)
+                                .setVolume(currentVol - 0.05);
+                          }
+                        }
+                      },
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: _toggleControls,
+                        onDoubleTapDown: widget.useDoubleTapSeek
+                            ? (details) {
+                                if (details.localPosition.dx <
+                                    constraints.maxWidth / 2) {
+                                  _seekRelativeSeconds(-_gestureSeekSeconds);
+                                } else {
+                                  _seekRelativeSeconds(_gestureSeekSeconds);
+                                }
                               }
-                            }
-                          : null,
-                      onDoubleTap: widget.useDoubleTapSeek ? () {} : null,
-                      onHorizontalDragStart: !widget.useDoubleTapSeek
-                          ? (_) => _beginDragSeek()
-                          : null,
-                      onHorizontalDragUpdate: !widget.useDoubleTapSeek
-                          ? (details) =>
-                                _updateDragSeek(details, constraints.maxWidth)
-                          : null,
-                      onHorizontalDragEnd: !widget.useDoubleTapSeek
-                          ? (_) => _endDragSeek()
-                          : null,
-                      onHorizontalDragCancel: !widget.useDoubleTapSeek
-                          ? _endDragSeek
-                          : null,
-                      child: const ColoredBox(color: Colors.transparent),
+                            : null,
+                        onDoubleTap: () {
+                          if (ref.read(desktopCapabilitiesProvider)) {
+                            widget.onFullScreenToggle?.call();
+                          }
+                        },
+                        onHorizontalDragStart: !widget.useDoubleTapSeek
+                            ? (_) => _beginDragSeek()
+                            : null,
+                        onHorizontalDragUpdate: !widget.useDoubleTapSeek
+                            ? (details) => _updateDragSeek(
+                                  details,
+                                  constraints.maxWidth,
+                                )
+                            : null,
+                        onHorizontalDragEnd: !widget.useDoubleTapSeek
+                            ? (_) => _endDragSeek()
+                            : null,
+                        onHorizontalDragCancel: !widget.useDoubleTapSeek
+                            ? _endDragSeek
+                            : null,
+                        child: const ColoredBox(color: Colors.transparent),
+                      ),
                     ),
                   ),
 
@@ -976,6 +1082,13 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                                             ),
                                           ),
                                         ),
+                                        if (ref.watch(desktopCapabilitiesProvider)) ...[
+                                          const SizedBox(width: 8),
+                                          _buildDesktopVolumeControl(
+                                            context,
+                                            colorScheme,
+                                          ),
+                                        ],
                                         const SizedBox(width: 6),
                                         if (widget.enableNativePip &&
                                             !kIsWeb &&
