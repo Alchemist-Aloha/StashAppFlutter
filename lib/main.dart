@@ -13,6 +13,7 @@ import 'core/utils/pip_mode.dart';
 import 'core/utils/media_handler.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:window_manager/window_manager.dart';
 
 import 'core/presentation/theme/app_theme.dart';
 import 'core/presentation/theme/theme_mode_provider.dart';
@@ -35,9 +36,12 @@ Future<void> main() async {
       (defaultTargetPlatform == TargetPlatform.windows ||
           defaultTargetPlatform == TargetPlatform.linux ||
           defaultTargetPlatform == TargetPlatform.macOS)) {
-    fvp.registerWith(options: {
-      'platforms': ['windows', 'linux', 'macos'],
-    });
+    fvp.registerWith(
+      options: {
+        'platforms': ['windows', 'linux', 'macos'],
+      },
+    );
+    await windowManager.ensureInitialized();
   }
 
   // Increase Flutter's in-memory image cache so more decoded thumbnails stay

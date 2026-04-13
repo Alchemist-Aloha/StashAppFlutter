@@ -119,7 +119,8 @@ class GraphQLSceneRepository implements SceneRepository {
                 graphqlEndpoint: _graphqlEndpoint,
               ),
             ),
-            captions: s.captions
+            captions:
+                s.captions
                     ?.map(
                       (c) => VideoCaption(
                         languageCode: c.language_code,
@@ -341,7 +342,8 @@ class GraphQLSceneRepository implements SceneRepository {
           graphqlEndpoint: _graphqlEndpoint,
         ),
       ),
-      captions: s.captions
+      captions:
+          s.captions
               ?.map(
                 (c) => VideoCaption(
                   languageCode: c.language_code,

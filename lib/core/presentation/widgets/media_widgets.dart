@@ -35,10 +35,7 @@ class MediaCard extends StatelessWidget {
           children: [
             AspectRatio(
               aspectRatio: aspectRatio,
-              child: StashImage(
-                imageUrl: imageUrl,
-                fit: BoxFit.cover,
-              ),
+              child: StashImage(imageUrl: imageUrl, fit: BoxFit.cover),
             ),
             Padding(
               padding: const EdgeInsets.all(AppTheme.spacingSmall),

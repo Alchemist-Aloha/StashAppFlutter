@@ -1008,20 +1008,24 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                                               _showControlsTemporarily();
                                             },
                                           ),
-                                        IconButton(
-                                          tooltip: 'Toggle Fullscreen',
-                                          style: _controlButtonStyle(
-                                            colorScheme,
+                                        GestureDetector(
+                                          onTap: () {}, // Consume tap to prevent propagation
+                                          child: IconButton(
+                                            tooltip: 'Toggle Fullscreen',
+                                            style: _controlButtonStyle(
+                                              colorScheme,
+                                            ),
+                                            icon: Icon(
+                                              isFullScreen
+                                                  ? Icons
+                                                      .fullscreen_exit_rounded
+                                                  : Icons.fullscreen_rounded,
+                                            ),
+                                            onPressed: () {
+                                              widget.onFullScreenToggle?.call();
+                                              _showControlsTemporarily();
+                                            },
                                           ),
-                                          icon: Icon(
-                                            isFullScreen
-                                                ? Icons.fullscreen_exit_rounded
-                                                : Icons.fullscreen_rounded,
-                                          ),
-                                          onPressed: () {
-                                            widget.onFullScreenToggle?.call();
-                                            _showControlsTemporarily();
-                                          },
                                         ),
                                       ],
                                     ),

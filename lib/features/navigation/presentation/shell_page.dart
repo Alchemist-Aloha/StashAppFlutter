@@ -140,7 +140,18 @@ class _ShellPageState extends ConsumerState<ShellPage> {
     final activeSceneId = playerState.activeScene?.id;
     final pathSceneId = _extractSceneIdFromPath(currentPath);
     final isTiktokFullScreen = ref.watch(fullScreenModeProvider);
-    final isFullScreen = playerState.isFullScreen || isTiktokFullScreen;
+
+    // Consider we are in fullscreen if the provider says so, OR if we are on a known fullscreen path.
+    // This provides a more immediate UI response during route transitions.
+    final isFullscreenPath =
+        currentPath.contains('/fullscreen') ||
+        currentPath.contains('/image/') ||
+        currentPath.contains('/images/') ||
+        currentPath.startsWith('/image/') ||
+        currentPath.startsWith('/images/');
+
+    final isFullScreen =
+        playerState.isFullScreen || isTiktokFullScreen || isFullscreenPath;
     final isTiktokLayout = ref.watch(sceneTiktokLayoutProvider);
     final isMobile = Responsive.isMobile(context);
     final shakeEnabled = ref.watch(shakeToRandomEnabledProvider);
