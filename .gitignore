@@ -1,4 +1,5 @@
 # Miscellaneous
+**/*.g.dart
 .hermes/
 *.class
 *.log
