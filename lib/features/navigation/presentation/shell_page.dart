@@ -8,11 +8,9 @@ import '../../../core/presentation/providers/desktop_capabilities_provider.dart'
 import '../../../core/data/graphql/graphql_client.dart';
 import '../../scenes/presentation/providers/video_player_provider.dart';
 import '../../scenes/presentation/providers/scene_list_provider.dart';
-import '../../scenes/presentation/providers/playback_queue_provider.dart';
 import '../../performers/presentation/providers/performer_list_provider.dart';
 import '../../studios/presentation/providers/studio_list_provider.dart';
 import '../../tags/presentation/providers/tag_list_provider.dart';
-import 'dart:math';
 import 'package:shake_gesture/shake_gesture.dart';
 import '../../galleries/presentation/providers/gallery_list_provider.dart';
 import '../../scenes/presentation/widgets/tiktok_scenes_view.dart';
@@ -214,14 +212,22 @@ class _ShellPageState extends ConsumerState<ShellPage> {
     Future<void> handleShake() async {
       if (!shakeEnabled || !mounted) return;
 
-      final currentTab = allTabs[navigationShell.currentIndex];
-      switch (currentTab.type) {
+      // Provide haptic feedback when shake is detected
+      HapticFeedback.mediumImpact();
+
+      // IMPORTANT: navigationShell.currentIndex refers to the index in the
+      // static branches list in router.dart, which corresponds to NavigationTabType.values.
+      // We must NOT use allTabs[currentIndex] because allTabs can be reordered by the user.
+      final currentTabType =
+          NavigationTabType.values[navigationShell.currentIndex];
+
+      switch (currentTabType) {
         case NavigationTabType.scenes:
-          final scenes = ref.read(sceneListProvider).value ?? [];
-          if (scenes.isNotEmpty) {
-            final index = Random().nextInt(scenes.length);
-            ref.read(playbackQueueProvider.notifier).setIndex(index);
-            context.push('/scenes/scene/${scenes[index].id}');
+          final random = await ref
+              .read(sceneListProvider.notifier)
+              .getRandomScene();
+          if (mounted && context.mounted && random != null) {
+            context.push('/scenes/scene/${random.id}');
           }
           break;
         case NavigationTabType.performers:
@@ -314,16 +320,13 @@ class _ShellPageState extends ConsumerState<ShellPage> {
       ];
       for (int i = 0; i < visibleTabs.length && i < digitKeys.length; i++) {
         final index = i;
-        bindings[SingleActivator(digitKeys[i])] =
-            () => onDestinationSelected(index);
+        bindings[SingleActivator(digitKeys[i])] = () =>
+            onDestinationSelected(index);
       }
 
       bodyContent = CallbackShortcuts(
         bindings: bindings,
-        child: Focus(
-          autofocus: true,
-          child: bodyContent,
-        ),
+        child: Focus(autofocus: true, child: bodyContent),
       );
     }
 

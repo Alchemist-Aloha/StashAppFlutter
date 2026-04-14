@@ -116,9 +116,23 @@ flutter run
 ```
 
 ### Build
+You can build the project manually for a specific platform:
 ```bash
-flutter build apk
+flutter build apk --release --split-per-abi
 ```
+
+Or use the provided build script to check dependencies, generate code, and build for all available platforms:
+
+```bash
+chmod +x build.sh
+./build.sh
+```
+
+The script will:
+1.  **Check Dependencies:** Verify that `flutter`, `dart`, `cmake`, `ninja`, and the **Android SDK** are correctly installed.
+2.  **Fetch Packages:** Run `flutter pub get`.
+3.  **Generate Code:** Run `build_runner` for GraphQL and Riverpod.
+4.  **Multi-Platform Build:** Attempt to build for **Android (APK)**, **Web**, **Linux**, **Windows**, and **macOS**, providing a summary of successes and failures at the end.
 
 
 ## 📚 Internal Docs
