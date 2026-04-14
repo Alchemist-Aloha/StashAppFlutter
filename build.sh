@@ -10,6 +10,46 @@ NC='\033[0m' # No Color
 
 echo -e "${YELLOW}Starting StashFlow Build Process...${NC}"
 
+# Dependency Check
+echo -e "${YELLOW}Checking build dependencies...${NC}"
+check_dep() {
+    local name=$1
+    local command=$2
+    if command -v "$command" &> /dev/null; then
+        echo -e "[${GREEN}✓${NC}] $name"
+        return 0
+    else
+        echo -e "[${RED}✗${NC}] $name"
+        return 1
+    fi
+}
+
+check_android() {
+    local sdk_path
+    sdk_path=$(flutter doctor -v | grep "Android SDK at" | awk '{print $NF}')
+    if [[ -n "$sdk_path" ]]; then
+        echo -e "[${GREEN}✓${NC}] Android SDK (at $sdk_path)"
+        return 0
+    else
+        echo -e "[${RED}✗${NC}] Android SDK"
+        return 1
+    fi
+}
+
+MISSING_CRITICAL=0
+check_dep "Flutter" "flutter" || MISSING_CRITICAL=1
+check_dep "Dart" "dart" || MISSING_CRITICAL=1
+check_dep "CMake (Linux/Windows)" "cmake"
+check_dep "Ninja (Linux/Windows)" "ninja"
+check_android
+
+if [ $MISSING_CRITICAL -eq 1 ]; then
+    echo -e "${RED}Critical dependencies (Flutter/Dart) are missing! Please install them first.${NC}"
+    exit 1
+fi
+
+echo -e "${GREEN}Dependency check finished. Continuing with build...${NC}\n"
+
 # 1. Fetch dependencies
 echo -e "${YELLOW}Fetching dependencies...${NC}"
 flutter pub get || { echo -e "${RED}flutter pub get failed!${NC}"; exit 1; }
