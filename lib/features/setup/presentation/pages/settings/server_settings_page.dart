@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:graphql/client.dart';
+import 'package:stash_app_flutter/core/data/auth/auth_mode.dart';
+import 'package:stash_app_flutter/core/data/auth/auth_provider.dart';
 import 'package:stash_app_flutter/core/data/graphql/graphql_client.dart';
 import 'package:stash_app_flutter/core/data/graphql/media_headers_provider.dart';
 import 'package:stash_app_flutter/core/data/preferences/secure_storage_provider.dart';
@@ -17,14 +19,15 @@ import 'package:stash_app_flutter/features/scenes/data/repositories/stream_resol
 import 'package:stash_app_flutter/features/scenes/presentation/providers/scene_details_provider.dart';
 import 'package:stash_app_flutter/features/scenes/presentation/providers/scene_list_provider.dart';
 import 'package:stash_app_flutter/features/scenes/presentation/providers/video_player_provider.dart';
+import 'package:stash_app_flutter/features/setup/data/graphql/version.graphql.dart';
+import 'package:stash_app_flutter/features/setup/presentation/providers/connection_provider.dart';
 import 'package:stash_app_flutter/features/studios/presentation/providers/studio_details_provider.dart';
 import 'package:stash_app_flutter/features/studios/presentation/providers/studio_list_provider.dart';
 import 'package:stash_app_flutter/features/studios/presentation/providers/studio_media_provider.dart';
 import 'package:stash_app_flutter/features/tags/presentation/providers/tag_details_provider.dart';
 import 'package:stash_app_flutter/features/tags/presentation/providers/tag_list_provider.dart';
 import 'package:stash_app_flutter/features/tags/presentation/providers/tag_media_provider.dart';
-import 'package:stash_app_flutter/features/setup/data/graphql/version.graphql.dart';
-import 'package:stash_app_flutter/features/setup/presentation/providers/connection_provider.dart';
+
 import '../../widgets/settings_page_shell.dart';
 
 class ServerSettingsPage extends ConsumerStatefulWidget {
@@ -37,21 +40,34 @@ class ServerSettingsPage extends ConsumerStatefulWidget {
 class _ServerSettingsPageState extends ConsumerState<ServerSettingsPage> {
   final _baseUrlController = TextEditingController();
   final _apiKeyController = TextEditingController();
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
+
   final _baseUrlFocusNode = FocusNode();
   final _apiKeyFocusNode = FocusNode();
+  final _usernameFocusNode = FocusNode();
+  final _passwordFocusNode = FocusNode();
+
   bool _loading = true;
   bool _obscureApiKey = true;
+  bool _obscurePassword = true;
+  AuthMode _selectedAuthMode = AuthMode.apiKey;
 
   @override
   void initState() {
     super.initState();
     _baseUrlFocusNode.addListener(_onTextFieldFocusChanged);
     _apiKeyFocusNode.addListener(_onTextFieldFocusChanged);
+    _usernameFocusNode.addListener(_onTextFieldFocusChanged);
+    _passwordFocusNode.addListener(_onTextFieldFocusChanged);
     _load();
   }
 
   void _onTextFieldFocusChanged() {
-    if (_baseUrlFocusNode.hasFocus || _apiKeyFocusNode.hasFocus) {
+    if (_baseUrlFocusNode.hasFocus ||
+        _apiKeyFocusNode.hasFocus ||
+        _usernameFocusNode.hasFocus ||
+        _passwordFocusNode.hasFocus) {
       return;
     }
     _saveServerSettings();
@@ -60,11 +76,21 @@ class _ServerSettingsPageState extends ConsumerState<ServerSettingsPage> {
   Future<void> _load() async {
     final prefs = ref.read(sharedPreferencesProvider);
     final secureStorage = ref.read(secureStorageProvider);
+
     final url = prefs.getString('server_base_url') ?? '';
     final apiKey = await secureStorage.read(key: 'server_api_key') ?? '';
+    final username = await secureStorage.read(key: 'server_username') ?? '';
+    final password = await secureStorage.read(key: 'server_password') ?? '';
+    final modeRaw = prefs.getString('auth_mode') ?? AuthMode.apiKey.name;
 
     _baseUrlController.text = url;
     _apiKeyController.text = apiKey;
+    _usernameController.text = username;
+    _passwordController.text = password;
+
+    _selectedAuthMode = modeRaw == AuthMode.password.name
+        ? AuthMode.password
+        : AuthMode.apiKey;
 
     setState(() => _loading = false);
   }
@@ -75,9 +101,12 @@ class _ServerSettingsPageState extends ConsumerState<ServerSettingsPage> {
     return !parsed.hasScheme && parsed.host.isNotEmpty;
   }
 
-  Future<bool> _canConnect(String endpointUrl, String apiKey) async {
+  Future<bool> _canConnect(
+    String endpointUrl, {
+    required Map<String, String> headers,
+  }) async {
     final testClient = GraphQLClient(
-      link: HttpLink(endpointUrl, defaultHeaders: {'ApiKey': apiKey}),
+      link: HttpLink(endpointUrl, defaultHeaders: headers),
       cache: GraphQLCache(store: InMemoryStore()),
     );
 
@@ -91,26 +120,64 @@ class _ServerSettingsPageState extends ConsumerState<ServerSettingsPage> {
   }
 
   Future<String?> _resolveHostOnlyEndpoint(String hostOnlyInput) async {
-    final apiKey = _apiKeyController.text.trim();
     final httpsCandidate = normalizeGraphqlServerUrl('https://$hostOnlyInput');
     final httpCandidate = normalizeGraphqlServerUrl('http://$hostOnlyInput');
 
+    if (_selectedAuthMode == AuthMode.password) {
+      final authState = ref.read(authProvider);
+      if (authState.cookieHeader.isNotEmpty) {
+        final cookieHeaders = <String, String>{
+          'Cookie': authState.cookieHeader,
+        };
+
+        if (httpsCandidate.isNotEmpty) {
+          try {
+            if (await _canConnect(httpsCandidate, headers: cookieHeaders)) {
+              return httpsCandidate;
+            }
+          } catch (_) {}
+        }
+
+        if (httpCandidate.isNotEmpty) {
+          try {
+            if (await _canConnect(httpCandidate, headers: cookieHeaders)) {
+              return httpCandidate;
+            }
+          } catch (_) {}
+        }
+      }
+
+      if (httpsCandidate.isNotEmpty) {
+        return httpsCandidate;
+      }
+      return httpCandidate.isNotEmpty ? httpCandidate : null;
+    }
+
+    final apiKey = _apiKeyController.text.trim();
+    final headers = apiKey.isEmpty
+        ? const <String, String>{}
+        : <String, String>{'ApiKey': apiKey};
+
     if (httpsCandidate.isNotEmpty) {
       try {
-        if (await _canConnect(httpsCandidate, apiKey)) return httpsCandidate;
+        if (await _canConnect(httpsCandidate, headers: headers)) {
+          return httpsCandidate;
+        }
       } catch (_) {}
     }
 
     if (httpCandidate.isNotEmpty) {
       try {
-        if (await _canConnect(httpCandidate, apiKey)) return httpCandidate;
+        if (await _canConnect(httpCandidate, headers: headers)) {
+          return httpCandidate;
+        }
       } catch (_) {}
     }
 
     return null;
   }
 
-  Future<void> _saveServerSettings() async {
+  Future<void> _saveServerSettings({bool attemptPasswordLogin = false}) async {
     final rawUrl = _baseUrlController.text.trim();
     String normalizedUrl = normalizeGraphqlServerUrl(rawUrl);
 
@@ -121,7 +188,7 @@ class _ServerSettingsPageState extends ConsumerState<ServerSettingsPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(
-              'Could not connect using https:// or http://. Check host, port, and API key.',
+              'Could not resolve server URL. Check host, port, and credentials.',
             ),
           ),
         );
@@ -153,6 +220,21 @@ class _ServerSettingsPageState extends ConsumerState<ServerSettingsPage> {
     }
     ref.read(serverApiKeyInternalProvider.notifier).update(newApiKey);
 
+    final authNotifier = ref.read(authProvider.notifier);
+    await authNotifier.setMode(_selectedAuthMode);
+    await authNotifier.updateUsername(_usernameController.text);
+    await authNotifier.updatePassword(_passwordController.text);
+
+    if (_selectedAuthMode == AuthMode.password && attemptPasswordLogin) {
+      final loggedIn = await authNotifier.login();
+      if (!loggedIn && mounted) {
+        final error = ref.read(authProvider).errorMessage ?? 'Login failed';
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(error)));
+      }
+    }
+
     ref.read(sharedPreferencesTriggerProvider.notifier).trigger();
 
     _baseUrlController.text = normalizedUrl;
@@ -177,6 +259,9 @@ class _ServerSettingsPageState extends ConsumerState<ServerSettingsPage> {
     ref.invalidate(graphqlClientProvider);
     ref.invalidate(connectionStatusProvider);
     ref.invalidate(mediaHeadersProvider);
+    ref.invalidate(mediaPlaybackHeadersProvider);
+
+    await ref.read(authProvider.notifier).refreshCookieHeader();
 
     ref.invalidate(sceneListProvider);
     ref.invalidate(sceneDetailsProvider);
@@ -207,17 +292,29 @@ class _ServerSettingsPageState extends ConsumerState<ServerSettingsPage> {
   void dispose() {
     _baseUrlController.dispose();
     _apiKeyController.dispose();
+    _usernameController.dispose();
+    _passwordController.dispose();
+
     _baseUrlFocusNode
       ..removeListener(_onTextFieldFocusChanged)
       ..dispose();
     _apiKeyFocusNode
       ..removeListener(_onTextFieldFocusChanged)
       ..dispose();
+    _usernameFocusNode
+      ..removeListener(_onTextFieldFocusChanged)
+      ..dispose();
+    _passwordFocusNode
+      ..removeListener(_onTextFieldFocusChanged)
+      ..dispose();
+
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authProvider);
+
     return SettingsPageShell(
       title: 'Server Settings',
       child: _loading
@@ -235,8 +332,9 @@ class _ServerSettingsPageState extends ConsumerState<ServerSettingsPage> {
                   const SizedBox(height: AppTheme.spacingLarge),
                   SettingsSectionCard(
                     title: 'Server Details',
-                    subtitle: 'URL and API key used by the GraphQL client',
+                    subtitle: 'Configure endpoint and authentication method',
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         TextField(
                           controller: _baseUrlController,
@@ -255,48 +353,151 @@ class _ServerSettingsPageState extends ConsumerState<ServerSettingsPage> {
                           },
                         ),
                         const SizedBox(height: AppTheme.spacingMedium),
-                        TextField(
-                          controller: _apiKeyController,
-                          focusNode: _apiKeyFocusNode,
-                          decoration: InputDecoration(
-                            labelText: 'API key',
-                            hintText: 'Paste ApiKey header value',
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _obscureApiKey
-                                    ? Icons.visibility_off
-                                    : Icons.visibility,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _obscureApiKey = !_obscureApiKey;
-                                });
-                              },
+                        Text(
+                          'Authentication Method',
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                        const SizedBox(height: AppTheme.spacingSmall),
+                        SegmentedButton<AuthMode>(
+                          segments: const [
+                            ButtonSegment<AuthMode>(
+                              value: AuthMode.apiKey,
+                              label: Text('API Key'),
+                              icon: Icon(Icons.vpn_key_rounded),
                             ),
-                          ),
-                          autocorrect: false,
-                          enableSuggestions: false,
-                          obscureText: _obscureApiKey,
-                          textInputAction: TextInputAction.done,
-                          onEditingComplete: () {
-                            FocusScope.of(context).unfocus();
-                            _saveServerSettings();
+                            ButtonSegment<AuthMode>(
+                              value: AuthMode.password,
+                              label: Text('Username + Password'),
+                              icon: Icon(Icons.password_rounded),
+                            ),
+                          ],
+                          selected: <AuthMode>{_selectedAuthMode},
+                          onSelectionChanged: (selection) async {
+                            final selected = selection.first;
+                            setState(() => _selectedAuthMode = selected);
+                            await _saveServerSettings();
                           },
                         ),
+                        const SizedBox(height: AppTheme.spacingMedium),
+                        if (_selectedAuthMode == AuthMode.apiKey)
+                          TextField(
+                            controller: _apiKeyController,
+                            focusNode: _apiKeyFocusNode,
+                            decoration: InputDecoration(
+                              labelText: 'API key',
+                              hintText: 'Paste ApiKey header value',
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _obscureApiKey
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _obscureApiKey = !_obscureApiKey;
+                                  });
+                                },
+                              ),
+                            ),
+                            autocorrect: false,
+                            enableSuggestions: false,
+                            obscureText: _obscureApiKey,
+                            textInputAction: TextInputAction.done,
+                            onEditingComplete: () {
+                              FocusScope.of(context).unfocus();
+                              _saveServerSettings();
+                            },
+                          ),
+                        if (_selectedAuthMode == AuthMode.password) ...[
+                          TextField(
+                            controller: _usernameController,
+                            focusNode: _usernameFocusNode,
+                            decoration: const InputDecoration(
+                              labelText: 'Username',
+                            ),
+                            autocorrect: false,
+                            enableSuggestions: false,
+                            textInputAction: TextInputAction.next,
+                          ),
+                          const SizedBox(height: AppTheme.spacingMedium),
+                          TextField(
+                            controller: _passwordController,
+                            focusNode: _passwordFocusNode,
+                            decoration: InputDecoration(
+                              labelText: 'Password',
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _obscurePassword
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _obscurePassword = !_obscurePassword;
+                                  });
+                                },
+                              ),
+                            ),
+                            autocorrect: false,
+                            enableSuggestions: false,
+                            obscureText: _obscurePassword,
+                            textInputAction: TextInputAction.done,
+                            onEditingComplete: () {
+                              FocusScope.of(context).unfocus();
+                              _saveServerSettings();
+                            },
+                          ),
+                          const SizedBox(height: AppTheme.spacingSmall),
+                          Text(
+                            _buildAuthStatusLabel(authState),
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        ],
                         const SizedBox(height: AppTheme.spacingMedium),
                         Wrap(
                           spacing: AppTheme.spacingSmall,
                           runSpacing: AppTheme.spacingSmall,
                           children: [
                             FilledButton.icon(
-                              onPressed: _saveServerSettings,
+                              onPressed: () async {
+                                await _saveServerSettings(
+                                  attemptPasswordLogin:
+                                      _selectedAuthMode == AuthMode.password,
+                                );
+                              },
                               icon: const Icon(Icons.sync_rounded),
-                              label: const Text('Test Connection'),
+                              label: Text(
+                                _selectedAuthMode == AuthMode.password
+                                    ? 'Login + Test Connection'
+                                    : 'Test Connection',
+                              ),
                             ),
+                            if (_selectedAuthMode == AuthMode.password)
+                              OutlinedButton.icon(
+                                onPressed: () async {
+                                  await ref
+                                      .read(authProvider.notifier)
+                                      .logout();
+                                  if (!mounted) return;
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'Logged out and cookies cleared.',
+                                      ),
+                                    ),
+                                  );
+                                  ref.invalidate(connectionStatusProvider);
+                                },
+                                icon: const Icon(Icons.logout_rounded),
+                                label: const Text('Logout'),
+                              ),
                             OutlinedButton.icon(
                               onPressed: () async {
                                 _baseUrlController.text = '';
                                 _apiKeyController.text = '';
+                                _usernameController.text = '';
+                                _passwordController.text = '';
+                                await ref.read(authProvider.notifier).logout();
                                 await _saveServerSettings();
                               },
                               icon: const Icon(Icons.clear_all_rounded),
@@ -311,6 +512,19 @@ class _ServerSettingsPageState extends ConsumerState<ServerSettingsPage> {
               ),
             ),
     );
+  }
+
+  String _buildAuthStatusLabel(AuthState authState) {
+    switch (authState.loginStatus) {
+      case AuthLoginStatus.loggingIn:
+        return 'Authentication status: logging in...';
+      case AuthLoginStatus.loggedIn:
+        return 'Authentication status: logged in';
+      case AuthLoginStatus.error:
+        return 'Authentication status: ${authState.errorMessage ?? 'error'}';
+      case AuthLoginStatus.loggedOut:
+        return 'Authentication status: logged out';
+    }
   }
 
   Widget _buildConnectionStatusBody() {

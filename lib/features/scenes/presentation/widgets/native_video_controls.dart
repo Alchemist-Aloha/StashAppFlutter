@@ -471,8 +471,12 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
               child: SliderTheme(
                 data: SliderTheme.of(context).copyWith(
                   trackHeight: 2,
-                  thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
-                  overlayShape: const RoundSliderOverlayShape(overlayRadius: 12),
+                  thumbShape: const RoundSliderThumbShape(
+                    enabledThumbRadius: 6,
+                  ),
+                  overlayShape: const RoundSliderOverlayShape(
+                    overlayRadius: 12,
+                  ),
                   activeTrackColor: colorScheme.primary,
                   inactiveTrackColor: colorScheme.onSurfaceVariant.withValues(
                     alpha: 0.25,
@@ -612,8 +616,9 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                       child: Listener(
                         onPointerSignal: (pointerSignal) {
                           if (pointerSignal is PointerScrollEvent) {
-                            final currentVol =
-                                ref.read(desktopSettingsProvider).volume;
+                            final currentVol = ref
+                                .read(desktopSettingsProvider)
+                                .volume;
                             if (pointerSignal.scrollDelta.dy < 0) {
                               ref
                                   .read(playerStateProvider.notifier)
@@ -648,9 +653,9 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                               : null,
                           onHorizontalDragUpdate: !widget.useDoubleTapSeek
                               ? (details) => _updateDragSeek(
-                                    details,
-                                    constraints.maxWidth,
-                                  )
+                                  details,
+                                  constraints.maxWidth,
+                                )
                               : null,
                           onHorizontalDragEnd: !widget.useDoubleTapSeek
                               ? (_) => _endDragSeek()
@@ -670,12 +675,13 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           if (_dragSeekTarget != null &&
-                              (widget.scene.paths.vtt?.isNotEmpty ?? false)) ...[
+                              (widget.scene.paths.vtt?.isNotEmpty ??
+                                  false)) ...[
                             ScrubbingPreview(
                               vttUrl: widget.scene.paths.vtt!,
                               timeInSeconds:
                                   _dragSeekTarget!.inMilliseconds / 1000,
-                              headers: ref.read(mediaHeadersProvider),
+                              headers: ref.read(mediaPlaybackHeadersProvider),
                             ),
                             const SizedBox(height: 16),
                           ],
@@ -685,12 +691,11 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                     ),
                   ),
 
-                  Positioned.fill(
-                    child: _buildVolumeOverlay(colorScheme),
-                  ),
+                  Positioned.fill(child: _buildVolumeOverlay(colorScheme)),
 
                   // Layer: Scrubbing Preview (Floating above the slider)
-                  if (_isScrubbing && (widget.scene.paths.vtt?.isNotEmpty ?? false))
+                  if (_isScrubbing &&
+                      (widget.scene.paths.vtt?.isNotEmpty ?? false))
                     Positioned(
                       bottom: 84, // Positioned above the slider
                       left: 0,
@@ -700,18 +705,20 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                         builder: (context, constraints) {
                           final double ratio = _scrubMs / durationMs;
                           const double previewWidth = 160;
-                          
+
                           // Track is inset slightly from edges
                           final double trackWidth = constraints.maxWidth - 32;
                           final double thumbX = 16 + (ratio * trackWidth);
-                          
+
                           double leftOffset = thumbX - (previewWidth / 2);
-                          
+
                           // Edge protection
                           if (leftOffset < 8) {
                             leftOffset = 8;
-                          } else if (leftOffset + previewWidth > constraints.maxWidth - 8) {
-                            leftOffset = constraints.maxWidth - previewWidth - 8;
+                          } else if (leftOffset + previewWidth >
+                              constraints.maxWidth - 8) {
+                            leftOffset =
+                                constraints.maxWidth - previewWidth - 8;
                           }
 
                           return Stack(
@@ -722,7 +729,9 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                                 child: ScrubbingPreview(
                                   vttUrl: widget.scene.paths.vtt!,
                                   timeInSeconds: _scrubMs / 1000,
-                                  headers: ref.read(mediaHeadersProvider),
+                                  headers: ref.read(
+                                    mediaPlaybackHeadersProvider,
+                                  ),
                                   width: 160,
                                   height: 90,
                                 ),
@@ -1221,7 +1230,9 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                                             ),
                                           ),
                                         ),
-                                        if (ref.watch(desktopCapabilitiesProvider)) ...[
+                                        if (ref.watch(
+                                          desktopCapabilitiesProvider,
+                                        )) ...[
                                           const SizedBox(width: 8),
                                           _buildDesktopVolumeControl(
                                             context,
@@ -1261,7 +1272,8 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                                             },
                                           ),
                                         GestureDetector(
-                                          onTap: () {}, // Consume tap to prevent propagation
+                                          onTap:
+                                              () {}, // Consume tap to prevent propagation
                                           child: IconButton(
                                             tooltip: 'Toggle Fullscreen',
                                             style: _controlButtonStyle(
@@ -1270,7 +1282,7 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                                             icon: Icon(
                                               isFullScreen
                                                   ? Icons
-                                                      .fullscreen_exit_rounded
+                                                        .fullscreen_exit_rounded
                                                   : Icons.fullscreen_rounded,
                                             ),
                                             onPressed: () {

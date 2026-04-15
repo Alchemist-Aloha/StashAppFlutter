@@ -1,5 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import '../auth/auth_mode.dart';
+import '../auth/auth_provider.dart';
 import '../preferences/shared_preferences_provider.dart';
 
 part 'graphql_client.g.dart';
@@ -79,7 +81,18 @@ class GraphqlClient extends _$GraphqlClient {
     }
 
     final apiKey = ref.watch(serverApiKeyProvider);
-    final HttpLink httpLink = HttpLink(url, defaultHeaders: {'ApiKey': apiKey});
+    final authState = ref.watch(authProvider);
+
+    final headers = <String, String>{};
+    if (authState.mode == AuthMode.password) {
+      if (authState.cookieHeader.isNotEmpty) {
+        headers['Cookie'] = authState.cookieHeader;
+      }
+    } else if (apiKey.isNotEmpty) {
+      headers['ApiKey'] = apiKey;
+    }
+
+    final HttpLink httpLink = HttpLink(url, defaultHeaders: headers);
 
     const bool isTestMode = bool.fromEnvironment(
       'FLUTTER_TEST',

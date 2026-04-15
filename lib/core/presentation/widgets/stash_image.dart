@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
+import '../../data/auth/dio_file_service.dart';
 import '../../data/graphql/media_headers_provider.dart';
 import '../../data/graphql/url_resolver.dart';
 import '../../data/graphql/graphql_client.dart';
@@ -175,7 +176,7 @@ class StashImage extends ConsumerWidget {
       'stashImageCache',
       stalePeriod: const Duration(days: 30),
       maxNrOfCacheObjects: 300,
-      fileService: HttpFileService(),
+      fileService: DioFileService(),
     ),
   );
 

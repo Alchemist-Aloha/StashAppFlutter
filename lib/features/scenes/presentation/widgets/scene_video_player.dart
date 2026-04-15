@@ -118,7 +118,7 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
 
       final choice = await resolver.resolvePreferredStream(widget.scene);
       if (choice != null && mounted) {
-        final mediaHeaders = ref.read(mediaHeadersProvider);
+        final mediaHeaders = ref.read(mediaPlaybackHeadersProvider);
         await ref
             .read(playerStateProvider.notifier)
             .playScene(
@@ -179,7 +179,7 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
       if (!mounted) {
         return const _PrewarmResult(attempted: false, succeeded: false);
       }
-      final headers = ref.read(mediaHeadersProvider);
+      final headers = ref.read(mediaPlaybackHeadersProvider);
       headers.forEach((key, value) {
         request.headers.add(key, value);
       });
@@ -476,7 +476,8 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
 
         // On Windows and Web, toggling fullscreen can sometimes trigger a pause in the native player
         // due to window state changes or focus loss during the transition.
-        if (wasPlaying && (kIsWeb || defaultTargetPlatform == TargetPlatform.windows)) {
+        if (wasPlaying &&
+            (kIsWeb || defaultTargetPlatform == TargetPlatform.windows)) {
           if (controller != null && !controller.value.isPlaying) {
             await controller.play();
           }
@@ -620,8 +621,7 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
                         return SceneSubtitleOverlay(
                           text: value.caption.text,
                           constraints: constraints,
-                          bottomRatio:
-                              playerState.subtitlePositionBottomRatio,
+                          bottomRatio: playerState.subtitlePositionBottomRatio,
                           fontSize: playerState.subtitleFontSize + 4,
                           textAlign: _subtitleTextAlign(
                             playerState.subtitleTextAlignment,

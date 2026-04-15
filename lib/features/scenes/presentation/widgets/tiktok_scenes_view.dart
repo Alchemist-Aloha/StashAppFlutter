@@ -233,7 +233,7 @@ class _TiktokScenesViewState extends ConsumerState<TiktokScenesView> {
       final choice = await resolver.resolvePreferredStream(scene);
       if (choice == null) return;
 
-      final headers = ref.read(mediaHeadersProvider);
+      final headers = ref.read(mediaPlaybackHeadersProvider);
       final controller = VideoPlayerController.networkUrl(
         Uri.parse(choice.url),
         httpHeaders: headers,
@@ -551,10 +551,7 @@ class _TiktokSceneItemState extends ConsumerState<TiktokSceneItem> {
               tween: Tween(begin: 0.0, end: 1.0),
               duration: const Duration(milliseconds: 400),
               builder: (context, value, child) {
-                return Opacity(
-                  opacity: value,
-                  child: child,
-                );
+                return Opacity(opacity: value, child: child);
               },
               child: Stack(
                 fit: StackFit.expand,
@@ -746,7 +743,7 @@ class _TiktokSceneItemState extends ConsumerState<TiktokSceneItem> {
                             Text(
                               (widget.scene.rating100 ?? 0) > 0
                                   ? (widget.scene.rating100! / 20)
-                                      .toStringAsFixed(1)
+                                        .toStringAsFixed(1)
                                   : '-',
                               style: const TextStyle(
                                 color: Colors.white,
