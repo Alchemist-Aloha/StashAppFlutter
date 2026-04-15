@@ -267,63 +267,62 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
     }
 
     // Main playback surface.
-    final playbackSurface = LayoutBuilder(
-      builder: (context, constraints) {
-        return Stack(
-          children: [
-            Positioned.fill(
-              child: Container(
-                color: Colors.black,
-                child: Center(
-                  child: AspectRatio(
-                    aspectRatio: controller.value.aspectRatio,
-                    child: VideoPlayer(controller),
-                  ),
-                ),
-              ),
-            ),
-            if (playerState.selectedSubtitleLanguage != null &&
-                playerState.selectedSubtitleLanguage != 'none')
-              ValueListenableBuilder(
-                valueListenable: controller,
-                builder: (context, value, child) {
-                  return SceneSubtitleOverlay(
-                    text: value.caption.text,
-                    constraints: constraints,
-                    bottomRatio: playerState.subtitlePositionBottomRatio,
-                    fontSize: playerState.subtitleFontSize,
-                    textAlign: _subtitleTextAlign(
-                      playerState.subtitleTextAlignment,
-                    ),
-                    horizontalAlignment: _subtitleHorizontalAlignment(
-                      playerState.subtitleTextAlignment,
-                    ),
-                    horizontalPadding: 16,
-                  );
-                },
-              ),
-            Positioned.fill(
-              child: Material(
-                color: Colors.transparent,
-                child: NativeVideoControls(
-                  controller: controller,
-                  useDoubleTapSeek: playerState.useDoubleTapSeek,
-                  enableNativePip: playerState.enableNativePip,
-                  onFullScreenToggle: _toggleFullScreen,
-                  scene: widget.scene,
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-
     return AspectRatio(
       aspectRatio: aspectRatio,
-      child: kIsWeb
-          ? playbackSurface
-          : Hero(tag: 'scene_player_${widget.scene.id}', child: playbackSurface),
+      child: Hero(
+        tag: 'scene_player_${widget.scene.id}',
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return Stack(
+              children: [
+                Positioned.fill(
+                  child: Container(
+                    color: Colors.black,
+                    child: Center(
+                      child: AspectRatio(
+                        aspectRatio: controller.value.aspectRatio,
+                        child: VideoPlayer(controller),
+                      ),
+                    ),
+                  ),
+                ),
+                if (playerState.selectedSubtitleLanguage != null &&
+                    playerState.selectedSubtitleLanguage != 'none')
+                  ValueListenableBuilder(
+                    valueListenable: controller,
+                    builder: (context, value, child) {
+                      return SceneSubtitleOverlay(
+                        text: value.caption.text,
+                        constraints: constraints,
+                        bottomRatio: playerState.subtitlePositionBottomRatio,
+                        fontSize: playerState.subtitleFontSize,
+                        textAlign: _subtitleTextAlign(
+                          playerState.subtitleTextAlignment,
+                        ),
+                        horizontalAlignment: _subtitleHorizontalAlignment(
+                          playerState.subtitleTextAlignment,
+                        ),
+                        horizontalPadding: 16,
+                      );
+                    },
+                  ),
+                Positioned.fill(
+                  child: Material(
+                    color: Colors.transparent,
+                    child: NativeVideoControls(
+                      controller: controller,
+                      useDoubleTapSeek: playerState.useDoubleTapSeek,
+                      enableNativePip: playerState.enableNativePip,
+                      onFullScreenToggle: _toggleFullScreen,
+                      scene: widget.scene,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
     );
   }
 }
@@ -347,35 +346,6 @@ class FullscreenPlayerPage extends ConsumerStatefulWidget {
 class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
   bool _isPopping = false;
   bool _wasMaximizedBeforeFullscreen = false;
-  bool _didRunExitCleanup = false;
-
-  Future<void> _resumePlaybackAfterTransition(
-    VideoPlayerController? controller,
-    bool wasPlaying,
-  ) async {
-    if (!wasPlaying || controller == null) return;
-
-    // Web fullscreen transitions can pause playback after route/system updates,
-    // so retry a few times to recover reliably.
-    const retries = <Duration>[
-      Duration.zero,
-      Duration(milliseconds: 120),
-      Duration(milliseconds: 350),
-    ];
-
-    for (final delay in retries) {
-      if (delay > Duration.zero) {
-        await Future<void>.delayed(delay);
-      }
-      if (!mounted) return;
-      if (!controller.value.isPlaying) {
-        await controller.play();
-      }
-      if (controller.value.isPlaying) {
-        return;
-      }
-    }
-  }
 
   @override
   void initState() {
@@ -402,14 +372,7 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
     final wasPlaying = controller?.value.isPlaying ?? false;
 
     try {
-      if (!kIsWeb) {
-        await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-      }
-
-      AppLogStore.instance.add(
-        'FullscreenPlayerPage [${widget.sceneId}] enter start web=$kIsWeb wasPlaying=$wasPlaying playingNow=${controller?.value.isPlaying ?? false}',
-        source: 'FullscreenPlayerPage',
-      );
+      await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 
       if (!kIsWeb &&
           (defaultTargetPlatform == TargetPlatform.windows ||
@@ -437,13 +400,18 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
             unawaited(controller.play());
           }
         }
-      } else if (kIsWeb) {
-        await _resumePlaybackAfterTransition(controller, wasPlaying);
       } else {
         await SystemChrome.setPreferredOrientations([
           DeviceOrientation.landscapeLeft,
           DeviceOrientation.landscapeRight,
         ]);
+
+        // On Web, toggling fullscreen can sometimes trigger a pause
+        if (wasPlaying && kIsWeb) {
+          if (controller != null && !controller.value.isPlaying) {
+            unawaited(controller.play());
+          }
+        }
       }
     } catch (e) {
       AppLogStore.instance.add(
@@ -451,10 +419,6 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
         source: 'FullscreenPlayerPage',
       );
     } finally {
-      AppLogStore.instance.add(
-        'FullscreenPlayerPage [${widget.sceneId}] enter done web=$kIsWeb playingNow=${controller?.value.isPlaying ?? false}',
-        source: 'FullscreenPlayerPage',
-      );
       if (mounted) {
         ref.read(playerStateProvider.notifier).setFullScreen(true);
       }
@@ -462,16 +426,8 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
   }
 
   void _exitFullScreen() {
-    if (_didRunExitCleanup) return;
-    _didRunExitCleanup = true;
-
     final controller = ref.read(playerStateProvider).videoPlayerController;
     final wasPlaying = controller?.value.isPlaying ?? false;
-
-    AppLogStore.instance.add(
-      'FullscreenPlayerPage [${widget.sceneId}] exit start web=$kIsWeb wasPlaying=$wasPlaying playingNow=${controller?.value.isPlaying ?? false}',
-      source: 'FullscreenPlayerPage',
-    );
 
     // Reset state early so parent pages (like ShellPage) rebuild correctly.
     // We use a post-frame callback to avoid "Tried to modify a provider while
@@ -483,9 +439,7 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
 
     // Reset orientation and show system UI.
     // These are async but don't need to be awaited for the state change.
-    if (!kIsWeb) {
-      unawaited(SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge));
-    }
+    unawaited(SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge));
 
     if (!kIsWeb &&
         (defaultTargetPlatform == TargetPlatform.windows ||
@@ -508,8 +462,6 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
           }
         }
       }());
-    } else if (kIsWeb) {
-      unawaited(_resumePlaybackAfterTransition(controller, wasPlaying));
     } else {
       unawaited(() async {
         await SystemChrome.setPreferredOrientations([
@@ -518,13 +470,15 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
           DeviceOrientation.landscapeLeft,
           DeviceOrientation.landscapeRight,
         ]);
+
+        // On Web, toggling fullscreen can sometimes trigger a pause
+        if (wasPlaying && kIsWeb) {
+          if (controller != null && !controller.value.isPlaying) {
+            await controller.play();
+          }
+        }
       }());
     }
-
-    AppLogStore.instance.add(
-      'FullscreenPlayerPage [${widget.sceneId}] exit scheduled web=$kIsWeb playingNow=${controller?.value.isPlaying ?? false}',
-      source: 'FullscreenPlayerPage',
-    );
   }
 
   /// Toggles between inline and immersive fullscreen mode.
@@ -535,6 +489,9 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
 
     // If we are in FullscreenPlayerPage, the toggle button always exits.
     _isPopping = true;
+    // Update state immediately before popping.
+    // _exitFullScreen will also be called via deactivate() for extra safety.
+    ref.read(playerStateProvider.notifier).setFullScreen(false);
     router?.pop();
   }
 
@@ -594,108 +551,61 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) {
           _isPopping = true;
+          // Ensure state is updated immediately on back-swipe
+          ref.read(playerStateProvider.notifier).setFullScreen(false);
         }
       },
       child: Material(
         color: Colors.black,
-        child: (kIsWeb
-                ? SizedBox.expand(
-                    child: LayoutBuilder(
-                      builder: (context, constraints) {
-                        return Stack(
-                          children: [
-                            Positioned.fill(
-                              child: Center(
-                                child: AspectRatio(
-                                  aspectRatio: controller.value.aspectRatio,
-                                  child: VideoPlayer(controller),
-                                ),
-                              ),
-                            ),
-                            if (playerState.selectedSubtitleLanguage != null &&
-                                playerState.selectedSubtitleLanguage != 'none')
-                              ValueListenableBuilder(
-                                valueListenable: controller,
-                                builder: (context, value, child) {
-                                  return SceneSubtitleOverlay(
-                                    text: value.caption.text,
-                                    constraints: constraints,
-                                    bottomRatio:
-                                        playerState.subtitlePositionBottomRatio,
-                                    fontSize: playerState.subtitleFontSize + 4,
-                                    textAlign: _subtitleTextAlign(
-                                      playerState.subtitleTextAlignment,
-                                    ),
-                                    horizontalAlignment:
-                                        _subtitleHorizontalAlignment(
-                                          playerState.subtitleTextAlignment,
-                                        ),
-                                    horizontalPadding: 32,
-                                  );
-                                },
-                              ),
-                            NativeVideoControls(
-                              controller: controller,
-                              useDoubleTapSeek: playerState.useDoubleTapSeek,
-                              enableNativePip: playerState.enableNativePip,
-                              onFullScreenToggle: _toggleFullScreen,
-                              scene: scene,
-                            ),
-                          ],
-                        );
-                      },
+        child: Hero(
+          tag: 'scene_player_${widget.sceneId}',
+          child: SizedBox.expand(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return Stack(
+                  children: [
+                    Positioned.fill(
+                      child: Center(
+                        child: AspectRatio(
+                          aspectRatio: controller.value.aspectRatio,
+                          child: VideoPlayer(controller),
+                        ),
+                      ),
                     ),
-                  )
-                : Hero(
-                    tag: 'scene_player_${widget.sceneId}',
-                    child: SizedBox.expand(
-                      child: LayoutBuilder(
-                        builder: (context, constraints) {
-                          return Stack(
-                            children: [
-                              Positioned.fill(
-                                child: Center(
-                                  child: AspectRatio(
-                                    aspectRatio: controller.value.aspectRatio,
-                                    child: VideoPlayer(controller),
-                                  ),
-                                ),
-                              ),
-                              if (playerState.selectedSubtitleLanguage != null &&
-                                  playerState.selectedSubtitleLanguage != 'none')
-                                ValueListenableBuilder(
-                                  valueListenable: controller,
-                                  builder: (context, value, child) {
-                                    return SceneSubtitleOverlay(
-                                      text: value.caption.text,
-                                      constraints: constraints,
-                                      bottomRatio:
-                                          playerState.subtitlePositionBottomRatio,
-                                      fontSize: playerState.subtitleFontSize + 4,
-                                      textAlign: _subtitleTextAlign(
-                                        playerState.subtitleTextAlignment,
-                                      ),
-                                      horizontalAlignment:
-                                          _subtitleHorizontalAlignment(
-                                            playerState.subtitleTextAlignment,
-                                          ),
-                                      horizontalPadding: 32,
-                                    );
-                                  },
-                                ),
-                              NativeVideoControls(
-                                controller: controller,
-                                useDoubleTapSeek: playerState.useDoubleTapSeek,
-                                enableNativePip: playerState.enableNativePip,
-                                onFullScreenToggle: _toggleFullScreen,
-                                scene: scene,
-                              ),
-                            ],
+                    if (playerState.selectedSubtitleLanguage != null &&
+                        playerState.selectedSubtitleLanguage != 'none')
+                      ValueListenableBuilder(
+                        valueListenable: controller,
+                        builder: (context, value, child) {
+                          return SceneSubtitleOverlay(
+                            text: value.caption.text,
+                            constraints: constraints,
+                            bottomRatio:
+                                playerState.subtitlePositionBottomRatio,
+                            fontSize: playerState.subtitleFontSize + 4,
+                            textAlign: _subtitleTextAlign(
+                              playerState.subtitleTextAlignment,
+                            ),
+                            horizontalAlignment: _subtitleHorizontalAlignment(
+                              playerState.subtitleTextAlignment,
+                            ),
+                            horizontalPadding: 32,
                           );
                         },
                       ),
+                    NativeVideoControls(
+                      controller: controller,
+                      useDoubleTapSeek: playerState.useDoubleTapSeek,
+                      enableNativePip: playerState.enableNativePip,
+                      onFullScreenToggle: _toggleFullScreen,
+                      scene: scene,
                     ),
-                  )),
+                  ],
+                );
+              },
+            ),
+          ),
+        ),
       ),
     );
   }
