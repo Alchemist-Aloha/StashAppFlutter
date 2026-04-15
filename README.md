@@ -40,6 +40,7 @@ A modern, multi-platform client for your **Stash** server. Designed for seamless
 - 💬 **Subtitle Support:** Load external **VTT/SRT** subtitles automatically. Customize **font size** and **vertical position** to suit your device.
 - 🌐 **Multi-Language:** Set a **default subtitle language** (English, Chinese, German, etc.) to auto-load whenever available.
 - 🎵 **System Integration:** Supports `audio_service` controls (notifications/lock screen), background audio, and **Picture-in-Picture (PiP)**.
+ - 🆕 **Improved Subtitle Handling:** External subtitles are auto-detected and loaded when available. Users can customize `subtitle_font_size` and `subtitle_position_bottom_ratio`, and set `default_subtitle_language` to prefer a language when multiple tracks exist.
 
 ### 🖼️ Images & Galleries
 
@@ -47,6 +48,7 @@ A modern, multi-platform client for your **Stash** server. Designed for seamless
 - 🖼️ **Enhanced Fullscreen Image Viewer:** Choose vertical/horizontal swipe direction, use previous/next quick-nav buttons, and avoid accidental UI hide when tapping overlay controls.
 - ▶️ **Configurable Slideshow:** Start/stop slideshow, tune interval/transition/direction/loop, and save preferred defaults.
 - ⭐ **Inline Rating Actions:** Rate either the current **Image** or its parent **Gallery** directly in fullscreen, with remembered rating target selection.
+ - 🆕 **Sprite Image (Thumbnail Atlas) Support:** The app detects sprite metadata and uses thumbnail atlases for fast seek previews and compact gallery grids. Sprite parsing and rendering are handled during metadata resolution to provide smooth hover/seek preview UX.
 
 ### 🔎 Browsing, Search & Filters
 
