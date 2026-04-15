@@ -400,7 +400,14 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
     final wasPlaying = controller?.value.isPlaying ?? false;
 
     try {
-      await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+      if (!kIsWeb) {
+        await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+      }
+
+      AppLogStore.instance.add(
+        'FullscreenPlayerPage [${widget.sceneId}] enter start web=$kIsWeb wasPlaying=$wasPlaying playingNow=${controller?.value.isPlaying ?? false}',
+        source: 'FullscreenPlayerPage',
+      );
 
       if (!kIsWeb &&
           (defaultTargetPlatform == TargetPlatform.windows ||
@@ -442,6 +449,10 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
         source: 'FullscreenPlayerPage',
       );
     } finally {
+      AppLogStore.instance.add(
+        'FullscreenPlayerPage [${widget.sceneId}] enter done web=$kIsWeb playingNow=${controller?.value.isPlaying ?? false}',
+        source: 'FullscreenPlayerPage',
+      );
       if (mounted) {
         ref.read(playerStateProvider.notifier).setFullScreen(true);
       }
@@ -451,6 +462,11 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
   void _exitFullScreen() {
     final controller = ref.read(playerStateProvider).videoPlayerController;
     final wasPlaying = controller?.value.isPlaying ?? false;
+
+    AppLogStore.instance.add(
+      'FullscreenPlayerPage [${widget.sceneId}] exit start web=$kIsWeb wasPlaying=$wasPlaying playingNow=${controller?.value.isPlaying ?? false}',
+      source: 'FullscreenPlayerPage',
+    );
 
     // Reset state early so parent pages (like ShellPage) rebuild correctly.
     // We use a post-frame callback to avoid "Tried to modify a provider while
@@ -462,7 +478,9 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
 
     // Reset orientation and show system UI.
     // These are async but don't need to be awaited for the state change.
-    unawaited(SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge));
+    if (!kIsWeb) {
+      unawaited(SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge));
+    }
 
     if (!kIsWeb &&
         (defaultTargetPlatform == TargetPlatform.windows ||
@@ -497,6 +515,11 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
         ]);
       }());
     }
+
+    AppLogStore.instance.add(
+      'FullscreenPlayerPage [${widget.sceneId}] exit scheduled web=$kIsWeb playingNow=${controller?.value.isPlaying ?? false}',
+      source: 'FullscreenPlayerPage',
+    );
   }
 
   /// Toggles between inline and immersive fullscreen mode.
