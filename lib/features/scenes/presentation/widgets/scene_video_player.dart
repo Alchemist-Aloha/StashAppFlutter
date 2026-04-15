@@ -41,35 +41,6 @@ Alignment _subtitleHorizontalAlignment(String setting) {
   }
 }
 
-Future<void> _ensureWebPlaybackContinues(
-  VideoPlayerController? controller, {
-  required bool shouldBePlaying,
-}) async {
-  if (!kIsWeb || !shouldBePlaying || controller == null) {
-    return;
-  }
-
-  const retryDelays = <Duration>[
-    Duration.zero,
-    Duration(milliseconds: 80),
-    Duration(milliseconds: 220),
-    Duration(milliseconds: 500),
-  ];
-
-  for (final delay in retryDelays) {
-    if (delay > Duration.zero) {
-      await Future<void>.delayed(delay);
-    }
-    try {
-      if (!controller.value.isPlaying) {
-        await controller.play();
-      }
-    } catch (_) {
-      // Ignore transient controller errors during route/fullscreen transitions.
-    }
-  }
-}
-
 /// A comprehensive video player for Stash scenes.
 ///
 /// This widget handles both inline and immersive fullscreen playback.
@@ -237,8 +208,6 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
     if (!mounted) return;
 
     final playerState = ref.read(playerStateProvider);
-    final controller = playerState.videoPlayerController;
-    final wasPlaying = controller?.value.isPlaying ?? false;
     final router = GoRouter.maybeOf(context);
 
     // We check both state and path for maximum robustness.
@@ -251,13 +220,6 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
     } else {
       context.push('/scenes/scene/${widget.scene.id}/fullscreen');
     }
-
-    unawaited(
-      _ensureWebPlaybackContinues(
-        controller,
-        shouldBePlaying: wasPlaying,
-      ),
-    );
   }
 
   @override
@@ -385,6 +347,34 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
   bool _isPopping = false;
   bool _wasMaximizedBeforeFullscreen = false;
 
+  Future<void> _resumePlaybackAfterTransition(
+    VideoPlayerController? controller,
+    bool wasPlaying,
+  ) async {
+    if (!wasPlaying || controller == null) return;
+
+    // Web fullscreen transitions can pause playback after route/system updates,
+    // so retry a few times to recover reliably.
+    const retries = <Duration>[
+      Duration.zero,
+      Duration(milliseconds: 120),
+      Duration(milliseconds: 350),
+    ];
+
+    for (final delay in retries) {
+      if (delay > Duration.zero) {
+        await Future<void>.delayed(delay);
+      }
+      if (!mounted) return;
+      if (!controller.value.isPlaying) {
+        await controller.play();
+      }
+      if (controller.value.isPlaying) {
+        return;
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -438,18 +428,13 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
             unawaited(controller.play());
           }
         }
+      } else if (kIsWeb) {
+        await _resumePlaybackAfterTransition(controller, wasPlaying);
       } else {
         await SystemChrome.setPreferredOrientations([
           DeviceOrientation.landscapeLeft,
           DeviceOrientation.landscapeRight,
         ]);
-
-        // On Web, toggling fullscreen can sometimes trigger a pause
-        if (wasPlaying && kIsWeb) {
-          if (controller != null && !controller.value.isPlaying) {
-            unawaited(controller.play());
-          }
-        }
       }
     } catch (e) {
       AppLogStore.instance.add(
@@ -457,12 +442,6 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
         source: 'FullscreenPlayerPage',
       );
     } finally {
-      unawaited(
-        _ensureWebPlaybackContinues(
-          controller,
-          shouldBePlaying: wasPlaying,
-        ),
-      );
       if (mounted) {
         ref.read(playerStateProvider.notifier).setFullScreen(true);
       }
@@ -506,6 +485,8 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
           }
         }
       }());
+    } else if (kIsWeb) {
+      unawaited(_resumePlaybackAfterTransition(controller, wasPlaying));
     } else {
       unawaited(() async {
         await SystemChrome.setPreferredOrientations([
@@ -514,22 +495,8 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
           DeviceOrientation.landscapeLeft,
           DeviceOrientation.landscapeRight,
         ]);
-
-        // On Web, toggling fullscreen can sometimes trigger a pause
-        if (wasPlaying && kIsWeb) {
-          if (controller != null && !controller.value.isPlaying) {
-            await controller.play();
-          }
-        }
       }());
     }
-
-    unawaited(
-      _ensureWebPlaybackContinues(
-        controller,
-        shouldBePlaying: wasPlaying,
-      ),
-    );
   }
 
   /// Toggles between inline and immersive fullscreen mode.
