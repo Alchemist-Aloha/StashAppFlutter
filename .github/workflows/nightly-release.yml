@@ -143,6 +143,10 @@ jobs:
     permissions:
       contents: write
     steps:
+      - name: Get short SHA
+        id: slug
+        run: echo "sha_short=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_OUTPUT
+
       - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
@@ -152,8 +156,8 @@ jobs:
       - name: Create Nightly Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: nightly
-          name: Nightly Build
+          tag_name: nightly-${{ steps.slug.outputs.sha_short }}
+          name: Nightly Build (${{ steps.slug.outputs.sha_short }})
           prerelease: true
           make_latest: false
           files: artifacts/**
