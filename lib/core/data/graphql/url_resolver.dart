@@ -14,17 +14,22 @@ String resolveGraphqlMediaUrl({
     return '${graphqlEndpoint.scheme}:$value';
   }
 
-  final origin = Uri(
+  final base = Uri(
     scheme: graphqlEndpoint.scheme,
+    userInfo: graphqlEndpoint.userInfo,
     host: graphqlEndpoint.host,
     port: graphqlEndpoint.hasPort ? graphqlEndpoint.port : null,
   );
 
-  if (value.startsWith('/')) {
-    return origin.resolveUri(Uri.parse(value)).toString();
+  final resolved = base.resolve(value);
+
+  if (graphqlEndpoint.queryParameters.isNotEmpty) {
+    final mergedParams = Map<String, dynamic>.from(graphqlEndpoint.queryParameters)
+      ..addAll(resolved.queryParameters);
+    return resolved.replace(queryParameters: mergedParams).toString();
   }
 
-  return origin.resolve(value).toString();
+  return resolved.toString();
 }
 
 /// Appends an API key to the given [url] as a query parameter.

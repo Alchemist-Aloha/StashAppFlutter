@@ -39,6 +39,25 @@ void main() {
     expect(resolveGraphqlMediaUrl(rawUrl: null, graphqlEndpoint: endpoint), '');
   });
 
+  test('preserves userInfo and queryParameters from endpoint', () {
+    final ssoEndpoint = Uri.parse('https://user:pass@stash.host.tld/graphql?token=secret');
+    final result = resolveGraphqlMediaUrl(
+      rawUrl: '/image/abc.jpg',
+      graphqlEndpoint: ssoEndpoint,
+    );
+    expect(result, 'https://user:pass@stash.host.tld/image/abc.jpg?token=secret');
+  });
+
+  test('merges endpoint queryParameters with relative path parameters', () {
+    final ssoEndpoint = Uri.parse('https://stash.host.tld/graphql?token=secret');
+    final result = resolveGraphqlMediaUrl(
+      rawUrl: '/image/abc.jpg?id=123',
+      graphqlEndpoint: ssoEndpoint,
+    );
+    expect(result, contains('token=secret'));
+    expect(result, contains('id=123'));
+  });
+
   group('appendApiKey', () {
     test('appends apikey to url without existing parameters', () {
       final url = 'http://example.com/image';

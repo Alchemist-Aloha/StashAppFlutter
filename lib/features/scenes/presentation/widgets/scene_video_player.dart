@@ -14,6 +14,7 @@ import '../providers/video_player_provider.dart';
 import '../../data/repositories/stream_resolver.dart';
 import '../../../../core/data/graphql/media_headers_provider.dart';
 import '../../../../core/utils/app_log_store.dart';
+import '../../../../core/utils/web_helpers.dart';
 import 'native_video_controls.dart';
 import 'scene_subtitle_overlay.dart';
 
@@ -215,6 +216,14 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
     final currentPath = router?.routeInformationProvider.value.uri.path ?? '';
     final isInFullscreenPath = currentPath.endsWith('/fullscreen');
 
+    if (kIsWeb) {
+      if (playerState.isFullScreen || isInFullscreenPath) {
+        unawaited(exitWebFullScreen());
+      } else {
+        unawaited(enterWebFullScreen());
+      }
+    }
+
     if (playerState.isFullScreen || isInFullscreenPath) {
       router?.pop();
     } else {
@@ -346,6 +355,14 @@ class FullscreenPlayerPage extends ConsumerStatefulWidget {
 class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
   bool _isPopping = false;
   bool _wasMaximizedBeforeFullscreen = false;
+  bool _wasPlayingBeforeExit = false;
+  VideoPlayerController? _currentListenedController;
+
+  void _onControllerUpdate() {
+    if (!_isPopping && _currentListenedController != null) {
+      _wasPlayingBeforeExit = _currentListenedController!.value.isPlaying;
+    }
+  }
 
   @override
   void initState() {
@@ -364,6 +381,7 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
 
   @override
   void dispose() {
+    _currentListenedController?.removeListener(_onControllerUpdate);
     super.dispose();
   }
 
@@ -405,6 +423,15 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
           DeviceOrientation.landscapeLeft,
           DeviceOrientation.landscapeRight,
         ]);
+
+        // On Web, toggling fullscreen and the Hero transition can trigger a pause
+        if (wasPlaying && kIsWeb) {
+          Future.delayed(const Duration(milliseconds: 350), () {
+            if (controller != null && !controller.value.isPlaying) {
+              unawaited(controller.play());
+            }
+          });
+        }
       }
     } catch (e) {
       AppLogStore.instance.add(
@@ -420,7 +447,7 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
 
   void _exitFullScreen() {
     final controller = ref.read(playerStateProvider).videoPlayerController;
-    final wasPlaying = controller?.value.isPlaying ?? false;
+    final wasPlaying = _wasPlayingBeforeExit;
 
     // Reset state early so parent pages (like ShellPage) rebuild correctly.
     // We use a post-frame callback to avoid "Tried to modify a provider while
@@ -447,29 +474,44 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
           _wasMaximizedBeforeFullscreen = false;
         }
 
-        // On Windows, toggling fullscreen can sometimes trigger a pause in the native player
+        // On Windows and Web, toggling fullscreen can sometimes trigger a pause in the native player
         // due to window state changes or focus loss during the transition.
-        if (wasPlaying && defaultTargetPlatform == TargetPlatform.windows) {
+        if (wasPlaying && (kIsWeb || defaultTargetPlatform == TargetPlatform.windows)) {
           if (controller != null && !controller.value.isPlaying) {
             await controller.play();
           }
         }
       }());
     } else {
-      unawaited(
-        SystemChrome.setPreferredOrientations([
+      unawaited(() async {
+        await SystemChrome.setPreferredOrientations([
           DeviceOrientation.portraitUp,
           DeviceOrientation.portraitDown,
           DeviceOrientation.landscapeLeft,
           DeviceOrientation.landscapeRight,
-        ]),
-      );
+        ]);
+
+        // On Web, toggling fullscreen and the Hero transition can trigger a pause
+        if (wasPlaying && kIsWeb) {
+          Future.delayed(const Duration(milliseconds: 350), () {
+            // Do not check `mounted` here because FullscreenPlayerPage might be unmounted
+            // when returning to the inline player page.
+            if (controller != null && !controller.value.isPlaying) {
+              unawaited(controller.play());
+            }
+          });
+        }
+      }());
     }
   }
 
   /// Toggles between inline and immersive fullscreen mode.
   Future<void> _toggleFullScreen() async {
     if (!mounted || _isPopping) return;
+
+    if (kIsWeb) {
+      unawaited(exitWebFullScreen());
+    }
 
     final router = GoRouter.maybeOf(context);
 
@@ -513,6 +555,16 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
     // We must have an active scene that matches the one we're trying to show.
     final scene = playerState.activeScene;
     final controller = playerState.videoPlayerController;
+
+    if (controller != _currentListenedController) {
+      _currentListenedController?.removeListener(_onControllerUpdate);
+      _currentListenedController = controller;
+      _currentListenedController?.addListener(_onControllerUpdate);
+      // Immediately hydrate the initial value.
+      if (controller != null && !_isPopping) {
+        _wasPlayingBeforeExit = controller.value.isPlaying;
+      }
+    }
 
     if (scene == null || scene.id != sceneId || controller == null) {
       return Scaffold(
