@@ -83,20 +83,6 @@ A modern, multi-platform client for your **Stash** server. Designed for seamless
 1. **Access:** Visit the [Live Web App](https://alchemist-aloha.github.io/StashFlow/) (if hosted) or host your own build.
 2. **Configure:** Enter your Stash server details in the connection prompt. Enable local network access.
 
-### ⚙️ Runtime Settings
-
-Tailor your experience in the app settings:
-
-- `server_base_url` & `server_api_key`: Connection details.
-- `prefer_scene_streams`: Toggle between direct file paths and scene-specific stream resolution.
-- `scene_layout_mode`: Switch between **List**, **Grid** and **TikTok** view.
-- `autoplay_next`: Enable continuous playback in details and TikTok views.
-- `video_background_playback`: Continue audio when app is minimized.
-- `video_native_pip`: Enable auto-PiP on Android.
-- `default_subtitle_language`: Configure preferred subtitle language for auto-loading.
-- `subtitle_font_size` & `subtitle_position_bottom_ratio`: Tune subtitle appearance for any screen.
-- `image_fullscreen_vertical_swipe`: Fullscreen image swipe direction (vertical, horizontal).
-
 ---
 
 ## 🤓 For Developers
