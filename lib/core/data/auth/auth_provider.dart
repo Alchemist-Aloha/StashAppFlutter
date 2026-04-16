@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../preferences/secure_storage_provider.dart';
@@ -199,6 +200,7 @@ class AuthProvider extends Notifier<AuthState> {
       final cookieHeader = await service.cookieHeaderFor(
         requestUri: endpointUri,
       );
+      final isLoggedIn = cookieHeader.isNotEmpty || kIsWeb;
       final secureStorage = ref.read(secureStorageProvider);
       if (cookieHeader.isEmpty) {
         await secureStorage.delete(key: _cookieHeaderKey);
@@ -208,13 +210,13 @@ class AuthProvider extends Notifier<AuthState> {
 
       state = state.copyWith(
         cookieHeader: cookieHeader,
-        loginStatus: cookieHeader.isEmpty
-            ? AuthLoginStatus.loggedOut
-            : AuthLoginStatus.loggedIn,
+        loginStatus: isLoggedIn
+            ? AuthLoginStatus.loggedIn
+            : AuthLoginStatus.loggedOut,
         clearError: true,
       );
 
-      return cookieHeader.isNotEmpty;
+      return isLoggedIn;
     } catch (error) {
       state = state.copyWith(
         loginStatus: AuthLoginStatus.error,
@@ -257,9 +259,7 @@ class AuthProvider extends Notifier<AuthState> {
 
     state = state.copyWith(
       cookieHeader: cookieHeader,
-      loginStatus: cookieHeader.isEmpty
-          ? AuthLoginStatus.loggedOut
-          : AuthLoginStatus.loggedIn,
+      loginStatus: _resolveLoginStatusAfterCookieRefresh(cookieHeader),
       clearError: true,
     );
 
@@ -278,6 +278,19 @@ class AuthProvider extends Notifier<AuthState> {
     } catch (_) {
       return '';
     }
+  }
+
+  AuthLoginStatus _resolveLoginStatusAfterCookieRefresh(String cookieHeader) {
+    if (cookieHeader.isNotEmpty) {
+      return AuthLoginStatus.loggedIn;
+    }
+
+    if (kIsWeb && state.mode == AuthMode.password) {
+      // On web, browser-managed credentials may be valid even when CookieJar is empty.
+      return state.loginStatus;
+    }
+
+    return AuthLoginStatus.loggedOut;
   }
 
   String _readServerUrl() {

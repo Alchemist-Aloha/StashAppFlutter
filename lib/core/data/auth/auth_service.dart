@@ -1,5 +1,4 @@
-import 'dart:io';
-
+import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:cookie_jar/cookie_jar.dart';
@@ -17,16 +16,25 @@ class AuthService {
   static Future<AuthService> create() async {
     final cookieJar = await createPersistCookieJar();
 
-    final dio = Dio()
-      ..interceptors.add(CookieManager(cookieJar))
-      ..options.followRedirects = true
-      ..options.validateStatus = (status) =>
-          status != null && status >= 200 && status < 500;
+    final dio = Dio(
+      BaseOptions(
+        followRedirects: true,
+        validateStatus: (status) => status != null && status >= 200 && status < 500,
+        extra: kIsWeb
+            ? <String, dynamic>{'withCredentials': true}
+            : const <String, dynamic>{},
+      ),
+    )..interceptors.add(CookieManager(cookieJar));
 
     return AuthService(dio: dio, cookieJar: cookieJar);
   }
 
   static Future<PersistCookieJar> createPersistCookieJar() async {
+    if (kIsWeb) {
+      // Web cannot persist filesystem cookies; keep the same API with in-memory storage.
+      return PersistCookieJar(ignoreExpires: false);
+    }
+
     _sharedCookieJarFuture ??= () async {
       final supportDir = await getApplicationSupportDirectory();
       final cookiePath = p.join(supportDir.path, 'stashflow_cookies');
@@ -61,7 +69,8 @@ class AuthService {
       },
       options: Options(
         contentType: Headers.formUrlEncodedContentType,
-        headers: <String, String>{HttpHeaders.acceptHeader: '*/*'},
+        headers: const <String, String>{'accept': '*/*'},
+        extra: kIsWeb ? <String, dynamic>{'withCredentials': true} : null,
       ),
     );
 
