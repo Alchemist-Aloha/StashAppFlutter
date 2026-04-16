@@ -21,7 +21,8 @@ class AuthService {
     final dio = Dio(
       BaseOptions(
         followRedirects: true,
-        validateStatus: (status) => status != null && status >= 200 && status < 500,
+        validateStatus: (status) =>
+            status != null && status >= 200 && status < 500,
         extra: kIsWeb
             ? <String, dynamic>{'withCredentials': true}
             : const <String, dynamic>{},
@@ -81,10 +82,9 @@ class AuthService {
         // On the web, the browser securely handles the session cookie.
         // We inject a dummy cookie so `cookieJar` isn't empty,
         // which preserves the app's logged-in state logic.
-        await cookieJar.saveFromResponse(
-          loginUri,
-          [Cookie('web_session', 'active')],
-        );
+        await cookieJar.saveFromResponse(loginUri, [
+          Cookie('web_session', 'active'),
+        ]);
       }
       return true;
     }
