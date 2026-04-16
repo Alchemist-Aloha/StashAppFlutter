@@ -23,9 +23,6 @@ class AuthService {
         followRedirects: true,
         validateStatus: (status) =>
             status != null && status >= 200 && status < 500,
-        extra: kIsWeb
-            ? <String, dynamic>{'withCredentials': true}
-            : const <String, dynamic>{},
       ),
     );
 
@@ -67,19 +64,23 @@ class AuthService {
     }
 
     final loginUri = _resolveEndpoint(graphqlEndpoint, 'login');
-    final response = await _dio.postUri(
-      loginUri,
-      data: <String, String>{
-        'username': trimmedUsername,
-        'password': password,
-        'returnURL': '/',
-      },
-      options: Options(
-        contentType: Headers.formUrlEncodedContentType,
-        headers: const <String, String>{'accept': '*/*'},
-        extra: kIsWeb ? <String, dynamic>{'withCredentials': true} : null,
-      ),
-    );
+    Response response;
+    try {
+      response = await _dio.postUri(
+        loginUri,
+        data: <String, String>{
+          'username': trimmedUsername,
+          'password': password,
+          'returnURL': '/',
+        },
+        options: Options(
+          contentType: Headers.formUrlEncodedContentType,
+          headers: const <String, String>{'accept': '*/*'},
+        ),
+      );
+    } on DioException catch (_) {
+      return false;
+    }
 
     if (response.statusCode == 200) {
       if (kIsWeb) {
