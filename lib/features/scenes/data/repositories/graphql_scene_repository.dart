@@ -538,20 +538,20 @@ class GraphQLSceneRepository implements SceneRepository {
       final found = result.parsedData?.findPerformers.performers ?? [];
 
       String? chosenId;
+      final pNameLower = p.name?.toLowerCase();
+      final pUrlsSet = p.urls.toSet();
+
       for (final f in found) {
-        final name = f.name;
-        final urls = f.urls;
-        if (p.name != null && name.toLowerCase() == p.name!.toLowerCase()) {
+        if (pNameLower != null && f.name.toLowerCase() == pNameLower) {
           chosenId = f.id;
           break;
         }
-        for (final pUrl in p.urls) {
-          if (urls?.contains(pUrl) == true) {
-            chosenId = f.id;
-            break;
-          }
+
+        final fUrls = f.urls;
+        if (fUrls != null && fUrls.any((u) => pUrlsSet.contains(u))) {
+          chosenId = f.id;
+          break;
         }
-        if (chosenId != null) break;
       }
 
       if (chosenId != null) {
