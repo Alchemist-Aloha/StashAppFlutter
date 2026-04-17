@@ -35,9 +35,7 @@ class TagMediaGridPage extends ConsumerWidget {
       onFetchNextPage: () =>
           ref.read(tagMediaGridProvider(tagId).notifier).fetchNextPage(),
       gridDelegate: isGridView
-          ? GridUtils.createDelegate(
-              crossAxisCount: gridColumns ?? 2,
-            )
+          ? GridUtils.createDelegate(crossAxisCount: gridColumns ?? 2)
           : null,
       padding: isGridView ? GridUtils.defaultPadding : EdgeInsets.zero,
       itemBuilder: (context, item, memCacheWidth, memCacheHeight) => GridCard(

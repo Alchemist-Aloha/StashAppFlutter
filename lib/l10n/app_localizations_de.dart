@@ -112,6 +112,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get common_no_media => 'Keine Medien verfügbar';
 
   @override
+  String get common_show => 'Show';
+
+  @override
+  String get common_hide => 'Hide';
+
+  @override
+  String get galleries_filter_saved => 'Filter preferences saved as default';
+
+  @override
   String get common_setup_required => 'Einrichtung erforderlich';
 
   @override
@@ -1094,4 +1103,52 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get settings_develop_web_auth_subtitle =>
       'Hebt die Native-only-Beschränkung auf und erzwingt die Sichtbarkeit der Benutzername + Passwort-Authentifizierungsmethode in Flutter Web.';
+
+  @override
+  String get common_edit => 'Bearbeiten';
+
+  @override
+  String get common_resolution => 'Auflösung';
+
+  @override
+  String get common_orientation => 'Ausrichtung';
+
+  @override
+  String get performers_filter_saved =>
+      'Filtereinstellungen als Standard gespeichert';
+
+  @override
+  String get images_filtered_by_gallery => 'Gefiltert nach Galerie';
+
+  @override
+  String get images_slideshow_need_two =>
+      'Mindestens 2 Bilder werden für die Diashow benötigt.';
+
+  @override
+  String get images_slideshow_start_title => 'Diashow starten';
+
+  @override
+  String images_slideshow_interval(num seconds) {
+    return 'Intervall: ${seconds}s';
+  }
+
+  @override
+  String images_slideshow_transition_ms(num ms) {
+    return 'Übergang: ${ms}ms';
+  }
+
+  @override
+  String get common_forward => 'Vorwärts';
+
+  @override
+  String get common_backward => 'Rückwärts';
+
+  @override
+  String get images_slideshow_loop_title => 'Diashow wiederholen';
+
+  @override
+  String get common_cancel => 'Abbrechen';
+
+  @override
+  String get common_start => 'Starten';
 }

@@ -305,7 +305,8 @@ class _TiktokScenesViewState extends ConsumerState<TiktokScenesView> {
         );
       },
       loading: () => const Center(child: CircularProgressContext()),
-      error: (e, st) => Center(child: Text(context.l10n.common_error(e.toString()))),
+      error: (e, st) =>
+          Center(child: Text(context.l10n.common_error(e.toString()))),
     );
   }
 }

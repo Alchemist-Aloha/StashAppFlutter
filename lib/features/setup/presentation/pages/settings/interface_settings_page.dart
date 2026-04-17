@@ -148,9 +148,16 @@ class _InterfaceSettingsPageState extends ConsumerState<InterfaceSettingsPage> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text('App Language', style: TextStyle(fontSize: 16)),
+                            const Text(
+                              'App Language',
+                              style: TextStyle(fontSize: 16),
+                            ),
                             DropdownButton<String?>(
-                              value: ref.watch(appLanguageProvider)?.toString() ?? (ref.watch(sharedPreferencesProvider).getString(appLanguagePreferenceKey)),
+                              value:
+                                  ref.watch(appLanguageProvider)?.toString() ??
+                                  (ref
+                                      .watch(sharedPreferencesProvider)
+                                      .getString(appLanguagePreferenceKey)),
                               dropdownColor: colorScheme.surface,
                               items: supportedLanguages.entries.map((entry) {
                                 return DropdownMenuItem<String?>(
@@ -159,7 +166,9 @@ class _InterfaceSettingsPageState extends ConsumerState<InterfaceSettingsPage> {
                                 );
                               }).toList(),
                               onChanged: (value) async {
-                                await ref.read(appLanguageProvider.notifier).setLanguage(value);
+                                await ref
+                                    .read(appLanguageProvider.notifier)
+                                    .setLanguage(value);
                               },
                             ),
                           ],
@@ -376,7 +385,8 @@ class _InterfaceSettingsPageState extends ConsumerState<InterfaceSettingsPage> {
                           ],
                           onSelected: (value) async {
                             setState(() {
-                              _imageFullscreenVerticalSwipe = value == 'vertical';
+                              _imageFullscreenVerticalSwipe =
+                                  value == 'vertical';
                             });
                             await _saveSettings();
                           },
@@ -686,9 +696,13 @@ class _InterfaceSettingsPageState extends ConsumerState<InterfaceSettingsPage> {
           value: value,
           dropdownColor: colorScheme.surface,
           items: [
-            DropdownMenuItem<int?>(value: null, child: Text(l10n.common_default)),
+            DropdownMenuItem<int?>(
+              value: null,
+              child: Text(l10n.common_default),
+            ),
             ...List.generate(10, (index) => index + 1).map(
-              (i) => DropdownMenuItem<int?>(value: i, child: Text(i.toString())),
+              (i) =>
+                  DropdownMenuItem<int?>(value: i, child: Text(i.toString())),
             ),
           ],
           onChanged: onChanged,

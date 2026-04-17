@@ -89,8 +89,10 @@ class _AppearanceSettingsPageState
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return SettingsPageShell(
-      title: 'Appearance Settings',
+      title: l10n.settings_appearance_title,
       child: _loading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
@@ -99,8 +101,8 @@ class _AppearanceSettingsPageState
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   SettingsSectionCard(
-                    title: 'Theme Mode',
-                    subtitle: 'Choose how the app follows brightness changes',
+                    title: l10n.settings_appearance_theme_mode,
+                    subtitle: l10n.settings_appearance_theme_mode_subtitle,
                     child: SizedBox(
                       width: double.infinity,
                       child: SegmentedButton<ThemeMode>(
@@ -108,21 +110,21 @@ class _AppearanceSettingsPageState
                         style: const ButtonStyle(
                           visualDensity: VisualDensity.compact,
                         ),
-                        segments: const [
+                        segments: [
                           ButtonSegment<ThemeMode>(
                             value: ThemeMode.system,
                             icon: Icon(Icons.brightness_auto_outlined),
-                            label: Text('System'),
+                            label: Text(l10n.settings_appearance_theme_system),
                           ),
                           ButtonSegment<ThemeMode>(
                             value: ThemeMode.light,
                             icon: Icon(Icons.light_mode_outlined),
-                            label: Text('Light'),
+                            label: Text(l10n.settings_appearance_theme_light),
                           ),
                           ButtonSegment<ThemeMode>(
                             value: ThemeMode.dark,
                             icon: Icon(Icons.dark_mode_outlined),
-                            label: Text('Dark'),
+                            label: Text(l10n.settings_appearance_theme_dark),
                           ),
                         ],
                         selected: {_themeMode},
@@ -146,9 +148,9 @@ class _AppearanceSettingsPageState
                       children: [
                         SwitchListTile.adaptive(
                           contentPadding: EdgeInsets.zero,
-                          title: const Text('True Black (AMOLED)'),
-                          subtitle: const Text(
-                            'Use pure black backgrounds in dark mode to save battery on OLED screens',
+                          title: Text(l10n.settings_appearance_true_black),
+                          subtitle: Text(
+                            l10n.settings_appearance_true_black_subtitle,
                           ),
                           value: ref.watch(trueBlackEnabledProvider),
                           onChanged: (value) {

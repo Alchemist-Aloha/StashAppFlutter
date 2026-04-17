@@ -777,7 +777,9 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
       ),
       error: (e, s) => Scaffold(
         backgroundColor: Colors.black,
-        body: Center(child: Text('Error: $e', style: const TextStyle(color: Colors.white))),
+        body: Center(
+          child: Text('Error: $e', style: const TextStyle(color: Colors.white)),
+        ),
       ),
       data: (items) {
         final Map<ShortcutActivator, VoidCallback> bindings = {};
@@ -809,9 +811,7 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
           _currentIndex = items.indexWhere((i) => i.id == widget.imageId);
           if (_currentIndex == -1) _currentIndex = 0;
           _pageController.dispose();
-          _pageController = ExtendedPageController(
-            initialPage: _currentIndex,
-          );
+          _pageController = ExtendedPageController(initialPage: _currentIndex);
           _initialPageSet = true;
 
           // Prefetch initial adjacent images
@@ -824,9 +824,9 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
         final displayTitle = _getDisplayTitle(currentImage);
         final totalItemCount =
             galleryDetailsAsync?.maybeWhen(
-                  data: (gallery) => gallery.imageCount ?? items.length,
-                  orElse: () => items.length,
-                ) ??
+              data: (gallery) => gallery.imageCount ?? items.length,
+              orElse: () => items.length,
+            ) ??
             items.length;
 
         return Scaffold(
@@ -839,9 +839,12 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
                 builder: (context, constraints) {
                   final isWideLayout =
                       constraints.maxWidth >= Responsive.tabletBreakpoint;
-                  final scrollDirection =
-                      useVerticalSwipe ? Axis.vertical : Axis.horizontal;
-                  final maxOverlayWidth = isWideLayout ? 720.0 : constraints.maxWidth;
+                  final scrollDirection = useVerticalSwipe
+                      ? Axis.vertical
+                      : Axis.horizontal;
+                  final maxOverlayWidth = isWideLayout
+                      ? 720.0
+                      : constraints.maxWidth;
                   final horizontalPadding = isWideLayout ? 24.0 : 8.0;
 
                   return Listener(
@@ -896,7 +899,8 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
                                 onDoubleTap: (ExtendedImageGestureState state) {
                                   final pointerDownPosition =
                                       state.pointerDownPosition;
-                                  final begin = state.gestureDetails!.totalScale;
+                                  final begin =
+                                      state.gestureDetails!.totalScale;
                                   final end = begin == 1.0 ? 3.0 : 1.0;
 
                                   state.handleDoubleTap(

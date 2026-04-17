@@ -145,7 +145,10 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
                       ],
                     ),
                     const SizedBox(height: AppTheme.spacingMedium),
-                    Text(context.l10n.common_sort_method, style: context.textTheme.labelLarge),
+                    Text(
+                      context.l10n.common_sort_method,
+                      style: context.textTheme.labelLarge,
+                    ),
                     const SizedBox(height: AppTheme.spacingSmall),
                     Wrap(
                       spacing: AppTheme.spacingSmall,
@@ -166,7 +169,10 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
                           .toList(),
                     ),
                     const SizedBox(height: AppTheme.spacingMedium),
-                    Text(context.l10n.common_direction, style: context.textTheme.labelLarge),
+                    Text(
+                      context.l10n.common_direction,
+                      style: context.textTheme.labelLarge,
+                    ),
                     const SizedBox(height: AppTheme.spacingSmall),
                     SizedBox(
                       width: double.infinity,
@@ -227,9 +233,7 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
                             Navigator.pop(context);
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text(
-                                  context.l10n.tags_sort_saved,
-                                ),
+                                content: Text(context.l10n.tags_sort_saved),
                               ),
                             );
                           }
@@ -355,9 +359,7 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
       onPageSizeChanged: (pageSize) =>
           ref.read(galleryListProvider.notifier).setPerPage(pageSize),
       gridDelegate: isGridView
-          ? GridUtils.createDelegate(
-              crossAxisCount: gridColumns ?? 2,
-            )
+          ? GridUtils.createDelegate(crossAxisCount: gridColumns ?? 2)
           : null,
       padding: isGridView ? GridUtils.defaultPadding : EdgeInsets.zero,
       itemBuilder: (context, gallery, memCacheWidth, memCacheHeight) =>

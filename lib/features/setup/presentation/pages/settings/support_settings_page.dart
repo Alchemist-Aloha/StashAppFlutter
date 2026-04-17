@@ -44,12 +44,14 @@ class SupportSettingsPage extends ConsumerWidget {
                       children: [
                         SettingsSectionCard(
                           title: l10n.settings_support_update_available,
-                          subtitle: l10n.settings_support_update_available_subtitle,
+                          subtitle:
+                              l10n.settings_support_update_available_subtitle,
                           child: SettingsActionCard(
                             icon: Icons.system_update_rounded,
-                            title: l10n.settings_support_update_to(updateInfo.latestVersion),
-                            subtitle:
-                                l10n.settings_support_update_to_subtitle,
+                            title: l10n.settings_support_update_to(
+                              updateInfo.latestVersion,
+                            ),
+                            subtitle: l10n.settings_support_update_to_subtitle,
                             trailing: const Icon(
                               Icons.open_in_new_rounded,
                               size: 18,
@@ -131,9 +133,13 @@ class SupportSettingsPage extends ConsumerWidget {
                       }
                     } catch (e) {
                       if (context.mounted) {
-                        ScaffoldMessenger.of(
-                          context,
-                        ).showSnackBar(SnackBar(content: Text(context.l10n.common_error(e.toString()))));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              context.l10n.common_error(e.toString()),
+                            ),
+                          ),
+                        );
                       }
                     }
                   },

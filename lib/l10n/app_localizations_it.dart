@@ -112,6 +112,15 @@ class AppLocalizationsIt extends AppLocalizations {
   String get common_no_media => 'Nessun media disponibile';
 
   @override
+  String get common_show => 'Show';
+
+  @override
+  String get common_hide => 'Hide';
+
+  @override
+  String get galleries_filter_saved => 'Filter preferences saved as default';
+
+  @override
   String get common_setup_required => 'Configurazione Richiesta';
 
   @override
@@ -1104,4 +1113,52 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get settings_develop_web_auth_subtitle =>
       'Ignora la restrizione solo-nativa e forza la visibilità del metodo di autenticazione Nome utente + Password su Flutter Web.';
+
+  @override
+  String get common_edit => 'Modifica';
+
+  @override
+  String get common_resolution => 'Risoluzione';
+
+  @override
+  String get common_orientation => 'Orientamento';
+
+  @override
+  String get performers_filter_saved =>
+      'Preferenze del filtro salvate come predefinite';
+
+  @override
+  String get images_filtered_by_gallery => 'Filtrato per galleria';
+
+  @override
+  String get images_slideshow_need_two =>
+      'Sono necessarie almeno 2 immagini per la presentazione.';
+
+  @override
+  String get images_slideshow_start_title => 'Avvia presentazione';
+
+  @override
+  String images_slideshow_interval(num seconds) {
+    return 'Intervallo: ${seconds}s';
+  }
+
+  @override
+  String images_slideshow_transition_ms(num ms) {
+    return 'Transizione: ${ms}ms';
+  }
+
+  @override
+  String get common_forward => 'Avanti';
+
+  @override
+  String get common_backward => 'Indietro';
+
+  @override
+  String get images_slideshow_loop_title => 'Loop presentazione';
+
+  @override
+  String get common_cancel => 'Annulla';
+
+  @override
+  String get common_start => 'Avvia';
 }

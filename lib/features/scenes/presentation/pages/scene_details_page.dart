@@ -93,11 +93,9 @@ class _SceneDetailsPageState extends ConsumerState<SceneDetailsPage> {
     if (!context.mounted) return;
 
     if (randomScene == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(context.l10n.scenes_no_random),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.l10n.scenes_no_random)));
       return;
     }
 
@@ -443,7 +441,11 @@ class _SceneDetailsPageState extends ConsumerState<SceneDetailsPage> {
               } catch (e) {
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(context.l10n.details_failed_update_rating(e.toString()))),
+                    SnackBar(
+                      content: Text(
+                        context.l10n.details_failed_update_rating(e.toString()),
+                      ),
+                    ),
                   );
                 }
               }
@@ -471,13 +473,21 @@ class _SceneDetailsPageState extends ConsumerState<SceneDetailsPage> {
               _invalidateSceneListUnlessRandom();
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(context.l10n.details_o_count_incremented)),
+                  SnackBar(
+                    content: Text(context.l10n.details_o_count_incremented),
+                  ),
                 );
               }
             } catch (e) {
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(context.l10n.details_failed_increment_o_count(e.toString()))),
+                  SnackBar(
+                    content: Text(
+                      context.l10n.details_failed_increment_o_count(
+                        e.toString(),
+                      ),
+                    ),
+                  ),
                 );
               }
             }
@@ -537,7 +547,11 @@ class _SceneDetailsPageState extends ConsumerState<SceneDetailsPage> {
                 onPressed: () {
                   setState(() => _detailsExpanded = !_detailsExpanded);
                 },
-                child: Text(_detailsExpanded ? context.l10n.details_show_less : context.l10n.details_show_more),
+                child: Text(
+                  _detailsExpanded
+                      ? context.l10n.details_show_less
+                      : context.l10n.details_show_more,
+                ),
               ),
           ],
         ),
@@ -587,7 +601,11 @@ class _SceneDetailsPageState extends ConsumerState<SceneDetailsPage> {
                 onPressed: () {
                   setState(() => _tagsExpanded = !_tagsExpanded);
                 },
-                child: Text(_tagsExpanded ? context.l10n.details_show_less : context.l10n.details_show_more),
+                child: Text(
+                  _tagsExpanded
+                      ? context.l10n.details_show_less
+                      : context.l10n.details_show_more,
+                ),
               ),
           ],
         ),

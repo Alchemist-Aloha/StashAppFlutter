@@ -112,6 +112,15 @@ class AppLocalizationsFr extends AppLocalizations {
   String get common_no_media => 'Aucun média disponible';
 
   @override
+  String get common_show => 'Show';
+
+  @override
+  String get common_hide => 'Hide';
+
+  @override
+  String get galleries_filter_saved => 'Filter preferences saved as default';
+
+  @override
   String get common_setup_required => 'Configuration requise';
 
   @override
@@ -1105,4 +1114,52 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get settings_develop_web_auth_subtitle =>
       'Surcharge la restriction native uniquement et force la visibilité de la méthode d\'authentification Utilisateur + Mot de passe sur Flutter Web.';
+
+  @override
+  String get common_edit => 'Modifier';
+
+  @override
+  String get common_resolution => 'Résolution';
+
+  @override
+  String get common_orientation => 'Orientation';
+
+  @override
+  String get performers_filter_saved =>
+      'Préférences de filtre enregistrées comme défaut';
+
+  @override
+  String get images_filtered_by_gallery => 'Filtré par galerie';
+
+  @override
+  String get images_slideshow_need_two =>
+      'Il faut au moins 2 images pour le diaporama.';
+
+  @override
+  String get images_slideshow_start_title => 'Démarrer le diaporama';
+
+  @override
+  String images_slideshow_interval(num seconds) {
+    return 'Intervalle : ${seconds}s';
+  }
+
+  @override
+  String images_slideshow_transition_ms(num ms) {
+    return 'Transition : ${ms}ms';
+  }
+
+  @override
+  String get common_forward => 'Avant';
+
+  @override
+  String get common_backward => 'Arrière';
+
+  @override
+  String get images_slideshow_loop_title => 'Boucle du diaporama';
+
+  @override
+  String get common_cancel => 'Annuler';
+
+  @override
+  String get common_start => 'Démarrer';
 }

@@ -145,9 +145,9 @@ class VideoPlaybackControls extends StatelessWidget {
               size: 20,
               color:
                   selectedSubtitleLanguage != null &&
-                          selectedSubtitleLanguage != 'none'
-                      ? colorScheme.primary
-                      : colorScheme.onSurface,
+                      selectedSubtitleLanguage != 'none'
+                  ? colorScheme.primary
+                  : colorScheme.onSurface,
             ),
             style: _controlButtonStyle(colorScheme),
             initialValue: selectedSubtitleLanguage,
@@ -169,7 +169,8 @@ class VideoPlaybackControls extends StatelessWidget {
                             ? Icons.check_circle
                             : Icons.circle_outlined,
                         size: 16,
-                        color: (selectedSubtitleLanguage == null ||
+                        color:
+                            (selectedSubtitleLanguage == null ||
                                 selectedSubtitleLanguage == 'none')
                             ? colorScheme.primary
                             : colorScheme.onSurfaceVariant,
@@ -190,11 +191,11 @@ class VideoPlaybackControls extends StatelessWidget {
                 final captionType = c.captionType;
                 final isUnknownLangSelection =
                     (selectedLang.isEmpty || selectedLang == '00') &&
-                        (captionLang.isEmpty || captionLang == '00');
+                    (captionLang.isEmpty || captionLang == '00');
                 final isSelected =
                     (selectedLang == captionLang || isUnknownLangSelection) &&
-                        (selectedType == captionType ||
-                            (selectedType.isEmpty && isUnknownLangSelection));
+                    (selectedType == captionType ||
+                        (selectedType.isEmpty && isUnknownLangSelection));
 
                 final label = c.languageCode == '00' || c.languageCode.isEmpty
                     ? 'Unknown (${c.captionType})'
@@ -241,26 +242,26 @@ class VideoPlaybackControls extends StatelessWidget {
             return _playbackSpeeds
                 .map(
                   (speed) => PopupMenuItem<double>(
-                        value: speed,
-                        child: Row(
-                          children: [
-                            Icon(
-                              speed == playbackSpeed
-                                  ? Icons.check_circle
-                                  : Icons.circle_outlined,
-                              size: 16,
-                              color: speed == playbackSpeed
-                                  ? colorScheme.primary
-                                  : colorScheme.onSurfaceVariant,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              _formatSpeed(speed),
-                              style: TextStyle(color: colorScheme.onSurface),
-                            ),
-                          ],
+                    value: speed,
+                    child: Row(
+                      children: [
+                        Icon(
+                          speed == playbackSpeed
+                              ? Icons.check_circle
+                              : Icons.circle_outlined,
+                          size: 16,
+                          color: speed == playbackSpeed
+                              ? colorScheme.primary
+                              : colorScheme.onSurfaceVariant,
                         ),
-                      ),
+                        const SizedBox(width: 8),
+                        Text(
+                          _formatSpeed(speed),
+                          style: TextStyle(color: colorScheme.onSurface),
+                        ),
+                      ],
+                    ),
+                  ),
                 )
                 .toList();
           },

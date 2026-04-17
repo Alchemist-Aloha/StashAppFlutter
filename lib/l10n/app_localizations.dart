@@ -264,6 +264,24 @@ abstract class AppLocalizations {
   /// **'No media available'**
   String get common_no_media;
 
+  /// No description provided for @common_show.
+  ///
+  /// In en, this message translates to:
+  /// **'Show'**
+  String get common_show;
+
+  /// No description provided for @common_hide.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide'**
+  String get common_hide;
+
+  /// No description provided for @galleries_filter_saved.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter preferences saved as default'**
+  String get galleries_filter_saved;
+
   /// No description provided for @common_setup_required.
   ///
   /// In en, this message translates to:
@@ -2051,6 +2069,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Overrides the native-only restriction and forces the Username + Password auth method to be visible on Flutter Web.'**
   String get settings_develop_web_auth_subtitle;
+
+  /// No description provided for @common_edit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get common_edit;
+
+  /// No description provided for @common_resolution.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolution'**
+  String get common_resolution;
+
+  /// No description provided for @common_orientation.
+  ///
+  /// In en, this message translates to:
+  /// **'Orientation'**
+  String get common_orientation;
+
+  /// No description provided for @performers_filter_saved.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter preferences saved as default'**
+  String get performers_filter_saved;
+
+  /// No description provided for @images_filtered_by_gallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Filtered by Gallery'**
+  String get images_filtered_by_gallery;
+
+  /// No description provided for @images_slideshow_need_two.
+  ///
+  /// In en, this message translates to:
+  /// **'Need at least 2 images for slideshow.'**
+  String get images_slideshow_need_two;
+
+  /// No description provided for @images_slideshow_start_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Slideshow'**
+  String get images_slideshow_start_title;
+
+  /// No description provided for @images_slideshow_interval.
+  ///
+  /// In en, this message translates to:
+  /// **'Interval: {seconds}s'**
+  String images_slideshow_interval(num seconds);
+
+  /// No description provided for @images_slideshow_transition_ms.
+  ///
+  /// In en, this message translates to:
+  /// **'Transition: {ms}ms'**
+  String images_slideshow_transition_ms(num ms);
+
+  /// No description provided for @common_forward.
+  ///
+  /// In en, this message translates to:
+  /// **'Forward'**
+  String get common_forward;
+
+  /// No description provided for @common_backward.
+  ///
+  /// In en, this message translates to:
+  /// **'Backward'**
+  String get common_backward;
+
+  /// No description provided for @images_slideshow_loop_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Loop slideshow'**
+  String get images_slideshow_loop_title;
+
+  /// No description provided for @common_cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get common_cancel;
+
+  /// No description provided for @common_start.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get common_start;
 }
 
 class _AppLocalizationsDelegate

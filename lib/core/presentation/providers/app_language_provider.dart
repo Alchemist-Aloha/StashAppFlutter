@@ -46,7 +46,7 @@ class AppLanguageNotifier extends Notifier<Locale?> {
             countryCode: parts[2],
           );
         } else {
-           state = Locale(languageCode);
+          state = Locale(languageCode);
         }
       } else {
         state = Locale(languageCode);

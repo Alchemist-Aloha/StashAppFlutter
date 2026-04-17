@@ -52,7 +52,9 @@ class GroupDetailsPage extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        group.name.isEmpty ? context.l10n.groups_untitled : group.name,
+                        group.name.isEmpty
+                            ? context.l10n.groups_untitled
+                            : group.name,
                         style: context.textTheme.headlineMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: context.colors.onSurface,

@@ -34,9 +34,7 @@ class PerformerDetailsPage extends ConsumerWidget {
 
     if (randomPerformer == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('No performers available for random navigation'),
-        ),
+        SnackBar(content: Text(context.l10n.performers_no_random)),
       );
       return;
     }
@@ -69,7 +67,7 @@ class PerformerDetailsPage extends ConsumerWidget {
     final randomNavigationEnabled = ref.watch(randomNavigationEnabledProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Performer Details')),
+      appBar: AppBar(title: Text(context.l10n.details_performer)),
       floatingActionButton: randomNavigationEnabled
           ? FloatingActionButton.small(
               onPressed: () => _openRandomPerformer(context, ref),
@@ -287,7 +285,13 @@ class PerformerDetailsPage extends ConsumerWidget {
                                         ScaffoldMessenger.of(
                                           context,
                                         ).showSnackBar(
-                                          SnackBar(content: Text(context.l10n.common_error(e.toString()))),
+                                          SnackBar(
+                                            content: Text(
+                                              context.l10n.common_error(
+                                                e.toString(),
+                                              ),
+                                            ),
+                                          ),
                                         );
                                       }
                                     }
@@ -450,7 +454,8 @@ class PerformerDetailsPage extends ConsumerWidget {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) => Center(child: Text(context.l10n.common_error(err.toString()))),
+        error: (err, stack) =>
+            Center(child: Text(context.l10n.common_error(err.toString()))),
       ),
     );
   }

@@ -114,6 +114,15 @@ class AppLocalizationsRu extends AppLocalizations {
   String get common_no_media => 'Медиафайлы отсутствуют';
 
   @override
+  String get common_show => 'Show';
+
+  @override
+  String get common_hide => 'Hide';
+
+  @override
+  String get galleries_filter_saved => 'Filter preferences saved as default';
+
+  @override
   String get common_setup_required => 'Требуется настройка';
 
   @override
@@ -1091,4 +1100,52 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get settings_develop_web_auth_subtitle =>
       'Переопределяет ограничение «только для нативных приложений» и делает видимым метод аутентификации по имени пользователя и паролю во Flutter Web.';
+
+  @override
+  String get common_edit => 'Редактировать';
+
+  @override
+  String get common_resolution => 'Разрешение';
+
+  @override
+  String get common_orientation => 'Ориентация';
+
+  @override
+  String get performers_filter_saved =>
+      'Параметры фильтра сохранены как по умолчанию';
+
+  @override
+  String get images_filtered_by_gallery => 'Отфильтровано по галерее';
+
+  @override
+  String get images_slideshow_need_two =>
+      'Требуется как минимум 2 изображения для слайд-шоу.';
+
+  @override
+  String get images_slideshow_start_title => 'Запустить слайд-шоу';
+
+  @override
+  String images_slideshow_interval(num seconds) {
+    return 'Интервал: $secondsс';
+  }
+
+  @override
+  String images_slideshow_transition_ms(num ms) {
+    return 'Переход: $msмс';
+  }
+
+  @override
+  String get common_forward => 'Вперед';
+
+  @override
+  String get common_backward => 'Назад';
+
+  @override
+  String get images_slideshow_loop_title => 'Зациклить слайд-шоу';
+
+  @override
+  String get common_cancel => 'Отмена';
+
+  @override
+  String get common_start => 'Начать';
 }

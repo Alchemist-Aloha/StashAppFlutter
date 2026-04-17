@@ -54,7 +54,9 @@ class _DebugLogViewerPageState extends State<DebugLogViewerPage> {
         title: const Text('Debug Log Viewer'),
         actions: [
           IconButton(
-            tooltip: _autoScroll ? context.l10n.common_disable_autoscroll : context.l10n.common_enable_autoscroll,
+            tooltip: _autoScroll
+                ? context.l10n.common_disable_autoscroll
+                : context.l10n.common_enable_autoscroll,
             icon: Icon(_autoScroll ? Icons.lock_open : Icons.lock),
             onPressed: () {
               setState(() => _autoScroll = !_autoScroll);

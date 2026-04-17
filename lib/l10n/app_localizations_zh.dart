@@ -110,6 +110,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String get common_no_media => '暂无媒体';
 
   @override
+  String get common_show => 'Show';
+
+  @override
+  String get common_hide => 'Hide';
+
+  @override
+  String get galleries_filter_saved => 'Filter preferences saved as default';
+
+  @override
   String get common_setup_required => '需要设置';
 
   @override
@@ -1024,6 +1033,52 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String get settings_develop_web_auth_subtitle =>
       '覆盖仅限原生的限制，并强制用户名 + 密码身份验证方式在 Flutter Web 上可见。';
+
+  @override
+  String get common_edit => '编辑';
+
+  @override
+  String get common_resolution => '分辨率';
+
+  @override
+  String get common_orientation => '方向';
+
+  @override
+  String get performers_filter_saved => '过滤首选项已保存为默认值';
+
+  @override
+  String get images_filtered_by_gallery => '按图库过滤';
+
+  @override
+  String get images_slideshow_need_two => '幻灯片放映至少需要 2 张图片。';
+
+  @override
+  String get images_slideshow_start_title => '开始幻灯片放映';
+
+  @override
+  String images_slideshow_interval(num seconds) {
+    return '间隔：${seconds}s';
+  }
+
+  @override
+  String images_slideshow_transition_ms(num ms) {
+    return '过渡：${ms}ms';
+  }
+
+  @override
+  String get common_forward => '前进';
+
+  @override
+  String get common_backward => '后退';
+
+  @override
+  String get images_slideshow_loop_title => '循环幻灯片放映';
+
+  @override
+  String get common_cancel => '取消';
+
+  @override
+  String get common_start => '开始';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hans`).
@@ -2046,6 +2101,52 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   @override
   String get settings_develop_web_auth_subtitle =>
       '覆盖仅限原生的限制，并强制用户名 + 密码身份验证方式在 Flutter Web 上可见。';
+
+  @override
+  String get common_edit => '编辑';
+
+  @override
+  String get common_resolution => '分辨率';
+
+  @override
+  String get common_orientation => '方向';
+
+  @override
+  String get performers_filter_saved => '筛选首选项已保存为默认值';
+
+  @override
+  String get images_filtered_by_gallery => '按画廊筛选';
+
+  @override
+  String get images_slideshow_need_two => '幻灯片放映至少需要 2 张图片。';
+
+  @override
+  String get images_slideshow_start_title => '开始幻灯片放映';
+
+  @override
+  String images_slideshow_interval(num seconds) {
+    return '间隔：${seconds}s';
+  }
+
+  @override
+  String images_slideshow_transition_ms(num ms) {
+    return '过渡：${ms}ms';
+  }
+
+  @override
+  String get common_forward => '前进';
+
+  @override
+  String get common_backward => '后退';
+
+  @override
+  String get images_slideshow_loop_title => '循环幻灯片放映';
+
+  @override
+  String get common_cancel => '取消';
+
+  @override
+  String get common_start => '开始';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -3072,4 +3173,50 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   @override
   String get settings_develop_web_auth_subtitle =>
       '覆寫僅限原生的限制，並強制「使用者名稱 + 密碼」驗證方式在 Flutter Web 上可見。';
+
+  @override
+  String get common_edit => '編輯';
+
+  @override
+  String get common_resolution => '解析度';
+
+  @override
+  String get common_orientation => '方向';
+
+  @override
+  String get performers_filter_saved => '篩選偏好已儲存為預設值';
+
+  @override
+  String get images_filtered_by_gallery => '按圖庫篩選';
+
+  @override
+  String get images_slideshow_need_two => '幻燈片播放至少需要 2 張圖片。';
+
+  @override
+  String get images_slideshow_start_title => '開始幻燈片播放';
+
+  @override
+  String images_slideshow_interval(num seconds) {
+    return '間隔：${seconds}s';
+  }
+
+  @override
+  String images_slideshow_transition_ms(num ms) {
+    return '過渡：${ms}ms';
+  }
+
+  @override
+  String get common_forward => '向前';
+
+  @override
+  String get common_backward => '向後';
+
+  @override
+  String get images_slideshow_loop_title => '循環幻燈片播放';
+
+  @override
+  String get common_cancel => '取消';
+
+  @override
+  String get common_start => '開始';
 }

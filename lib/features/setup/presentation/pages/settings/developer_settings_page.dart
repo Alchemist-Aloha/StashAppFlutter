@@ -59,9 +59,7 @@ class _DeveloperSettingsPageState extends ConsumerState<DeveloperSettingsPage> {
               children: [
                 SwitchListTile(
                   title: Text(l10n.settings_develop_video_debug),
-                  subtitle: Text(
-                    l10n.settings_develop_video_debug_subtitle,
-                  ),
+                  subtitle: Text(l10n.settings_develop_video_debug_subtitle),
                   value: _showVideoDebugInfo,
                   onChanged: (value) {
                     setState(() => _showVideoDebugInfo = value);
@@ -88,9 +86,7 @@ class _DeveloperSettingsPageState extends ConsumerState<DeveloperSettingsPage> {
               subtitle: l10n.settings_develop_web_overrides_subtitle,
               child: SwitchListTile(
                 title: Text(l10n.settings_develop_web_auth),
-                subtitle: Text(
-                  l10n.settings_develop_web_auth_subtitle,
-                ),
+                subtitle: Text(l10n.settings_develop_web_auth_subtitle),
                 value: _allowWebPasswordLogin,
                 onChanged: (value) {
                   setState(() => _allowWebPasswordLogin = value);

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/presentation/widgets/error_state_view.dart';
 import '../../../../core/presentation/widgets/section_header.dart';
 import '../../../../core/presentation/theme/app_theme.dart';
+import '../../../../core/utils/l10n_extensions.dart';
 import '../providers/gallery_details_provider.dart';
 import '../providers/gallery_list_provider.dart';
 
@@ -16,7 +17,7 @@ class GalleryDetailsPage extends ConsumerWidget {
     final galleryAsync = ref.watch(galleryDetailsProvider(galleryId));
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Gallery Details')),
+      appBar: AppBar(title: Text(context.l10n.details_gallery)),
       body: galleryAsync.when(
         data: (gallery) => RefreshIndicator(
           onRefresh: () async {

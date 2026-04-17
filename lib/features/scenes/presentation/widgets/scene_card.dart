@@ -84,8 +84,9 @@ class _SceneCardState extends ConsumerState<SceneCard> {
     double aspectRatio,
   ) {
     final headers = ref.watch(mediaHeadersProvider);
-    final totalDuration =
-        widget.scene.files.isNotEmpty ? (widget.scene.files.first.duration ?? 0.0) : 0.0;
+    final totalDuration = widget.scene.files.isNotEmpty
+        ? (widget.scene.files.first.duration ?? 0.0)
+        : 0.0;
 
     final rawVttUrl = widget.scene.paths.vtt ?? '';
     final apiKey = ref.read(serverApiKeyProvider);
@@ -174,27 +175,23 @@ class _SceneCardState extends ConsumerState<SceneCard> {
 
   @override
   Widget build(BuildContext context) {
-    final duration =
-        widget.scene.files.isNotEmpty ? widget.scene.files.first.duration : null;
+    final duration = widget.scene.files.isNotEmpty
+        ? widget.scene.files.first.duration
+        : null;
 
     // Use primary file's aspect ratio if available, default to 16/9.
     // This ensures the image container in List view adapts to the media,
     // preventing black bars or forced cropping of portrait/square content.
     final double? fileAspectRatio =
         (widget.scene.files.isNotEmpty &&
-                widget.scene.files.first.width != null &&
-                widget.scene.files.first.height != null)
-            ? widget.scene.files.first.width!.toDouble() /
-                widget.scene.files.first.height!.toDouble()
-            : null;
+            widget.scene.files.first.width != null &&
+            widget.scene.files.first.height != null)
+        ? widget.scene.files.first.width!.toDouble() /
+              widget.scene.files.first.height!.toDouble()
+        : null;
 
     if (widget.isGrid) {
-      return _buildGridCard(
-        context,
-        ref,
-        duration,
-        fileAspectRatio ?? 16 / 9,
-      );
+      return _buildGridCard(context, ref, duration, fileAspectRatio ?? 16 / 9);
     }
     return _buildListCard(context, ref, duration, fileAspectRatio ?? 16 / 9);
   }

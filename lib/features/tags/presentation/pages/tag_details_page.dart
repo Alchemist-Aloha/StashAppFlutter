@@ -29,11 +29,9 @@ class TagDetailsPage extends ConsumerWidget {
     if (!context.mounted) return;
 
     if (randomTag == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('No tags available for random navigation'),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.l10n.tags_no_random)));
       return;
     }
 
@@ -49,7 +47,7 @@ class TagDetailsPage extends ConsumerWidget {
     final randomNavigationEnabled = ref.watch(randomNavigationEnabledProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Tag Details')),
+      appBar: AppBar(title: Text(context.l10n.details_tag)),
       floatingActionButton: randomNavigationEnabled
           ? FloatingActionButton.small(
               onPressed: () => _openRandomTag(context, ref),
@@ -230,7 +228,8 @@ class TagDetailsPage extends ConsumerWidget {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) => Center(child: Text(context.l10n.common_error(err.toString()))),
+        error: (err, stack) =>
+            Center(child: Text(context.l10n.common_error(err.toString()))),
       ),
     );
   }

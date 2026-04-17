@@ -29,11 +29,9 @@ class StudioDetailsPage extends ConsumerWidget {
     if (!context.mounted) return;
 
     if (randomStudio == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(context.l10n.studios_no_random),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.l10n.studios_no_random)));
       return;
     }
 
@@ -231,7 +229,8 @@ class StudioDetailsPage extends ConsumerWidget {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) => Center(child: Text(context.l10n.common_error(err.toString()))),
+        error: (err, stack) =>
+            Center(child: Text(context.l10n.common_error(err.toString()))),
       ),
     );
   }

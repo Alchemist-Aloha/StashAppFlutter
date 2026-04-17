@@ -41,6 +41,9 @@
   "common_configure_now": "Configure Now",
   "common_clear_rating": "Clear Rating",
   "common_no_media": "No media available",
+  "common_show": "Show",
+  "common_hide": "Hide",
+  "galleries_filter_saved": "Filter preferences saved as default",
   "common_setup_required": "Setup Required",
   "common_update_available": "Update Available",
   "details_studio": "Studio Details",
@@ -399,6 +402,26 @@
       }
     }
   },
+  "common_edit": "Edit",
+  "common_resolution": "Resolution",
+  "common_orientation": "Orientation",
+  "performers_filter_saved": "Filter preferences saved as default",
+  "images_filtered_by_gallery": "Filtered by Gallery",
+  "images_slideshow_need_two": "Need at least 2 images for slideshow.",
+  "images_slideshow_start_title": "Start Slideshow",
+  "images_slideshow_interval": "Interval: {seconds}s",
+  "@images_slideshow_interval": {
+    "placeholders": {"seconds": {"type": "num"}}
+  },
+  "images_slideshow_transition_ms": "Transition: {ms}ms",
+  "@images_slideshow_transition_ms": {
+    "placeholders": {"ms": {"type": "num"}}
+  },
+  "common_forward": "Forward",
+  "common_backward": "Backward",
+  "images_slideshow_loop_title": "Loop slideshow",
+  "common_cancel": "Cancel",
+  "common_start": "Start",
   "@common_not_found": {
     "placeholders": {
       "item": {

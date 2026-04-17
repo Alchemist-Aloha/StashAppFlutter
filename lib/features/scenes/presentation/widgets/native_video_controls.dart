@@ -527,68 +527,65 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
     });
   }
 
-    Widget _buildSpeedSliderPanel(
-      ColorScheme colorScheme,
-      double playbackSpeed,
-    ) {
-      if (!_showSpeedSlider) return const SizedBox.shrink();
+  Widget _buildSpeedSliderPanel(ColorScheme colorScheme, double playbackSpeed) {
+    if (!_showSpeedSlider) return const SizedBox.shrink();
 
-      return Padding(
-        padding: const EdgeInsets.only(bottom: 8, left: 8, right: 8),
-        child: Row(
-          children: [
-            IconButton(
-              tooltip: 'Reset to 1x',
-              style: _controlButtonStyle(colorScheme),
-              iconSize: 20,
-              icon: const Icon(Icons.refresh_rounded),
-              onPressed: () {
-                widget.controller.setPlaybackSpeed(1.0);
-                _showControlsTemporarily();
-              },
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: SliderTheme(
-                data: SliderTheme.of(context).copyWith(
-                  trackHeight: 2,
-                  thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
-                  overlayShape: const RoundSliderOverlayShape(overlayRadius: 12),
-                  activeTrackColor: colorScheme.primary,
-                  inactiveTrackColor: colorScheme.onSurfaceVariant.withValues(
-                    alpha: 0.25,
-                  ),
-                  thumbColor: colorScheme.primary,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8, left: 8, right: 8),
+      child: Row(
+        children: [
+          IconButton(
+            tooltip: 'Reset to 1x',
+            style: _controlButtonStyle(colorScheme),
+            iconSize: 20,
+            icon: const Icon(Icons.refresh_rounded),
+            onPressed: () {
+              widget.controller.setPlaybackSpeed(1.0);
+              _showControlsTemporarily();
+            },
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: SliderTheme(
+              data: SliderTheme.of(context).copyWith(
+                trackHeight: 2,
+                thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
+                overlayShape: const RoundSliderOverlayShape(overlayRadius: 12),
+                activeTrackColor: colorScheme.primary,
+                inactiveTrackColor: colorScheme.onSurfaceVariant.withValues(
+                  alpha: 0.25,
                 ),
-                child: Slider(
-                  value: playbackSpeed.clamp(0.25, 3.0),
-                  min: 0.25,
-                  max: 3.0,
-                  divisions: 11,
-                  onChanged: (v) {
-                    widget.controller.setPlaybackSpeed(v);
-                    _showControlsTemporarily();
-                  },
-                ),
+                thumbColor: colorScheme.primary,
+              ),
+              child: Slider(
+                value: playbackSpeed.clamp(0.25, 3.0),
+                min: 0.25,
+                max: 3.0,
+                divisions: 11,
+                onChanged: (v) {
+                  widget.controller.setPlaybackSpeed(v);
+                  _showControlsTemporarily();
+                },
               ),
             ),
-            const SizedBox(width: 8),
-            IconButton(
-              tooltip: 'Close speed slider',
-              style: _controlButtonStyle(colorScheme),
-              iconSize: 20,
-              icon: const Icon(Icons.close_rounded),
-              onPressed: () {
-                setState(() => _showSpeedSlider = false);
-                _showControlsTemporarily();
-              },
-            ),
-          ],
-        ),
-      );
-    }
+          ),
+          const SizedBox(width: 8),
+          IconButton(
+            tooltip: 'Close speed slider',
+            style: _controlButtonStyle(colorScheme),
+            iconSize: 20,
+            icon: const Icon(Icons.close_rounded),
+            onPressed: () {
+              setState(() => _showSpeedSlider = false);
+              _showControlsTemporarily();
+            },
+          ),
+        ],
+      ),
+    );
+  }
 
-    Widget _buildVolumeOverlay(ColorScheme colorScheme) {
+  Widget _buildVolumeOverlay(ColorScheme colorScheme) {
     final desktopSettings = ref.watch(desktopSettingsProvider);
     final volume = desktopSettings.volume;
     final isMuted = desktopSettings.isMuted;
@@ -1133,7 +1130,10 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                                       ),
                                       formattedDuration: _format(duration),
                                       onSpeedTap: () {
-                                        setState(() => _showSpeedSlider = !_showSpeedSlider);
+                                        setState(
+                                          () => _showSpeedSlider =
+                                              !_showSpeedSlider,
+                                        );
                                         _showControlsTemporarily();
                                       },
                                       isSpeedSliderVisible: _showSpeedSlider,

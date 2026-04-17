@@ -112,6 +112,15 @@ class AppLocalizationsJa extends AppLocalizations {
   String get common_no_media => 'メディアがありません';
 
   @override
+  String get common_show => 'Show';
+
+  @override
+  String get common_hide => 'Hide';
+
+  @override
+  String get galleries_filter_saved => 'Filter preferences saved as default';
+
+  @override
   String get common_setup_required => '設定が必要です';
 
   @override
@@ -1044,4 +1053,50 @@ class AppLocalizationsJa extends AppLocalizations {
   @override
   String get settings_develop_web_auth_subtitle =>
       'ネイティブ限定の制限を上書きし、Flutter Webでユーザー名 + パスワード認証を強制表示します。';
+
+  @override
+  String get common_edit => '編集';
+
+  @override
+  String get common_resolution => '解像度';
+
+  @override
+  String get common_orientation => '方向';
+
+  @override
+  String get performers_filter_saved => 'フィルタ設定をデフォルトとして保存しました';
+
+  @override
+  String get images_filtered_by_gallery => 'ギャラリーでフィルタ済み';
+
+  @override
+  String get images_slideshow_need_two => 'スライドショーには少なくとも画像が2枚必要です。';
+
+  @override
+  String get images_slideshow_start_title => 'スライドショーを開始';
+
+  @override
+  String images_slideshow_interval(num seconds) {
+    return '間隔: ${seconds}s';
+  }
+
+  @override
+  String images_slideshow_transition_ms(num ms) {
+    return 'トランジション: ${ms}ms';
+  }
+
+  @override
+  String get common_forward => '進む';
+
+  @override
+  String get common_backward => '戻る';
+
+  @override
+  String get images_slideshow_loop_title => 'スライドショーをループ';
+
+  @override
+  String get common_cancel => 'キャンセル';
+
+  @override
+  String get common_start => '開始';
 }

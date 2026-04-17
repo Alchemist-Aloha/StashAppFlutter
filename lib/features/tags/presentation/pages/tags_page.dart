@@ -120,7 +120,10 @@ class _TagsPageState extends ConsumerState<TagsPage> {
                   ],
                 ),
                 const SizedBox(height: AppTheme.spacingMedium),
-                Text(context.l10n.common_sort_method, style: context.textTheme.labelLarge),
+                Text(
+                  context.l10n.common_sort_method,
+                  style: context.textTheme.labelLarge,
+                ),
                 const SizedBox(height: AppTheme.spacingSmall),
                 Wrap(
                   spacing: AppTheme.spacingSmall,
@@ -141,7 +144,10 @@ class _TagsPageState extends ConsumerState<TagsPage> {
                       .toList(),
                 ),
                 const SizedBox(height: AppTheme.spacingMedium),
-                Text(context.l10n.common_direction, style: context.textTheme.labelLarge),
+                Text(
+                  context.l10n.common_direction,
+                  style: context.textTheme.labelLarge,
+                ),
                 const SizedBox(height: AppTheme.spacingSmall),
                 SizedBox(
                   width: double.infinity,
@@ -199,9 +205,7 @@ class _TagsPageState extends ConsumerState<TagsPage> {
                       if (context.mounted) {
                         Navigator.pop(context);
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(context.l10n.tags_sort_saved),
-                          ),
+                          SnackBar(content: Text(context.l10n.tags_sort_saved)),
                         );
                       }
                     },
@@ -307,9 +311,7 @@ class _TagsPageState extends ConsumerState<TagsPage> {
                         Navigator.pop(context);
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text(
-                              context.l10n.tags_filter_saved,
-                            ),
+                            content: Text(context.l10n.tags_filter_saved),
                           ),
                         );
                       }
@@ -338,11 +340,9 @@ class _TagsPageState extends ConsumerState<TagsPage> {
     if (!mounted) return;
 
     if (randomTag == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(context.l10n.tags_no_random),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.l10n.tags_no_random)));
       return;
     }
 
@@ -367,12 +367,10 @@ class _TagsPageState extends ConsumerState<TagsPage> {
       scrollController: scrollController,
       imageUrlBuilder: (tag) => tag.imagePath,
       onRefresh: () => ref.read(tagListProvider.notifier).refresh(),
-      onFetchNextPage: () =>
-          ref.read(tagListProvider.notifier).fetchNextPage(),
+      onFetchNextPage: () => ref.read(tagListProvider.notifier).fetchNextPage(),
       onPageSizeChanged: (pageSize) =>
           ref.read(tagListProvider.notifier).setPerPage(pageSize),
       actions: [
-
         Stack(
           children: [
             IconButton(

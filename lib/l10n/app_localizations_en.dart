@@ -112,6 +112,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get common_no_media => 'No media available';
 
   @override
+  String get common_show => 'Show';
+
+  @override
+  String get common_hide => 'Hide';
+
+  @override
+  String get galleries_filter_saved => 'Filter preferences saved as default';
+
+  @override
   String get common_setup_required => 'Setup Required';
 
   @override
@@ -1078,4 +1087,51 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get settings_develop_web_auth_subtitle =>
       'Overrides the native-only restriction and forces the Username + Password auth method to be visible on Flutter Web.';
+
+  @override
+  String get common_edit => 'Edit';
+
+  @override
+  String get common_resolution => 'Resolution';
+
+  @override
+  String get common_orientation => 'Orientation';
+
+  @override
+  String get performers_filter_saved => 'Filter preferences saved as default';
+
+  @override
+  String get images_filtered_by_gallery => 'Filtered by Gallery';
+
+  @override
+  String get images_slideshow_need_two =>
+      'Need at least 2 images for slideshow.';
+
+  @override
+  String get images_slideshow_start_title => 'Start Slideshow';
+
+  @override
+  String images_slideshow_interval(num seconds) {
+    return 'Interval: ${seconds}s';
+  }
+
+  @override
+  String images_slideshow_transition_ms(num ms) {
+    return 'Transition: ${ms}ms';
+  }
+
+  @override
+  String get common_forward => 'Forward';
+
+  @override
+  String get common_backward => 'Backward';
+
+  @override
+  String get images_slideshow_loop_title => 'Loop slideshow';
+
+  @override
+  String get common_cancel => 'Cancel';
+
+  @override
+  String get common_start => 'Start';
 }

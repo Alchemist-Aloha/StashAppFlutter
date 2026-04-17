@@ -107,9 +107,7 @@ class _PerformersPageState extends ConsumerState<PerformersPage> {
 
     if (random == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(context.l10n.performers_no_random),
-        ),
+        SnackBar(content: Text(context.l10n.performers_no_random)),
       );
       return;
     }
@@ -161,7 +159,10 @@ class _PerformersPageState extends ConsumerState<PerformersPage> {
                   ],
                 ),
                 const SizedBox(height: AppTheme.spacingMedium),
-                Text(context.l10n.common_sort_method, style: context.textTheme.labelLarge),
+                Text(
+                  context.l10n.common_sort_method,
+                  style: context.textTheme.labelLarge,
+                ),
                 const SizedBox(height: AppTheme.spacingSmall),
                 Wrap(
                   spacing: AppTheme.spacingSmall,
@@ -182,7 +183,10 @@ class _PerformersPageState extends ConsumerState<PerformersPage> {
                       .toList(),
                 ),
                 const SizedBox(height: AppTheme.spacingMedium),
-                Text(context.l10n.common_direction, style: context.textTheme.labelLarge),
+                Text(
+                  context.l10n.common_direction,
+                  style: context.textTheme.labelLarge,
+                ),
                 const SizedBox(height: AppTheme.spacingSmall),
                 SizedBox(
                   width: double.infinity,
@@ -242,9 +246,7 @@ class _PerformersPageState extends ConsumerState<PerformersPage> {
                       if (context.mounted) {
                         Navigator.pop(context);
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Sort preferences saved as default'),
-                          ),
+                          SnackBar(content: Text(context.l10n.tags_sort_saved)),
                         );
                       }
                     },
@@ -253,7 +255,7 @@ class _PerformersPageState extends ConsumerState<PerformersPage> {
                         vertical: AppTheme.spacingMedium,
                       ),
                     ),
-                    child: const Text('Save as Default'),
+                    child: Text(context.l10n.common_save_default),
                   ),
                 ),
                 const SizedBox(height: AppTheme.spacingMedium),
@@ -318,7 +320,10 @@ class _PerformersPageState extends ConsumerState<PerformersPage> {
                   },
                 ),
                 const SizedBox(height: AppTheme.spacingMedium),
-                Text(context.l10n.performers_gender, style: context.textTheme.labelLarge),
+                Text(
+                  context.l10n.performers_gender,
+                  style: context.textTheme.labelLarge,
+                ),
                 const SizedBox(height: AppTheme.spacingSmall),
                 Wrap(
                   spacing: AppTheme.spacingSmall,
@@ -333,8 +338,14 @@ class _PerformersPageState extends ConsumerState<PerformersPage> {
                     for (final option in [
                       ('FEMALE', context.l10n.performers_gender_female),
                       ('MALE', context.l10n.performers_gender_male),
-                      ('TRANSGENDER_FEMALE', context.l10n.performers_gender_trans_female),
-                      ('TRANSGENDER_MALE', context.l10n.performers_gender_trans_male),
+                      (
+                        'TRANSGENDER_FEMALE',
+                        context.l10n.performers_gender_trans_female,
+                      ),
+                      (
+                        'TRANSGENDER_MALE',
+                        context.l10n.performers_gender_trans_male,
+                      ),
                       ('NON_BINARY', 'Non-binary'),
                       ('INTERSEX', context.l10n.performers_gender_intersex),
                     ])

@@ -131,7 +131,10 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
                   ],
                 ),
                 const SizedBox(height: AppTheme.spacingMedium),
-                Text(context.l10n.common_sort_method, style: context.textTheme.labelLarge),
+                Text(
+                  context.l10n.common_sort_method,
+                  style: context.textTheme.labelLarge,
+                ),
                 const SizedBox(height: AppTheme.spacingSmall),
                 Wrap(
                   spacing: AppTheme.spacingSmall,
@@ -152,7 +155,10 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
                       .toList(),
                 ),
                 const SizedBox(height: AppTheme.spacingMedium),
-                Text(context.l10n.common_direction, style: context.textTheme.labelLarge),
+                Text(
+                  context.l10n.common_direction,
+                  style: context.textTheme.labelLarge,
+                ),
                 const SizedBox(height: AppTheme.spacingSmall),
                 SizedBox(
                   width: double.infinity,
@@ -320,9 +326,7 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
                         Navigator.pop(context);
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text(
-                              context.l10n.studios_filter_saved,
-                            ),
+                            content: Text(context.l10n.studios_filter_saved),
                           ),
                         );
                       }
@@ -354,11 +358,9 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
     if (!mounted) return;
 
     if (randomStudio == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(context.l10n.studios_no_random),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.l10n.studios_no_random)));
       return;
     }
 

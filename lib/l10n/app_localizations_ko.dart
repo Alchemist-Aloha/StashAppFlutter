@@ -110,6 +110,15 @@ class AppLocalizationsKo extends AppLocalizations {
   String get common_no_media => '미디어가 없습니다';
 
   @override
+  String get common_show => 'Show';
+
+  @override
+  String get common_hide => 'Hide';
+
+  @override
+  String get galleries_filter_saved => 'Filter preferences saved as default';
+
+  @override
   String get common_setup_required => '설정이 필요합니다';
 
   @override
@@ -1043,4 +1052,50 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String get settings_develop_web_auth_subtitle =>
       '네이티브 전용 제한을 무시하고 Flutter 웹에서 사용자 이름 + 비밀번호 인증 방식을 강제로 표시합니다.';
+
+  @override
+  String get common_edit => '편집';
+
+  @override
+  String get common_resolution => '해상도';
+
+  @override
+  String get common_orientation => '방향';
+
+  @override
+  String get performers_filter_saved => '필터 설정을 기본값으로 저장했습니다';
+
+  @override
+  String get images_filtered_by_gallery => '갤러리로 필터링됨';
+
+  @override
+  String get images_slideshow_need_two => '슬라이드쇼에는 최소 2개의 이미지가 필요합니다.';
+
+  @override
+  String get images_slideshow_start_title => '슬라이드쇼 시작';
+
+  @override
+  String images_slideshow_interval(num seconds) {
+    return '간격: ${seconds}s';
+  }
+
+  @override
+  String images_slideshow_transition_ms(num ms) {
+    return '전환: ${ms}ms';
+  }
+
+  @override
+  String get common_forward => '앞으로';
+
+  @override
+  String get common_backward => '뒤로';
+
+  @override
+  String get images_slideshow_loop_title => '슬라이드쇼 반복';
+
+  @override
+  String get common_cancel => '취소';
+
+  @override
+  String get common_start => '시작';
 }

@@ -333,8 +333,10 @@ class _ServerSettingsPageState extends ConsumerState<ServerSettingsPage> {
   Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
 
+    final l10n = AppLocalizations.of(context)!;
+
     return SettingsPageShell(
-      title: 'Server Settings',
+      title: '${l10n.settings_server} ${l10n.settings_title}',
       child: _loading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
@@ -343,8 +345,8 @@ class _ServerSettingsPageState extends ConsumerState<ServerSettingsPage> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   SettingsSectionCard(
-                    title: 'Connection Status',
-                    subtitle: 'Live connectivity against the configured server',
+                    title: l10n.settings_server_status,
+                    subtitle: l10n.settings_server_status_subtitle,
                     child: _buildConnectionStatusBody(),
                   ),
                   const SizedBox(height: AppTheme.spacingLarge),
@@ -357,8 +359,8 @@ class _ServerSettingsPageState extends ConsumerState<ServerSettingsPage> {
                         TextField(
                           controller: _baseUrlController,
                           focusNode: _baseUrlFocusNode,
-                          decoration: const InputDecoration(
-                            labelText: 'GraphQL server URL',
+                          decoration: InputDecoration(
+                            labelText: l10n.settings_server_url,
                             hintText: 'http://192.168.1.100:9999/graphql',
                             helperText:
                                 'Example format: http(s)://host:port/graphql.',
@@ -378,16 +380,16 @@ class _ServerSettingsPageState extends ConsumerState<ServerSettingsPage> {
                         const SizedBox(height: AppTheme.spacingSmall),
                         SegmentedButton<AuthMode>(
                           segments: [
-                            const ButtonSegment<AuthMode>(
+                            ButtonSegment<AuthMode>(
                               value: AuthMode.apiKey,
-                              label: Text('API Key'),
-                              icon: Icon(Icons.vpn_key_rounded),
+                              label: Text(l10n.settings_server_auth_apikey),
+                              icon: const Icon(Icons.vpn_key_rounded),
                             ),
                             if (!kIsWeb || _allowWebPasswordLogin)
-                              const ButtonSegment<AuthMode>(
+                              ButtonSegment<AuthMode>(
                                 value: AuthMode.password,
-                                label: Text('Username + Password'),
-                                icon: Icon(Icons.password_rounded),
+                                label: Text(l10n.settings_server_auth_password),
+                                icon: const Icon(Icons.password_rounded),
                               ),
                           ],
                           selected: <AuthMode>{_selectedAuthMode},
@@ -400,8 +402,8 @@ class _ServerSettingsPageState extends ConsumerState<ServerSettingsPage> {
                         const SizedBox(height: AppTheme.spacingSmall),
                         Text(
                           _selectedAuthMode == AuthMode.password
-                              ? 'Recommended: use your Stash username/password session.'
-                              : 'Use API key for static-token authentication.',
+                              ? l10n.settings_server_auth_password_desc
+                              : l10n.settings_server_auth_apikey_desc,
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                         const SizedBox(height: AppTheme.spacingMedium),
@@ -410,12 +412,12 @@ class _ServerSettingsPageState extends ConsumerState<ServerSettingsPage> {
                             controller: _apiKeyController,
                             focusNode: _apiKeyFocusNode,
                             decoration: InputDecoration(
-                              labelText: 'API key',
+                              labelText: l10n.settings_server_auth_apikey,
                               hintText: 'Paste ApiKey header value',
                               suffixIcon: IconButton(
                                 tooltip: _obscureApiKey
-                                    ? 'Show API key'
-                                    : 'Hide API key',
+                                    ? l10n.common_show
+                                    : l10n.common_hide,
                                 icon: Icon(
                                   _obscureApiKey
                                       ? Icons.visibility_off
@@ -453,11 +455,11 @@ class _ServerSettingsPageState extends ConsumerState<ServerSettingsPage> {
                             controller: _passwordController,
                             focusNode: _passwordFocusNode,
                             decoration: InputDecoration(
-                              labelText: 'Password',
+                              labelText: l10n.settings_server_password,
                               suffixIcon: IconButton(
                                 tooltip: _obscurePassword
-                                    ? 'Show password'
-                                    : 'Hide password',
+                                    ? l10n.common_show
+                                    : l10n.common_hide,
                                 icon: Icon(
                                   _obscurePassword
                                       ? Icons.visibility_off
@@ -503,8 +505,8 @@ class _ServerSettingsPageState extends ConsumerState<ServerSettingsPage> {
                               icon: const Icon(Icons.sync_rounded),
                               label: Text(
                                 _selectedAuthMode == AuthMode.password
-                                    ? 'Login & Test'
-                                    : 'Test Connection',
+                                    ? l10n.settings_server_login_test
+                                    : l10n.settings_server_test,
                               ),
                             ),
                             if (_selectedAuthMode == AuthMode.password)
@@ -512,14 +514,16 @@ class _ServerSettingsPageState extends ConsumerState<ServerSettingsPage> {
                                 onPressed: _isSaving
                                     ? null
                                     : () async {
-                                        final messenger = ScaffoldMessenger.of(context);
+                                        final messenger = ScaffoldMessenger.of(
+                                          context,
+                                        );
                                         await ref
                                             .read(authProvider.notifier)
                                             .logout();
                                         messenger.showSnackBar(
-                                          const SnackBar(
+                                          SnackBar(
                                             content: Text(
-                                              'Logged out and cookies cleared.',
+                                              l10n.settings_server_logout_confirm,
                                             ),
                                           ),
                                         );
@@ -528,7 +532,7 @@ class _ServerSettingsPageState extends ConsumerState<ServerSettingsPage> {
                                         );
                                       },
                                 icon: const Icon(Icons.logout_rounded),
-                                label: const Text('Logout'),
+                                label: Text(l10n.settings_server_logout),
                               ),
                             OutlinedButton.icon(
                               onPressed: _isSaving
@@ -544,7 +548,7 @@ class _ServerSettingsPageState extends ConsumerState<ServerSettingsPage> {
                                       await _saveServerSettings();
                                     },
                               icon: const Icon(Icons.clear_all_rounded),
-                              label: const Text('Clear Settings'),
+                              label: Text(l10n.settings_server_clear),
                             ),
                           ],
                         ),
