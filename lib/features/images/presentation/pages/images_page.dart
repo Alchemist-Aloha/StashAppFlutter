@@ -270,9 +270,6 @@ class _ImagesPageState extends ConsumerState<ImagesPage> {
 
     int crossAxisCount = gridColumns ?? (isTablet ? 3 : (isMobile ? 2 : 5));
 
-    final screenWidth = MediaQuery.sizeOf(context).width;
-    final memCacheWidth = (screenWidth / crossAxisCount * 1.5).toInt();
-
     final randomNavigationEnabled = ref.watch(randomNavigationEnabledProvider);
 
     // Hoist invariant layout calculations out of the itemBuilder loop
