@@ -511,14 +511,16 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
                         child: SizedBox(
                           height: MediaQuery.sizeOf(context).height * 0.7,
                           child: Center(
-                            child: Text(
-                              widget.emptyMessage,
-                              style: TextStyle(
-                                color: context.colors.onSurface.withValues(
-                                  alpha: 0.7,
-                                ),
-                              ),
-                            ),
+                                    child: Text(
+                                      widget.emptyMessage == 'No items found'
+                                          ? context.l10n.common_no_items
+                                          : widget.emptyMessage,
+                                      style: TextStyle(
+                                        color: context.colors.onSurface.withValues(
+                                          alpha: 0.7,
+                                        ),
+                                      ),
+                                    ),
                           ),
                         ),
                       ),
@@ -651,7 +653,7 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
                 },
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (err, stack) => ErrorStateView(
-                  message: 'Failed to load items.\n$err',
+                  message: context.l10n.common_error(err.toString()),
                   onRetry: widget.onRefresh,
                 ),
               ),

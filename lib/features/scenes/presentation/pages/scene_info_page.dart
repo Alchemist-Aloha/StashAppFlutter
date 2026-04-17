@@ -17,7 +17,7 @@ class SceneInfoPage extends ConsumerWidget {
     final mediaHeaders = ref.watch(mediaHeadersProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Scene Info')),
+      appBar: AppBar(title: Text(context.l10n.details_scene)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(

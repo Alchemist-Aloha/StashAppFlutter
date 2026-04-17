@@ -152,9 +152,9 @@ class _SceneEditPageState extends ConsumerState<SceneEditPage> {
 
   Future<void> _pickTags() async {
     final results = await showDialog<List<Tag>>(
-      context: context,
-      builder: (context) => EntityPicker<Tag>(
-        title: 'Select Tags',
+          context: context,
+          builder: (context) => EntityPicker<Tag>(
+            title: context.l10n.scenes_select_tags,
         providerType: 'tag',
         multiSelect: true,
         initialSelection: _selectedTagIds,
@@ -179,14 +179,14 @@ class _SceneEditPageState extends ConsumerState<SceneEditPage> {
     if (scrapers.isEmpty) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('No scrapers available')));
+      ).showSnackBar(SnackBar(content: Text(context.l10n.scenes_no_scrapers)));
       return;
     }
 
     final scraper = await showDialog<Scraper>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Select Scraper'),
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(context.l10n.scenes_select_scraper),
         content: SizedBox(
           width: double.maxFinite,
           child: ListView.builder(
@@ -218,7 +218,7 @@ class _SceneEditPageState extends ConsumerState<SceneEditPage> {
       if (results.isEmpty) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(const SnackBar(content: Text('No results found')));
+        ).showSnackBar(SnackBar(content: Text(context.l10n.scenes_no_results_found)));
         return;
       }
 
@@ -227,7 +227,7 @@ class _SceneEditPageState extends ConsumerState<SceneEditPage> {
         final picked = await showDialog<ScrapedScene>(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text('Select Result'),
+            title: Text(context.l10n.scenes_select_result),
             content: SizedBox(
               width: double.maxFinite,
               child: ListView.builder(
@@ -237,7 +237,8 @@ class _SceneEditPageState extends ConsumerState<SceneEditPage> {
                   final r = results[index];
                   return ListTile(
                     title: Text(r.title ?? 'No title'),
-                    subtitle: Text(r.urls.isNotEmpty ? r.urls.first : 'No URL'),
+                    title: Text(r.title ?? context.l10n.common_no_title),
+                    subtitle: Text(r.urls.isNotEmpty ? r.urls.first : context.l10n.common_no_url),
                     onTap: () => Navigator.of(context).pop(r),
                   );
                 },
@@ -303,7 +304,7 @@ class _SceneEditPageState extends ConsumerState<SceneEditPage> {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Scrape failed: $e')));
+        ).showSnackBar(SnackBar(content: Text(context.l10n.scenes_scrape_failed(e.toString()))));
       }
     } finally {
       if (mounted) setState(() => _isScraping = false);
@@ -345,7 +346,7 @@ class _SceneEditPageState extends ConsumerState<SceneEditPage> {
         if (mounted) {
           Navigator.of(context).pop(true);
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Scene updated successfully')),
+            SnackBar(content: Text(context.l10n.scenes_updated_successfully)),
           );
         }
       }
@@ -354,7 +355,7 @@ class _SceneEditPageState extends ConsumerState<SceneEditPage> {
         setState(() => _isSaving = false);
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Failed to update scene: $e')));
+        ).showSnackBar(SnackBar(content: Text(context.l10n.scenes_update_failed(e.toString()))));
       }
     }
   }
@@ -381,8 +382,9 @@ class _SceneEditPageState extends ConsumerState<SceneEditPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Scene'),
+        title: Text(context.l10n.scenes_edit_title),
         actions: [
+            title: Text(context.l10n.scenes_field_studio, style: Theme.of(context).textTheme.labelLarge),
           if (scrapeEnabled)
             if (_isScraping)
               const Center(
@@ -543,6 +545,7 @@ class _SceneEditPageState extends ConsumerState<SceneEditPage> {
             Row(
               children: [
                 Text('Tags', style: Theme.of(context).textTheme.labelLarge),
+                                Text(context.l10n.scenes_field_tags, style: Theme.of(context).textTheme.labelLarge),
                 const Spacer(),
                 IconButton(
                   onPressed: _pickTags,
@@ -571,6 +574,7 @@ class _SceneEditPageState extends ConsumerState<SceneEditPage> {
             Row(
               children: [
                 Text('URLs', style: Theme.of(context).textTheme.titleMedium),
+                                Text(context.l10n.scenes_field_urls, style: Theme.of(context).textTheme.titleMedium),
                 const Spacer(),
                 IconButton(
                   onPressed: _addUrlField,

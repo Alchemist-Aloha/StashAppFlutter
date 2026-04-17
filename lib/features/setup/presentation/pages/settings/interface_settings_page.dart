@@ -525,15 +525,15 @@ class _InterfaceSettingsPageState extends ConsumerState<InterfaceSettingsPage> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final isCompact = constraints.maxWidth < 560;
-        final segments = const [
+        final segments = [
           ButtonSegment<String>(
             value: 'list',
-            label: Text('List'),
+            label: Text(context.l10n.settings_interface_layout_list),
             icon: Icon(Icons.view_list),
           ),
           ButtonSegment<String>(
             value: 'grid',
-            label: Text('Grid'),
+            label: Text(context.l10n.settings_interface_layout_grid),
             icon: Icon(Icons.grid_view),
           ),
         ];

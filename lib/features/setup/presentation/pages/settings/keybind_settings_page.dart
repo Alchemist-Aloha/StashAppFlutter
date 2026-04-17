@@ -181,11 +181,11 @@ class _KeyCaptureDialogState extends State<_KeyCaptureDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Assign Shortcut'),
+      title: Text(context.l10n.settings_keybind_assign_shortcut),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text('Press any key combination...'),
+          Text(context.l10n.settings_keybind_press_any),
           const SizedBox(height: 24),
           Focus(
             autofocus: true,

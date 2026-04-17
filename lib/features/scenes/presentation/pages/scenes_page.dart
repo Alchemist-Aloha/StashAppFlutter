@@ -193,7 +193,7 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
                       ],
                     ),
                     const SizedBox(height: AppTheme.spacingMedium),
-                    Text('Sort Method', style: context.textTheme.labelLarge),
+                    Text(context.l10n.common_sort_method, style: context.textTheme.labelLarge),
                     const SizedBox(height: AppTheme.spacingSmall),
                     Wrap(
                       spacing: AppTheme.spacingSmall,
@@ -287,7 +287,7 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
                             vertical: AppTheme.spacingMedium,
                           ),
                         ),
-                        child: const Text('Save as Default'),
+                        child: Text(context.l10n.common_save_default),
                       ),
                     ),
                     const SizedBox(height: AppTheme.spacingMedium),

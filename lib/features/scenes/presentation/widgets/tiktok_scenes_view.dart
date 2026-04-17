@@ -273,7 +273,7 @@ class _TiktokScenesViewState extends ConsumerState<TiktokScenesView> {
     return scenesAsync.when(
       data: (scenes) {
         if (scenes.isEmpty) {
-          return const Center(child: Text('No scenes found'));
+          return Center(child: Text(context.l10n.common_no_items));
         }
 
         // Initialize first batch if needed
@@ -412,7 +412,7 @@ class _TiktokSceneItemState extends ConsumerState<TiktokSceneItem> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Rate Scene', style: context.textTheme.titleLarge),
+              Text(context.l10n.common_rate, style: context.textTheme.titleLarge),
               const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -456,7 +456,7 @@ class _TiktokSceneItemState extends ConsumerState<TiktokSceneItem> {
                     Navigator.pop(context);
                   }
                 },
-                child: const Text('Clear Rating'),
+                child: Text(context.l10n.common_clear_rating),
               ),
               const SizedBox(height: AppTheme.spacingMedium),
             ],

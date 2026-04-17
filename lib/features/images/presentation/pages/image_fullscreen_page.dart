@@ -792,7 +792,10 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
       error: (e, s) => Scaffold(
         backgroundColor: Colors.black,
         body: Center(
-          child: Text('Error: $e', style: const TextStyle(color: Colors.white)),
+          child: Text(
+            context.l10n.common_error(e.toString()),
+            style: const TextStyle(color: Colors.white),
+          ),
         ),
       ),
       data: (items) {

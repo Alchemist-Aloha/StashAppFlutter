@@ -424,6 +424,25 @@
     }
   }
   ,
+  "settings_keybind_assign_shortcut": "Assign Shortcut",
+  "settings_keybind_press_any": "Press any key combination...",
+
+  "scenes_select_tags": "Select Tags",
+  "scenes_no_scrapers": "No scrapers available",
+  "scenes_select_scraper": "Select Scraper",
+  "scenes_no_results_found": "No results found",
+  "scenes_select_result": "Select Result",
+  "scenes_scrape_failed": "Scrape failed: {error}",
+  "@scenes_scrape_failed": {"placeholders": {"error": {"type": "String"}}},
+  "scenes_updated_successfully": "Scene updated successfully",
+  "scenes_update_failed": "Failed to update scene: {error}",
+  "@scenes_update_failed": {"placeholders": {"error": {"type": "String"}}},
+  "scenes_edit_title": "Edit Scene",
+  "scenes_field_studio": "Studio",
+  "scenes_field_tags": "Tags",
+  "scenes_field_urls": "URLs",
+  "common_no_title": "No title"
+  ,
   "details_more_from_studio": "Mehr vom Studio",
   "details_o_count_incremented": "O-Zähler erhöht",
   "details_show_less": "Weniger anzeigen",

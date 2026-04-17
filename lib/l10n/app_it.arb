@@ -432,4 +432,25 @@
       "error": { "type": "String" }
     }
   }
+  ,
+  "common_no_title": "Nessun titolo",
+  "scenes_filter_title": "Filtra scene",
+  "scenes_watched": "Guardato",
+  "scenes_unwatched": "Non guardato",
+  "scenes_select_scraper": "Seleziona scraper",
+  "scenes_scrape_failed": "Estrazione fallita",
+  "scenes_updated_successfully": "Scene aggiornate con successo",
+  "scenes_update_failed": "Aggiornamento scene fallito",
+  "scenes_select_result": "Seleziona risultato",
+  "scenes_no_scrapers": "Nessun scraper trovato",
+  "scenes_select_tags": "Seleziona tag",
+  "settings_keybind_assign_shortcut": "Premi una scorciatoia per assegnare",
+  "settings_keybind_press_any": "Premi qualsiasi tasto per assegnare la scorciatoia",
+  "scenes_edit_title": "Modifica scena",
+  "scenes_field_url": "URL",
+  "scenes_field_url_hint": "Inserisci un URL valido",
+  "scenes_field_sources": "Fonti",
+  "scenes_field_sources_hint": "Aggiungi sorgenti separate da virgole",
+  "scenes_field_title": "Titolo",
+  "scenes_field_title_hint": "Titolo della scena"
 }
