@@ -1113,13 +1113,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get common_square => '正方形';
 
   @override
-  String get performers_filter_saved => '过滤首选项已保存为默认值';
+  String get performers_filter_saved => '筛选首选项已保存为默认值';
 
   @override
   String get images_title => '图片';
 
   @override
-  String get images_sort_title => '排序图片';
+  String get images_sort_title => '对图片排序';
 
   @override
   String get images_sort_saved => '排序首选项已保存为默认值';
@@ -1145,7 +1145,7 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get images_filtered_by_gallery => '按图库过滤';
+  String get images_filtered_by_gallery => '按画廊筛选';
 
   @override
   String get images_slideshow_need_two => '幻灯片放映至少需要 2 张图片。';
