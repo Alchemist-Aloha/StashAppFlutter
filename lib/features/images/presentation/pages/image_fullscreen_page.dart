@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:stash_app_flutter/core/data/preferences/shared_preferences_provider.dart';
+import 'package:stash_app_flutter/core/presentation/providers/keybinds_provider.dart';
 import 'package:stash_app_flutter/features/galleries/presentation/providers/gallery_list_provider.dart';
 import 'package:stash_app_flutter/features/galleries/presentation/providers/gallery_details_provider.dart';
 import '../../domain/entities/image.dart' as entity;
@@ -766,59 +767,80 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
     final prefs = ref.watch(sharedPreferencesProvider);
     final useVerticalSwipe =
         prefs.getBool(_imageFullscreenVerticalSwipeKey) ?? true;
+    final keybinds = ref.watch(keybindsProvider);
 
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: CallbackShortcuts(
-        bindings: {
-          const SingleActivator(LogicalKeyboardKey.arrowLeft):
-              _goToPreviousImage,
-          const SingleActivator(LogicalKeyboardKey.arrowRight): () {
-            ref.read(imageListProvider).whenData((items) {
-              _goToNextImage(items.length);
-            });
-          },
-        },
-        child: Focus(
-          autofocus: true,
-          child: imagesAsync.when(
-            data: (items) {
-              if (!_initialPageSet) {
-                _currentIndex = items.indexWhere((i) => i.id == widget.imageId);
-                if (_currentIndex == -1) _currentIndex = 0;
-                _pageController.dispose();
-                _pageController = ExtendedPageController(
-                  initialPage: _currentIndex,
-                );
-                _initialPageSet = true;
+    return imagesAsync.when(
+      loading: () => const Scaffold(
+        backgroundColor: Colors.black,
+        body: Center(child: CircularProgressIndicator()),
+      ),
+      error: (e, s) => Scaffold(
+        backgroundColor: Colors.black,
+        body: Center(child: Text('Error: $e', style: const TextStyle(color: Colors.white))),
+      ),
+      data: (items) {
+        final Map<ShortcutActivator, VoidCallback> bindings = {};
+        for (var entry in keybinds.binds.entries) {
+          final action = entry.key;
+          final bind = entry.value;
 
-                // Prefetch initial adjacent images
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  _prefetchAdjacent(items, _currentIndex, headers);
-                });
-              }
+          VoidCallback? callback;
+          switch (action) {
+            case KeybindAction.previousImage:
+              callback = _goToPreviousImage;
+              break;
+            case KeybindAction.nextImage:
+              callback = () => _goToNextImage(items.length);
+              break;
+            case KeybindAction.closePlayer:
+              callback = () => context.pop();
+              break;
+            default:
+              break;
+          }
 
-              final currentImage = items.isNotEmpty
-                  ? items[_currentIndex]
-                  : null;
-              final displayTitle = _getDisplayTitle(currentImage);
-              final totalItemCount =
-                  galleryDetailsAsync?.maybeWhen(
-                    data: (gallery) => gallery.imageCount ?? items.length,
-                    orElse: () => items.length,
-                  ) ??
-                  items.length;
+          if (callback != null) {
+            bindings[bind.toActivator()] = callback;
+          }
+        }
 
-              return LayoutBuilder(
+        if (!_initialPageSet && items.isNotEmpty) {
+          _currentIndex = items.indexWhere((i) => i.id == widget.imageId);
+          if (_currentIndex == -1) _currentIndex = 0;
+          _pageController.dispose();
+          _pageController = ExtendedPageController(
+            initialPage: _currentIndex,
+          );
+          _initialPageSet = true;
+
+          // Prefetch initial adjacent images
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _prefetchAdjacent(items, _currentIndex, headers);
+          });
+        }
+
+        final currentImage = items.isNotEmpty ? items[_currentIndex] : null;
+        final displayTitle = _getDisplayTitle(currentImage);
+        final totalItemCount =
+            galleryDetailsAsync?.maybeWhen(
+                  data: (gallery) => gallery.imageCount ?? items.length,
+                  orElse: () => items.length,
+                ) ??
+            items.length;
+
+        return Scaffold(
+          backgroundColor: Colors.black,
+          body: CallbackShortcuts(
+            bindings: bindings,
+            child: Focus(
+              autofocus: true,
+              child: LayoutBuilder(
                 builder: (context, constraints) {
                   final isWideLayout =
                       constraints.maxWidth >= Responsive.tabletBreakpoint;
-                  final scrollDirection = useVerticalSwipe
-                      ? Axis.vertical
-                      : Axis.horizontal;
-                  final maxOverlayWidth = isWideLayout
-                      ? 720.0
-                      : constraints.maxWidth;
+                  final scrollDirection =
+                      useVerticalSwipe ? Axis.vertical : Axis.horizontal;
+                  final maxOverlayWidth = isWideLayout ? 720.0 : constraints.maxWidth;
                   final horizontalPadding = isWideLayout ? 24.0 : 8.0;
 
                   return Listener(
@@ -873,8 +895,7 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
                                 onDoubleTap: (ExtendedImageGestureState state) {
                                   final pointerDownPosition =
                                       state.pointerDownPosition;
-                                  final begin =
-                                      state.gestureDetails!.totalScale;
+                                  final begin = state.gestureDetails!.totalScale;
                                   final end = begin == 1.0 ? 3.0 : 1.0;
 
                                   state.handleDoubleTap(
@@ -941,13 +962,11 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
                     ),
                   );
                 },
-              );
-            },
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (e, s) => Center(child: Text('Error: $e')),
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

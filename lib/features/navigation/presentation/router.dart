@@ -27,6 +27,8 @@ import '../../setup/presentation/pages/settings/appearance_settings_page.dart';
 import '../../setup/presentation/pages/settings/interface_settings_page.dart';
 import '../../setup/presentation/pages/settings/navigation_customization_page.dart';
 import '../../setup/presentation/pages/settings/support_settings_page.dart';
+import '../../setup/presentation/pages/settings/developer_settings_page.dart';
+import '../../setup/presentation/pages/settings/keybind_settings_page.dart';
 import '../../setup/presentation/debug_log_viewer_page.dart';
 import '../../scenes/presentation/widgets/scene_video_player.dart';
 import 'shell_page.dart';
@@ -69,8 +71,15 @@ GoRouter router(Ref ref) {
                 routes: [
                   GoRoute(
                     path: 'scene/:id',
-                    builder: (context, state) =>
-                        SceneDetailsPage(sceneId: state.pathParameters['id']!),
+                    pageBuilder: (context, state) => CustomTransitionPage(
+                      key: state.pageKey,
+                      child: SceneDetailsPage(
+                        sceneId: state.pathParameters['id']!,
+                      ),
+                      transitionsBuilder:
+                          (context, animation, secondaryAnimation, child) =>
+                              FadeTransition(opacity: animation, child: child),
+                    ),
                     routes: [
                       GoRoute(
                         path: 'fullscreen',
@@ -307,6 +316,14 @@ GoRouter router(Ref ref) {
           GoRoute(
             path: 'support',
             builder: (context, state) => const SupportSettingsPage(),
+          ),
+          GoRoute(
+            path: 'develop',
+            builder: (context, state) => const DeveloperSettingsPage(),
+          ),
+          GoRoute(
+            path: 'keybinds',
+            builder: (context, state) => const KeybindSettingsPage(),
           ),
           GoRoute(
             path: 'logs',

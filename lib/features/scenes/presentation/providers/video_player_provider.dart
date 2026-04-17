@@ -378,7 +378,7 @@ class PlayerState extends _$PlayerState {
         mimeType: state.streamMimeType,
         streamLabel: state.streamLabel,
         streamSource: state.streamSource,
-        httpHeaders: ref.read(mediaHeadersProvider),
+        httpHeaders: ref.read(mediaPlaybackHeadersProvider),
         prewarmAttempted: state.prewarmAttempted,
         prewarmSucceeded: state.prewarmSucceeded,
         prewarmLatencyMs: state.prewarmLatencyMs,
@@ -573,7 +573,8 @@ class PlayerState extends _$PlayerState {
       activeScene: scene,
       videoPlayerController: videoController,
       isPlaying: false,
-      isFullScreen: state.isFullScreen, // Preserve fullscreen state across scenes
+      isFullScreen:
+          state.isFullScreen, // Preserve fullscreen state across scenes
       isInPipMode: state.isInPipMode, // Preserve PiP state across scenes
       streamMimeType: mimeType,
       streamLabel: streamLabel,
@@ -594,7 +595,6 @@ class PlayerState extends _$PlayerState {
       subtitlePositionBottomRatio: state.subtitlePositionBottomRatio,
       subtitleTextAlignment: state.subtitleTextAlignment,
     );
-
 
     try {
       await videoController.initialize();
@@ -724,9 +724,11 @@ class PlayerState extends _$PlayerState {
     }
 
     final desktopSettings = ref.read(desktopSettingsProvider);
-    unawaited(controller.setVolume(
-      desktopSettings.isMuted ? 0 : desktopSettings.volume,
-    ));
+    unawaited(
+      controller.setVolume(
+        desktopSettings.isMuted ? 0 : desktopSettings.volume,
+      ),
+    );
 
     controller.removeListener(_videoListener);
     controller.addListener(_videoListener);
@@ -879,7 +881,7 @@ class PlayerState extends _$PlayerState {
     String? fallbackVttUrl,
   }) async {
     final apiKey = ref.read(serverApiKeyProvider);
-    final headers = ref.read(mediaHeadersProvider);
+    final headers = ref.read(mediaPlaybackHeadersProvider);
     final authenticatedUrl = appendApiKey(url, apiKey);
 
     AppLogStore.instance.add(
@@ -1079,7 +1081,7 @@ class PlayerState extends _$PlayerState {
         final resolver = ref.read(streamResolverProvider.notifier);
         final choice = await resolver.resolvePreferredStream(nextScene);
         if (choice != null) {
-          final mediaHeaders = ref.read(mediaHeadersProvider);
+          final mediaHeaders = ref.read(mediaPlaybackHeadersProvider);
           await playScene(
             nextScene,
             choice.url,

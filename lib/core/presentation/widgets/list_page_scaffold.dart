@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../theme/app_theme.dart';
 import '../../utils/responsive.dart';
+import '../providers/desktop_capabilities_provider.dart';
 import 'error_state_view.dart';
 import '../../utils/pagination.dart';
 import 'stash_image.dart';
@@ -45,6 +47,7 @@ class ListPageScaffold<T> extends ConsumerStatefulWidget {
     this.memCacheWidthBuilder,
     this.prefetchDistance = StashImage.defaultPrefetchDistance,
     this.itemExtent,
+    this.onPageSizeChanged,
   });
 
   /// The page title displayed in the AppBar.
@@ -130,6 +133,9 @@ class ListPageScaffold<T> extends ConsumerStatefulWidget {
   /// For list view, this enables [ListView.itemExtent] optimization.
   final double? itemExtent;
 
+  /// Triggered when the calculated page size (fitting 2 screens) changes.
+  final ValueChanged<int>? onPageSizeChanged;
+
   @override
   ConsumerState<ListPageScaffold<T>> createState() =>
       _ListPageScaffoldState<T>();
@@ -144,6 +150,9 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
   double? _measuredItemExtent;
   int? _lastVisibleIndexPrefetched;
   final GlobalKey _firstItemKey = GlobalKey();
+
+  DateTime? _lastHorizontalSwipeTime;
+  static const _horizontalSwipeThreshold = Duration(milliseconds: 500);
 
   @override
   void dispose() {
@@ -183,7 +192,11 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
         widget.tabletCrossAxisCount != null) {
       // Also apply tablet count for desktop if desktop count is not specified
       count = widget.tabletCrossAxisCount!;
-    } else if (widget.useResponsiveGrid && !isMobile) {
+    } else if (widget.useResponsiveGrid &&
+        !isMobile &&
+        widget.gridDelegate == null) {
+      // Only apply default responsive override (3 columns) if NO explicit gridDelegate was provided.
+      // If a gridDelegate was provided (e.g., from a user setting), we respect its count.
       count = 3;
     }
 
@@ -194,6 +207,22 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
       childAspectRatio: delegate.childAspectRatio,
       mainAxisExtent: delegate.mainAxisExtent,
     );
+  }
+
+  int _getEffectivePrefetchDistance(BuildContext context) {
+    final itemsInTwoScreens = GridUtils.calculateItemsPerPage(
+      context: context,
+      gridDelegate:
+          widget.gridDelegate != null ? _getResponsiveGridDelegate(context) : null,
+      padding: widget.padding,
+      screens: 2.0,
+      itemExtent: widget.itemExtent,
+      measuredItemExtent: _measuredItemExtent,
+    );
+
+    return itemsInTwoScreens > widget.prefetchDistance
+        ? itemsInTwoScreens
+        : widget.prefetchDistance;
   }
 
   void _handleInitialPrefetch(List<T> items) {
@@ -208,9 +237,15 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
 
-      final count = items.length < widget.prefetchDistance
+      final prefetchDistance = _getEffectivePrefetchDistance(context);
+
+      if (widget.onPageSizeChanged != null) {
+        widget.onPageSizeChanged!(prefetchDistance);
+      }
+
+      final count = items.length < prefetchDistance
           ? items.length
-          : widget.prefetchDistance;
+          : prefetchDistance;
       final headers = ref.read(mediaHeadersProvider);
       final isGrid = widget.gridDelegate != null;
 
@@ -253,7 +288,7 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
     final offset = scrollInfo.metrics.pixels;
     final isGrid = widget.gridDelegate != null;
     final headers = ref.read(mediaHeadersProvider);
-    final prefetchDistance = widget.prefetchDistance;
+    final prefetchDistance = _getEffectivePrefetchDistance(context);
 
     int? memCacheWidth;
     if (widget.memCacheWidthBuilder != null) {
@@ -361,6 +396,8 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
 
   @override
   Widget build(BuildContext context) {
+    final isDesktop = ref.watch(desktopCapabilitiesProvider);
+
     return Scaffold(
       appBar: widget.hideAppBar
           ? null
@@ -427,11 +464,40 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
                 ...widget.actions,
               ],
             ),
-      body: Column(
-        children: [
-          if (widget.sortBar != null) widget.sortBar!,
-          Expanded(
-            child: widget.provider.when(
+      body: Listener(
+        onPointerSignal: (pointerSignal) {
+          if (pointerSignal is PointerScrollEvent) {
+            // Horizontal swipe for navigation (Back)
+            if (isDesktop && pointerSignal.scrollDelta.dx.abs() > 30) {
+              final now = DateTime.now();
+              if (_lastHorizontalSwipeTime == null ||
+                  now.difference(_lastHorizontalSwipeTime!) >
+                      _horizontalSwipeThreshold) {
+                if (pointerSignal.scrollDelta.dx < -30) {
+                  // Swipe right (negative dx) -> Go Back
+                  if (context.canPop()) {
+                    _lastHorizontalSwipeTime = now;
+                    context.pop();
+                  }
+                }
+              }
+            }
+
+            // Vertical scroll for refresh (Pull to refresh on trackpad)
+            if (widget.onRefresh != null &&
+                widget.scrollController != null &&
+                widget.scrollController!.hasClients &&
+                widget.scrollController!.position.pixels <= 0 &&
+                pointerSignal.scrollDelta.dy < -50) {
+              widget.onRefresh!();
+            }
+          }
+        },
+        child: Column(
+          children: [
+            if (widget.sortBar != null) widget.sortBar!,
+            Expanded(
+              child: widget.provider.when(
               data: (items) {
                 _handleInitialPrefetch(items);
 
@@ -588,7 +654,7 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
             ),
           ),
         ],
-      ),
+      ),),
       floatingActionButton: widget.floatingActionButton,
     );
   }

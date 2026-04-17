@@ -11,6 +11,7 @@ import 'package:window_manager/window_manager.dart';
 
 import '../../domain/entities/scene.dart';
 import '../providers/video_player_provider.dart';
+import '../../../../core/presentation/providers/keybinds_provider.dart';
 import '../../data/repositories/stream_resolver.dart';
 import '../../../../core/data/graphql/media_headers_provider.dart';
 import '../../../../core/utils/app_log_store.dart';
@@ -118,7 +119,7 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
 
       final choice = await resolver.resolvePreferredStream(widget.scene);
       if (choice != null && mounted) {
-        final mediaHeaders = ref.read(mediaHeadersProvider);
+        final mediaHeaders = ref.read(mediaPlaybackHeadersProvider);
         await ref
             .read(playerStateProvider.notifier)
             .playScene(
@@ -179,7 +180,7 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
       if (!mounted) {
         return const _PrewarmResult(attempted: false, succeeded: false);
       }
-      final headers = ref.read(mediaHeadersProvider);
+      final headers = ref.read(mediaPlaybackHeadersProvider);
       headers.forEach((key, value) {
         request.headers.add(key, value);
       });
@@ -241,27 +242,36 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
     // If this player isn't active, show a placeholder with a play button.
     if (playerState.activeScene?.id != widget.scene.id) {
       final colorScheme = Theme.of(context).colorScheme;
+      final keybinds = ref.watch(keybindsProvider);
+      final playPauseBind = keybinds.binds[KeybindAction.playPause];
+
       return AspectRatio(
         aspectRatio: aspectRatio,
-        child: Container(
-          color: Colors.black,
-          child: Center(
-            child: _isStarting
-                ? const CircularProgressIndicator()
-                : FilledButton.tonalIcon(
-                    style: FilledButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 14,
+        child: CallbackShortcuts(
+          bindings: {
+            if (playPauseBind != null)
+              playPauseBind.toActivator(): () =>
+                  _startPlaybackIfNeeded(force: true),
+          },
+          child: Focus(
+            autofocus: true,
+            child: Container(
+              color: Colors.black,
+              child: Center(
+                child: _isStarting
+                    ? const CircularProgressIndicator()
+                    : IconButton.filledTonal(
+                        style: IconButton.styleFrom(
+                          backgroundColor: colorScheme.surfaceContainerHigh
+                              .withValues(alpha: 0.92),
+                          foregroundColor: colorScheme.onSurface,
+                          padding: const EdgeInsets.all(16),
+                        ),
+                        icon: const Icon(Icons.play_arrow_rounded, size: 32),
+                        onPressed: () => _startPlaybackIfNeeded(force: true),
                       ),
-                      backgroundColor: colorScheme.surfaceContainerHigh
-                          .withValues(alpha: 0.92),
-                      foregroundColor: colorScheme.onSurface,
-                    ),
-                    icon: const Icon(Icons.play_arrow_rounded, size: 24),
-                    label: const Text('Play'),
-                    onPressed: () => _startPlaybackIfNeeded(force: true),
-                  ),
+              ),
+            ),
           ),
         ),
       );
@@ -476,7 +486,8 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
 
         // On Windows and Web, toggling fullscreen can sometimes trigger a pause in the native player
         // due to window state changes or focus loss during the transition.
-        if (wasPlaying && (kIsWeb || defaultTargetPlatform == TargetPlatform.windows)) {
+        if (wasPlaying &&
+            (kIsWeb || defaultTargetPlatform == TargetPlatform.windows)) {
           if (controller != null && !controller.value.isPlaying) {
             await controller.play();
           }
@@ -597,12 +608,13 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
         color: Colors.black,
         child: Hero(
           tag: 'scene_player_${widget.sceneId}',
-          child: SizedBox.expand(
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                return Stack(
-                  children: [
-                    Positioned.fill(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return Stack(
+                children: [
+                  Positioned.fill(
+                    child: Container(
+                      color: Colors.black,
                       child: Center(
                         child: AspectRatio(
                           aspectRatio: controller.value.aspectRatio,
@@ -610,38 +622,42 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
                         ),
                       ),
                     ),
-                    if (playerState.selectedSubtitleLanguage != null &&
-                        playerState.selectedSubtitleLanguage != 'none')
-                      ValueListenableBuilder(
-                        valueListenable: controller,
-                        builder: (context, value, child) {
-                          return SceneSubtitleOverlay(
-                            text: value.caption.text,
-                            constraints: constraints,
-                            bottomRatio:
-                                playerState.subtitlePositionBottomRatio,
-                            fontSize: playerState.subtitleFontSize + 4,
-                            textAlign: _subtitleTextAlign(
-                              playerState.subtitleTextAlignment,
-                            ),
-                            horizontalAlignment: _subtitleHorizontalAlignment(
-                              playerState.subtitleTextAlignment,
-                            ),
-                            horizontalPadding: 32,
-                          );
-                        },
-                      ),
-                    NativeVideoControls(
-                      controller: controller,
-                      useDoubleTapSeek: playerState.useDoubleTapSeek,
-                      enableNativePip: playerState.enableNativePip,
-                      onFullScreenToggle: _toggleFullScreen,
-                      scene: scene,
+                  ),
+                  if (playerState.selectedSubtitleLanguage != null &&
+                      playerState.selectedSubtitleLanguage != 'none')
+                    ValueListenableBuilder(
+                      valueListenable: controller,
+                      builder: (context, value, child) {
+                        return SceneSubtitleOverlay(
+                          text: value.caption.text,
+                          constraints: constraints,
+                          bottomRatio: playerState.subtitlePositionBottomRatio,
+                          fontSize: playerState.subtitleFontSize + 4,
+                          textAlign: _subtitleTextAlign(
+                            playerState.subtitleTextAlignment,
+                          ),
+                          horizontalAlignment: _subtitleHorizontalAlignment(
+                            playerState.subtitleTextAlignment,
+                          ),
+                          horizontalPadding: 32,
+                        );
+                      },
                     ),
-                  ],
-                );
-              },
-            ),
+                  Positioned.fill(
+                    child: Material(
+                      color: Colors.transparent,
+                      child: NativeVideoControls(
+                        controller: controller,
+                        useDoubleTapSeek: playerState.useDoubleTapSeek,
+                        enableNativePip: playerState.enableNativePip,
+                        onFullScreenToggle: _toggleFullScreen,
+                        scene: scene,
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
         ),
       ),

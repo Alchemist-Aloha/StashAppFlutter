@@ -7,6 +7,7 @@ import '../../../../core/presentation/widgets/list_page_scaffold.dart';
 import '../../../../core/presentation/theme/app_theme.dart';
 import '../../../../core/utils/responsive.dart';
 import '../../../setup/presentation/providers/navigation_customization_provider.dart';
+import '../../../../core/presentation/providers/layout_settings_provider.dart';
 import '../../../galleries/presentation/providers/gallery_list_provider.dart';
 import '../providers/image_list_provider.dart';
 import '../widgets/image_card.dart';
@@ -256,6 +257,7 @@ class _ImagesPageState extends ConsumerState<ImagesPage> {
   @override
   Widget build(BuildContext context) {
     final imagesAsync = ref.watch(imageListProvider);
+    final gridColumns = ref.watch(imageGridColumnsProvider);
     final isMobile = Responsive.isMobile(context);
     final isTablet = Responsive.isTablet(context);
 
@@ -266,18 +268,19 @@ class _ImagesPageState extends ConsumerState<ImagesPage> {
     final organizedOnly = ref.watch(imageOrganizedOnlyProvider);
     final hasActiveFilters = filterActive || organizedOnly;
 
-    int crossAxisCount = 2;
-    if (isTablet) {
-      crossAxisCount = 3;
-    } else if (!isMobile) {
-      crossAxisCount = 5;
-    }
+    int crossAxisCount = gridColumns ?? (isTablet ? 3 : (isMobile ? 2 : 5));
 
     final randomNavigationEnabled = ref.watch(randomNavigationEnabledProvider);
 
     return ListPageScaffold<entity.Image>(
       title: 'Images',
       imageUrlBuilder: (img) => img.paths.thumbnail,
+      // Pass the actual column count to the scaffold so scroll-sensed prefetch works correctly.
+      // We use a dummy gridDelegate just to signal to ListPageScaffold that it's a grid.
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: crossAxisCount,
+      ),
+      useResponsiveGrid: false,
       actions: [
         Stack(
           children: [
@@ -329,6 +332,8 @@ class _ImagesPageState extends ConsumerState<ImagesPage> {
       onRefresh: () => ref.read(imageListProvider.notifier).refresh(),
       onFetchNextPage: () =>
           ref.read(imageListProvider.notifier).fetchNextPage(),
+      onPageSizeChanged: (pageSize) =>
+          ref.read(imageListProvider.notifier).setPerPage(pageSize),
       floatingActionButton: randomNavigationEnabled
           ? FloatingActionButton.small(
               heroTag: 'images_random_fab',

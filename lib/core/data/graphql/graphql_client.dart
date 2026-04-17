@@ -1,5 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import '../auth/auth_mode.dart';
+import '../auth/auth_provider.dart';
+import 'http_client_factory.dart';
 import '../preferences/shared_preferences_provider.dart';
 
 part 'graphql_client.g.dart';
@@ -79,7 +83,27 @@ class GraphqlClient extends _$GraphqlClient {
     }
 
     final apiKey = ref.watch(serverApiKeyProvider);
-    final HttpLink httpLink = HttpLink(url, defaultHeaders: {'ApiKey': apiKey});
+    final authState = ref.watch(authProvider);
+    final isPasswordMode = authState.mode == AuthMode.password;
+
+    final headers = <String, String>{};
+    if (isPasswordMode) {
+      // Browsers treat Cookie as a forbidden request header. For web we rely
+      // on credentials-enabled requests instead of manually setting Cookie.
+      if (!kIsWeb && authState.cookieHeader.isNotEmpty) {
+        headers['Cookie'] = authState.cookieHeader;
+      }
+    } else if (apiKey.isNotEmpty) {
+      headers['ApiKey'] = apiKey;
+    }
+
+    final httpClient = createGraphqlHttpClient(withCredentials: isPasswordMode);
+
+    final HttpLink httpLink = HttpLink(
+      url,
+      defaultHeaders: headers,
+      httpClient: httpClient,
+    );
 
     const bool isTestMode = bool.fromEnvironment(
       'FLUTTER_TEST',

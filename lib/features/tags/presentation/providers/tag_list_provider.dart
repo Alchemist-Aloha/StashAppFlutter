@@ -105,7 +105,7 @@ class TagFavoritesOnly extends _$TagFavoritesOnly {
 @Riverpod(keepAlive: true)
 class TagList extends _$TagList {
   int _currentPage = 1;
-  static const int _perPage = kDefaultPageSize;
+  int _perPage = kDefaultPageSize;
   bool _hasMore = true;
   bool _isLoadingMore = false;
 
@@ -156,6 +156,15 @@ class TagList extends _$TagList {
 
   void setFavoritesOnly(bool enabled) {
     ref.read(tagFavoritesOnlyProvider.notifier).state = enabled;
+    _currentPage = 1;
+    _hasMore = true;
+    _isLoadingMore = false;
+    ref.invalidateSelf();
+  }
+
+  void setPerPage(int perPage) {
+    if (_perPage == perPage) return;
+    _perPage = perPage;
     _currentPage = 1;
     _hasMore = true;
     _isLoadingMore = false;

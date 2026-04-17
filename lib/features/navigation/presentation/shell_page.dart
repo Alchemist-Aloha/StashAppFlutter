@@ -4,7 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/utils/responsive.dart';
+import 'package:flutter/gestures.dart';
 import '../../../core/presentation/providers/desktop_capabilities_provider.dart';
+import '../../../core/presentation/providers/keybinds_provider.dart';
 import '../../../core/data/graphql/graphql_client.dart';
 import '../../scenes/presentation/providers/video_player_provider.dart';
 import '../../scenes/presentation/providers/scene_list_provider.dart';
@@ -30,6 +32,8 @@ class ShellPage extends ConsumerStatefulWidget {
 
 class _ShellPageState extends ConsumerState<ShellPage> {
   bool _dialogShown = false;
+  DateTime? _lastHorizontalSwipeTime;
+  static const _horizontalSwipeThreshold = Duration(milliseconds: 500);
 
   @override
   void initState() {
@@ -307,6 +311,8 @@ class _ShellPageState extends ConsumerState<ShellPage> {
 
     if (ref.watch(desktopCapabilitiesProvider)) {
       final Map<ShortcutActivator, VoidCallback> bindings = {};
+      final keybinds = ref.watch(keybindsProvider);
+
       final digitKeys = [
         LogicalKeyboardKey.digit1,
         LogicalKeyboardKey.digit2,
@@ -320,8 +326,18 @@ class _ShellPageState extends ConsumerState<ShellPage> {
       ];
       for (int i = 0; i < visibleTabs.length && i < digitKeys.length; i++) {
         final index = i;
-        bindings[SingleActivator(digitKeys[i])] = () =>
-            onDestinationSelected(index);
+        bindings[SingleActivator(digitKeys[i])] =
+            () => onDestinationSelected(index);
+      }
+
+      // Add back bind
+      final backBind = keybinds.binds[KeybindAction.back];
+      if (backBind != null) {
+        bindings[backBind.toActivator()] = () {
+          if (context.canPop()) {
+            context.pop();
+          }
+        };
       }
 
       bodyContent = CallbackShortcuts(
@@ -330,12 +346,38 @@ class _ShellPageState extends ConsumerState<ShellPage> {
       );
     }
 
+    final isDesktop = ref.watch(desktopCapabilitiesProvider);
+
     return PopScope(
       canPop: !context.canPop(),
       child: ShakeGesture(
         onShake: handleShake,
         child: Scaffold(
-          body: bodyContent,
+          body: Listener(
+            onPointerSignal: (pointerSignal) {
+              if (isDesktop && pointerSignal is PointerScrollEvent) {
+                if (pointerSignal.scrollDelta.dx.abs() > 30) {
+                  final now = DateTime.now();
+                  if (_lastHorizontalSwipeTime == null ||
+                      now.difference(_lastHorizontalSwipeTime!) >
+                          _horizontalSwipeThreshold) {
+                    if (pointerSignal.scrollDelta.dx < -30) {
+                      // Swipe Right (negative dx) -> Go Back
+                      if (context.canPop()) {
+                        _lastHorizontalSwipeTime = now;
+                        context.pop();
+                      }
+                    } else if (pointerSignal.scrollDelta.dx > 30) {
+                      // Swipe Left (positive dx) -> Go Forward (if possible)
+                      // GoRouter doesn't have a simple goForward,
+                      // but we can at least support Back for now as it's most expected.
+                    }
+                  }
+                }
+              }
+            },
+            child: bodyContent,
+          ),
           bottomNavigationBar: (isFullScreen || !isMobile)
               ? null
               : SafeArea(

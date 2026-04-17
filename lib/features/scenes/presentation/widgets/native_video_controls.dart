@@ -4,12 +4,13 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:video_player/video_player.dart';
 import 'package:flutter/gestures.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/presentation/providers/desktop_capabilities_provider.dart';
 import '../../../../core/presentation/providers/desktop_settings_provider.dart';
+import '../../../../core/presentation/providers/keybinds_provider.dart';
 import '../../../../core/utils/pip_mode.dart';
 import '../../../../core/presentation/theme/app_theme.dart';
 import '../../../../core/utils/app_log_store.dart';
@@ -43,7 +44,16 @@ class NativeVideoControls extends ConsumerStatefulWidget {
 
 class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
     with WidgetsBindingObserver {
-  static const _playbackSpeeds = <double>[0.75, 1.0, 1.25, 1.5, 2.0];
+  static const _playbackSpeeds = <double>[
+    0.25,
+    0.5,
+    0.75,
+    1.0,
+    1.25,
+    1.5,
+    2.0,
+    3.0,
+  ];
   static const _controlsAutoHideDelay = Duration(milliseconds: 1000);
   static const _gestureSeekSeconds = 10;
   static const _dragSeekSensitivity = 0.30;
@@ -55,6 +65,7 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
   bool _wasPlaying = false;
   bool _wasPlayingBeforeScrub = false;
   bool _showVolumeSlider = false;
+  bool _showSpeedSlider = false;
   Timer? _hideControlsTimer;
   Duration? _dragSeekStartPosition;
   Duration? _dragSeekTarget;
@@ -328,6 +339,28 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
     _showControlsTemporarily();
   }
 
+  void _playNext() {
+    final queue = ref.read(playbackQueueProvider.notifier);
+    final next = queue.getNextScene();
+    if (next != null) {
+      queue.playNext();
+      if (mounted) {
+        GoRouter.of(context).pushReplacement('/scenes/scene/${next.id}');
+      }
+    }
+  }
+
+  void _playPrevious() {
+    final queue = ref.read(playbackQueueProvider.notifier);
+    final prev = queue.getPreviousScene();
+    if (prev != null) {
+      queue.playPrevious();
+      if (mounted) {
+        GoRouter.of(context).pushReplacement('/scenes/scene/${prev.id}');
+      }
+    }
+  }
+
   String _format(Duration d) {
     final totalSeconds = d.inSeconds;
     final hours = totalSeconds ~/ 3600;
@@ -340,10 +373,14 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
   }
 
   String _formatSpeed(double speed) {
-    final whole = speed.roundToDouble() == speed;
-    return whole
-        ? '${speed.toStringAsFixed(0)}x'
-        : '${speed.toStringAsFixed(2)}x';
+    if (speed == speed.toInt()) {
+      return '${speed.toInt()}x';
+    }
+    String s = speed.toStringAsFixed(2);
+    if (s.endsWith('0')) {
+      s = s.substring(0, s.length - 1);
+    }
+    return '${s}x';
   }
 
   ButtonStyle _controlButtonStyle(ColorScheme colorScheme) {
@@ -471,8 +508,12 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
               child: SliderTheme(
                 data: SliderTheme.of(context).copyWith(
                   trackHeight: 2,
-                  thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
-                  overlayShape: const RoundSliderOverlayShape(overlayRadius: 12),
+                  thumbShape: const RoundSliderThumbShape(
+                    enabledThumbRadius: 6,
+                  ),
+                  overlayShape: const RoundSliderOverlayShape(
+                    overlayRadius: 12,
+                  ),
                   activeTrackColor: colorScheme.primary,
                   inactiveTrackColor: colorScheme.onSurfaceVariant.withValues(
                     alpha: 0.25,
@@ -504,7 +545,139 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
     });
   }
 
-  Widget _buildVolumeOverlay(ColorScheme colorScheme) {
+    Widget _buildSpeedSliderPanel(
+      ColorScheme colorScheme,
+      double playbackSpeed,
+    ) {
+      if (!_showSpeedSlider) return const SizedBox.shrink();
+
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 8, left: 8, right: 8),
+        child: Row(
+          children: [
+            IconButton(
+              tooltip: 'Reset to 1x',
+              style: _controlButtonStyle(colorScheme),
+              iconSize: 20,
+              icon: const Icon(Icons.refresh_rounded),
+              onPressed: () {
+                widget.controller.setPlaybackSpeed(1.0);
+                _showControlsTemporarily();
+              },
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: SliderTheme(
+                data: SliderTheme.of(context).copyWith(
+                  trackHeight: 2,
+                  thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
+                  overlayShape: const RoundSliderOverlayShape(overlayRadius: 12),
+                  activeTrackColor: colorScheme.primary,
+                  inactiveTrackColor: colorScheme.onSurfaceVariant.withValues(
+                    alpha: 0.25,
+                  ),
+                  thumbColor: colorScheme.primary,
+                ),
+                child: Slider(
+                  value: playbackSpeed.clamp(0.25, 3.0),
+                  min: 0.25,
+                  max: 3.0,
+                  divisions: 11,
+                  onChanged: (v) {
+                    widget.controller.setPlaybackSpeed(v);
+                    _showControlsTemporarily();
+                  },
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            IconButton(
+              tooltip: 'Close speed slider',
+              style: _controlButtonStyle(colorScheme),
+              iconSize: 20,
+              icon: const Icon(Icons.close_rounded),
+              onPressed: () {
+                setState(() => _showSpeedSlider = false);
+                _showControlsTemporarily();
+              },
+            ),
+          ],
+        ),
+      );
+    }
+
+    Widget _buildPlaybackSpeedButton(
+      ColorScheme colorScheme,
+      double playbackSpeed,
+    ) {
+      return PopupMenuButton<double>(
+        tooltip: 'Playback speed',
+        initialValue: playbackSpeed,
+        color: colorScheme.surfaceContainerHigh,
+        surfaceTintColor: colorScheme.surfaceTint,
+        onSelected: (speed) async {
+          await widget.controller.setPlaybackSpeed(speed);
+          _showControlsTemporarily();
+        },
+        itemBuilder: (context) {
+          return _playbackSpeeds
+              .map(
+                (speed) => PopupMenuItem<double>(
+                  value: speed,
+                  child: Row(
+                    children: [
+                      Icon(
+                        speed == playbackSpeed
+                            ? Icons.check_circle
+                            : Icons.circle_outlined,
+                        size: 16,
+                        color:
+                            speed == playbackSpeed
+                                ? colorScheme.primary
+                                : colorScheme.onSurfaceVariant,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        _formatSpeed(speed),
+                        style: TextStyle(color: colorScheme.onSurface),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+              .toList();
+        },
+        child: GestureDetector(
+          onTap: () {
+            setState(() => _showSpeedSlider = !_showSpeedSlider);
+            _showControlsTemporarily();
+          },
+          child: Container(
+            constraints: const BoxConstraints(minWidth: 38, minHeight: 38),
+            alignment: Alignment.center,
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceContainerHigh.withValues(alpha: 0.62),
+              borderRadius: BorderRadius.circular(10),
+              border: _showSpeedSlider
+                  ? Border.all(color: colorScheme.primary, width: 1.5)
+                  : null,
+            ),
+            child: Text(
+              _formatSpeed(playbackSpeed),
+              style: TextStyle(
+                color: _showSpeedSlider
+                    ? colorScheme.primary
+                    : colorScheme.onSurface,
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+    Widget _buildVolumeOverlay(ColorScheme colorScheme) {
     final desktopSettings = ref.watch(desktopSettingsProvider);
     final volume = desktopSettings.volume;
     final isMuted = desktopSettings.isMuted;
@@ -571,33 +744,102 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
     final sliderValue = currentMs.clamp(0, durationMs.toDouble()).toDouble();
 
     final isDesktop = ref.watch(desktopCapabilitiesProvider);
+    final keybinds = ref.watch(keybindsProvider);
+
+    Map<ShortcutActivator, VoidCallback> bindings = {};
+    for (var entry in keybinds.binds.entries) {
+      final action = entry.key;
+      final bind = entry.value;
+
+      VoidCallback? callback;
+      switch (action) {
+        case KeybindAction.playPause:
+          callback = _togglePlay;
+          break;
+        case KeybindAction.seekForward:
+          callback = () => _seekRelativeSeconds(5);
+          break;
+        case KeybindAction.seekBackward:
+          callback = () => _seekRelativeSeconds(-5);
+          break;
+        case KeybindAction.seekForwardLarge:
+          callback = () => _seekRelativeSeconds(10);
+          break;
+        case KeybindAction.seekBackwardLarge:
+          callback = () => _seekRelativeSeconds(-10);
+          break;
+        case KeybindAction.volumeUp:
+          callback = () {
+            final currentVol = ref.read(desktopSettingsProvider).volume;
+            ref.read(playerStateProvider.notifier).setVolume(currentVol + 0.05);
+          };
+          break;
+        case KeybindAction.volumeDown:
+          callback = () {
+            final currentVol = ref.read(desktopSettingsProvider).volume;
+            ref.read(playerStateProvider.notifier).setVolume(currentVol - 0.05);
+          };
+          break;
+        case KeybindAction.toggleMute:
+          callback = () => ref.read(playerStateProvider.notifier).toggleMute();
+          break;
+        case KeybindAction.toggleFullscreen:
+          callback = () => widget.onFullScreenToggle?.call();
+          break;
+        case KeybindAction.togglePip:
+          callback = () {
+            if (widget.enableNativePip && !kIsWeb && Platform.isAndroid) {
+              PipMode.enterIfAvailable(
+                aspectRatio: widget.controller.value.aspectRatio,
+              );
+            }
+          };
+          break;
+        case KeybindAction.nextScene:
+          callback = _playNext;
+          break;
+        case KeybindAction.previousScene:
+          callback = _playPrevious;
+          break;
+        case KeybindAction.speedUp:
+          callback = () {
+            final currentSpeed = widget.controller.value.playbackSpeed;
+            widget.controller.setPlaybackSpeed(currentSpeed + 0.25);
+          };
+          break;
+        case KeybindAction.speedDown:
+          callback = () {
+            final currentSpeed = widget.controller.value.playbackSpeed;
+            widget.controller.setPlaybackSpeed(currentSpeed - 0.25);
+          };
+          break;
+        case KeybindAction.resetSpeed:
+          callback = () => widget.controller.setPlaybackSpeed(1.0);
+          break;
+        case KeybindAction.closePlayer:
+          callback = () => ref.read(playerStateProvider.notifier).stop();
+          break;
+        case KeybindAction.back:
+          callback = () {
+            ref.read(playerStateProvider.notifier).stop();
+            if (context.canPop()) {
+              context.pop();
+            }
+          };
+          break;
+        default:
+          break;
+      }
+
+      if (callback != null) {
+        bindings[bind.toActivator()] = callback;
+      }
+    }
 
     return PopScope(
       canPop: !_isScrubbing,
       child: CallbackShortcuts(
-        bindings: {
-          const SingleActivator(LogicalKeyboardKey.space): _togglePlay,
-          const SingleActivator(LogicalKeyboardKey.arrowLeft): () =>
-              _seekRelativeSeconds(-5),
-          const SingleActivator(LogicalKeyboardKey.arrowRight): () =>
-              _seekRelativeSeconds(5),
-          const SingleActivator(LogicalKeyboardKey.keyJ): () =>
-              _seekRelativeSeconds(-10),
-          const SingleActivator(LogicalKeyboardKey.keyL): () =>
-              _seekRelativeSeconds(10),
-          const SingleActivator(LogicalKeyboardKey.keyF): () =>
-              widget.onFullScreenToggle?.call(),
-          const SingleActivator(LogicalKeyboardKey.keyM): () =>
-              ref.read(playerStateProvider.notifier).toggleMute(),
-          const SingleActivator(LogicalKeyboardKey.arrowUp): () {
-            final currentVol = ref.read(desktopSettingsProvider).volume;
-            ref.read(playerStateProvider.notifier).setVolume(currentVol + 0.05);
-          },
-          const SingleActivator(LogicalKeyboardKey.arrowDown): () {
-            final currentVol = ref.read(desktopSettingsProvider).volume;
-            ref.read(playerStateProvider.notifier).setVolume(currentVol - 0.05);
-          },
-        },
+        bindings: bindings,
         child: Focus(
           autofocus: true,
           child: LayoutBuilder(
@@ -612,16 +854,26 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                       child: Listener(
                         onPointerSignal: (pointerSignal) {
                           if (pointerSignal is PointerScrollEvent) {
-                            final currentVol =
-                                ref.read(desktopSettingsProvider).volume;
-                            if (pointerSignal.scrollDelta.dy < 0) {
-                              ref
-                                  .read(playerStateProvider.notifier)
-                                  .setVolume(currentVol + 0.05);
-                            } else {
-                              ref
-                                  .read(playerStateProvider.notifier)
-                                  .setVolume(currentVol - 0.05);
+                            if (pointerSignal.scrollDelta.dy != 0) {
+                              // Vertical scroll -> Volume
+                              final currentVol =
+                                  ref.read(desktopSettingsProvider).volume;
+                              if (pointerSignal.scrollDelta.dy < 0) {
+                                ref
+                                    .read(playerStateProvider.notifier)
+                                    .setVolume(currentVol + 0.05);
+                              } else {
+                                ref
+                                    .read(playerStateProvider.notifier)
+                                    .setVolume(currentVol - 0.05);
+                              }
+                            } else if (pointerSignal.scrollDelta.dx != 0) {
+                              // Horizontal scroll -> Seek
+                              if (pointerSignal.scrollDelta.dx > 0) {
+                                _seekRelativeSeconds(5);
+                              } else {
+                                _seekRelativeSeconds(-5);
+                              }
                             }
                           }
                         },
@@ -648,15 +900,15 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                               : null,
                           onHorizontalDragUpdate: !widget.useDoubleTapSeek
                               ? (details) => _updateDragSeek(
-                                    details,
-                                    constraints.maxWidth,
-                                  )
+                                  details,
+                                  constraints.maxWidth,
+                                )
                               : null,
                           onHorizontalDragEnd: !widget.useDoubleTapSeek
                               ? (_) => _endDragSeek()
                               : null,
                           onHorizontalDragCancel: !widget.useDoubleTapSeek
-                              ? _endDragSeek
+                              ? () => _endDragSeek()
                               : null,
                           child: const ColoredBox(color: Colors.transparent),
                         ),
@@ -670,12 +922,13 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           if (_dragSeekTarget != null &&
-                              (widget.scene.paths.vtt?.isNotEmpty ?? false)) ...[
+                              (widget.scene.paths.vtt?.isNotEmpty ??
+                                  false)) ...[
                             ScrubbingPreview(
                               vttUrl: widget.scene.paths.vtt!,
                               timeInSeconds:
                                   _dragSeekTarget!.inMilliseconds / 1000,
-                              headers: ref.read(mediaHeadersProvider),
+                              headers: ref.read(mediaPlaybackHeadersProvider),
                             ),
                             const SizedBox(height: 16),
                           ],
@@ -685,12 +938,11 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                     ),
                   ),
 
-                  Positioned.fill(
-                    child: _buildVolumeOverlay(colorScheme),
-                  ),
+                  Positioned.fill(child: _buildVolumeOverlay(colorScheme)),
 
                   // Layer: Scrubbing Preview (Floating above the slider)
-                  if (_isScrubbing && (widget.scene.paths.vtt?.isNotEmpty ?? false))
+                  if (_isScrubbing &&
+                      (widget.scene.paths.vtt?.isNotEmpty ?? false))
                     Positioned(
                       bottom: 84, // Positioned above the slider
                       left: 0,
@@ -700,18 +952,20 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                         builder: (context, constraints) {
                           final double ratio = _scrubMs / durationMs;
                           const double previewWidth = 160;
-                          
+
                           // Track is inset slightly from edges
                           final double trackWidth = constraints.maxWidth - 32;
                           final double thumbX = 16 + (ratio * trackWidth);
-                          
+
                           double leftOffset = thumbX - (previewWidth / 2);
-                          
+
                           // Edge protection
                           if (leftOffset < 8) {
                             leftOffset = 8;
-                          } else if (leftOffset + previewWidth > constraints.maxWidth - 8) {
-                            leftOffset = constraints.maxWidth - previewWidth - 8;
+                          } else if (leftOffset + previewWidth >
+                              constraints.maxWidth - 8) {
+                            leftOffset =
+                                constraints.maxWidth - previewWidth - 8;
                           }
 
                           return Stack(
@@ -722,7 +976,9 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                                 child: ScrubbingPreview(
                                   vttUrl: widget.scene.paths.vtt!,
                                   timeInSeconds: _scrubMs / 1000,
-                                  headers: ref.read(mediaHeadersProvider),
+                                  headers: ref.read(
+                                    mediaPlaybackHeadersProvider,
+                                  ),
                                   width: 160,
                                   height: 90,
                                 ),
@@ -868,6 +1124,10 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                                           999,
                                         ),
                                       ),
+                                    ),
+                                    _buildSpeedSliderPanel(
+                                      colorScheme,
+                                      playbackSpeed,
                                     ),
                                     SliderTheme(
                                       data: SliderTheme.of(context).copyWith(
@@ -1147,81 +1407,13 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                                             },
                                           ),
                                         const SizedBox(width: 8),
-                                        PopupMenuButton<double>(
-                                          tooltip: 'Playback speed',
-                                          initialValue: playbackSpeed,
-                                          color:
-                                              colorScheme.surfaceContainerHigh,
-                                          surfaceTintColor:
-                                              colorScheme.surfaceTint,
-                                          onSelected: (speed) async {
-                                            await widget.controller
-                                                .setPlaybackSpeed(speed);
-                                            _showControlsTemporarily();
-                                          },
-                                          itemBuilder: (context) {
-                                            return _playbackSpeeds
-                                                .map(
-                                                  (
-                                                    speed,
-                                                  ) => PopupMenuItem<double>(
-                                                    value: speed,
-                                                    child: Row(
-                                                      children: [
-                                                        Icon(
-                                                          speed == playbackSpeed
-                                                              ? Icons
-                                                                    .check_circle
-                                                              : Icons
-                                                                    .circle_outlined,
-                                                          size: 16,
-                                                          color:
-                                                              speed ==
-                                                                  playbackSpeed
-                                                              ? colorScheme
-                                                                    .primary
-                                                              : colorScheme
-                                                                    .onSurfaceVariant,
-                                                        ),
-                                                        const SizedBox(
-                                                          width: 8,
-                                                        ),
-                                                        Text(
-                                                          _formatSpeed(speed),
-                                                          style: TextStyle(
-                                                            color: colorScheme
-                                                                .onSurface,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                )
-                                                .toList();
-                                          },
-                                          child: Container(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 8,
-                                              vertical: 4,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: colorScheme
-                                                  .surfaceContainerHigh
-                                                  .withValues(alpha: 0.6),
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                            ),
-                                            child: Text(
-                                              _formatSpeed(playbackSpeed),
-                                              style: TextStyle(
-                                                color: colorScheme.onSurface,
-                                                fontSize: 11,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                          ),
+                                        _buildPlaybackSpeedButton(
+                                          colorScheme,
+                                          playbackSpeed,
                                         ),
-                                        if (ref.watch(desktopCapabilitiesProvider)) ...[
+                                        if (ref.watch(
+                                          desktopCapabilitiesProvider,
+                                        )) ...[
                                           const SizedBox(width: 8),
                                           _buildDesktopVolumeControl(
                                             context,
@@ -1261,7 +1453,8 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                                             },
                                           ),
                                         GestureDetector(
-                                          onTap: () {}, // Consume tap to prevent propagation
+                                          onTap:
+                                              () {}, // Consume tap to prevent propagation
                                           child: IconButton(
                                             tooltip: 'Toggle Fullscreen',
                                             style: _controlButtonStyle(
@@ -1270,7 +1463,7 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                                             icon: Icon(
                                               isFullScreen
                                                   ? Icons
-                                                      .fullscreen_exit_rounded
+                                                        .fullscreen_exit_rounded
                                                   : Icons.fullscreen_rounded,
                                             ),
                                             onPressed: () {
