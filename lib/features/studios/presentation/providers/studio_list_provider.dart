@@ -105,7 +105,7 @@ class StudioFavoritesOnly extends _$StudioFavoritesOnly {
 @Riverpod(keepAlive: true)
 class StudioList extends _$StudioList {
   int _currentPage = 1;
-  static const int _perPage = kDefaultPageSize;
+  int _perPage = kDefaultPageSize;
   bool _hasMore = true;
   bool _isLoadingMore = false;
 
@@ -156,6 +156,15 @@ class StudioList extends _$StudioList {
 
   void setFavoritesOnly(bool enabled) {
     ref.read(studioFavoritesOnlyProvider.notifier).state = enabled;
+    _currentPage = 1;
+    _hasMore = true;
+    _isLoadingMore = false;
+    ref.invalidateSelf();
+  }
+
+  void setPerPage(int perPage) {
+    if (_perPage == perPage) return;
+    _perPage = perPage;
     _currentPage = 1;
     _hasMore = true;
     _isLoadingMore = false;

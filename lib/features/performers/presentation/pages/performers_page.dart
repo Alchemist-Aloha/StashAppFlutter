@@ -439,6 +439,8 @@ class _PerformersPageState extends ConsumerState<PerformersPage> {
       onRefresh: () => ref.read(performerListProvider.notifier).refresh(),
       onFetchNextPage: () =>
           ref.read(performerListProvider.notifier).fetchNextPage(),
+      onPageSizeChanged: (pageSize) =>
+          ref.read(performerListProvider.notifier).setPerPage(pageSize),
       actions: [
         Stack(
           children: [

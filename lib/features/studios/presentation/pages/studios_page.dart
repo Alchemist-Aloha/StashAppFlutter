@@ -386,6 +386,8 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
       onRefresh: () => ref.read(studioListProvider.notifier).refresh(),
       onFetchNextPage: () =>
           ref.read(studioListProvider.notifier).fetchNextPage(),
+      onPageSizeChanged: (pageSize) =>
+          ref.read(studioListProvider.notifier).setPerPage(pageSize),
       actions: [
         Stack(
           children: [

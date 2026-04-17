@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 
-const int kDefaultPageSize = 20;
+const int kDefaultPageSize = 40;
 const double kPaginationLoadMoreThreshold = 200;
 
 bool shouldLoadNextPage(

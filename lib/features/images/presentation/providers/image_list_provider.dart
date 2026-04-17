@@ -123,7 +123,7 @@ class ImageOrganizedOnly extends _$ImageOrganizedOnly {
 @Riverpod(keepAlive: true)
 class ImageList extends _$ImageList {
   int _currentPage = 1;
-  static const int _perPage = kDefaultPageSize;
+  int _perPage = kDefaultPageSize;
   bool _hasMore = true;
   bool _isLoadingMore = false;
 
@@ -171,6 +171,15 @@ class ImageList extends _$ImageList {
     ref
         .read(imageSortProvider.notifier)
         .setSort(sort: sort, descending: descending);
+    _currentPage = 1;
+    _hasMore = true;
+    _isLoadingMore = false;
+    ref.invalidateSelf();
+  }
+
+  void setPerPage(int perPage) {
+    if (_perPage == perPage) return;
+    _perPage = perPage;
     _currentPage = 1;
     _hasMore = true;
     _isLoadingMore = false;

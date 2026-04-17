@@ -332,6 +332,8 @@ class _ImagesPageState extends ConsumerState<ImagesPage> {
       onRefresh: () => ref.read(imageListProvider.notifier).refresh(),
       onFetchNextPage: () =>
           ref.read(imageListProvider.notifier).fetchNextPage(),
+      onPageSizeChanged: (pageSize) =>
+          ref.read(imageListProvider.notifier).setPerPage(pageSize),
       floatingActionButton: randomNavigationEnabled
           ? FloatingActionButton.small(
               heroTag: 'images_random_fab',

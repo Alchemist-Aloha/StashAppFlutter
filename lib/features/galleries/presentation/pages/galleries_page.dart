@@ -351,6 +351,8 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
       onRefresh: () => ref.read(galleryListProvider.notifier).refresh(),
       onFetchNextPage: () =>
           ref.read(galleryListProvider.notifier).fetchNextPage(),
+      onPageSizeChanged: (pageSize) =>
+          ref.read(galleryListProvider.notifier).setPerPage(pageSize),
       gridDelegate: isGridView
           ? GridUtils.createDelegate(
               crossAxisCount: gridColumns ?? 2,

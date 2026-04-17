@@ -354,6 +354,8 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
       onRefresh: () => ref.read(sceneListProvider.notifier).refresh(),
       onFetchNextPage: () =>
           ref.read(sceneListProvider.notifier).fetchNextPage(),
+      onPageSizeChanged: (pageSize) =>
+          ref.read(sceneListProvider.notifier).setPerPage(pageSize),
       actions: [
         Stack(
           children: [

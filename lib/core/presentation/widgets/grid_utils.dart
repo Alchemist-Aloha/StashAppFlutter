@@ -26,4 +26,39 @@ class GridUtils {
       childAspectRatio: childAspectRatio,
     );
   }
+
+  /// Calculates how many items fit in a certain number of screens.
+  static int calculateItemsPerPage({
+    required BuildContext context,
+    required SliverGridDelegate? gridDelegate,
+    required EdgeInsetsGeometry padding,
+    double screens = 2.0,
+    double? itemExtent,
+    double? measuredItemExtent,
+  }) {
+    final screenHeight = MediaQuery.sizeOf(context).height;
+    final isGrid = gridDelegate != null;
+    double stride;
+    int crossAxisCount = 1;
+
+    if (isGrid && gridDelegate is SliverGridDelegateWithFixedCrossAxisCount) {
+      crossAxisCount = gridDelegate.crossAxisCount;
+      final horizontalPadding =
+          padding is EdgeInsets ? padding.horizontal : 0.0;
+      final availableWidth = MediaQuery.sizeOf(context).width - horizontalPadding;
+      final itemWidth =
+          (availableWidth -
+              (gridDelegate.crossAxisSpacing * (crossAxisCount - 1))) /
+          crossAxisCount;
+      final itemHeight =
+          gridDelegate.mainAxisExtent ??
+          (itemWidth / gridDelegate.childAspectRatio);
+      stride = itemHeight + gridDelegate.mainAxisSpacing;
+    } else {
+      stride = itemExtent ?? measuredItemExtent ?? 300.0;
+    }
+
+    final double rowsNeeded = (screenHeight * screens) / stride;
+    return (rowsNeeded * crossAxisCount).ceil();
+  }
 }

@@ -368,8 +368,12 @@ class _TagsPageState extends ConsumerState<TagsPage> {
       scrollController: scrollController,
       imageUrlBuilder: (tag) => tag.imagePath,
       onRefresh: () => ref.read(tagListProvider.notifier).refresh(),
-      onFetchNextPage: () => ref.read(tagListProvider.notifier).fetchNextPage(),
+      onFetchNextPage: () =>
+          ref.read(tagListProvider.notifier).fetchNextPage(),
+      onPageSizeChanged: (pageSize) =>
+          ref.read(tagListProvider.notifier).setPerPage(pageSize),
       actions: [
+
         Stack(
           children: [
             IconButton(

@@ -201,8 +201,8 @@ class StashImage extends ConsumerWidget {
 
   static final Set<String> _prefetched = <String>{};
   static final Set<String> _cacheCheckedUrls = <String>{};
-  static const int defaultPrefetchDistance = 10;
-  static const int _maxConcurrentPrefetch = 2;
+  static const int defaultPrefetchDistance = 40;
+  static const int _maxConcurrentPrefetch = 10;
   static int _ongoingPrefetches = 0;
 
   static Future<void> prefetch(

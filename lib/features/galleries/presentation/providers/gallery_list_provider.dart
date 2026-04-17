@@ -147,7 +147,7 @@ class GalleryGridLayout extends _$GalleryGridLayout {
 @Riverpod(keepAlive: true)
 class GalleryList extends _$GalleryList {
   int _currentPage = 1;
-  static const int _perPage = kDefaultPageSize;
+  int _perPage = kDefaultPageSize;
   bool _hasMore = true;
   bool _isLoadingMore = false;
 
@@ -193,6 +193,15 @@ class GalleryList extends _$GalleryList {
     ref
         .read(gallerySortProvider.notifier)
         .setSort(sort: sort, descending: descending);
+    _currentPage = 1;
+    _hasMore = true;
+    _isLoadingMore = false;
+    ref.invalidateSelf();
+  }
+
+  void setPerPage(int perPage) {
+    if (_perPage == perPage) return;
+    _perPage = perPage;
     _currentPage = 1;
     _hasMore = true;
     _isLoadingMore = false;

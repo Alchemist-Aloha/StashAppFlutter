@@ -47,6 +47,7 @@ class ListPageScaffold<T> extends ConsumerStatefulWidget {
     this.memCacheWidthBuilder,
     this.prefetchDistance = StashImage.defaultPrefetchDistance,
     this.itemExtent,
+    this.onPageSizeChanged,
   });
 
   /// The page title displayed in the AppBar.
@@ -132,6 +133,9 @@ class ListPageScaffold<T> extends ConsumerStatefulWidget {
   /// For list view, this enables [ListView.itemExtent] optimization.
   final double? itemExtent;
 
+  /// Triggered when the calculated page size (fitting 2 screens) changes.
+  final ValueChanged<int>? onPageSizeChanged;
+
   @override
   ConsumerState<ListPageScaffold<T>> createState() =>
       _ListPageScaffoldState<T>();
@@ -206,34 +210,15 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
   }
 
   int _getEffectivePrefetchDistance(BuildContext context) {
-    final screenHeight = MediaQuery.sizeOf(context).height;
-    final isGrid = widget.gridDelegate != null;
-    double stride;
-    int crossAxisCount = 1;
-
-    if (isGrid) {
-      final delegate =
-          _getResponsiveGridDelegate(context)
-              as SliverGridDelegateWithFixedCrossAxisCount;
-      crossAxisCount = delegate.crossAxisCount;
-      final padding = widget.padding is EdgeInsets
-          ? (widget.padding as EdgeInsets).horizontal
-          : 0.0;
-      final availableWidth = MediaQuery.sizeOf(context).width - padding;
-      final itemWidth =
-          (availableWidth -
-              (delegate.crossAxisSpacing * (crossAxisCount - 1))) /
-          crossAxisCount;
-      final itemHeight =
-          delegate.mainAxisExtent ?? (itemWidth / delegate.childAspectRatio);
-      stride = itemHeight + delegate.mainAxisSpacing;
-    } else {
-      stride = widget.itemExtent ?? _measuredItemExtent ?? 300.0;
-    }
-
-    // Number of rows in two screen heights
-    final double rowsInTwoScreens = (screenHeight * 2.0) / stride;
-    final int itemsInTwoScreens = (rowsInTwoScreens * crossAxisCount).ceil();
+    final itemsInTwoScreens = GridUtils.calculateItemsPerPage(
+      context: context,
+      gridDelegate:
+          widget.gridDelegate != null ? _getResponsiveGridDelegate(context) : null,
+      padding: widget.padding,
+      screens: 2.0,
+      itemExtent: widget.itemExtent,
+      measuredItemExtent: _measuredItemExtent,
+    );
 
     return itemsInTwoScreens > widget.prefetchDistance
         ? itemsInTwoScreens
@@ -253,6 +238,11 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
       if (!mounted) return;
 
       final prefetchDistance = _getEffectivePrefetchDistance(context);
+
+      if (widget.onPageSizeChanged != null) {
+        widget.onPageSizeChanged!(prefetchDistance);
+      }
+
       final count = items.length < prefetchDistance
           ? items.length
           : prefetchDistance;
