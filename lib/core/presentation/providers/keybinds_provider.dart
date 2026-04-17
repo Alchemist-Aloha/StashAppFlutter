@@ -21,6 +21,9 @@ enum KeybindAction {
   speedDown,
   resetSpeed,
   closePlayer,
+  nextImage,
+  previousImage,
+  back,
 }
 
 class Keybind {
@@ -70,7 +73,16 @@ class Keybind {
     if (shift) parts.add('Shift');
     if (alt) parts.add('Alt');
     if (meta) parts.add('Meta');
-    parts.add(key.keyLabel);
+
+    if (key == LogicalKeyboardKey.space) {
+      parts.add('Space');
+    } else if (key.keyLabel.trim().isEmpty) {
+      // Fallback for keys with empty labels (like some function keys or special keys)
+      parts.add(key.debugName ?? 'Unknown');
+    } else {
+      parts.add(key.keyLabel);
+    }
+
     return parts.join(' + ');
   }
 }
@@ -97,6 +109,9 @@ class Keybinds {
         KeybindAction.speedDown: const Keybind(LogicalKeyboardKey.bracketLeft),
         KeybindAction.resetSpeed: const Keybind(LogicalKeyboardKey.backspace),
         KeybindAction.closePlayer: const Keybind(LogicalKeyboardKey.escape),
+        KeybindAction.nextImage: const Keybind(LogicalKeyboardKey.arrowRight),
+        KeybindAction.previousImage: const Keybind(LogicalKeyboardKey.arrowLeft),
+        KeybindAction.back: const Keybind(LogicalKeyboardKey.escape),
       };
 
   Map<String, dynamic> toJson() {

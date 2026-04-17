@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../theme/app_theme.dart';
 import '../../utils/responsive.dart';
+import '../providers/desktop_capabilities_provider.dart';
 import 'error_state_view.dart';
 import '../../utils/pagination.dart';
 import 'stash_image.dart';
@@ -144,6 +146,9 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
   double? _measuredItemExtent;
   int? _lastVisibleIndexPrefetched;
   final GlobalKey _firstItemKey = GlobalKey();
+
+  DateTime? _lastHorizontalSwipeTime;
+  static const _horizontalSwipeThreshold = Duration(milliseconds: 500);
 
   @override
   void dispose() {
@@ -361,6 +366,8 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
 
   @override
   Widget build(BuildContext context) {
+    final isDesktop = ref.watch(desktopCapabilitiesProvider);
+
     return Scaffold(
       appBar: widget.hideAppBar
           ? null
@@ -427,11 +434,40 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
                 ...widget.actions,
               ],
             ),
-      body: Column(
-        children: [
-          if (widget.sortBar != null) widget.sortBar!,
-          Expanded(
-            child: widget.provider.when(
+      body: Listener(
+        onPointerSignal: (pointerSignal) {
+          if (pointerSignal is PointerScrollEvent) {
+            // Horizontal swipe for navigation (Back)
+            if (isDesktop && pointerSignal.scrollDelta.dx.abs() > 30) {
+              final now = DateTime.now();
+              if (_lastHorizontalSwipeTime == null ||
+                  now.difference(_lastHorizontalSwipeTime!) >
+                      _horizontalSwipeThreshold) {
+                if (pointerSignal.scrollDelta.dx < -30) {
+                  // Swipe right (negative dx) -> Go Back
+                  if (context.canPop()) {
+                    _lastHorizontalSwipeTime = now;
+                    context.pop();
+                  }
+                }
+              }
+            }
+
+            // Vertical scroll for refresh (Pull to refresh on trackpad)
+            if (widget.onRefresh != null &&
+                widget.scrollController != null &&
+                widget.scrollController!.hasClients &&
+                widget.scrollController!.position.pixels <= 0 &&
+                pointerSignal.scrollDelta.dy < -50) {
+              widget.onRefresh!();
+            }
+          }
+        },
+        child: Column(
+          children: [
+            if (widget.sortBar != null) widget.sortBar!,
+            Expanded(
+              child: widget.provider.when(
               data: (items) {
                 _handleInitialPrefetch(items);
 
@@ -588,7 +624,7 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
             ),
           ),
         ],
-      ),
+      ),),
       floatingActionButton: widget.floatingActionButton,
     );
   }

@@ -11,6 +11,7 @@ import 'package:window_manager/window_manager.dart';
 
 import '../../domain/entities/scene.dart';
 import '../providers/video_player_provider.dart';
+import '../../../../core/presentation/providers/keybinds_provider.dart';
 import '../../data/repositories/stream_resolver.dart';
 import '../../../../core/data/graphql/media_headers_provider.dart';
 import '../../../../core/utils/app_log_store.dart';
@@ -241,23 +242,36 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
     // If this player isn't active, show a placeholder with a play button.
     if (playerState.activeScene?.id != widget.scene.id) {
       final colorScheme = Theme.of(context).colorScheme;
+      final keybinds = ref.watch(keybindsProvider);
+      final playPauseBind = keybinds.binds[KeybindAction.playPause];
+
       return AspectRatio(
         aspectRatio: aspectRatio,
-        child: Container(
-          color: Colors.black,
-          child: Center(
-            child: _isStarting
-                ? const CircularProgressIndicator()
-                : IconButton.filledTonal(
-                    style: IconButton.styleFrom(
-                      backgroundColor: colorScheme.surfaceContainerHigh
-                          .withValues(alpha: 0.92),
-                      foregroundColor: colorScheme.onSurface,
-                      padding: const EdgeInsets.all(16),
-                    ),
-                    icon: const Icon(Icons.play_arrow_rounded, size: 32),
-                    onPressed: () => _startPlaybackIfNeeded(force: true),
-                  ),
+        child: CallbackShortcuts(
+          bindings: {
+            if (playPauseBind != null)
+              playPauseBind.toActivator(): () =>
+                  _startPlaybackIfNeeded(force: true),
+          },
+          child: Focus(
+            autofocus: true,
+            child: Container(
+              color: Colors.black,
+              child: Center(
+                child: _isStarting
+                    ? const CircularProgressIndicator()
+                    : IconButton.filledTonal(
+                        style: IconButton.styleFrom(
+                          backgroundColor: colorScheme.surfaceContainerHigh
+                              .withValues(alpha: 0.92),
+                          foregroundColor: colorScheme.onSurface,
+                          padding: const EdgeInsets.all(16),
+                        ),
+                        icon: const Icon(Icons.play_arrow_rounded, size: 32),
+                        onPressed: () => _startPlaybackIfNeeded(force: true),
+                      ),
+              ),
+            ),
           ),
         ),
       );

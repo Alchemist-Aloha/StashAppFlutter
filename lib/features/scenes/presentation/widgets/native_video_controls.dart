@@ -819,9 +819,21 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
         case KeybindAction.closePlayer:
           callback = () => ref.read(playerStateProvider.notifier).stop();
           break;
+        case KeybindAction.back:
+          callback = () {
+            ref.read(playerStateProvider.notifier).stop();
+            if (context.canPop()) {
+              context.pop();
+            }
+          };
+          break;
+        default:
+          break;
       }
 
-      bindings[bind.toActivator()] = callback;
+      if (callback != null) {
+        bindings[bind.toActivator()] = callback;
+      }
     }
 
     return PopScope(

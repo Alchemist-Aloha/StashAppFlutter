@@ -97,6 +97,12 @@ class KeybindSettingsPage extends ConsumerWidget {
         return 'Reset Playback Speed';
       case KeybindAction.closePlayer:
         return 'Close Player';
+      case KeybindAction.nextImage:
+        return 'Next Image';
+      case KeybindAction.previousImage:
+        return 'Previous Image';
+      case KeybindAction.back:
+        return 'Go Back';
     }
   }
 
@@ -134,6 +140,12 @@ class KeybindSettingsPage extends ConsumerWidget {
         return 'Restore playback speed to 1.0x';
       case KeybindAction.closePlayer:
         return 'Stop playback and close video viewer';
+      case KeybindAction.nextImage:
+        return 'Navigate to the next image';
+      case KeybindAction.previousImage:
+        return 'Navigate to the previous image';
+      case KeybindAction.back:
+        return 'Navigate back to the previous page';
     }
   }
 
