@@ -429,10 +429,37 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
           }
         }
       } else {
-        await SystemChrome.setPreferredOrientations([
-          DeviceOrientation.landscapeLeft,
-          DeviceOrientation.landscapeRight,
-        ]);
+        final playerState = ref.read(playerStateProvider);
+        final aspectRatio = controller?.value.aspectRatio ?? 16 / 9;
+        final allowGravity = playerState.videoGravityOrientation;
+
+        List<DeviceOrientation> orientations;
+        if (aspectRatio > 1.0) {
+          // Landscape
+          orientations = allowGravity
+              ? [
+                DeviceOrientation.landscapeLeft,
+                DeviceOrientation.landscapeRight,
+              ]
+              : [DeviceOrientation.landscapeLeft];
+        } else if (aspectRatio < 1.0) {
+          // Portrait
+          orientations = allowGravity
+              ? [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]
+              : [DeviceOrientation.portraitUp];
+        } else {
+          // Square
+          orientations = allowGravity
+              ? [
+                DeviceOrientation.portraitUp,
+                DeviceOrientation.portraitDown,
+                DeviceOrientation.landscapeLeft,
+                DeviceOrientation.landscapeRight,
+              ]
+              : [DeviceOrientation.portraitUp];
+        }
+
+        await SystemChrome.setPreferredOrientations(orientations);
 
         // On Web, toggling fullscreen and the Hero transition can trigger a pause
         if (wasPlaying && kIsWeb) {
