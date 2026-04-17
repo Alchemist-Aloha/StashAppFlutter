@@ -188,7 +188,11 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
         widget.tabletCrossAxisCount != null) {
       // Also apply tablet count for desktop if desktop count is not specified
       count = widget.tabletCrossAxisCount!;
-    } else if (widget.useResponsiveGrid && !isMobile) {
+    } else if (widget.useResponsiveGrid &&
+        !isMobile &&
+        widget.gridDelegate == null) {
+      // Only apply default responsive override (3 columns) if NO explicit gridDelegate was provided.
+      // If a gridDelegate was provided (e.g., from a user setting), we respect its count.
       count = 3;
     }
 

@@ -275,6 +275,12 @@ class _ImagesPageState extends ConsumerState<ImagesPage> {
     return ListPageScaffold<entity.Image>(
       title: 'Images',
       imageUrlBuilder: (img) => img.paths.thumbnail,
+      // Pass the actual column count to the scaffold so scroll-sensed prefetch works correctly.
+      // We use a dummy gridDelegate just to signal to ListPageScaffold that it's a grid.
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: crossAxisCount,
+      ),
+      useResponsiveGrid: false,
       actions: [
         Stack(
           children: [
