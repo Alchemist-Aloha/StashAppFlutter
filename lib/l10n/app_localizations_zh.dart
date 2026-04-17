@@ -1008,6 +1008,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settings_playback_seek_double_tap_label => '双击';
 
   @override
+  String get settings_playback_gravity_orientation => '重力控制的方向';
+
+  @override
+  String get settings_playback_gravity_orientation_subtitle =>
+      '允许使用设备传感器在匹配的方向之间旋转（例如：左右翻转横向）。';
+
+  @override
   String get settings_playback_subtitle_lang_none_disabled => '无（禁用）';
 
   @override
@@ -2307,6 +2314,13 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String get settings_playback_seek_double_tap_label => '双击';
+
+  @override
+  String get settings_playback_gravity_orientation => '重力控制的方向';
+
+  @override
+  String get settings_playback_gravity_orientation_subtitle =>
+      '允许使用设备传感器在匹配的方向之间旋转（例如：左右翻转横向）。';
 
   @override
   String get settings_playback_subtitle_lang_none_disabled => '无（禁用）';
@@ -3611,6 +3625,13 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get settings_playback_seek_double_tap_label => '雙擊';
+
+  @override
+  String get settings_playback_gravity_orientation => '重力控制的方向';
+
+  @override
+  String get settings_playback_gravity_orientation_subtitle =>
+      '允許使用裝置感測器在相符方向之間旋轉（例如：將橫向向左/向右翻轉）。';
 
   @override
   String get settings_playback_subtitle_lang_none_disabled => '無（停用）';

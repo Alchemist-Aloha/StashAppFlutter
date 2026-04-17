@@ -1072,6 +1072,14 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settings_playback_seek_double_tap_label => 'Doppeltippen';
 
   @override
+  String get settings_playback_gravity_orientation =>
+      'Schwerkraftgesteuerte Ausrichtung';
+
+  @override
+  String get settings_playback_gravity_orientation_subtitle =>
+      'Erlaube die Rotation zwischen passenden Ausrichtungen mithilfe des Gerätesensors (z. B. Landschaft links/rechts).';
+
+  @override
   String get settings_playback_subtitle_lang_none_disabled =>
       'Keine (Deaktiviert)';
 

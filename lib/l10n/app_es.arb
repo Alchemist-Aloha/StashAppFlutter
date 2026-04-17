@@ -528,5 +528,7 @@
   "tags_search_placeholder": "Buscar etiquetas...",
   "scenes_duration_short": "< 5 min.",
   "scenes_duration_medium": "5-20 min.",
-  "scenes_duration_long": "> 20 min."
+  "scenes_duration_long": "> 20 min.",
+  "settings_playback_gravity_orientation": "Orientación controlada por la gravedad",
+  "settings_playback_gravity_orientation_subtitle": "Permitir rotar entre orientaciones coincidentes usando el sensor del dispositivo (p. ej., girar el paisaje izquierda/derecha)."
 }

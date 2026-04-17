@@ -1078,6 +1078,14 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settings_playback_seek_double_tap_label => 'Double-appui';
 
   @override
+  String get settings_playback_gravity_orientation =>
+      'Orientation contrôlée par la gravité';
+
+  @override
+  String get settings_playback_gravity_orientation_subtitle =>
+      'Permettre la rotation entre orientations correspondantes à l\'aide du capteur de l\'appareil (par ex. basculer paysage gauche/droite).';
+
+  @override
   String get settings_playback_subtitle_lang_none_disabled =>
       'Aucun (Désactivé)';
 

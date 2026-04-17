@@ -528,5 +528,7 @@
   "tags_search_placeholder": "タグを検索...",
   "scenes_duration_short": "< 5分",
   "scenes_duration_medium": "5-20分",
-  "scenes_duration_long": "> 20分"
+  "scenes_duration_long": "> 20分",
+  "settings_playback_gravity_orientation": "重力制御の画面向き",
+  "settings_playback_gravity_orientation_subtitle": "デバイスのセンサーを使って一致する向きに回転できるようにします（例：左右の横向きに反転）。"
 }

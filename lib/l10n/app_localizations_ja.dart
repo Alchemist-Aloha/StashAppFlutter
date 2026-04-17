@@ -1025,6 +1025,13 @@ class AppLocalizationsJa extends AppLocalizations {
   String get settings_playback_seek_double_tap_label => 'ダブルタップ';
 
   @override
+  String get settings_playback_gravity_orientation => '重力制御の画面向き';
+
+  @override
+  String get settings_playback_gravity_orientation_subtitle =>
+      'デバイスのセンサーを使って一致する向きに回転できるようにします（例：左右の横向きに反転）。';
+
+  @override
   String get settings_playback_subtitle_lang_none_disabled => 'なし（無効）';
 
   @override

@@ -528,5 +528,7 @@
   "tags_search_placeholder": "搜索标签...",
   "scenes_duration_short": "< 5分钟",
   "scenes_duration_medium": "5-20分钟",
-  "scenes_duration_long": "> 20分钟"
+  "scenes_duration_long": "> 20分钟",
+  "settings_playback_gravity_orientation": "重力控制的方向",
+  "settings_playback_gravity_orientation_subtitle": "允许使用设备传感器在匹配的方向之间旋转（例如：左右翻转横向）。"
 }

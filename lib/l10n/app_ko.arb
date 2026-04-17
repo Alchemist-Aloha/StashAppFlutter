@@ -528,5 +528,7 @@
   "tags_search_placeholder": "태그 검색...",
   "scenes_duration_short": "< 5분",
   "scenes_duration_medium": "5-20분",
-  "scenes_duration_long": "> 20분"
+  "scenes_duration_long": "> 20분",
+  "settings_playback_gravity_orientation": "중력 제어 화면 방향",
+  "settings_playback_gravity_orientation_subtitle": "기기 센서를 사용하여 일치하는 방향으로 회전하도록 허용합니다(예: 좌/우 가로 방향 전환)."
 }

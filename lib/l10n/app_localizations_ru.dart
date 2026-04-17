@@ -1066,6 +1066,14 @@ class AppLocalizationsRu extends AppLocalizations {
   String get settings_playback_seek_double_tap_label => 'Двойное нажатие';
 
   @override
+  String get settings_playback_gravity_orientation =>
+      'Ориентация, управляемая гравитацией';
+
+  @override
+  String get settings_playback_gravity_orientation_subtitle =>
+      'Разрешить поворот между совпадающими ориентациями с помощью датчика устройства (например, переворачивать альбомную ориентацию влево/вправо).';
+
+  @override
   String get settings_playback_subtitle_lang_none_disabled => 'Нет (Отключено)';
 
   @override

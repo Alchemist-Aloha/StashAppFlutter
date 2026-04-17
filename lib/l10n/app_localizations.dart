@@ -2022,6 +2022,18 @@ abstract class AppLocalizations {
   /// **'Double-tap'**
   String get settings_playback_seek_double_tap_label;
 
+  /// No description provided for @settings_playback_gravity_orientation.
+  ///
+  /// In en, this message translates to:
+  /// **'Gravity-controlled orientation'**
+  String get settings_playback_gravity_orientation;
+
+  /// No description provided for @settings_playback_gravity_orientation_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow rotating between matching orientations using the device sensor (e.g. flipping landscape left/right).'**
+  String get settings_playback_gravity_orientation_subtitle;
+
   /// No description provided for @settings_playback_subtitle_lang_none_disabled.
   ///
   /// In en, this message translates to:

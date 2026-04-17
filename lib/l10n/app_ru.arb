@@ -528,5 +528,7 @@
   "tags_search_placeholder": "Поиск тегов...",
   "scenes_duration_short": "< 5 мин.",
   "scenes_duration_medium": "5-20 мин.",
-  "scenes_duration_long": "> 20 мин."
+  "scenes_duration_long": "> 20 мин.",
+  "settings_playback_gravity_orientation": "Ориентация, управляемая гравитацией",
+  "settings_playback_gravity_orientation_subtitle": "Разрешить поворот между совпадающими ориентациями с помощью датчика устройства (например, переворачивать альбомную ориентацию влево/вправо)."
 }

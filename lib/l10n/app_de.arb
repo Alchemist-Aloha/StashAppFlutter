@@ -528,5 +528,7 @@
   "tags_search_placeholder": "Tags durchsuchen...",
   "scenes_duration_short": "< 5 Min.",
   "scenes_duration_medium": "5-20 Min.",
-  "scenes_duration_long": "> 20 Min."
+  "scenes_duration_long": "> 20 Min.",
+  "settings_playback_gravity_orientation": "Schwerkraftgesteuerte Ausrichtung",
+  "settings_playback_gravity_orientation_subtitle": "Erlaube die Rotation zwischen passenden Ausrichtungen mithilfe des Gerätesensors (z. B. Landschaft links/rechts)."
 }

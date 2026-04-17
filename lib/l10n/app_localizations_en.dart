@@ -1056,6 +1056,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settings_playback_seek_double_tap_label => 'Double-tap';
 
   @override
+  String get settings_playback_gravity_orientation =>
+      'Gravity-controlled orientation';
+
+  @override
+  String get settings_playback_gravity_orientation_subtitle =>
+      'Allow rotating between matching orientations using the device sensor (e.g. flipping landscape left/right).';
+
+  @override
   String get settings_playback_subtitle_lang_none_disabled => 'None (Disabled)';
 
   @override

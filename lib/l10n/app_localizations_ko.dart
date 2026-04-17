@@ -1024,6 +1024,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get settings_playback_seek_double_tap_label => '두 번 탭';
 
   @override
+  String get settings_playback_gravity_orientation => '중력 제어 화면 방향';
+
+  @override
+  String get settings_playback_gravity_orientation_subtitle =>
+      '기기 센서를 사용하여 일치하는 방향으로 회전하도록 허용합니다(예: 좌/우 가로 방향 전환).';
+
+  @override
   String get settings_playback_subtitle_lang_none_disabled => '없음(비활성화)';
 
   @override
