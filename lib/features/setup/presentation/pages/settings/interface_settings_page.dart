@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:stash_app_flutter/core/data/preferences/shared_preferences_provider.dart';
+import 'package:stash_app_flutter/l10n/app_localizations.dart';
 import 'package:stash_app_flutter/core/presentation/theme/app_theme.dart';
 import 'package:stash_app_flutter/features/setup/presentation/providers/navigation_customization_provider.dart';
 import 'package:stash_app_flutter/features/setup/presentation/providers/gesture_settings_provider.dart';
@@ -675,6 +676,7 @@ class _InterfaceSettingsPageState extends ConsumerState<InterfaceSettingsPage> {
     required ValueChanged<int?> onChanged,
   }) {
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -684,7 +686,7 @@ class _InterfaceSettingsPageState extends ConsumerState<InterfaceSettingsPage> {
           value: value,
           dropdownColor: colorScheme.surface,
           items: [
-            const DropdownMenuItem<int?>(value: null, child: Text('Default')),
+            DropdownMenuItem<int?>(value: null, child: Text(l10n.common_default)),
             ...List.generate(10, (index) => index + 1).map(
               (i) => DropdownMenuItem<int?>(value: i, child: Text(i.toString())),
             ),

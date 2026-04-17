@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stash_app_flutter/core/presentation/theme/app_theme.dart';
+import 'package:stash_app_flutter/l10n/app_localizations.dart';
 import 'package:stash_app_flutter/core/presentation/theme/theme_mode_provider.dart';
 import 'package:stash_app_flutter/core/presentation/theme/theme_color_provider.dart';
 import 'package:stash_app_flutter/core/presentation/theme/true_black_provider.dart';
@@ -167,6 +168,7 @@ class _AppearanceSettingsPageState
 
   Widget _buildColorSelector() {
     final isCustom = _forceShowCustom || !_presetColors.contains(_seedColor);
+    final l10n = AppLocalizations.of(context)!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -184,11 +186,11 @@ class _AppearanceSettingsPageState
           TextField(
             controller: _customHexController,
             focusNode: _customHexFocusNode,
-            decoration: const InputDecoration(
-              labelText: 'Custom Hex Color',
+            decoration: InputDecoration(
+              labelText: l10n.settings_appearance_custom_hex,
               hintText: 'FF0F766E',
               prefixText: '#',
-              helperText: 'Enter an 8-digit ARGB hex code',
+              helperText: l10n.settings_appearance_custom_hex_helper,
             ),
             maxLength: 8,
             onChanged: (value) {

@@ -228,6 +228,12 @@ abstract class AppLocalizations {
   /// **'View all'**
   String get common_view_all;
 
+  /// No description provided for @common_default.
+  ///
+  /// In en, this message translates to:
+  /// **'Default'**
+  String get common_default;
+
   /// No description provided for @common_later.
   ///
   /// In en, this message translates to:
@@ -407,6 +413,906 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Error: {message}'**
   String common_error(String message);
+
+  /// No description provided for @settings_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settings_title;
+
+  /// No description provided for @settings_customize.
+  ///
+  /// In en, this message translates to:
+  /// **'Customize StashFlow'**
+  String get settings_customize;
+
+  /// No description provided for @settings_customize_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tune playback, appearance, layout, and support tools from one place.'**
+  String get settings_customize_subtitle;
+
+  /// No description provided for @settings_core_section.
+  ///
+  /// In en, this message translates to:
+  /// **'Core settings'**
+  String get settings_core_section;
+
+  /// No description provided for @settings_core_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Most-used configuration pages'**
+  String get settings_core_subtitle;
+
+  /// No description provided for @settings_server.
+  ///
+  /// In en, this message translates to:
+  /// **'Server'**
+  String get settings_server;
+
+  /// No description provided for @settings_server_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection and API configuration'**
+  String get settings_server_subtitle;
+
+  /// No description provided for @settings_playback.
+  ///
+  /// In en, this message translates to:
+  /// **'Playback'**
+  String get settings_playback;
+
+  /// No description provided for @settings_playback_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Player behavior and interactions'**
+  String get settings_playback_subtitle;
+
+  /// No description provided for @settings_keyboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Keyboard'**
+  String get settings_keyboard;
+
+  /// No description provided for @settings_keyboard_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Customizable shortcuts and hotkeys'**
+  String get settings_keyboard_subtitle;
+
+  /// No description provided for @settings_appearance.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get settings_appearance;
+
+  /// No description provided for @settings_appearance_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme and colors'**
+  String get settings_appearance_subtitle;
+
+  /// No description provided for @settings_interface.
+  ///
+  /// In en, this message translates to:
+  /// **'Interface'**
+  String get settings_interface;
+
+  /// No description provided for @settings_interface_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Navigation and layout defaults'**
+  String get settings_interface_subtitle;
+
+  /// No description provided for @settings_support.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get settings_support;
+
+  /// No description provided for @settings_support_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Diagnostics and about'**
+  String get settings_support_subtitle;
+
+  /// No description provided for @settings_develop.
+  ///
+  /// In en, this message translates to:
+  /// **'Develop'**
+  String get settings_develop;
+
+  /// No description provided for @settings_develop_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced tools and overrides'**
+  String get settings_develop_subtitle;
+
+  /// No description provided for @settings_appearance_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance Settings'**
+  String get settings_appearance_title;
+
+  /// No description provided for @settings_appearance_theme_mode.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme Mode'**
+  String get settings_appearance_theme_mode;
+
+  /// No description provided for @settings_appearance_theme_mode_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose how the app follows brightness changes'**
+  String get settings_appearance_theme_mode_subtitle;
+
+  /// No description provided for @settings_appearance_theme_system.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get settings_appearance_theme_system;
+
+  /// No description provided for @settings_appearance_theme_light.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get settings_appearance_theme_light;
+
+  /// No description provided for @settings_appearance_theme_dark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get settings_appearance_theme_dark;
+
+  /// No description provided for @settings_appearance_primary_color.
+  ///
+  /// In en, this message translates to:
+  /// **'Primary Color'**
+  String get settings_appearance_primary_color;
+
+  /// No description provided for @settings_appearance_primary_color_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a seed color for the Material 3 palette'**
+  String get settings_appearance_primary_color_subtitle;
+
+  /// No description provided for @settings_appearance_advanced_theming.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced Theming'**
+  String get settings_appearance_advanced_theming;
+
+  /// No description provided for @settings_appearance_advanced_theming_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Optimizations for specific screen types'**
+  String get settings_appearance_advanced_theming_subtitle;
+
+  /// No description provided for @settings_appearance_true_black.
+  ///
+  /// In en, this message translates to:
+  /// **'True Black (AMOLED)'**
+  String get settings_appearance_true_black;
+
+  /// No description provided for @settings_appearance_true_black_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Use pure black backgrounds in dark mode to save battery on OLED screens'**
+  String get settings_appearance_true_black_subtitle;
+
+  /// No description provided for @settings_appearance_custom_hex.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom Hex Color'**
+  String get settings_appearance_custom_hex;
+
+  /// No description provided for @settings_appearance_custom_hex_helper.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter an 8-digit ARGB hex code'**
+  String get settings_appearance_custom_hex_helper;
+
+  /// No description provided for @settings_interface_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Interface Settings'**
+  String get settings_interface_title;
+
+  /// No description provided for @settings_interface_language.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get settings_interface_language;
+
+  /// No description provided for @settings_interface_language_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Overwrite the default system language'**
+  String get settings_interface_language_subtitle;
+
+  /// No description provided for @settings_interface_app_language.
+  ///
+  /// In en, this message translates to:
+  /// **'App Language'**
+  String get settings_interface_app_language;
+
+  /// No description provided for @settings_interface_navigation.
+  ///
+  /// In en, this message translates to:
+  /// **'Navigation'**
+  String get settings_interface_navigation;
+
+  /// No description provided for @settings_interface_navigation_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Visibility of global navigation shortcuts'**
+  String get settings_interface_navigation_subtitle;
+
+  /// No description provided for @settings_interface_show_random.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Random Navigation Buttons'**
+  String get settings_interface_show_random;
+
+  /// No description provided for @settings_interface_show_random_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable or disable the floating casino buttons across list and details pages'**
+  String get settings_interface_show_random_subtitle;
+
+  /// No description provided for @settings_interface_shake_random.
+  ///
+  /// In en, this message translates to:
+  /// **'Shake to Discover'**
+  String get settings_interface_shake_random;
+
+  /// No description provided for @settings_interface_shake_random_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Shake your device to jump to a random item in the current tab'**
+  String get settings_interface_shake_random_subtitle;
+
+  /// No description provided for @settings_interface_show_edit.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Edit Button'**
+  String get settings_interface_show_edit;
+
+  /// No description provided for @settings_interface_show_edit_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable or disable the edit button on the scene details page'**
+  String get settings_interface_show_edit_subtitle;
+
+  /// No description provided for @settings_interface_customize_tabs.
+  ///
+  /// In en, this message translates to:
+  /// **'Customize Tabs'**
+  String get settings_interface_customize_tabs;
+
+  /// No description provided for @settings_interface_customize_tabs_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reorder or hide navigation menu items'**
+  String get settings_interface_customize_tabs_subtitle;
+
+  /// No description provided for @settings_interface_scenes_layout.
+  ///
+  /// In en, this message translates to:
+  /// **'Scenes Layout'**
+  String get settings_interface_scenes_layout;
+
+  /// No description provided for @settings_interface_scenes_layout_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Default browsing mode for scenes'**
+  String get settings_interface_scenes_layout_subtitle;
+
+  /// No description provided for @settings_interface_galleries_layout.
+  ///
+  /// In en, this message translates to:
+  /// **'Galleries Layout'**
+  String get settings_interface_galleries_layout;
+
+  /// No description provided for @settings_interface_galleries_layout_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Default browsing mode for galleries'**
+  String get settings_interface_galleries_layout_subtitle;
+
+  /// No description provided for @settings_interface_layout_default.
+  ///
+  /// In en, this message translates to:
+  /// **'Default Layout'**
+  String get settings_interface_layout_default;
+
+  /// No description provided for @settings_interface_layout_default_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the default layout for the page'**
+  String get settings_interface_layout_default_desc;
+
+  /// No description provided for @settings_interface_layout_list.
+  ///
+  /// In en, this message translates to:
+  /// **'List'**
+  String get settings_interface_layout_list;
+
+  /// No description provided for @settings_interface_layout_grid.
+  ///
+  /// In en, this message translates to:
+  /// **'Grid'**
+  String get settings_interface_layout_grid;
+
+  /// No description provided for @settings_interface_layout_tiktok.
+  ///
+  /// In en, this message translates to:
+  /// **'Infinite Scroll'**
+  String get settings_interface_layout_tiktok;
+
+  /// No description provided for @settings_interface_grid_columns.
+  ///
+  /// In en, this message translates to:
+  /// **'Grid Columns'**
+  String get settings_interface_grid_columns;
+
+  /// No description provided for @settings_interface_image_viewer.
+  ///
+  /// In en, this message translates to:
+  /// **'Image Viewer'**
+  String get settings_interface_image_viewer;
+
+  /// No description provided for @settings_interface_image_viewer_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Configure fullscreen image browsing behavior'**
+  String get settings_interface_image_viewer_subtitle;
+
+  /// No description provided for @settings_interface_swipe_direction.
+  ///
+  /// In en, this message translates to:
+  /// **'Fullscreen Swipe Direction'**
+  String get settings_interface_swipe_direction;
+
+  /// No description provided for @settings_interface_swipe_direction_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose how images advance in fullscreen mode'**
+  String get settings_interface_swipe_direction_desc;
+
+  /// No description provided for @settings_interface_swipe_vertical.
+  ///
+  /// In en, this message translates to:
+  /// **'Vertical'**
+  String get settings_interface_swipe_vertical;
+
+  /// No description provided for @settings_interface_swipe_horizontal.
+  ///
+  /// In en, this message translates to:
+  /// **'Horizontal'**
+  String get settings_interface_swipe_horizontal;
+
+  /// No description provided for @settings_interface_waterfall_columns.
+  ///
+  /// In en, this message translates to:
+  /// **'Waterfall Grid Columns'**
+  String get settings_interface_waterfall_columns;
+
+  /// No description provided for @settings_interface_performer_layouts.
+  ///
+  /// In en, this message translates to:
+  /// **'Performer Layouts'**
+  String get settings_interface_performer_layouts;
+
+  /// No description provided for @settings_interface_performer_layouts_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Media and gallery defaults for performers'**
+  String get settings_interface_performer_layouts_subtitle;
+
+  /// No description provided for @settings_interface_studio_layouts.
+  ///
+  /// In en, this message translates to:
+  /// **'Studio Layouts'**
+  String get settings_interface_studio_layouts;
+
+  /// No description provided for @settings_interface_studio_layouts_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Media and gallery defaults for studios'**
+  String get settings_interface_studio_layouts_subtitle;
+
+  /// No description provided for @settings_interface_tag_layouts.
+  ///
+  /// In en, this message translates to:
+  /// **'Tag Layouts'**
+  String get settings_interface_tag_layouts;
+
+  /// No description provided for @settings_interface_tag_layouts_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Media and gallery defaults for tags'**
+  String get settings_interface_tag_layouts_subtitle;
+
+  /// No description provided for @settings_interface_media_layout.
+  ///
+  /// In en, this message translates to:
+  /// **'Media Layout'**
+  String get settings_interface_media_layout;
+
+  /// No description provided for @settings_interface_media_layout_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Layout for Media page'**
+  String get settings_interface_media_layout_subtitle;
+
+  /// No description provided for @settings_interface_galleries_layout_item.
+  ///
+  /// In en, this message translates to:
+  /// **'Galleries Layout'**
+  String get settings_interface_galleries_layout_item;
+
+  /// No description provided for @settings_interface_galleries_layout_subtitle_item.
+  ///
+  /// In en, this message translates to:
+  /// **'Layout for Galleries page'**
+  String get settings_interface_galleries_layout_subtitle_item;
+
+  /// No description provided for @settings_server_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Server Settings'**
+  String get settings_server_title;
+
+  /// No description provided for @settings_server_status.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection Status'**
+  String get settings_server_status;
+
+  /// No description provided for @settings_server_status_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Live connectivity against the configured server'**
+  String get settings_server_status_subtitle;
+
+  /// No description provided for @settings_server_details.
+  ///
+  /// In en, this message translates to:
+  /// **'Server Details'**
+  String get settings_server_details;
+
+  /// No description provided for @settings_server_details_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Configure endpoint and authentication method'**
+  String get settings_server_details_subtitle;
+
+  /// No description provided for @settings_server_url.
+  ///
+  /// In en, this message translates to:
+  /// **'GraphQL server URL'**
+  String get settings_server_url;
+
+  /// No description provided for @settings_server_url_helper.
+  ///
+  /// In en, this message translates to:
+  /// **'Example format: http(s)://host:port/graphql.'**
+  String get settings_server_url_helper;
+
+  /// No description provided for @settings_server_auth_method.
+  ///
+  /// In en, this message translates to:
+  /// **'Authentication Method'**
+  String get settings_server_auth_method;
+
+  /// No description provided for @settings_server_auth_apikey.
+  ///
+  /// In en, this message translates to:
+  /// **'API Key'**
+  String get settings_server_auth_apikey;
+
+  /// No description provided for @settings_server_auth_password.
+  ///
+  /// In en, this message translates to:
+  /// **'Username + Password'**
+  String get settings_server_auth_password;
+
+  /// No description provided for @settings_server_auth_password_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended: use your Stash username/password session.'**
+  String get settings_server_auth_password_desc;
+
+  /// No description provided for @settings_server_auth_apikey_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Use API key for static-token authentication.'**
+  String get settings_server_auth_apikey_desc;
+
+  /// No description provided for @settings_server_username.
+  ///
+  /// In en, this message translates to:
+  /// **'Username'**
+  String get settings_server_username;
+
+  /// No description provided for @settings_server_password.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get settings_server_password;
+
+  /// No description provided for @settings_server_login_test.
+  ///
+  /// In en, this message translates to:
+  /// **'Login & Test'**
+  String get settings_server_login_test;
+
+  /// No description provided for @settings_server_test.
+  ///
+  /// In en, this message translates to:
+  /// **'Test Connection'**
+  String get settings_server_test;
+
+  /// No description provided for @settings_server_logout.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get settings_server_logout;
+
+  /// No description provided for @settings_server_clear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Settings'**
+  String get settings_server_clear;
+
+  /// No description provided for @settings_server_connected.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected (Stash {version})'**
+  String settings_server_connected(String version);
+
+  /// No description provided for @settings_server_checking.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking connection...'**
+  String get settings_server_checking;
+
+  /// No description provided for @settings_server_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed: {error}'**
+  String settings_server_failed(String error);
+
+  /// No description provided for @settings_server_invalid_url.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid server URL'**
+  String get settings_server_invalid_url;
+
+  /// No description provided for @settings_server_resolve_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not resolve server URL. Check host, port, and credentials.'**
+  String get settings_server_resolve_error;
+
+  /// No description provided for @settings_server_logout_confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Logged out and cookies cleared.'**
+  String get settings_server_logout_confirm;
+
+  /// No description provided for @settings_playback_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Playback Settings'**
+  String get settings_playback_title;
+
+  /// No description provided for @settings_playback_behavior.
+  ///
+  /// In en, this message translates to:
+  /// **'Playback behavior'**
+  String get settings_playback_behavior;
+
+  /// No description provided for @settings_playback_behavior_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Default playback and background handling'**
+  String get settings_playback_behavior_subtitle;
+
+  /// No description provided for @settings_playback_prefer_streams.
+  ///
+  /// In en, this message translates to:
+  /// **'Prefer sceneStreams first'**
+  String get settings_playback_prefer_streams;
+
+  /// No description provided for @settings_playback_prefer_streams_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'When off, playback directly uses paths.stream'**
+  String get settings_playback_prefer_streams_subtitle;
+
+  /// No description provided for @settings_playback_autoplay.
+  ///
+  /// In en, this message translates to:
+  /// **'Autoplay Next Scene'**
+  String get settings_playback_autoplay;
+
+  /// No description provided for @settings_playback_autoplay_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatically play the next scene when current playback ends'**
+  String get settings_playback_autoplay_subtitle;
+
+  /// No description provided for @settings_playback_background.
+  ///
+  /// In en, this message translates to:
+  /// **'Background Playback'**
+  String get settings_playback_background;
+
+  /// No description provided for @settings_playback_background_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep video audio playing when app is backgrounded'**
+  String get settings_playback_background_subtitle;
+
+  /// No description provided for @settings_playback_pip.
+  ///
+  /// In en, this message translates to:
+  /// **'Native Picture-in-Picture'**
+  String get settings_playback_pip;
+
+  /// No description provided for @settings_playback_pip_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Android PiP button and auto-enter on background'**
+  String get settings_playback_pip_subtitle;
+
+  /// No description provided for @settings_playback_subtitles.
+  ///
+  /// In en, this message translates to:
+  /// **'Subtitle settings'**
+  String get settings_playback_subtitles;
+
+  /// No description provided for @settings_playback_subtitles_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic loading and appearance'**
+  String get settings_playback_subtitles_subtitle;
+
+  /// No description provided for @settings_playback_subtitle_lang.
+  ///
+  /// In en, this message translates to:
+  /// **'Default Subtitle Language'**
+  String get settings_playback_subtitle_lang;
+
+  /// No description provided for @settings_playback_subtitle_lang_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-load if available'**
+  String get settings_playback_subtitle_lang_subtitle;
+
+  /// No description provided for @settings_playback_subtitle_size.
+  ///
+  /// In en, this message translates to:
+  /// **'Subtitle Font Size'**
+  String get settings_playback_subtitle_size;
+
+  /// No description provided for @settings_playback_subtitle_pos.
+  ///
+  /// In en, this message translates to:
+  /// **'Subtitle Vertical Position'**
+  String get settings_playback_subtitle_pos;
+
+  /// No description provided for @settings_playback_subtitle_pos_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}% from bottom'**
+  String settings_playback_subtitle_pos_desc(String percent);
+
+  /// No description provided for @settings_playback_subtitle_align.
+  ///
+  /// In en, this message translates to:
+  /// **'Subtitle Text Alignment'**
+  String get settings_playback_subtitle_align;
+
+  /// No description provided for @settings_playback_subtitle_align_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Alignment for multiline subtitles'**
+  String get settings_playback_subtitle_align_subtitle;
+
+  /// No description provided for @settings_playback_seek.
+  ///
+  /// In en, this message translates to:
+  /// **'Seek interaction'**
+  String get settings_playback_seek;
+
+  /// No description provided for @settings_playback_seek_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose how scrubbing works during playback'**
+  String get settings_playback_seek_subtitle;
+
+  /// No description provided for @settings_playback_seek_double_tap.
+  ///
+  /// In en, this message translates to:
+  /// **'Double-tap left/right to seek 10s'**
+  String get settings_playback_seek_double_tap;
+
+  /// No description provided for @settings_playback_seek_drag.
+  ///
+  /// In en, this message translates to:
+  /// **'Drag the timeline to seek'**
+  String get settings_playback_seek_drag;
+
+  /// No description provided for @settings_playback_seek_drag_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Drag'**
+  String get settings_playback_seek_drag_label;
+
+  /// No description provided for @settings_playback_seek_double_tap_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Double-tap'**
+  String get settings_playback_seek_double_tap_label;
+
+  /// No description provided for @settings_support_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get settings_support_title;
+
+  /// No description provided for @settings_support_diagnostics.
+  ///
+  /// In en, this message translates to:
+  /// **'Diagnostics and project info'**
+  String get settings_support_diagnostics;
+
+  /// No description provided for @settings_support_diagnostics_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open runtime logs or jump to the repository when you need help.'**
+  String get settings_support_diagnostics_subtitle;
+
+  /// No description provided for @settings_support_update_available.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Available'**
+  String get settings_support_update_available;
+
+  /// No description provided for @settings_support_update_available_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A newer version is available on GitHub'**
+  String get settings_support_update_available_subtitle;
+
+  /// No description provided for @settings_support_update_to.
+  ///
+  /// In en, this message translates to:
+  /// **'Update to {version}'**
+  String settings_support_update_to(String version);
+
+  /// No description provided for @settings_support_update_to_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New features and improvements are waiting for you.'**
+  String get settings_support_update_to_subtitle;
+
+  /// No description provided for @settings_support_about.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get settings_support_about;
+
+  /// No description provided for @settings_support_about_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Project and source information'**
+  String get settings_support_about_subtitle;
+
+  /// No description provided for @settings_support_version.
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
+  String get settings_support_version;
+
+  /// No description provided for @settings_support_version_loading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading version info...'**
+  String get settings_support_version_loading;
+
+  /// No description provided for @settings_support_version_unavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Version info unavailable'**
+  String get settings_support_version_unavailable;
+
+  /// No description provided for @settings_support_github.
+  ///
+  /// In en, this message translates to:
+  /// **'GitHub Repository'**
+  String get settings_support_github;
+
+  /// No description provided for @settings_support_github_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'View source code and report issues'**
+  String get settings_support_github_subtitle;
+
+  /// No description provided for @settings_support_github_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open GitHub link'**
+  String get settings_support_github_error;
+
+  /// No description provided for @settings_develop_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Develop'**
+  String get settings_develop_title;
+
+  /// No description provided for @settings_develop_diagnostics.
+  ///
+  /// In en, this message translates to:
+  /// **'Diagnostic Tools'**
+  String get settings_develop_diagnostics;
+
+  /// No description provided for @settings_develop_diagnostics_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Troubleshooting and performance'**
+  String get settings_develop_diagnostics_subtitle;
+
+  /// No description provided for @settings_develop_video_debug.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Video Debug Info'**
+  String get settings_develop_video_debug;
+
+  /// No description provided for @settings_develop_video_debug_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Display technical playback details as an overlay on the video player.'**
+  String get settings_develop_video_debug_subtitle;
+
+  /// No description provided for @settings_develop_log_viewer.
+  ///
+  /// In en, this message translates to:
+  /// **'Debug Log Viewer'**
+  String get settings_develop_log_viewer;
+
+  /// No description provided for @settings_develop_log_viewer_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open a live view of in-app logs.'**
+  String get settings_develop_log_viewer_subtitle;
+
+  /// No description provided for @settings_develop_web_overrides.
+  ///
+  /// In en, this message translates to:
+  /// **'Web Overrides'**
+  String get settings_develop_web_overrides;
+
+  /// No description provided for @settings_develop_web_overrides_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced flags for web platform'**
+  String get settings_develop_web_overrides_subtitle;
+
+  /// No description provided for @settings_develop_web_auth.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow Password Login on Web'**
+  String get settings_develop_web_auth;
+
+  /// No description provided for @settings_develop_web_auth_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Overrides the native-only restriction and forces the Username + Password auth method to be visible on Flutter Web.'**
+  String get settings_develop_web_auth_subtitle;
 }
 
 class _AppLocalizationsDelegate

@@ -8,6 +8,7 @@ import 'package:stash_app_flutter/core/data/graphql/graphql_client.dart';
 import 'package:stash_app_flutter/core/data/graphql/media_headers_provider.dart';
 import 'package:stash_app_flutter/core/data/preferences/secure_storage_provider.dart';
 import 'package:stash_app_flutter/core/data/preferences/shared_preferences_provider.dart';
+import 'package:stash_app_flutter/l10n/app_localizations.dart';
 import 'package:stash_app_flutter/core/presentation/theme/app_theme.dart';
 import 'package:stash_app_flutter/features/galleries/presentation/providers/gallery_details_provider.dart';
 import 'package:stash_app_flutter/features/galleries/presentation/providers/gallery_list_provider.dart';
@@ -571,6 +572,7 @@ class _ServerSettingsPageState extends ConsumerState<ServerSettingsPage> {
 
   Widget _buildConnectionStatusBody() {
     final statusInfo = ref.watch(connectionStatusProvider);
+    final l10n = AppLocalizations.of(context)!;
     return statusInfo.when(
       data: (version) => Row(
         children: [
@@ -581,7 +583,7 @@ class _ServerSettingsPageState extends ConsumerState<ServerSettingsPage> {
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              'Connected (Stash $version)',
+              l10n.settings_server_connected(version),
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                 color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w600,
@@ -590,15 +592,15 @@ class _ServerSettingsPageState extends ConsumerState<ServerSettingsPage> {
           ),
         ],
       ),
-      loading: () => const Row(
+      loading: () => Row(
         children: [
-          SizedBox(
+          const SizedBox(
             width: 18,
             height: 18,
             child: CircularProgressIndicator(strokeWidth: 2),
           ),
-          SizedBox(width: 12),
-          Expanded(child: Text('Checking connection...')),
+          const SizedBox(width: 12),
+          Expanded(child: Text(l10n.settings_server_checking)),
         ],
       ),
       error: (error, stack) => Row(
@@ -607,7 +609,7 @@ class _ServerSettingsPageState extends ConsumerState<ServerSettingsPage> {
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              'Failed: $error',
+              l10n.settings_server_failed(error.toString()),
               style: TextStyle(
                 color: Theme.of(context).colorScheme.error,
                 fontWeight: FontWeight.w600,
