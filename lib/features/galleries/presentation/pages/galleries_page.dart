@@ -319,6 +319,7 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
           children: [
             IconButton(
               icon: const Icon(Icons.filter_list),
+              tooltip: 'Filter options',
               onPressed: _showFilterPanel,
             ),
             if (hasActiveFilters)

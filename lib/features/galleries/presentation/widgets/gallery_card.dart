@@ -213,6 +213,7 @@ class GalleryCard extends ConsumerWidget {
                 IconButton(
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
+                  tooltip: 'More options',
                   onPressed: () => _showRating(context, ref),
                   icon: const Icon(Icons.more_vert, size: 20),
                 ),
@@ -340,9 +341,12 @@ class GalleryCard extends ConsumerWidget {
                     ],
                   ),
                 ),
-                InkWell(
-                  onTap: () => _showRating(context, ref),
-                  child: const Icon(Icons.more_vert, size: 14),
+                IconButton(
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  tooltip: 'More options',
+                  onPressed: () => _showRating(context, ref),
+                  icon: const Icon(Icons.more_vert, size: 14),
                 ),
               ],
             ),

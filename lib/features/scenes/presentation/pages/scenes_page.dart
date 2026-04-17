@@ -383,6 +383,7 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
           children: [
             IconButton(
               icon: const Icon(Icons.filter_list),
+              tooltip: 'Filter options',
               onPressed: _showFilterPanel,
             ),
             if (hasActiveFilters)

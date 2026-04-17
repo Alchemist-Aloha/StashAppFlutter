@@ -1,3 +1,3 @@
-## 2025-02-28 - Tooltips for Dynamic State Toggles
-**Learning:** In Flutter, adding a `tooltip` to an `IconButton` automatically sets its semantic accessibility label for screen readers. For dynamic state toggles like password visibility (`_obscurePassword`), the tooltip must conditionally update its text (e.g., 'Show password' vs 'Hide password') to maintain accurate screen reader announcements matching the visual state.
-**Action:** When adding or reviewing tooltips on toggle buttons, always ensure the tooltip text dynamically reflects the active state rather than using a static label.
+## 2024-05-24 - [Semantic IconButtons]
+**Learning:** Adding a `tooltip` property to an `IconButton` in Flutter is a highly effective micro-UX improvement that serves a dual purpose: providing a visual hint on desktop/web hover, and serving as the semantic accessibility label (ARIA equivalent) for screen readers. Replacing empty `InkWell` + `Icon` combinations with `IconButton` makes this much easier.
+**Action:** Always prefer `IconButton` with a defined `tooltip` over wrapping an `Icon` in a gesture detector when semantic meaning is required for an icon-only action.
