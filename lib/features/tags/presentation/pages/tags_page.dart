@@ -6,6 +6,7 @@ import '../../../setup/presentation/providers/navigation_customization_provider.
 import '../../../../core/presentation/providers/layout_settings_provider.dart';
 
 import '../../../../core/presentation/widgets/list_page_scaffold.dart';
+import '../../../../core/utils/l10n_extensions.dart';
 import '../../../../core/presentation/theme/app_theme.dart';
 import '../../domain/entities/tag.dart';
 
@@ -65,15 +66,15 @@ class _TagsPageState extends ConsumerState<TagsPage> {
   String _sortLabel(_TagSortOption option) {
     switch (option) {
       case _TagSortOption.name:
-        return 'Name';
+        return context.l10n.sort_name;
       case _TagSortOption.sceneCount:
-        return 'Scene Count';
+        return context.l10n.sort_scene_count;
       case _TagSortOption.lastUpdated:
-        return 'Updated At';
+        return context.l10n.sort_updated_at;
       case _TagSortOption.createdAt:
-        return 'Created At';
+        return context.l10n.sort_created_at;
       case _TagSortOption.random:
-        return 'Random';
+        return context.l10n.sort_random;
     }
   }
 
@@ -115,12 +116,12 @@ class _TagsPageState extends ConsumerState<TagsPage> {
                           tempDescending = false;
                         });
                       },
-                      child: const Text('Reset'),
+                      child: Text(context.l10n.common_reset),
                     ),
                   ],
                 ),
                 const SizedBox(height: AppTheme.spacingMedium),
-                Text('Sort Method', style: context.textTheme.labelLarge),
+                Text(context.l10n.common_sort_method, style: context.textTheme.labelLarge),
                 const SizedBox(height: AppTheme.spacingSmall),
                 Wrap(
                   spacing: AppTheme.spacingSmall,
@@ -141,21 +142,21 @@ class _TagsPageState extends ConsumerState<TagsPage> {
                       .toList(),
                 ),
                 const SizedBox(height: AppTheme.spacingMedium),
-                Text('Direction', style: context.textTheme.labelLarge),
+                Text(context.l10n.common_direction, style: context.textTheme.labelLarge),
                 const SizedBox(height: AppTheme.spacingSmall),
                 SizedBox(
                   width: double.infinity,
                   child: SegmentedButton<bool>(
-                    segments: const [
+                    segments: [
                       ButtonSegment(
                         value: true,
-                        label: Text('Descending'),
-                        icon: Icon(Icons.arrow_downward),
+                        label: Text(context.l10n.common_descending),
+                        icon: const Icon(Icons.arrow_downward),
                       ),
                       ButtonSegment(
                         value: false,
-                        label: Text('Ascending'),
-                        icon: Icon(Icons.arrow_upward),
+                        label: Text(context.l10n.common_ascending),
+                        icon: const Icon(Icons.arrow_upward),
                       ),
                     ],
                     selected: {tempDescending},
@@ -182,7 +183,7 @@ class _TagsPageState extends ConsumerState<TagsPage> {
                         vertical: AppTheme.spacingMedium,
                       ),
                     ),
-                    child: const Text('Apply Sort'),
+                    child: Text(context.l10n.common_apply_sort),
                   ),
                 ),
                 const SizedBox(height: AppTheme.spacingSmall),
@@ -199,8 +200,8 @@ class _TagsPageState extends ConsumerState<TagsPage> {
                       if (context.mounted) {
                         Navigator.pop(context);
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Sort preferences saved as default'),
+                          SnackBar(
+                            content: Text(context.l10n.tags_sort_saved),
                           ),
                         );
                       }
@@ -210,7 +211,7 @@ class _TagsPageState extends ConsumerState<TagsPage> {
                         vertical: AppTheme.spacingMedium,
                       ),
                     ),
-                    child: const Text('Save as Default'),
+                    child: Text(context.l10n.common_save_default),
                   ),
                 ),
                 const SizedBox(height: AppTheme.spacingMedium),
@@ -248,7 +249,7 @@ class _TagsPageState extends ConsumerState<TagsPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Filter Tags',
+                      context.l10n.tags_filter_title,
                       style: context.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -259,7 +260,7 @@ class _TagsPageState extends ConsumerState<TagsPage> {
                           tempFavoritesOnly = false;
                         });
                       },
-                      child: const Text('Reset'),
+                      child: Text(context.l10n.common_reset),
                     ),
                   ],
                 ),
@@ -267,7 +268,7 @@ class _TagsPageState extends ConsumerState<TagsPage> {
                 SwitchListTile.adaptive(
                   value: tempFavoritesOnly,
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('Favorites only'),
+                  title: Text(context.l10n.common_favorites_only),
                   onChanged: (value) {
                     setModalState(() => tempFavoritesOnly = value);
                   },
@@ -289,7 +290,7 @@ class _TagsPageState extends ConsumerState<TagsPage> {
                         vertical: AppTheme.spacingMedium,
                       ),
                     ),
-                    child: const Text('Apply Filters'),
+                    child: Text(context.l10n.common_apply_filters),
                   ),
                 ),
                 const SizedBox(height: AppTheme.spacingSmall),
@@ -306,9 +307,9 @@ class _TagsPageState extends ConsumerState<TagsPage> {
                       if (context.mounted) {
                         Navigator.pop(context);
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
+                          SnackBar(
                             content: Text(
-                              'Filter preferences saved as default',
+                              context.l10n.tags_filter_saved,
                             ),
                           ),
                         );
@@ -319,7 +320,7 @@ class _TagsPageState extends ConsumerState<TagsPage> {
                         vertical: AppTheme.spacingMedium,
                       ),
                     ),
-                    child: const Text('Save as Default'),
+                    child: Text(context.l10n.common_save_default),
                   ),
                 ),
                 const SizedBox(height: AppTheme.spacingMedium),
@@ -339,8 +340,8 @@ class _TagsPageState extends ConsumerState<TagsPage> {
 
     if (randomTag == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('No tags available for random navigation'),
+        SnackBar(
+          content: Text(context.l10n.tags_no_random),
         ),
       );
       return;

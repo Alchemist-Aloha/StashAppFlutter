@@ -6,6 +6,55 @@
   "nav_studios": "Studios",
   "nav_tags": "Tags",
   "nav_galleries": "Galleries",
+  "nScenes": "{count, plural, =0{no scenes} =1{1 scene} other{{count} scenes}}",
+  "@nScenes": {
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "format": "compact"
+      }
+    }
+  },
+  "nPerformers": "{count, plural, =0{no performers} =1{1 performer} other{{count} performers}}",
+  "@nPerformers": {
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "format": "compact"
+      }
+    }
+  },
+  "common_reset": "Reset",
+  "common_apply": "Apply",
+  "common_save_default": "Save as Default",
+  "common_sort_method": "Sort Method",
+  "common_direction": "Direction",
+  "common_ascending": "Ascending",
+  "common_descending": "Descending",
+  "common_favorites_only": "Favorites only",
+  "common_apply_sort": "Apply Sort",
+  "common_apply_filters": "Apply Filters",
+  "common_view_all": "View all",
+  "common_later": "Later",
+  "common_update_now": "Update Now",
+  "common_configure_now": "Configure Now",
+  "studios_filter_title": "Filter Studios",
+  "studios_filter_saved": "Filter preferences saved as default",
+  "sort_name": "Name",
+  "sort_scene_count": "Scene Count",
+  "sort_rating": "Rating",
+  "sort_updated_at": "Updated At",
+  "sort_created_at": "Created At",
+  "sort_random": "Random",
+  "studios_sort_saved": "Sort preferences saved as default",
+  "studios_no_random": "No studios available for random navigation",
+  "tags_filter_title": "Filter Tags",
+  "tags_filter_saved": "Filter preferences saved as default",
+  "tags_sort_saved": "Sort preferences saved as default",
+  "tags_no_random": "No tags available for random navigation",
+  "scenes_no_random": "No scenes available for random navigation",
+  "performers_no_random": "No performers available for random navigation",
+  "galleries_no_random": "No galleries available for random navigation",
   "@appTitle": {
     "description": "The name of the application"
   },
