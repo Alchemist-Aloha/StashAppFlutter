@@ -9,6 +9,7 @@ import 'package:stash_app_flutter/features/setup/presentation/providers/scrape_c
 import 'package:stash_app_flutter/features/scenes/presentation/providers/scene_list_provider.dart';
 import 'package:stash_app_flutter/features/galleries/presentation/providers/gallery_list_provider.dart';
 import 'package:stash_app_flutter/core/presentation/providers/layout_settings_provider.dart';
+import 'package:stash_app_flutter/core/presentation/providers/app_language_provider.dart';
 import '../../widgets/settings_page_shell.dart';
 
 class InterfaceSettingsPage extends ConsumerStatefulWidget {
@@ -138,6 +139,34 @@ class _InterfaceSettingsPageState extends ConsumerState<InterfaceSettingsPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  SettingsSectionCard(
+                    title: 'Language',
+                    subtitle: 'Overwrite the default system language',
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text('App Language', style: TextStyle(fontSize: 16)),
+                            DropdownButton<String?>(
+                              value: ref.watch(appLanguageProvider)?.toString() ?? (ref.watch(sharedPreferencesProvider).getString(appLanguagePreferenceKey)),
+                              dropdownColor: colorScheme.surface,
+                              items: supportedLanguages.entries.map((entry) {
+                                return DropdownMenuItem<String?>(
+                                  value: entry.key,
+                                  child: Text(entry.value),
+                                );
+                              }).toList(),
+                              onChanged: (value) async {
+                                await ref.read(appLanguageProvider.notifier).setLanguage(value);
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: AppTheme.spacingLarge),
                   SettingsSectionCard(
                     title: 'Navigation',
                     subtitle: 'Visibility of global navigation shortcuts',
