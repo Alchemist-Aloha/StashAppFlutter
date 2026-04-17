@@ -262,6 +262,7 @@ class _ServerSettingsPageState extends ConsumerState<ServerSettingsPage> {
                             labelText: 'API key',
                             hintText: 'Paste ApiKey header value',
                             suffixIcon: IconButton(
+                              tooltip: 'Toggle API key visibility',
                               icon: Icon(
                                 _obscureApiKey
                                     ? Icons.visibility_off
