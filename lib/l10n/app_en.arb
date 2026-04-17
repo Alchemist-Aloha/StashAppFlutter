@@ -1,0 +1,15 @@
+{
+  "@@locale": "en",
+  "appTitle": "StashFlow",
+  "@appTitle": {
+    "description": "The name of the application"
+  },
+  "common_error": "Error: {message}",
+  "@common_error": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  }
+}
