@@ -412,6 +412,9 @@ class _ServerSettingsPageState extends ConsumerState<ServerSettingsPage> {
                               labelText: 'API key',
                               hintText: 'Paste ApiKey header value',
                               suffixIcon: IconButton(
+                                tooltip: _obscureApiKey
+                                    ? 'Show API key'
+                                    : 'Hide API key',
                                 icon: Icon(
                                   _obscureApiKey
                                       ? Icons.visibility_off
@@ -451,6 +454,9 @@ class _ServerSettingsPageState extends ConsumerState<ServerSettingsPage> {
                             decoration: InputDecoration(
                               labelText: 'Password',
                               suffixIcon: IconButton(
+                                tooltip: _obscurePassword
+                                    ? 'Show password'
+                                    : 'Hide password',
                                 icon: Icon(
                                   _obscurePassword
                                       ? Icons.visibility_off
