@@ -310,10 +310,91 @@ class AppLocalizationsRu extends AppLocalizations {
   String get common_disable_autoscroll => 'автопрокрутка выкл';
 
   @override
+  String get common_retry => 'Повторить';
+
+  @override
+  String get common_no_items => 'Элементы не найдены';
+
+  @override
+  String get common_none => 'Нет';
+
+  @override
+  String get common_any => 'Любой';
+
+  @override
+  String get common_name => 'Имя';
+
+  @override
+  String get common_date => 'Дата';
+
+  @override
+  String get common_rating => 'Рейтинг';
+
+  @override
+  String get common_image_count => 'Количество изображений';
+
+  @override
+  String get common_filepath => 'Путь к файлу';
+
+  @override
+  String get common_random => 'Случайно';
+
+  @override
+  String get common_no_media_found => 'Медиа не найдены';
+
+  @override
+  String common_not_found(String item) {
+    return '$item не найден';
+  }
+
+  @override
+  String get common_add_favorite => 'Добавить в избранное';
+
+  @override
+  String get common_remove_favorite => 'Удалить из избранного';
+
+  @override
   String get details_group => 'детали группы';
 
   @override
+  String get details_synopsis => 'Синопсис';
+
+  @override
+  String get details_media => 'Медиа';
+
+  @override
+  String get details_galleries => 'Галереи';
+
+  @override
+  String get details_tags => 'Теги';
+
+  @override
+  String get details_links => 'Ссылки';
+
+  @override
   String get details_scene_scrape => 'собрать метаданные';
+
+  @override
+  String get details_show_more => 'Показать больше';
+
+  @override
+  String get details_show_less => 'Показать меньше';
+
+  @override
+  String get details_more_from_studio => 'Еще от студии';
+
+  @override
+  String get details_o_count_incremented => 'Счет O увеличен';
+
+  @override
+  String details_failed_update_rating(String error) {
+    return 'Не удалось обновить рейтинг: $error';
+  }
+
+  @override
+  String details_failed_increment_o_count(String error) {
+    return 'Не удалось увеличить счет O: $error';
+  }
 
   @override
   String get details_scene_add_performer => 'добавить исполнителя';
@@ -326,6 +407,90 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get details_scene_remove_url => 'удалить URL';
+
+  @override
+  String get groups_title => 'Группы';
+
+  @override
+  String get groups_unnamed => 'Группа без имени';
+
+  @override
+  String get groups_untitled => 'Группа без названия';
+
+  @override
+  String get studios_title => 'Студии';
+
+  @override
+  String get studios_galleries_title => 'Галереи студии';
+
+  @override
+  String get studios_media_title => 'Медиа студии';
+
+  @override
+  String get studios_sort_title => 'Сортировать студии';
+
+  @override
+  String get galleries_title => 'Галереи';
+
+  @override
+  String get galleries_sort_title => 'Сортировать галереи';
+
+  @override
+  String get galleries_all_images => 'Все изображения';
+
+  @override
+  String get galleries_filter_title => 'Фильтр галерей';
+
+  @override
+  String get galleries_min_rating => 'Минимальный рейтинг';
+
+  @override
+  String get galleries_image_count => 'Количество изображений';
+
+  @override
+  String get galleries_organization => 'Организация';
+
+  @override
+  String get galleries_organized_only => 'Только организованные';
+
+  @override
+  String get performers_title => 'Исполнители';
+
+  @override
+  String get performers_sort_title => 'Сортировать исполнителей';
+
+  @override
+  String get performers_filter_title => 'Фильтр исполнителей';
+
+  @override
+  String get performers_galleries_title => 'Все галереи исполнителя';
+
+  @override
+  String get performers_media_title => 'Все медиа исполнителя';
+
+  @override
+  String get performers_gender => 'Пол';
+
+  @override
+  String get performers_gender_any => 'Любой';
+
+  @override
+  String get performers_gender_female => 'Женский';
+
+  @override
+  String get performers_gender_male => 'Мужской';
+
+  @override
+  String get performers_gender_trans_female => 'Транс-женщина';
+
+  @override
+  String get performers_gender_trans_male => 'Транс-мужчина';
+
+  @override
+  String get performers_gender_intersex => 'Интерсекс';
+
+  @override
+  String get performers_play_count => 'Количество воспроизведений';
 
   @override
   String get random_studio => 'случайная студия';
@@ -376,6 +541,70 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get settings_keyboard_subtitle => 'Настраиваемые сочетания клавиш';
+
+  @override
+  String get settings_keyboard_title => 'Горячие клавиши';
+
+  @override
+  String get settings_keyboard_reset_defaults => 'Сбросить настройки';
+
+  @override
+  String get settings_keyboard_not_bound => 'Не назначено';
+
+  @override
+  String get settings_keyboard_volume_up => 'Увеличить громкость';
+
+  @override
+  String get settings_keyboard_volume_down => 'Уменьшить громкость';
+
+  @override
+  String get settings_keyboard_toggle_mute => 'Вкл/выкл звук';
+
+  @override
+  String get settings_keyboard_toggle_fullscreen => 'Полноэкранный режим';
+
+  @override
+  String get settings_keyboard_next_scene => 'Следующая сцена';
+
+  @override
+  String get settings_keyboard_prev_scene => 'Предыдущая сцена';
+
+  @override
+  String get settings_keyboard_increase_speed => 'Увеличить скорость';
+
+  @override
+  String get settings_keyboard_decrease_speed => 'Уменьшить скорость';
+
+  @override
+  String get settings_keyboard_reset_speed => 'Сбросить скорость';
+
+  @override
+  String get settings_keyboard_close_player => 'Закрыть плеер';
+
+  @override
+  String get settings_keyboard_next_image => 'Следующее изображение';
+
+  @override
+  String get settings_keyboard_prev_image => 'Предыдущее изображение';
+
+  @override
+  String get settings_keyboard_go_back => 'Назад';
+
+  @override
+  String get settings_keyboard_play_pause_desc =>
+      'Переключение между воспроизведением и паузой';
+
+  @override
+  String get settings_keyboard_seek_forward_5_desc => 'Вперед на 5 секунд';
+
+  @override
+  String get settings_keyboard_seek_backward_5_desc => 'Назад на 5 секунд';
+
+  @override
+  String get settings_keyboard_seek_forward_10_desc => 'Вперед на 10 секунд';
+
+  @override
+  String get settings_keyboard_seek_backward_10_desc => 'Назад на 10 секунд';
 
   @override
   String get settings_appearance => 'Внешний вид';

@@ -303,10 +303,91 @@ class AppLocalizationsKo extends AppLocalizations {
   String get common_disable_autoscroll => '자동 스크롤 비활성화';
 
   @override
+  String get common_retry => '재시도';
+
+  @override
+  String get common_no_items => '항목을 찾을 수 없습니다';
+
+  @override
+  String get common_none => '없음';
+
+  @override
+  String get common_any => '모두';
+
+  @override
+  String get common_name => '이름';
+
+  @override
+  String get common_date => '날짜';
+
+  @override
+  String get common_rating => '평점';
+
+  @override
+  String get common_image_count => '이미지 수';
+
+  @override
+  String get common_filepath => '파일 경로';
+
+  @override
+  String get common_random => '무작위';
+
+  @override
+  String get common_no_media_found => '미디어를 찾을 수 없습니다';
+
+  @override
+  String common_not_found(String item) {
+    return '$item을(를) 찾을 수 없습니다';
+  }
+
+  @override
+  String get common_add_favorite => '즐겨찾기에 추가';
+
+  @override
+  String get common_remove_favorite => '즐겨찾기에서 삭제';
+
+  @override
   String get details_group => '그룹 상세 정보';
 
   @override
+  String get details_synopsis => '시놉시스';
+
+  @override
+  String get details_media => '미디어';
+
+  @override
+  String get details_galleries => '갤러리';
+
+  @override
+  String get details_tags => '태그';
+
+  @override
+  String get details_links => '링크';
+
+  @override
   String get details_scene_scrape => '메타데이터 스크래핑';
+
+  @override
+  String get details_show_more => '더 보기';
+
+  @override
+  String get details_show_less => '간략히 보기';
+
+  @override
+  String get details_more_from_studio => '스튜디오의 기타';
+
+  @override
+  String get details_o_count_incremented => 'O 수가 증가했습니다';
+
+  @override
+  String details_failed_update_rating(String error) {
+    return '평점 업데이트 실패: $error';
+  }
+
+  @override
+  String details_failed_increment_o_count(String error) {
+    return 'O 수 증가 실패: $error';
+  }
 
   @override
   String get details_scene_add_performer => '출연자 추가';
@@ -319,6 +400,90 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get details_scene_remove_url => 'URL 제거';
+
+  @override
+  String get groups_title => '그룹';
+
+  @override
+  String get groups_unnamed => '이름 없는 그룹';
+
+  @override
+  String get groups_untitled => '제목 없는 그룹';
+
+  @override
+  String get studios_title => '스튜디오';
+
+  @override
+  String get studios_galleries_title => '스튜디오 갤러리';
+
+  @override
+  String get studios_media_title => '스튜디오 미디어';
+
+  @override
+  String get studios_sort_title => '스튜디오 정렬';
+
+  @override
+  String get galleries_title => '갤러리';
+
+  @override
+  String get galleries_sort_title => '갤러리 정렬';
+
+  @override
+  String get galleries_all_images => '모든 이미지';
+
+  @override
+  String get galleries_filter_title => '갤러리 필터';
+
+  @override
+  String get galleries_min_rating => '최소 평점';
+
+  @override
+  String get galleries_image_count => '이미지 수';
+
+  @override
+  String get galleries_organization => '정리';
+
+  @override
+  String get galleries_organized_only => '정리된 항목만';
+
+  @override
+  String get performers_title => '출연자';
+
+  @override
+  String get performers_sort_title => '출연자 정렬';
+
+  @override
+  String get performers_filter_title => '출연자 필터';
+
+  @override
+  String get performers_galleries_title => '모든 출연자 갤러리';
+
+  @override
+  String get performers_media_title => '모든 출연자 미디어';
+
+  @override
+  String get performers_gender => '성별';
+
+  @override
+  String get performers_gender_any => '모두';
+
+  @override
+  String get performers_gender_female => '여성';
+
+  @override
+  String get performers_gender_male => '남성';
+
+  @override
+  String get performers_gender_trans_female => '트랜스 여성';
+
+  @override
+  String get performers_gender_trans_male => '트랜스 남성';
+
+  @override
+  String get performers_gender_intersex => '인터섹스';
+
+  @override
+  String get performers_play_count => '재생 횟수';
 
   @override
   String get random_studio => '랜덤 스튜디오';
@@ -368,6 +533,69 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get settings_keyboard_subtitle => '사용자 정의 가능한 단축키 및 핫키';
+
+  @override
+  String get settings_keyboard_title => '키보드 단축키';
+
+  @override
+  String get settings_keyboard_reset_defaults => '기본값으로 재설정';
+
+  @override
+  String get settings_keyboard_not_bound => '할당되지 않음';
+
+  @override
+  String get settings_keyboard_volume_up => '볼륨 높이기';
+
+  @override
+  String get settings_keyboard_volume_down => '볼륨 낮추기';
+
+  @override
+  String get settings_keyboard_toggle_mute => '음소거 전환';
+
+  @override
+  String get settings_keyboard_toggle_fullscreen => '전체 화면 전환';
+
+  @override
+  String get settings_keyboard_next_scene => '다음 장면';
+
+  @override
+  String get settings_keyboard_prev_scene => '이전 장면';
+
+  @override
+  String get settings_keyboard_increase_speed => '재생 속도 증가';
+
+  @override
+  String get settings_keyboard_decrease_speed => '재생 속도 감소';
+
+  @override
+  String get settings_keyboard_reset_speed => '재생 속도 재설정';
+
+  @override
+  String get settings_keyboard_close_player => '플레이어 닫기';
+
+  @override
+  String get settings_keyboard_next_image => '다음 이미지';
+
+  @override
+  String get settings_keyboard_prev_image => '이전 이미지';
+
+  @override
+  String get settings_keyboard_go_back => '뒤로 가기';
+
+  @override
+  String get settings_keyboard_play_pause_desc => '동영상 재생/일시중지 전환';
+
+  @override
+  String get settings_keyboard_seek_forward_5_desc => '5초 앞으로 이동';
+
+  @override
+  String get settings_keyboard_seek_backward_5_desc => '5초 뒤로 이동';
+
+  @override
+  String get settings_keyboard_seek_forward_10_desc => '10초 앞으로 이동';
+
+  @override
+  String get settings_keyboard_seek_backward_10_desc => '10초 뒤로 이동';
 
   @override
   String get settings_appearance => '모양';

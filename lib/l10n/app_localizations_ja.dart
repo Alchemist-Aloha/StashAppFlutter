@@ -305,10 +305,91 @@ class AppLocalizationsJa extends AppLocalizations {
   String get common_disable_autoscroll => '自動スクロール無効';
 
   @override
+  String get common_retry => '再試行';
+
+  @override
+  String get common_no_items => '項目が見つかりませんでした';
+
+  @override
+  String get common_none => 'なし';
+
+  @override
+  String get common_any => '任意';
+
+  @override
+  String get common_name => '名前';
+
+  @override
+  String get common_date => '日付';
+
+  @override
+  String get common_rating => '評価';
+
+  @override
+  String get common_image_count => '画像数';
+
+  @override
+  String get common_filepath => 'ファイルパス';
+
+  @override
+  String get common_random => 'ランダム';
+
+  @override
+  String get common_no_media_found => 'メディアが見つかりませんでした';
+
+  @override
+  String common_not_found(String item) {
+    return '$item が見つかりません';
+  }
+
+  @override
+  String get common_add_favorite => 'お気に入りに追加';
+
+  @override
+  String get common_remove_favorite => 'お気に入りから削除';
+
+  @override
   String get details_group => 'グループ詳細';
 
   @override
+  String get details_synopsis => 'あらすじ';
+
+  @override
+  String get details_media => 'メディア';
+
+  @override
+  String get details_galleries => 'ギャラリー';
+
+  @override
+  String get details_tags => 'タグ';
+
+  @override
+  String get details_links => 'リンク';
+
+  @override
   String get details_scene_scrape => 'メタデータ取得';
+
+  @override
+  String get details_show_more => 'もっと見る';
+
+  @override
+  String get details_show_less => '簡易表示';
+
+  @override
+  String get details_more_from_studio => 'スタジオのその他';
+
+  @override
+  String get details_o_count_incremented => 'Oカウントが増えました';
+
+  @override
+  String details_failed_update_rating(String error) {
+    return '評価の更新に失敗しました: $error';
+  }
+
+  @override
+  String details_failed_increment_o_count(String error) {
+    return 'Oカウントの増加に失敗しました: $error';
+  }
 
   @override
   String get details_scene_add_performer => '出演者を追加';
@@ -321,6 +402,90 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get details_scene_remove_url => 'URLを削除';
+
+  @override
+  String get groups_title => 'グループ';
+
+  @override
+  String get groups_unnamed => '名前なしグループ';
+
+  @override
+  String get groups_untitled => '無題のグループ';
+
+  @override
+  String get studios_title => 'スタジオ';
+
+  @override
+  String get studios_galleries_title => 'スタジオギャラリー';
+
+  @override
+  String get studios_media_title => 'スタジオメディア';
+
+  @override
+  String get studios_sort_title => 'スタジオを並べ替え';
+
+  @override
+  String get galleries_title => 'ギャラリー';
+
+  @override
+  String get galleries_sort_title => 'ギャラリーを並べ替え';
+
+  @override
+  String get galleries_all_images => 'すべての画像';
+
+  @override
+  String get galleries_filter_title => 'ギャラリーをフィルター';
+
+  @override
+  String get galleries_min_rating => '最小評価';
+
+  @override
+  String get galleries_image_count => '画像数';
+
+  @override
+  String get galleries_organization => '整理状態';
+
+  @override
+  String get galleries_organized_only => '整理済みのみ';
+
+  @override
+  String get performers_title => 'パフォーマー';
+
+  @override
+  String get performers_sort_title => 'パフォーマーを並べ替え';
+
+  @override
+  String get performers_filter_title => 'パフォーマーをフィルター';
+
+  @override
+  String get performers_galleries_title => 'すべてのパフォーマーギャラリー';
+
+  @override
+  String get performers_media_title => 'すべてのパフォーマーメディア';
+
+  @override
+  String get performers_gender => '性別';
+
+  @override
+  String get performers_gender_any => '任意';
+
+  @override
+  String get performers_gender_female => '女性';
+
+  @override
+  String get performers_gender_male => '男性';
+
+  @override
+  String get performers_gender_trans_female => 'トランス女性';
+
+  @override
+  String get performers_gender_trans_male => 'トランス男性';
+
+  @override
+  String get performers_gender_intersex => 'インターセックス';
+
+  @override
+  String get performers_play_count => '再生回数';
 
   @override
   String get random_studio => 'ランダムなスタジオ';
@@ -369,6 +534,69 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get settings_keyboard_subtitle => 'カスタマイズ可能なショートカットとホットキー';
+
+  @override
+  String get settings_keyboard_title => 'キーボードショートカット';
+
+  @override
+  String get settings_keyboard_reset_defaults => 'デフォルトに戻す';
+
+  @override
+  String get settings_keyboard_not_bound => '未割り当て';
+
+  @override
+  String get settings_keyboard_volume_up => '音量を上げる';
+
+  @override
+  String get settings_keyboard_volume_down => '音量を下げる';
+
+  @override
+  String get settings_keyboard_toggle_mute => 'ミュート切替';
+
+  @override
+  String get settings_keyboard_toggle_fullscreen => '全画面切替';
+
+  @override
+  String get settings_keyboard_next_scene => '次のシーン';
+
+  @override
+  String get settings_keyboard_prev_scene => '前のシーン';
+
+  @override
+  String get settings_keyboard_increase_speed => '再生速度を上げる';
+
+  @override
+  String get settings_keyboard_decrease_speed => '再生速度を下げる';
+
+  @override
+  String get settings_keyboard_reset_speed => '再生速度をリセット';
+
+  @override
+  String get settings_keyboard_close_player => 'プレーヤーを閉じる';
+
+  @override
+  String get settings_keyboard_next_image => '次の画像';
+
+  @override
+  String get settings_keyboard_prev_image => '前の画像';
+
+  @override
+  String get settings_keyboard_go_back => '戻る';
+
+  @override
+  String get settings_keyboard_play_pause_desc => '動画の再生と一時停止を切り替えます';
+
+  @override
+  String get settings_keyboard_seek_forward_5_desc => '5秒進む';
+
+  @override
+  String get settings_keyboard_seek_backward_5_desc => '5秒戻る';
+
+  @override
+  String get settings_keyboard_seek_forward_10_desc => '10秒進む';
+
+  @override
+  String get settings_keyboard_seek_backward_10_desc => '10秒戻る';
 
   @override
   String get settings_appearance => '外観';

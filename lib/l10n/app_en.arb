@@ -69,9 +69,8 @@
     "description": "The name of the application"
   },
   "common_error": "Error: {message}",
-  "common_view_all": "View all",
   "common_no_media_available": "No media available",
-  "common_clear_rating": "Clear Rating",
+  
   "common_id": "ID: {id}",
   "common_search_placeholder": "Search...",
   "common_pause": "Pause",
@@ -109,13 +108,70 @@
   "common_clear_logs": "Clear logs",
   "common_enable_autoscroll": "Enable auto-scroll",
   "common_disable_autoscroll": "Disable auto-scroll",
+  "common_retry": "Retry",
+  "common_no_items": "No items found",
+  "common_none": "None",
+  "common_any": "Any",
+  "common_name": "Name",
+  "common_date": "Date",
+  "common_rating": "Rating",
+  "common_image_count": "Image Count",
+  "common_filepath": "Filepath",
+  "common_random": "Random",
+  "common_no_media_found": "No media found",
+  "common_not_found": "{item} not found",
+  "common_add_favorite": "Add favorite",
+  "common_remove_favorite": "Remove favorite",
 
   "details_group": "Group Details",
+  "details_synopsis": "Synopsis",
+  "details_media": "Media",
+  "details_galleries": "Galleries",
+  "details_tags": "Tags",
+  "details_links": "Links",
   "details_scene_scrape": "Scrape metadata",
+  "details_show_more": "Show more",
+  "details_show_less": "Show less",
+  "details_more_from_studio": "More From Studio",
+  "details_o_count_incremented": "O count incremented",
+  "details_failed_update_rating": "Failed to update rating: {error}",
+  "details_failed_increment_o_count": "Failed to increment O count: {error}",
   "details_scene_add_performer": "Add Performer",
   "details_scene_add_tag": "Add Tag",
   "details_scene_add_url": "Add URL",
   "details_scene_remove_url": "Remove URL",
+
+  "groups_title": "Groups",
+  "groups_unnamed": "Unnamed group",
+  "groups_untitled": "Untitled group",
+
+  "studios_title": "Studios",
+  "studios_galleries_title": "Studio Galleries",
+  "studios_media_title": "Studio Media",
+  "studios_sort_title": "Sort Studios",
+
+  "galleries_title": "Galleries",
+  "galleries_sort_title": "Sort Galleries",
+  "galleries_all_images": "All Images",
+  "galleries_filter_title": "Filter Galleries",
+  "galleries_min_rating": "Minimum Rating",
+  "galleries_image_count": "Image Count",
+  "galleries_organization": "Organization",
+  "galleries_organized_only": "Organized only",
+
+  "performers_title": "Performers",
+  "performers_sort_title": "Sort Performers",
+  "performers_filter_title": "Filter Performers",
+  "performers_galleries_title": "All Performer Galleries",
+  "performers_media_title": "All Performer Media",
+  "performers_gender": "Gender",
+  "performers_gender_any": "Any",
+  "performers_gender_female": "Female",
+  "performers_gender_male": "Male",
+  "performers_gender_trans_female": "Trans Female",
+  "performers_gender_trans_male": "Trans Male",
+  "performers_gender_intersex": "Intersex",
+  "performers_play_count": "Play Count",
 
   "random_studio": "Random studio",
   "random_gallery": "Random gallery",
@@ -134,6 +190,27 @@
   "settings_playback_subtitle": "Player behavior and interactions",
   "settings_keyboard": "Keyboard",
   "settings_keyboard_subtitle": "Customizable shortcuts and hotkeys",
+  "settings_keyboard_title": "Keyboard Shortcuts",
+  "settings_keyboard_reset_defaults": "Reset to Defaults",
+  "settings_keyboard_not_bound": "Not bound",
+  "settings_keyboard_volume_up": "Volume Up",
+  "settings_keyboard_volume_down": "Volume Down",
+  "settings_keyboard_toggle_mute": "Toggle Mute",
+  "settings_keyboard_toggle_fullscreen": "Toggle Fullscreen",
+  "settings_keyboard_next_scene": "Next Scene",
+  "settings_keyboard_prev_scene": "Previous Scene",
+  "settings_keyboard_increase_speed": "Increase Playback Speed",
+  "settings_keyboard_decrease_speed": "Decrease Playback Speed",
+  "settings_keyboard_reset_speed": "Reset Playback Speed",
+  "settings_keyboard_close_player": "Close Player",
+  "settings_keyboard_next_image": "Next Image",
+  "settings_keyboard_prev_image": "Previous Image",
+  "settings_keyboard_go_back": "Go Back",
+  "settings_keyboard_play_pause_desc": "Toggle between playing and pausing video",
+  "settings_keyboard_seek_forward_5_desc": "Jump forward by 5 seconds",
+  "settings_keyboard_seek_backward_5_desc": "Jump backward by 5 seconds",
+  "settings_keyboard_seek_forward_10_desc": "Jump forward by 10 seconds",
+  "settings_keyboard_seek_backward_10_desc": "Jump backward by 10 seconds",
   "settings_appearance": "Appearance",
   "settings_appearance_subtitle": "Theme and colors",
   "settings_interface": "Interface",
@@ -304,6 +381,27 @@
   "@common_error": {
     "placeholders": {
       "message": {
+        "type": "String"
+      }
+    }
+  },
+  "@details_failed_update_rating": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@details_failed_increment_o_count": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@common_not_found": {
+    "placeholders": {
+      "item": {
         "type": "String"
       }
     }

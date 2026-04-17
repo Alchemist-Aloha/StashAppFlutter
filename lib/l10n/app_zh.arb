@@ -85,12 +85,65 @@
   "common_clear_logs": "清除日志",
   "common_enable_autoscroll": "启用自动滚动",
   "common_disable_autoscroll": "禁用自动滚动",
+  "common_retry": "重试",
+  "common_no_items": "未找到项目",
+  "common_none": "无",
+  "common_any": "任意",
+  "common_name": "名称",
+  "common_date": "日期",
+  "common_rating": "评分",
+  "common_image_count": "图片数量",
+  "common_filepath": "文件路径",
+  "common_random": "随机",
+  "common_no_media_found": "未找到媒体",
+  "common_not_found": "未找到 {item}",
+  "common_add_favorite": "添加收藏",
+  "common_remove_favorite": "取消收藏",
+
   "details_group": "小组详情",
+  "details_synopsis": "剧情简介",
+  "details_media": "媒体",
+  "details_galleries": "图库",
+  "details_tags": "标签",
+  "details_links": "链接",
   "details_scene_scrape": "抓取元数据",
   "details_scene_add_performer": "添加出演者",
   "details_scene_add_tag": "添加标签",
   "details_scene_add_url": "添加 URL",
   "details_scene_remove_url": "移除 URL",
+
+  "groups_title": "小组",
+  "groups_unnamed": "未命名小组",
+  "groups_untitled": "无标题小组",
+
+  "studios_title": "制片商",
+  "studios_galleries_title": "制片商图库",
+  "studios_media_title": "制片商媒体",
+  "studios_sort_title": "制片商排序",
+
+  "galleries_title": "图库",
+  "galleries_sort_title": "图库排序",
+  "galleries_all_images": "所有图片",
+  "galleries_filter_title": "图库筛选",
+  "galleries_min_rating": "最低评分",
+  "galleries_image_count": "图片数量",
+  "galleries_organization": "整理",
+  "galleries_organized_only": "仅已整理",
+
+  "performers_title": "演职人员",
+  "performers_sort_title": "演职人员排序",
+  "performers_filter_title": "演职人员筛选",
+  "performers_galleries_title": "所有演职人员图库",
+  "performers_media_title": "所有演职人员媒体",
+  "performers_gender": "性别",
+  "performers_gender_any": "任意",
+  "performers_gender_female": "女性",
+  "performers_gender_male": "男性",
+  "performers_gender_trans_female": "跨性别女性",
+  "performers_gender_trans_male": "跨性别男性",
+  "performers_gender_intersex": "双性人",
+  "performers_play_count": "播放次数",
+
   "random_studio": "随机制片商",
   "random_gallery": "随机图库",
   "random_tag": "随机标签",
@@ -136,6 +189,27 @@
   "settings_playback_subtitle": "播放器行为和交互",
   "settings_keyboard": "键盘",
   "settings_keyboard_subtitle": "可自定义的快捷键",
+  "settings_keyboard_title": "键盘快捷键",
+  "settings_keyboard_reset_defaults": "重置为默认值",
+  "settings_keyboard_not_bound": "未绑定",
+  "settings_keyboard_volume_up": "提高音量",
+  "settings_keyboard_volume_down": "降低音量",
+  "settings_keyboard_toggle_mute": "切换静音",
+  "settings_keyboard_toggle_fullscreen": "切换全屏",
+  "settings_keyboard_next_scene": "下一个场景",
+  "settings_keyboard_prev_scene": "上一个场景",
+  "settings_keyboard_increase_speed": "提高播放速度",
+  "settings_keyboard_decrease_speed": "降低播放速度",
+  "settings_keyboard_reset_speed": "重置播放速度",
+  "settings_keyboard_close_player": "关闭播放器",
+  "settings_keyboard_next_image": "下一张图片",
+  "settings_keyboard_prev_image": "上一张图片",
+  "settings_keyboard_go_back": "返回",
+  "settings_keyboard_play_pause_desc": "在播放和暂停视频之间切换",
+  "settings_keyboard_seek_forward_5_desc": "快进 5 秒",
+  "settings_keyboard_seek_backward_5_desc": "快退 5 秒",
+  "settings_keyboard_seek_forward_10_desc": "快进 10 秒",
+  "settings_keyboard_seek_backward_10_desc": "快退 10 秒",
   "settings_appearance": "外观",
   "settings_appearance_subtitle": "主题和颜色",
   "settings_interface": "界面",
@@ -302,5 +376,29 @@
   "settings_develop_web_overrides": "Web 覆盖",
   "settings_develop_web_overrides_subtitle": "Web 平台的高级标志",
   "settings_develop_web_auth": "允许在 Web 上使用密码登录",
-  "settings_develop_web_auth_subtitle": "覆盖仅限原生的限制，并强制用户名 + 密码身份验证方式在 Flutter Web 上可见。"
+  "settings_develop_web_auth_subtitle": "覆盖仅限原生的限制，并强制用户名 + 密码身份验证方式在 Flutter Web 上可见。",
+  "@common_not_found": {
+    "placeholders": {
+      "item": {
+        "type": "String"
+      }
+    }
+  }
+  ,
+  "details_more_from_studio": "更多来自该制片商",
+  "details_o_count_incremented": "O 计数已增加",
+  "details_show_less": "显示较少",
+  "details_show_more": "显示更多",
+  "details_failed_update_rating": "更新评分失败：{error}",
+  "details_failed_increment_o_count": "增加 O 计数失败：{error}",
+  "@details_failed_update_rating": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "@details_failed_increment_o_count": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  }
 }

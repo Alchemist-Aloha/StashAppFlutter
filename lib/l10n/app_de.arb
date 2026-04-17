@@ -107,12 +107,65 @@
   "common_clear_logs": "Logs löschen",
   "common_enable_autoscroll": "Auto-Scroll an",
   "common_disable_autoscroll": "Auto-Scroll aus",
+  "common_retry": "Wiederholen",
+  "common_no_items": "Keine Einträge gefunden",
+  "common_none": "Keine",
+  "common_any": "Alle",
+  "common_name": "Name",
+  "common_date": "Datum",
+  "common_rating": "Bewertung",
+  "common_image_count": "Anzahl der Bilder",
+  "common_filepath": "Dateipfad",
+  "common_random": "Zufällig",
+  "common_no_media_found": "Keine Medien gefunden",
+  "common_not_found": "{item} nicht gefunden",
+  "common_add_favorite": "Zu Favoriten hinzufügen",
+  "common_remove_favorite": "Aus Favoriten entfernen",
+
   "details_group": "Gruppendetails",
+  "details_synopsis": "Zusammenfassung",
+  "details_media": "Medien",
+  "details_galleries": "Galerien",
+  "details_tags": "Tags",
+  "details_links": "Links",
   "details_scene_scrape": "Metadaten scrapen",
   "details_scene_add_performer": "Darsteller hinzufügen",
   "details_scene_add_tag": "Tag hinzufügen",
   "details_scene_add_url": "URL hinzufügen",
   "details_scene_remove_url": "URL entfernen",
+
+  "groups_title": "Gruppen",
+  "groups_unnamed": "Unbenannte Gruppe",
+  "groups_untitled": "Unbenannte Gruppe",
+
+  "studios_title": "Studios",
+  "studios_galleries_title": "Studio-Galerien",
+  "studios_media_title": "Studio-Medien",
+  "studios_sort_title": "Studios sortieren",
+
+  "galleries_title": "Galerien",
+  "galleries_sort_title": "Galerien sortieren",
+  "galleries_all_images": "Alle Bilder",
+  "galleries_filter_title": "Galerien filtern",
+  "galleries_min_rating": "Mindestbewertung",
+  "galleries_image_count": "Anzahl der Bilder",
+  "galleries_organization": "Organisation",
+  "galleries_organized_only": "Nur organisiert",
+
+  "performers_title": "Darsteller",
+  "performers_sort_title": "Darsteller sortieren",
+  "performers_filter_title": "Darsteller filtern",
+  "performers_galleries_title": "Alle Darsteller-Galerien",
+  "performers_media_title": "Alle Darsteller-Medien",
+  "performers_gender": "Geschlecht",
+  "performers_gender_any": "Alle",
+  "performers_gender_female": "Weiblich",
+  "performers_gender_male": "Männlich",
+  "performers_gender_trans_female": "Trans-weiblich",
+  "performers_gender_trans_male": "Trans-männlich",
+  "performers_gender_intersex": "Intersexuell",
+  "performers_play_count": "Wiedergabeanzahl",
+
   "random_studio": "Zufälliges Studio",
   "random_gallery": "Zufällige Galerie",
   "random_tag": "Zufälliger Tag",
@@ -129,6 +182,27 @@
   "settings_playback_subtitle": "Player-Verhalten und Interaktionen",
   "settings_keyboard": "Tastatur",
   "settings_keyboard_subtitle": "Anpassbare Verknüpfungen und Hotkeys",
+  "settings_keyboard_title": "Tastaturkürzel",
+  "settings_keyboard_reset_defaults": "Auf Standard zurücksetzen",
+  "settings_keyboard_not_bound": "Nicht zugewiesen",
+  "settings_keyboard_volume_up": "Lauter",
+  "settings_keyboard_volume_down": "Leiser",
+  "settings_keyboard_toggle_mute": "Stummschaltung umschalten",
+  "settings_keyboard_toggle_fullscreen": "Vollbild umschalten",
+  "settings_keyboard_next_scene": "Nächste Szene",
+  "settings_keyboard_prev_scene": "Vorherige Szene",
+  "settings_keyboard_increase_speed": "Wiedergabegeschwindigkeit erhöhen",
+  "settings_keyboard_decrease_speed": "Wiedergabegeschwindigkeit verringern",
+  "settings_keyboard_reset_speed": "Wiedergabegeschwindigkeit zurücksetzen",
+  "settings_keyboard_close_player": "Player schließen",
+  "settings_keyboard_next_image": "Nächstes Bild",
+  "settings_keyboard_prev_image": "Vorheriges Bild",
+  "settings_keyboard_go_back": "Zurückgehen",
+  "settings_keyboard_play_pause_desc": "Zwischen Wiedergabe und Pause umschalten",
+  "settings_keyboard_seek_forward_5_desc": "5 Sekunden vorwärts springen",
+  "settings_keyboard_seek_backward_5_desc": "5 Sekunden rückwärts springen",
+  "settings_keyboard_seek_forward_10_desc": "10 Sekunden vorwärts springen",
+  "settings_keyboard_seek_backward_10_desc": "10 Sekunden rückwärts springen",
   "settings_appearance": "Erscheinungsbild",
   "settings_appearance_subtitle": "Design und Farben",
   "settings_interface": "Benutzeroberfläche",
@@ -301,6 +375,30 @@
       "message": {
         "type": "String"
       }
+    }
+  },
+  "@common_not_found": {
+    "placeholders": {
+      "item": {
+        "type": "String"
+      }
+    }
+  }
+  ,
+  "details_more_from_studio": "Mehr vom Studio",
+  "details_o_count_incremented": "O-Zähler erhöht",
+  "details_show_less": "Weniger anzeigen",
+  "details_show_more": "Mehr anzeigen",
+  "details_failed_update_rating": "Fehler beim Aktualisieren der Bewertung: {error}",
+  "details_failed_increment_o_count": "Fehler beim Erhöhen des O-Zählers: {error}",
+  "@details_failed_update_rating": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "@details_failed_increment_o_count": {
+    "placeholders": {
+      "error": { "type": "String" }
     }
   }
 }

@@ -52,7 +52,7 @@ class GroupDetailsPage extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        group.name.isEmpty ? 'Untitled group' : group.name,
+                        group.name.isEmpty ? context.l10n.groups_untitled : group.name,
                         style: context.textTheme.headlineMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: context.colors.onSurface,
@@ -67,11 +67,11 @@ class GroupDetailsPage extends ConsumerWidget {
                             _buildChip(context, group.date!),
                           if (group.director != null &&
                               group.director!.isNotEmpty)
-                            _buildChip(context, 'Director: ${group.director}'),
+                            _buildChip(context, group.director!),
                           if (group.rating100 != null)
                             _buildChip(
                               context,
-                              'Rating: ${(group.rating100! / 20).toStringAsFixed(1)}',
+                              (group.rating100! / 20).toStringAsFixed(1),
                               icon: Icons.star,
                               iconColor: context.colors.ratingColor,
                             ),
@@ -83,8 +83,8 @@ class GroupDetailsPage extends ConsumerWidget {
                           height: 32,
                           color: context.colors.outline.withValues(alpha: 0.2),
                         ),
-                        const SectionHeader(
-                          title: 'Synopsis',
+                        SectionHeader(
+                          title: context.l10n.details_synopsis,
                           padding: EdgeInsets.zero,
                         ),
                         const SizedBox(height: AppTheme.spacingSmall),
@@ -106,7 +106,7 @@ class GroupDetailsPage extends ConsumerWidget {
         ),
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, stack) => ErrorStateView(
-          message: 'Failed to load group details.\n$err',
+          message: context.l10n.common_error(err.toString()),
           onRetry: () => ref.refresh(groupDetailsProvider(groupId)),
         ),
       ),

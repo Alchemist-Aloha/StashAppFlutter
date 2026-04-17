@@ -98,12 +98,12 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
 
   String _sortOptionLabel(_GallerySortOption option) {
     return switch (option) {
-      _GallerySortOption.title => 'Title',
-      _GallerySortOption.date => 'Date',
-      _GallerySortOption.rating => 'Rating',
-      _GallerySortOption.imageCount => 'Image Count',
-      _GallerySortOption.path => 'Filepath',
-      _GallerySortOption.random => 'Random',
+      _GallerySortOption.title => context.l10n.common_title,
+      _GallerySortOption.date => context.l10n.common_date,
+      _GallerySortOption.rating => context.l10n.common_rating,
+      _GallerySortOption.imageCount => context.l10n.common_image_count,
+      _GallerySortOption.path => context.l10n.common_filepath,
+      _GallerySortOption.random => context.l10n.common_random,
     };
   }
 
@@ -128,7 +128,7 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Sort Galleries',
+                          context.l10n.galleries_sort_title,
                           style: context.textTheme.headlineSmall?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
@@ -145,7 +145,7 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
                       ],
                     ),
                     const SizedBox(height: AppTheme.spacingMedium),
-                    Text('Sort Method', style: context.textTheme.labelLarge),
+                    Text(context.l10n.common_sort_method, style: context.textTheme.labelLarge),
                     const SizedBox(height: AppTheme.spacingSmall),
                     Wrap(
                       spacing: AppTheme.spacingSmall,
@@ -166,21 +166,21 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
                           .toList(),
                     ),
                     const SizedBox(height: AppTheme.spacingMedium),
-                    Text('Direction', style: context.textTheme.labelLarge),
+                    Text(context.l10n.common_direction, style: context.textTheme.labelLarge),
                     const SizedBox(height: AppTheme.spacingSmall),
                     SizedBox(
                       width: double.infinity,
                       child: SegmentedButton<bool>(
-                        segments: const [
+                        segments: [
                           ButtonSegment(
                             value: true,
-                            label: Text('Descending'),
-                            icon: Icon(Icons.arrow_downward),
+                            label: Text(context.l10n.common_descending),
+                            icon: const Icon(Icons.arrow_downward),
                           ),
                           ButtonSegment(
                             value: false,
-                            label: Text('Ascending'),
-                            icon: Icon(Icons.arrow_upward),
+                            label: Text(context.l10n.common_ascending),
+                            icon: const Icon(Icons.arrow_upward),
                           ),
                         ],
                         selected: {tempDescending},
@@ -207,7 +207,7 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
                             vertical: AppTheme.spacingMedium,
                           ),
                         ),
-                        child: const Text('Apply Sort'),
+                        child: Text(context.l10n.common_apply_sort),
                       ),
                     ),
                     const SizedBox(height: AppTheme.spacingSmall),
@@ -226,9 +226,9 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
                           if (context.mounted) {
                             Navigator.pop(context);
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
+                              SnackBar(
                                 content: Text(
-                                  'Sort preferences saved as default',
+                                  context.l10n.tags_sort_saved,
                                 ),
                               ),
                             );
@@ -239,7 +239,7 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
                             vertical: AppTheme.spacingMedium,
                           ),
                         ),
-                        child: const Text('Save as Default'),
+                        child: Text(context.l10n.common_save_default),
                       ),
                     ),
                     const SizedBox(height: AppTheme.spacingMedium),
@@ -290,7 +290,7 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
     final randomNavigationEnabled = ref.watch(randomNavigationEnabledProvider);
 
     return ListPageScaffold<Gallery>(
-      title: 'Galleries',
+      title: context.l10n.galleries_title,
       scrollController: ref.watch(galleryScrollControllerProvider),
       imageUrlBuilder: _getThumbnailUrl,
       actions: [
@@ -298,7 +298,7 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
           children: [
             IconButton(
               icon: const Icon(Icons.sort),
-              tooltip: 'Sort options',
+              tooltip: context.l10n.common_sort,
               onPressed: _showSortPanel,
             ),
             if (_sortOption != _GallerySortOption.path || _sortDescending)
@@ -339,14 +339,14 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
         ),
         IconButton(
           icon: const Icon(Icons.image),
-          tooltip: 'All Images',
+          tooltip: context.l10n.galleries_all_images,
           onPressed: () {
             ref.read(imageFilterStateProvider.notifier).clear();
             context.go('/galleries/images');
           },
         ),
       ],
-      searchHint: 'Search galleries...',
+      searchHint: context.l10n.common_search_placeholder,
       onSearchChanged: _onSearchChanged,
       provider: galleriesAsync,
       onRefresh: () => ref.read(galleryListProvider.notifier).refresh(),

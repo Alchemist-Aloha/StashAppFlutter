@@ -114,7 +114,7 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Sort Studios',
+                      context.l10n.studios_sort_title,
                       style: context.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -131,7 +131,7 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
                   ],
                 ),
                 const SizedBox(height: AppTheme.spacingMedium),
-                Text('Sort Method', style: context.textTheme.labelLarge),
+                Text(context.l10n.common_sort_method, style: context.textTheme.labelLarge),
                 const SizedBox(height: AppTheme.spacingSmall),
                 Wrap(
                   spacing: AppTheme.spacingSmall,
@@ -152,21 +152,21 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
                       .toList(),
                 ),
                 const SizedBox(height: AppTheme.spacingMedium),
-                Text('Direction', style: context.textTheme.labelLarge),
+                Text(context.l10n.common_direction, style: context.textTheme.labelLarge),
                 const SizedBox(height: AppTheme.spacingSmall),
                 SizedBox(
                   width: double.infinity,
                   child: SegmentedButton<bool>(
-                    segments: const [
+                    segments: [
                       ButtonSegment(
                         value: true,
-                        label: Text('Descending'),
-                        icon: Icon(Icons.arrow_downward),
+                        label: Text(context.l10n.common_descending),
+                        icon: const Icon(Icons.arrow_downward),
                       ),
                       ButtonSegment(
                         value: false,
-                        label: Text('Ascending'),
-                        icon: Icon(Icons.arrow_upward),
+                        label: Text(context.l10n.common_ascending),
+                        icon: const Icon(Icons.arrow_upward),
                       ),
                     ],
                     selected: {tempDescending},
@@ -376,8 +376,8 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
         _sortOption != _StudioSortOption.name || _sortDescending;
 
     return ListPageScaffold<Studio>(
-      title: 'Studios',
-      searchHint: 'Search studios...',
+      title: context.l10n.studios_title,
+      searchHint: context.l10n.common_search_placeholder,
       onSearchChanged: _onSearchChanged,
       provider: studiosAsync,
       scrollController: scrollController,
@@ -392,7 +392,7 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
           children: [
             IconButton(
               icon: const Icon(Icons.sort),
-              tooltip: 'Sort options',
+              tooltip: context.l10n.common_sort,
               onPressed: _showSortPanel,
             ),
             if (hasSortOverride)
@@ -414,7 +414,7 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
           children: [
             IconButton(
               icon: const Icon(Icons.filter_list),
-              tooltip: 'Filter options',
+              tooltip: context.l10n.common_filter,
               onPressed: _showFilterPanel,
             ),
             if (favoritesOnly)

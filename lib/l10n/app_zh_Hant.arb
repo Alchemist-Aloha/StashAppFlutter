@@ -107,12 +107,63 @@
   "common_clear_logs": "清除日誌",
   "common_enable_autoscroll": "啟用自動捲動",
   "common_disable_autoscroll": "禁用自動捲動",
+  "common_retry": "重試",
+  "common_no_items": "未找到項目",
+  "common_none": "無",
+  "common_any": "任意",
+  "common_name": "名稱",
+  "common_date": "日期",
+  "common_rating": "評分",
+  "common_image_count": "圖片數量",
+  "common_filepath": "文件路徑",
+  "common_random": "隨機",
+  "common_no_media_found": "未找到媒體",
+  "common_not_found": "未找到 {item}",
+  "common_add_favorite": "添加收藏",
+  "common_remove_favorite": "取消收藏",
   "details_group": "小組詳情",
+  "details_synopsis": "劇情簡介",
+  "details_media": "媒體",
+  "details_galleries": "圖庫",
+  "details_tags": "標籤",
+  "details_links": "鏈接",
   "details_scene_scrape": "擷取中繼資料",
   "details_scene_add_performer": "添加演出者",
   "details_scene_add_tag": "添加標籤",
   "details_scene_add_url": "添加 URL",
   "details_scene_remove_url": "移除 URL",
+
+  "groups_title": "小組",
+  "groups_unnamed": "未命名小組",
+  "groups_untitled": "無標題小組",
+
+  "studios_title": "製片商",
+  "studios_galleries_title": "製片商圖庫",
+  "studios_media_title": "製片商媒體",
+  "studios_sort_title": "製片商排序",
+
+  "galleries_title": "圖库",
+  "galleries_sort_title": "圖库排序",
+  "galleries_all_images": "所有圖片",
+  "galleries_filter_title": "圖库篩選",
+  "galleries_min_rating": "最低評分",
+  "galleries_image_count": "圖片數量",
+  "galleries_organization": "整理",
+  "galleries_organized_only": "僅已整理",
+
+  "performers_title": "演職人員",
+  "performers_sort_title": "演職人員排序",
+  "performers_filter_title": "演职人员篩選",
+  "performers_galleries_title": "所有演職人員圖库",
+  "performers_media_title": "所有演職人員媒體",
+  "performers_gender": "性別",
+  "performers_gender_any": "任意",
+  "performers_gender_female": "女性",
+  "performers_gender_male": "男性",
+  "performers_gender_trans_female": "跨性別女性",
+  "performers_gender_trans_male": "跨性別男性",
+  "performers_gender_intersex": "雙性人",
+  "performers_play_count": "播放次數",
   "random_studio": "隨機製片商",
   "random_gallery": "隨機圖庫",
   "random_tag": "隨機標籤",
@@ -129,6 +180,27 @@
   "settings_playback_subtitle": "播放器行為和互動",
   "settings_keyboard": "鍵盤",
   "settings_keyboard_subtitle": "可自訂的捷徑和熱鍵",
+  "settings_keyboard_title": "鍵盤快捷鍵",
+  "settings_keyboard_reset_defaults": "重置為默認值",
+  "settings_keyboard_not_bound": "未绑定",
+  "settings_keyboard_volume_up": "提高音量",
+  "settings_keyboard_volume_down": "降低音量",
+  "settings_keyboard_toggle_mute": "切換静音",
+  "settings_keyboard_toggle_fullscreen": "切換全屏",
+  "settings_keyboard_next_scene": "下一個場景",
+  "settings_keyboard_prev_scene": "上一個場景",
+  "settings_keyboard_increase_speed": "提高播放速度",
+  "settings_keyboard_decrease_speed": "降低播放速度",
+  "settings_keyboard_reset_speed": "重置播放速度",
+  "settings_keyboard_close_player": "關閉播放器",
+  "settings_keyboard_next_image": "下一張圖片",
+  "settings_keyboard_prev_image": "上一張圖片",
+  "settings_keyboard_go_back": "返回",
+  "settings_keyboard_play_pause_desc": "在播放和暫停視頻之間切換",
+  "settings_keyboard_seek_forward_5_desc": "快進 5 秒",
+  "settings_keyboard_seek_backward_5_desc": "快退 5 秒",
+  "settings_keyboard_seek_forward_10_desc": "快進 10 秒",
+  "settings_keyboard_seek_backward_10_desc": "快退 10 秒",
   "settings_appearance": "外觀",
   "settings_appearance_subtitle": "佈景主題和顏色",
   "settings_interface": "介面",
@@ -301,6 +373,30 @@
       "message": {
         "type": "String"
       }
+    }
+  },
+  "@common_not_found": {
+    "placeholders": {
+      "item": {
+        "type": "String"
+      }
+    }
+  }
+  ,
+  "details_more_from_studio": "來自該製片商的更多內容",
+  "details_o_count_incremented": "O 計數已增加",
+  "details_show_less": "顯示較少",
+  "details_show_more": "顯示更多",
+  "details_failed_update_rating": "更新評分失敗：{error}",
+  "details_failed_increment_o_count": "增加 O 計數失敗：{error}",
+  "@details_failed_update_rating": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "@details_failed_increment_o_count": {
+    "placeholders": {
+      "error": { "type": "String" }
     }
   }
 }

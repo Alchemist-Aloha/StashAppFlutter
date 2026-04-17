@@ -107,7 +107,26 @@
   "common_clear_logs": "effacer les logs",
   "common_enable_autoscroll": "activer défilement auto",
   "common_disable_autoscroll": "désactiver défilement auto",
+  "common_retry": "Réessayer",
+  "common_no_items": "Aucun élément trouvé",
+  "common_none": "Aucun",
+  "common_any": "Tous",
+  "common_name": "Nom",
+  "common_date": "Date",
+  "common_rating": "Note",
+  "common_image_count": "Nombre d'images",
+  "common_filepath": "Chemin du fichier",
+  "common_random": "Aléatoire",
+  "common_no_media_found": "Aucun média trouvé",
+  "common_not_found": "{item} non trouvé",
+  "common_add_favorite": "Ajouter aux favoris",
+  "common_remove_favorite": "Retirer des favoris",
   "details_group": "détails du groupe",
+  "details_synopsis": "Synopsis",
+  "details_media": "Médias",
+  "details_galleries": "Galeries",
+  "details_tags": "Tags",
+  "details_links": "Liens",
   "details_scene_scrape": "scraper les métadonnées",
   "details_scene_add_performer": "ajouter un interprète",
   "details_scene_add_tag": "ajouter un tag",
@@ -118,6 +137,39 @@
   "random_tag": "tag aléatoire",
   "random_scene": "scène aléatoire",
   "random_performer": "interprète aléatoire",
+
+  "groups_title": "Groupes",
+  "groups_unnamed": "Groupe sans nom",
+  "groups_untitled": "Groupe sans titre",
+
+  "studios_title": "Studios",
+  "studios_galleries_title": "Galeries du studio",
+  "studios_media_title": "Médias du studio",
+  "studios_sort_title": "Trier les studios",
+
+  "galleries_title": "Galeries",
+  "galleries_sort_title": "Trier les galeries",
+  "galleries_all_images": "Toutes les images",
+  "galleries_filter_title": "Filtrer les galeries",
+  "galleries_min_rating": "Note minimale",
+  "galleries_image_count": "Nombre d'images",
+  "galleries_organization": "Organisation",
+  "galleries_organized_only": "Organisé uniquement",
+
+  "performers_title": "Acteurs",
+  "performers_sort_title": "Trier les acteurs",
+  "performers_filter_title": "Filtrer les acteurs",
+  "performers_galleries_title": "Toutes les galeries de l'acteur",
+  "performers_media_title": "Tous les médias de l'acteur",
+  "performers_gender": "Genre",
+  "performers_gender_any": "Tous",
+  "performers_gender_female": "Femme",
+  "performers_gender_male": "Homme",
+  "performers_gender_trans_female": "Femme trans",
+  "performers_gender_trans_male": "Homme trans",
+  "performers_gender_intersex": "Intersexe",
+  "performers_play_count": "Nombre de lectures",
+
   "settings_title": "Paramètres",
   "settings_customize": "Personnaliser StashFlow",
   "settings_customize_subtitle": "Réglez la lecture, l'apparence, la disposition et les outils de support en un seul endroit.",
@@ -129,6 +181,27 @@
   "settings_playback_subtitle": "Comportement du lecteur et interactions",
   "settings_keyboard": "Clavier",
   "settings_keyboard_subtitle": "Raccourcis et touches de raccourci personnalisables",
+  "settings_keyboard_title": "Raccourcis clavier",
+  "settings_keyboard_reset_defaults": "Réinitialiser par défaut",
+  "settings_keyboard_not_bound": "Non lié",
+  "settings_keyboard_volume_up": "Augmenter le volume",
+  "settings_keyboard_volume_down": "Diminuer le volume",
+  "settings_keyboard_toggle_mute": "Couper/Rétablir le son",
+  "settings_keyboard_toggle_fullscreen": "Plein écran",
+  "settings_keyboard_next_scene": "Scène suivante",
+  "settings_keyboard_prev_scene": "Scène précédente",
+  "settings_keyboard_increase_speed": "Augmenter la vitesse de lecture",
+  "settings_keyboard_decrease_speed": "Diminuer la vitesse de lecture",
+  "settings_keyboard_reset_speed": "Réinitialiser la vitesse de lecture",
+  "settings_keyboard_close_player": "Fermer le lecteur",
+  "settings_keyboard_next_image": "Image suivante",
+  "settings_keyboard_prev_image": "Image précédente",
+  "settings_keyboard_go_back": "Retour",
+  "settings_keyboard_play_pause_desc": "Basculer entre lecture et pause",
+  "settings_keyboard_seek_forward_5_desc": "Avancer de 5 secondes",
+  "settings_keyboard_seek_backward_5_desc": "Reculer de 5 secondes",
+  "settings_keyboard_seek_forward_10_desc": "Avancer de 10 secondes",
+  "settings_keyboard_seek_backward_10_desc": "Reculer de 10 secondes",
   "settings_appearance": "Apparence",
   "settings_appearance_subtitle": "Thème et couleurs",
   "settings_interface": "Interface",
@@ -301,6 +374,30 @@
       "message": {
         "type": "String"
       }
+    }
+  },
+  "@common_not_found": {
+    "placeholders": {
+      "item": {
+        "type": "String"
+      }
+    }
+  }
+  ,
+  "details_more_from_studio": "Plus du studio",
+  "details_o_count_incremented": "Nombre O incrémenté",
+  "details_show_less": "Afficher moins",
+  "details_show_more": "Afficher plus",
+  "details_failed_update_rating": "Échec de la mise à jour de la note : {error}",
+  "details_failed_increment_o_count": "Échec de l'incrément du compteur O : {error}",
+  "@details_failed_update_rating": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "@details_failed_increment_o_count": {
+    "placeholders": {
+      "error": { "type": "String" }
     }
   }
 }

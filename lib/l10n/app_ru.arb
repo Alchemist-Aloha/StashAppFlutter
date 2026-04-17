@@ -107,12 +107,65 @@
   "common_clear_logs": "очистить логи",
   "common_enable_autoscroll": "автопрокрутка вкл",
   "common_disable_autoscroll": "автопрокрутка выкл",
+  "common_retry": "Повторить",
+  "common_no_items": "Элементы не найдены",
+  "common_none": "Нет",
+  "common_any": "Любой",
+  "common_name": "Имя",
+  "common_date": "Дата",
+  "common_rating": "Рейтинг",
+  "common_image_count": "Количество изображений",
+  "common_filepath": "Путь к файлу",
+  "common_random": "Случайно",
+  "common_no_media_found": "Медиа не найдены",
+  "common_not_found": "{item} не найден",
+  "common_add_favorite": "Добавить в избранное",
+  "common_remove_favorite": "Удалить из избранного",
+
   "details_group": "детали группы",
+  "details_synopsis": "Синопсис",
+  "details_media": "Медиа",
+  "details_galleries": "Галереи",
+  "details_tags": "Теги",
+  "details_links": "Ссылки",
   "details_scene_scrape": "собрать метаданные",
   "details_scene_add_performer": "добавить исполнителя",
   "details_scene_add_tag": "добавить тег",
   "details_scene_add_url": "добавить URL",
   "details_scene_remove_url": "удалить URL",
+
+  "groups_title": "Группы",
+  "groups_unnamed": "Группа без имени",
+  "groups_untitled": "Группа без названия",
+
+  "studios_title": "Студии",
+  "studios_galleries_title": "Галереи студии",
+  "studios_media_title": "Медиа студии",
+  "studios_sort_title": "Сортировать студии",
+
+  "galleries_title": "Галереи",
+  "galleries_sort_title": "Сортировать галереи",
+  "galleries_all_images": "Все изображения",
+  "galleries_filter_title": "Фильтр галерей",
+  "galleries_min_rating": "Минимальный рейтинг",
+  "galleries_image_count": "Количество изображений",
+  "galleries_organization": "Организация",
+  "galleries_organized_only": "Только организованные",
+
+  "performers_title": "Исполнители",
+  "performers_sort_title": "Сортировать исполнителей",
+  "performers_filter_title": "Фильтр исполнителей",
+  "performers_galleries_title": "Все галереи исполнителя",
+  "performers_media_title": "Все медиа исполнителя",
+  "performers_gender": "Пол",
+  "performers_gender_any": "Любой",
+  "performers_gender_female": "Женский",
+  "performers_gender_male": "Мужской",
+  "performers_gender_trans_female": "Транс-женщина",
+  "performers_gender_trans_male": "Транс-мужчина",
+  "performers_gender_intersex": "Интерсекс",
+  "performers_play_count": "Количество воспроизведений",
+
   "random_studio": "случайная студия",
   "random_gallery": "случайная галерея",
   "random_tag": "случайный тег",
@@ -129,6 +182,27 @@
   "settings_playback_subtitle": "Поведение плеера и взаимодействия",
   "settings_keyboard": "Клавиатура",
   "settings_keyboard_subtitle": "Настраиваемые сочетания клавиш",
+  "settings_keyboard_title": "Горячие клавиши",
+  "settings_keyboard_reset_defaults": "Сбросить настройки",
+  "settings_keyboard_not_bound": "Не назначено",
+  "settings_keyboard_volume_up": "Увеличить громкость",
+  "settings_keyboard_volume_down": "Уменьшить громкость",
+  "settings_keyboard_toggle_mute": "Вкл/выкл звук",
+  "settings_keyboard_toggle_fullscreen": "Полноэкранный режим",
+  "settings_keyboard_next_scene": "Следующая сцена",
+  "settings_keyboard_prev_scene": "Предыдущая сцена",
+  "settings_keyboard_increase_speed": "Увеличить скорость",
+  "settings_keyboard_decrease_speed": "Уменьшить скорость",
+  "settings_keyboard_reset_speed": "Сбросить скорость",
+  "settings_keyboard_close_player": "Закрыть плеер",
+  "settings_keyboard_next_image": "Следующее изображение",
+  "settings_keyboard_prev_image": "Предыдущее изображение",
+  "settings_keyboard_go_back": "Назад",
+  "settings_keyboard_play_pause_desc": "Переключение между воспроизведением и паузой",
+  "settings_keyboard_seek_forward_5_desc": "Вперед на 5 секунд",
+  "settings_keyboard_seek_backward_5_desc": "Назад на 5 секунд",
+  "settings_keyboard_seek_forward_10_desc": "Вперед на 10 секунд",
+  "settings_keyboard_seek_backward_10_desc": "Назад на 10 секунд",
   "settings_appearance": "Внешний вид",
   "settings_appearance_subtitle": "Тема и цвета",
   "settings_interface": "Интерфейс",
@@ -301,6 +375,30 @@
       "message": {
         "type": "String"
       }
+    }
+  },
+  "@common_not_found": {
+    "placeholders": {
+      "item": {
+        "type": "String"
+      }
+    }
+  }
+  ,
+  "details_more_from_studio": "Еще от студии",
+  "details_o_count_incremented": "Счет O увеличен",
+  "details_show_less": "Показать меньше",
+  "details_show_more": "Показать больше",
+  "details_failed_update_rating": "Не удалось обновить рейтинг: {error}",
+  "details_failed_increment_o_count": "Не удалось увеличить счет O: {error}",
+  "@details_failed_update_rating": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "@details_failed_increment_o_count": {
+    "placeholders": {
+      "error": { "type": "String" }
     }
   }
 }

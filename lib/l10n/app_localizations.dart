@@ -101,14 +101,14 @@ abstract class AppLocalizations {
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
-    Locale('de'),
     Locale('en'),
+    Locale('it'),
     Locale('es'),
     Locale('fr'),
-    Locale('it'),
+    Locale('de'),
+    Locale('ru'),
     Locale('ja'),
     Locale('ko'),
-    Locale('ru'),
     Locale('zh'),
     Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans'),
     Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'),
@@ -642,17 +642,167 @@ abstract class AppLocalizations {
   /// **'Disable auto-scroll'**
   String get common_disable_autoscroll;
 
+  /// No description provided for @common_retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get common_retry;
+
+  /// No description provided for @common_no_items.
+  ///
+  /// In en, this message translates to:
+  /// **'No items found'**
+  String get common_no_items;
+
+  /// No description provided for @common_none.
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get common_none;
+
+  /// No description provided for @common_any.
+  ///
+  /// In en, this message translates to:
+  /// **'Any'**
+  String get common_any;
+
+  /// No description provided for @common_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get common_name;
+
+  /// No description provided for @common_date.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get common_date;
+
+  /// No description provided for @common_rating.
+  ///
+  /// In en, this message translates to:
+  /// **'Rating'**
+  String get common_rating;
+
+  /// No description provided for @common_image_count.
+  ///
+  /// In en, this message translates to:
+  /// **'Image Count'**
+  String get common_image_count;
+
+  /// No description provided for @common_filepath.
+  ///
+  /// In en, this message translates to:
+  /// **'Filepath'**
+  String get common_filepath;
+
+  /// No description provided for @common_random.
+  ///
+  /// In en, this message translates to:
+  /// **'Random'**
+  String get common_random;
+
+  /// No description provided for @common_no_media_found.
+  ///
+  /// In en, this message translates to:
+  /// **'No media found'**
+  String get common_no_media_found;
+
+  /// No description provided for @common_not_found.
+  ///
+  /// In en, this message translates to:
+  /// **'{item} not found'**
+  String common_not_found(String item);
+
+  /// No description provided for @common_add_favorite.
+  ///
+  /// In en, this message translates to:
+  /// **'Add favorite'**
+  String get common_add_favorite;
+
+  /// No description provided for @common_remove_favorite.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove favorite'**
+  String get common_remove_favorite;
+
   /// No description provided for @details_group.
   ///
   /// In en, this message translates to:
   /// **'Group Details'**
   String get details_group;
 
+  /// No description provided for @details_synopsis.
+  ///
+  /// In en, this message translates to:
+  /// **'Synopsis'**
+  String get details_synopsis;
+
+  /// No description provided for @details_media.
+  ///
+  /// In en, this message translates to:
+  /// **'Media'**
+  String get details_media;
+
+  /// No description provided for @details_galleries.
+  ///
+  /// In en, this message translates to:
+  /// **'Galleries'**
+  String get details_galleries;
+
+  /// No description provided for @details_tags.
+  ///
+  /// In en, this message translates to:
+  /// **'Tags'**
+  String get details_tags;
+
+  /// No description provided for @details_links.
+  ///
+  /// In en, this message translates to:
+  /// **'Links'**
+  String get details_links;
+
   /// No description provided for @details_scene_scrape.
   ///
   /// In en, this message translates to:
   /// **'Scrape metadata'**
   String get details_scene_scrape;
+
+  /// No description provided for @details_show_more.
+  ///
+  /// In en, this message translates to:
+  /// **'Show more'**
+  String get details_show_more;
+
+  /// No description provided for @details_show_less.
+  ///
+  /// In en, this message translates to:
+  /// **'Show less'**
+  String get details_show_less;
+
+  /// No description provided for @details_more_from_studio.
+  ///
+  /// In en, this message translates to:
+  /// **'More From Studio'**
+  String get details_more_from_studio;
+
+  /// No description provided for @details_o_count_incremented.
+  ///
+  /// In en, this message translates to:
+  /// **'O count incremented'**
+  String get details_o_count_incremented;
+
+  /// No description provided for @details_failed_update_rating.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update rating: {error}'**
+  String details_failed_update_rating(String error);
+
+  /// No description provided for @details_failed_increment_o_count.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to increment O count: {error}'**
+  String details_failed_increment_o_count(String error);
 
   /// No description provided for @details_scene_add_performer.
   ///
@@ -677,6 +827,174 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Remove URL'**
   String get details_scene_remove_url;
+
+  /// No description provided for @groups_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Groups'**
+  String get groups_title;
+
+  /// No description provided for @groups_unnamed.
+  ///
+  /// In en, this message translates to:
+  /// **'Unnamed group'**
+  String get groups_unnamed;
+
+  /// No description provided for @groups_untitled.
+  ///
+  /// In en, this message translates to:
+  /// **'Untitled group'**
+  String get groups_untitled;
+
+  /// No description provided for @studios_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Studios'**
+  String get studios_title;
+
+  /// No description provided for @studios_galleries_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Studio Galleries'**
+  String get studios_galleries_title;
+
+  /// No description provided for @studios_media_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Studio Media'**
+  String get studios_media_title;
+
+  /// No description provided for @studios_sort_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort Studios'**
+  String get studios_sort_title;
+
+  /// No description provided for @galleries_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Galleries'**
+  String get galleries_title;
+
+  /// No description provided for @galleries_sort_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort Galleries'**
+  String get galleries_sort_title;
+
+  /// No description provided for @galleries_all_images.
+  ///
+  /// In en, this message translates to:
+  /// **'All Images'**
+  String get galleries_all_images;
+
+  /// No description provided for @galleries_filter_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter Galleries'**
+  String get galleries_filter_title;
+
+  /// No description provided for @galleries_min_rating.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum Rating'**
+  String get galleries_min_rating;
+
+  /// No description provided for @galleries_image_count.
+  ///
+  /// In en, this message translates to:
+  /// **'Image Count'**
+  String get galleries_image_count;
+
+  /// No description provided for @galleries_organization.
+  ///
+  /// In en, this message translates to:
+  /// **'Organization'**
+  String get galleries_organization;
+
+  /// No description provided for @galleries_organized_only.
+  ///
+  /// In en, this message translates to:
+  /// **'Organized only'**
+  String get galleries_organized_only;
+
+  /// No description provided for @performers_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Performers'**
+  String get performers_title;
+
+  /// No description provided for @performers_sort_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort Performers'**
+  String get performers_sort_title;
+
+  /// No description provided for @performers_filter_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter Performers'**
+  String get performers_filter_title;
+
+  /// No description provided for @performers_galleries_title.
+  ///
+  /// In en, this message translates to:
+  /// **'All Performer Galleries'**
+  String get performers_galleries_title;
+
+  /// No description provided for @performers_media_title.
+  ///
+  /// In en, this message translates to:
+  /// **'All Performer Media'**
+  String get performers_media_title;
+
+  /// No description provided for @performers_gender.
+  ///
+  /// In en, this message translates to:
+  /// **'Gender'**
+  String get performers_gender;
+
+  /// No description provided for @performers_gender_any.
+  ///
+  /// In en, this message translates to:
+  /// **'Any'**
+  String get performers_gender_any;
+
+  /// No description provided for @performers_gender_female.
+  ///
+  /// In en, this message translates to:
+  /// **'Female'**
+  String get performers_gender_female;
+
+  /// No description provided for @performers_gender_male.
+  ///
+  /// In en, this message translates to:
+  /// **'Male'**
+  String get performers_gender_male;
+
+  /// No description provided for @performers_gender_trans_female.
+  ///
+  /// In en, this message translates to:
+  /// **'Trans Female'**
+  String get performers_gender_trans_female;
+
+  /// No description provided for @performers_gender_trans_male.
+  ///
+  /// In en, this message translates to:
+  /// **'Trans Male'**
+  String get performers_gender_trans_male;
+
+  /// No description provided for @performers_gender_intersex.
+  ///
+  /// In en, this message translates to:
+  /// **'Intersex'**
+  String get performers_gender_intersex;
+
+  /// No description provided for @performers_play_count.
+  ///
+  /// In en, this message translates to:
+  /// **'Play Count'**
+  String get performers_play_count;
 
   /// No description provided for @random_studio.
   ///
@@ -773,6 +1091,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Customizable shortcuts and hotkeys'**
   String get settings_keyboard_subtitle;
+
+  /// No description provided for @settings_keyboard_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Keyboard Shortcuts'**
+  String get settings_keyboard_title;
+
+  /// No description provided for @settings_keyboard_reset_defaults.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset to Defaults'**
+  String get settings_keyboard_reset_defaults;
+
+  /// No description provided for @settings_keyboard_not_bound.
+  ///
+  /// In en, this message translates to:
+  /// **'Not bound'**
+  String get settings_keyboard_not_bound;
+
+  /// No description provided for @settings_keyboard_volume_up.
+  ///
+  /// In en, this message translates to:
+  /// **'Volume Up'**
+  String get settings_keyboard_volume_up;
+
+  /// No description provided for @settings_keyboard_volume_down.
+  ///
+  /// In en, this message translates to:
+  /// **'Volume Down'**
+  String get settings_keyboard_volume_down;
+
+  /// No description provided for @settings_keyboard_toggle_mute.
+  ///
+  /// In en, this message translates to:
+  /// **'Toggle Mute'**
+  String get settings_keyboard_toggle_mute;
+
+  /// No description provided for @settings_keyboard_toggle_fullscreen.
+  ///
+  /// In en, this message translates to:
+  /// **'Toggle Fullscreen'**
+  String get settings_keyboard_toggle_fullscreen;
+
+  /// No description provided for @settings_keyboard_next_scene.
+  ///
+  /// In en, this message translates to:
+  /// **'Next Scene'**
+  String get settings_keyboard_next_scene;
+
+  /// No description provided for @settings_keyboard_prev_scene.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous Scene'**
+  String get settings_keyboard_prev_scene;
+
+  /// No description provided for @settings_keyboard_increase_speed.
+  ///
+  /// In en, this message translates to:
+  /// **'Increase Playback Speed'**
+  String get settings_keyboard_increase_speed;
+
+  /// No description provided for @settings_keyboard_decrease_speed.
+  ///
+  /// In en, this message translates to:
+  /// **'Decrease Playback Speed'**
+  String get settings_keyboard_decrease_speed;
+
+  /// No description provided for @settings_keyboard_reset_speed.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Playback Speed'**
+  String get settings_keyboard_reset_speed;
+
+  /// No description provided for @settings_keyboard_close_player.
+  ///
+  /// In en, this message translates to:
+  /// **'Close Player'**
+  String get settings_keyboard_close_player;
+
+  /// No description provided for @settings_keyboard_next_image.
+  ///
+  /// In en, this message translates to:
+  /// **'Next Image'**
+  String get settings_keyboard_next_image;
+
+  /// No description provided for @settings_keyboard_prev_image.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous Image'**
+  String get settings_keyboard_prev_image;
+
+  /// No description provided for @settings_keyboard_go_back.
+  ///
+  /// In en, this message translates to:
+  /// **'Go Back'**
+  String get settings_keyboard_go_back;
+
+  /// No description provided for @settings_keyboard_play_pause_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Toggle between playing and pausing video'**
+  String get settings_keyboard_play_pause_desc;
+
+  /// No description provided for @settings_keyboard_seek_forward_5_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Jump forward by 5 seconds'**
+  String get settings_keyboard_seek_forward_5_desc;
+
+  /// No description provided for @settings_keyboard_seek_backward_5_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Jump backward by 5 seconds'**
+  String get settings_keyboard_seek_backward_5_desc;
+
+  /// No description provided for @settings_keyboard_seek_forward_10_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Jump forward by 10 seconds'**
+  String get settings_keyboard_seek_forward_10_desc;
+
+  /// No description provided for @settings_keyboard_seek_backward_10_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Jump backward by 10 seconds'**
+  String get settings_keyboard_seek_backward_10_desc;
 
   /// No description provided for @settings_appearance.
   ///

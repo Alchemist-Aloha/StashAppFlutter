@@ -307,10 +307,91 @@ class AppLocalizationsEn extends AppLocalizations {
   String get common_disable_autoscroll => 'Disable auto-scroll';
 
   @override
+  String get common_retry => 'Retry';
+
+  @override
+  String get common_no_items => 'No items found';
+
+  @override
+  String get common_none => 'None';
+
+  @override
+  String get common_any => 'Any';
+
+  @override
+  String get common_name => 'Name';
+
+  @override
+  String get common_date => 'Date';
+
+  @override
+  String get common_rating => 'Rating';
+
+  @override
+  String get common_image_count => 'Image Count';
+
+  @override
+  String get common_filepath => 'Filepath';
+
+  @override
+  String get common_random => 'Random';
+
+  @override
+  String get common_no_media_found => 'No media found';
+
+  @override
+  String common_not_found(String item) {
+    return '$item not found';
+  }
+
+  @override
+  String get common_add_favorite => 'Add favorite';
+
+  @override
+  String get common_remove_favorite => 'Remove favorite';
+
+  @override
   String get details_group => 'Group Details';
 
   @override
+  String get details_synopsis => 'Synopsis';
+
+  @override
+  String get details_media => 'Media';
+
+  @override
+  String get details_galleries => 'Galleries';
+
+  @override
+  String get details_tags => 'Tags';
+
+  @override
+  String get details_links => 'Links';
+
+  @override
   String get details_scene_scrape => 'Scrape metadata';
+
+  @override
+  String get details_show_more => 'Show more';
+
+  @override
+  String get details_show_less => 'Show less';
+
+  @override
+  String get details_more_from_studio => 'More From Studio';
+
+  @override
+  String get details_o_count_incremented => 'O count incremented';
+
+  @override
+  String details_failed_update_rating(String error) {
+    return 'Failed to update rating: $error';
+  }
+
+  @override
+  String details_failed_increment_o_count(String error) {
+    return 'Failed to increment O count: $error';
+  }
 
   @override
   String get details_scene_add_performer => 'Add Performer';
@@ -323,6 +404,90 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get details_scene_remove_url => 'Remove URL';
+
+  @override
+  String get groups_title => 'Groups';
+
+  @override
+  String get groups_unnamed => 'Unnamed group';
+
+  @override
+  String get groups_untitled => 'Untitled group';
+
+  @override
+  String get studios_title => 'Studios';
+
+  @override
+  String get studios_galleries_title => 'Studio Galleries';
+
+  @override
+  String get studios_media_title => 'Studio Media';
+
+  @override
+  String get studios_sort_title => 'Sort Studios';
+
+  @override
+  String get galleries_title => 'Galleries';
+
+  @override
+  String get galleries_sort_title => 'Sort Galleries';
+
+  @override
+  String get galleries_all_images => 'All Images';
+
+  @override
+  String get galleries_filter_title => 'Filter Galleries';
+
+  @override
+  String get galleries_min_rating => 'Minimum Rating';
+
+  @override
+  String get galleries_image_count => 'Image Count';
+
+  @override
+  String get galleries_organization => 'Organization';
+
+  @override
+  String get galleries_organized_only => 'Organized only';
+
+  @override
+  String get performers_title => 'Performers';
+
+  @override
+  String get performers_sort_title => 'Sort Performers';
+
+  @override
+  String get performers_filter_title => 'Filter Performers';
+
+  @override
+  String get performers_galleries_title => 'All Performer Galleries';
+
+  @override
+  String get performers_media_title => 'All Performer Media';
+
+  @override
+  String get performers_gender => 'Gender';
+
+  @override
+  String get performers_gender_any => 'Any';
+
+  @override
+  String get performers_gender_female => 'Female';
+
+  @override
+  String get performers_gender_male => 'Male';
+
+  @override
+  String get performers_gender_trans_female => 'Trans Female';
+
+  @override
+  String get performers_gender_trans_male => 'Trans Male';
+
+  @override
+  String get performers_gender_intersex => 'Intersex';
+
+  @override
+  String get performers_play_count => 'Play Count';
 
   @override
   String get random_studio => 'Random studio';
@@ -372,6 +537,74 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settings_keyboard_subtitle => 'Customizable shortcuts and hotkeys';
+
+  @override
+  String get settings_keyboard_title => 'Keyboard Shortcuts';
+
+  @override
+  String get settings_keyboard_reset_defaults => 'Reset to Defaults';
+
+  @override
+  String get settings_keyboard_not_bound => 'Not bound';
+
+  @override
+  String get settings_keyboard_volume_up => 'Volume Up';
+
+  @override
+  String get settings_keyboard_volume_down => 'Volume Down';
+
+  @override
+  String get settings_keyboard_toggle_mute => 'Toggle Mute';
+
+  @override
+  String get settings_keyboard_toggle_fullscreen => 'Toggle Fullscreen';
+
+  @override
+  String get settings_keyboard_next_scene => 'Next Scene';
+
+  @override
+  String get settings_keyboard_prev_scene => 'Previous Scene';
+
+  @override
+  String get settings_keyboard_increase_speed => 'Increase Playback Speed';
+
+  @override
+  String get settings_keyboard_decrease_speed => 'Decrease Playback Speed';
+
+  @override
+  String get settings_keyboard_reset_speed => 'Reset Playback Speed';
+
+  @override
+  String get settings_keyboard_close_player => 'Close Player';
+
+  @override
+  String get settings_keyboard_next_image => 'Next Image';
+
+  @override
+  String get settings_keyboard_prev_image => 'Previous Image';
+
+  @override
+  String get settings_keyboard_go_back => 'Go Back';
+
+  @override
+  String get settings_keyboard_play_pause_desc =>
+      'Toggle between playing and pausing video';
+
+  @override
+  String get settings_keyboard_seek_forward_5_desc =>
+      'Jump forward by 5 seconds';
+
+  @override
+  String get settings_keyboard_seek_backward_5_desc =>
+      'Jump backward by 5 seconds';
+
+  @override
+  String get settings_keyboard_seek_forward_10_desc =>
+      'Jump forward by 10 seconds';
+
+  @override
+  String get settings_keyboard_seek_backward_10_desc =>
+      'Jump backward by 10 seconds';
 
   @override
   String get settings_appearance => 'Appearance';

@@ -312,10 +312,91 @@ class AppLocalizationsDe extends AppLocalizations {
   String get common_disable_autoscroll => 'Auto-Scroll aus';
 
   @override
+  String get common_retry => 'Wiederholen';
+
+  @override
+  String get common_no_items => 'Keine Einträge gefunden';
+
+  @override
+  String get common_none => 'Keine';
+
+  @override
+  String get common_any => 'Alle';
+
+  @override
+  String get common_name => 'Name';
+
+  @override
+  String get common_date => 'Datum';
+
+  @override
+  String get common_rating => 'Bewertung';
+
+  @override
+  String get common_image_count => 'Anzahl der Bilder';
+
+  @override
+  String get common_filepath => 'Dateipfad';
+
+  @override
+  String get common_random => 'Zufällig';
+
+  @override
+  String get common_no_media_found => 'Keine Medien gefunden';
+
+  @override
+  String common_not_found(String item) {
+    return '$item nicht gefunden';
+  }
+
+  @override
+  String get common_add_favorite => 'Zu Favoriten hinzufügen';
+
+  @override
+  String get common_remove_favorite => 'Aus Favoriten entfernen';
+
+  @override
   String get details_group => 'Gruppendetails';
 
   @override
+  String get details_synopsis => 'Zusammenfassung';
+
+  @override
+  String get details_media => 'Medien';
+
+  @override
+  String get details_galleries => 'Galerien';
+
+  @override
+  String get details_tags => 'Tags';
+
+  @override
+  String get details_links => 'Links';
+
+  @override
   String get details_scene_scrape => 'Metadaten scrapen';
+
+  @override
+  String get details_show_more => 'Mehr anzeigen';
+
+  @override
+  String get details_show_less => 'Weniger anzeigen';
+
+  @override
+  String get details_more_from_studio => 'Mehr vom Studio';
+
+  @override
+  String get details_o_count_incremented => 'O-Zähler erhöht';
+
+  @override
+  String details_failed_update_rating(String error) {
+    return 'Fehler beim Aktualisieren der Bewertung: $error';
+  }
+
+  @override
+  String details_failed_increment_o_count(String error) {
+    return 'Fehler beim Erhöhen des O-Zählers: $error';
+  }
 
   @override
   String get details_scene_add_performer => 'Darsteller hinzufügen';
@@ -328,6 +409,90 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get details_scene_remove_url => 'URL entfernen';
+
+  @override
+  String get groups_title => 'Gruppen';
+
+  @override
+  String get groups_unnamed => 'Unbenannte Gruppe';
+
+  @override
+  String get groups_untitled => 'Unbenannte Gruppe';
+
+  @override
+  String get studios_title => 'Studios';
+
+  @override
+  String get studios_galleries_title => 'Studio-Galerien';
+
+  @override
+  String get studios_media_title => 'Studio-Medien';
+
+  @override
+  String get studios_sort_title => 'Studios sortieren';
+
+  @override
+  String get galleries_title => 'Galerien';
+
+  @override
+  String get galleries_sort_title => 'Galerien sortieren';
+
+  @override
+  String get galleries_all_images => 'Alle Bilder';
+
+  @override
+  String get galleries_filter_title => 'Galerien filtern';
+
+  @override
+  String get galleries_min_rating => 'Mindestbewertung';
+
+  @override
+  String get galleries_image_count => 'Anzahl der Bilder';
+
+  @override
+  String get galleries_organization => 'Organisation';
+
+  @override
+  String get galleries_organized_only => 'Nur organisiert';
+
+  @override
+  String get performers_title => 'Darsteller';
+
+  @override
+  String get performers_sort_title => 'Darsteller sortieren';
+
+  @override
+  String get performers_filter_title => 'Darsteller filtern';
+
+  @override
+  String get performers_galleries_title => 'Alle Darsteller-Galerien';
+
+  @override
+  String get performers_media_title => 'Alle Darsteller-Medien';
+
+  @override
+  String get performers_gender => 'Geschlecht';
+
+  @override
+  String get performers_gender_any => 'Alle';
+
+  @override
+  String get performers_gender_female => 'Weiblich';
+
+  @override
+  String get performers_gender_male => 'Männlich';
+
+  @override
+  String get performers_gender_trans_female => 'Trans-weiblich';
+
+  @override
+  String get performers_gender_trans_male => 'Trans-männlich';
+
+  @override
+  String get performers_gender_intersex => 'Intersexuell';
+
+  @override
+  String get performers_play_count => 'Wiedergabeanzahl';
 
   @override
   String get random_studio => 'Zufälliges Studio';
@@ -378,6 +543,77 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get settings_keyboard_subtitle =>
       'Anpassbare Verknüpfungen und Hotkeys';
+
+  @override
+  String get settings_keyboard_title => 'Tastaturkürzel';
+
+  @override
+  String get settings_keyboard_reset_defaults => 'Auf Standard zurücksetzen';
+
+  @override
+  String get settings_keyboard_not_bound => 'Nicht zugewiesen';
+
+  @override
+  String get settings_keyboard_volume_up => 'Lauter';
+
+  @override
+  String get settings_keyboard_volume_down => 'Leiser';
+
+  @override
+  String get settings_keyboard_toggle_mute => 'Stummschaltung umschalten';
+
+  @override
+  String get settings_keyboard_toggle_fullscreen => 'Vollbild umschalten';
+
+  @override
+  String get settings_keyboard_next_scene => 'Nächste Szene';
+
+  @override
+  String get settings_keyboard_prev_scene => 'Vorherige Szene';
+
+  @override
+  String get settings_keyboard_increase_speed =>
+      'Wiedergabegeschwindigkeit erhöhen';
+
+  @override
+  String get settings_keyboard_decrease_speed =>
+      'Wiedergabegeschwindigkeit verringern';
+
+  @override
+  String get settings_keyboard_reset_speed =>
+      'Wiedergabegeschwindigkeit zurücksetzen';
+
+  @override
+  String get settings_keyboard_close_player => 'Player schließen';
+
+  @override
+  String get settings_keyboard_next_image => 'Nächstes Bild';
+
+  @override
+  String get settings_keyboard_prev_image => 'Vorheriges Bild';
+
+  @override
+  String get settings_keyboard_go_back => 'Zurückgehen';
+
+  @override
+  String get settings_keyboard_play_pause_desc =>
+      'Zwischen Wiedergabe und Pause umschalten';
+
+  @override
+  String get settings_keyboard_seek_forward_5_desc =>
+      '5 Sekunden vorwärts springen';
+
+  @override
+  String get settings_keyboard_seek_backward_5_desc =>
+      '5 Sekunden rückwärts springen';
+
+  @override
+  String get settings_keyboard_seek_forward_10_desc =>
+      '10 Sekunden vorwärts springen';
+
+  @override
+  String get settings_keyboard_seek_backward_10_desc =>
+      '10 Sekunden rückwärts springen';
 
   @override
   String get settings_appearance => 'Erscheinungsbild';

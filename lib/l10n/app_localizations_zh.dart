@@ -303,10 +303,91 @@ class AppLocalizationsZh extends AppLocalizations {
   String get common_disable_autoscroll => '禁用自动滚动';
 
   @override
+  String get common_retry => '重试';
+
+  @override
+  String get common_no_items => '未找到项目';
+
+  @override
+  String get common_none => '无';
+
+  @override
+  String get common_any => '任意';
+
+  @override
+  String get common_name => '名称';
+
+  @override
+  String get common_date => '日期';
+
+  @override
+  String get common_rating => '评分';
+
+  @override
+  String get common_image_count => '图片数量';
+
+  @override
+  String get common_filepath => '文件路径';
+
+  @override
+  String get common_random => '随机';
+
+  @override
+  String get common_no_media_found => '未找到媒体';
+
+  @override
+  String common_not_found(String item) {
+    return '未找到 $item';
+  }
+
+  @override
+  String get common_add_favorite => '添加收藏';
+
+  @override
+  String get common_remove_favorite => '取消收藏';
+
+  @override
   String get details_group => '小组详情';
 
   @override
+  String get details_synopsis => '剧情简介';
+
+  @override
+  String get details_media => '媒体';
+
+  @override
+  String get details_galleries => '图库';
+
+  @override
+  String get details_tags => '标签';
+
+  @override
+  String get details_links => '链接';
+
+  @override
   String get details_scene_scrape => '抓取元数据';
+
+  @override
+  String get details_show_more => '显示更多';
+
+  @override
+  String get details_show_less => '显示较少';
+
+  @override
+  String get details_more_from_studio => '更多来自该制片商';
+
+  @override
+  String get details_o_count_incremented => 'O 计数已增加';
+
+  @override
+  String details_failed_update_rating(String error) {
+    return '更新评分失败：$error';
+  }
+
+  @override
+  String details_failed_increment_o_count(String error) {
+    return '增加 O 计数失败：$error';
+  }
 
   @override
   String get details_scene_add_performer => '添加出演者';
@@ -319,6 +400,90 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get details_scene_remove_url => '移除 URL';
+
+  @override
+  String get groups_title => '小组';
+
+  @override
+  String get groups_unnamed => '未命名小组';
+
+  @override
+  String get groups_untitled => '无标题小组';
+
+  @override
+  String get studios_title => '制片商';
+
+  @override
+  String get studios_galleries_title => '制片商图库';
+
+  @override
+  String get studios_media_title => '制片商媒体';
+
+  @override
+  String get studios_sort_title => '制片商排序';
+
+  @override
+  String get galleries_title => '图库';
+
+  @override
+  String get galleries_sort_title => '图库排序';
+
+  @override
+  String get galleries_all_images => '所有图片';
+
+  @override
+  String get galleries_filter_title => '图库筛选';
+
+  @override
+  String get galleries_min_rating => '最低评分';
+
+  @override
+  String get galleries_image_count => '图片数量';
+
+  @override
+  String get galleries_organization => '整理';
+
+  @override
+  String get galleries_organized_only => '仅已整理';
+
+  @override
+  String get performers_title => '演职人员';
+
+  @override
+  String get performers_sort_title => '演职人员排序';
+
+  @override
+  String get performers_filter_title => '演职人员筛选';
+
+  @override
+  String get performers_galleries_title => '所有演职人员图库';
+
+  @override
+  String get performers_media_title => '所有演职人员媒体';
+
+  @override
+  String get performers_gender => '性别';
+
+  @override
+  String get performers_gender_any => '任意';
+
+  @override
+  String get performers_gender_female => '女性';
+
+  @override
+  String get performers_gender_male => '男性';
+
+  @override
+  String get performers_gender_trans_female => '跨性别女性';
+
+  @override
+  String get performers_gender_trans_male => '跨性别男性';
+
+  @override
+  String get performers_gender_intersex => '双性人';
+
+  @override
+  String get performers_play_count => '播放次数';
 
   @override
   String get random_studio => '随机制片商';
@@ -367,6 +532,69 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get settings_keyboard_subtitle => '可自定义的快捷键';
+
+  @override
+  String get settings_keyboard_title => '键盘快捷键';
+
+  @override
+  String get settings_keyboard_reset_defaults => '重置为默认值';
+
+  @override
+  String get settings_keyboard_not_bound => '未绑定';
+
+  @override
+  String get settings_keyboard_volume_up => '提高音量';
+
+  @override
+  String get settings_keyboard_volume_down => '降低音量';
+
+  @override
+  String get settings_keyboard_toggle_mute => '切换静音';
+
+  @override
+  String get settings_keyboard_toggle_fullscreen => '切换全屏';
+
+  @override
+  String get settings_keyboard_next_scene => '下一个场景';
+
+  @override
+  String get settings_keyboard_prev_scene => '上一个场景';
+
+  @override
+  String get settings_keyboard_increase_speed => '提高播放速度';
+
+  @override
+  String get settings_keyboard_decrease_speed => '降低播放速度';
+
+  @override
+  String get settings_keyboard_reset_speed => '重置播放速度';
+
+  @override
+  String get settings_keyboard_close_player => '关闭播放器';
+
+  @override
+  String get settings_keyboard_next_image => '下一张图片';
+
+  @override
+  String get settings_keyboard_prev_image => '上一张图片';
+
+  @override
+  String get settings_keyboard_go_back => '返回';
+
+  @override
+  String get settings_keyboard_play_pause_desc => '在播放和暂停视频之间切换';
+
+  @override
+  String get settings_keyboard_seek_forward_5_desc => '快进 5 秒';
+
+  @override
+  String get settings_keyboard_seek_backward_5_desc => '快退 5 秒';
+
+  @override
+  String get settings_keyboard_seek_forward_10_desc => '快进 10 秒';
+
+  @override
+  String get settings_keyboard_seek_backward_10_desc => '快退 10 秒';
 
   @override
   String get settings_appearance => '外观';
@@ -1097,10 +1325,91 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get common_disable_autoscroll => '禁用自动滚动';
 
   @override
+  String get common_retry => '重试';
+
+  @override
+  String get common_no_items => '未找到项目';
+
+  @override
+  String get common_none => '无';
+
+  @override
+  String get common_any => '任意';
+
+  @override
+  String get common_name => '名称';
+
+  @override
+  String get common_date => '日期';
+
+  @override
+  String get common_rating => '评分';
+
+  @override
+  String get common_image_count => '图片数量';
+
+  @override
+  String get common_filepath => '文件路径';
+
+  @override
+  String get common_random => '随机';
+
+  @override
+  String get common_no_media_found => '未找到媒体';
+
+  @override
+  String common_not_found(String item) {
+    return '未找到 $item';
+  }
+
+  @override
+  String get common_add_favorite => '添加收藏';
+
+  @override
+  String get common_remove_favorite => '取消收藏';
+
+  @override
   String get details_group => '小组详情';
 
   @override
+  String get details_synopsis => '剧情简介';
+
+  @override
+  String get details_media => '媒体';
+
+  @override
+  String get details_galleries => '图库';
+
+  @override
+  String get details_tags => '标签';
+
+  @override
+  String get details_links => '链接';
+
+  @override
   String get details_scene_scrape => '抓取元数据';
+
+  @override
+  String get details_show_more => '显示更多';
+
+  @override
+  String get details_show_less => '显示较少';
+
+  @override
+  String get details_more_from_studio => '更多来自该制片商';
+
+  @override
+  String get details_o_count_incremented => 'O 计数已增加';
+
+  @override
+  String details_failed_update_rating(String error) {
+    return '更新评分失败：$error';
+  }
+
+  @override
+  String details_failed_increment_o_count(String error) {
+    return '增加 O 计数失败：$error';
+  }
 
   @override
   String get details_scene_add_performer => '添加出演者';
@@ -1113,6 +1422,90 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String get details_scene_remove_url => '移除 URL';
+
+  @override
+  String get groups_title => '小组';
+
+  @override
+  String get groups_unnamed => '未命名小组';
+
+  @override
+  String get groups_untitled => '无标题小组';
+
+  @override
+  String get studios_title => '制片商';
+
+  @override
+  String get studios_galleries_title => '制片商图库';
+
+  @override
+  String get studios_media_title => '制片商媒体';
+
+  @override
+  String get studios_sort_title => '制片商排序';
+
+  @override
+  String get galleries_title => '图库';
+
+  @override
+  String get galleries_sort_title => '图库排序';
+
+  @override
+  String get galleries_all_images => '所有图片';
+
+  @override
+  String get galleries_filter_title => '图库筛选';
+
+  @override
+  String get galleries_min_rating => '最低评分';
+
+  @override
+  String get galleries_image_count => '图片数量';
+
+  @override
+  String get galleries_organization => '整理';
+
+  @override
+  String get galleries_organized_only => '仅已整理';
+
+  @override
+  String get performers_title => '演职人员';
+
+  @override
+  String get performers_sort_title => '演职人员排序';
+
+  @override
+  String get performers_filter_title => '演职人员筛选';
+
+  @override
+  String get performers_galleries_title => '所有演职人员图库';
+
+  @override
+  String get performers_media_title => '所有演职人员媒体';
+
+  @override
+  String get performers_gender => '性别';
+
+  @override
+  String get performers_gender_any => '任意';
+
+  @override
+  String get performers_gender_female => '女性';
+
+  @override
+  String get performers_gender_male => '男性';
+
+  @override
+  String get performers_gender_trans_female => '跨性别女性';
+
+  @override
+  String get performers_gender_trans_male => '跨性别男性';
+
+  @override
+  String get performers_gender_intersex => '双性人';
+
+  @override
+  String get performers_play_count => '播放次数';
 
   @override
   String get random_studio => '随机制片商';
@@ -1161,6 +1554,69 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String get settings_keyboard_subtitle => '可自定义的快捷键';
+
+  @override
+  String get settings_keyboard_title => '键盘快捷键';
+
+  @override
+  String get settings_keyboard_reset_defaults => '重置为默认值';
+
+  @override
+  String get settings_keyboard_not_bound => '未绑定';
+
+  @override
+  String get settings_keyboard_volume_up => '提高音量';
+
+  @override
+  String get settings_keyboard_volume_down => '降低音量';
+
+  @override
+  String get settings_keyboard_toggle_mute => '切换静音';
+
+  @override
+  String get settings_keyboard_toggle_fullscreen => '切换全屏';
+
+  @override
+  String get settings_keyboard_next_scene => '下一个场景';
+
+  @override
+  String get settings_keyboard_prev_scene => '上一个场景';
+
+  @override
+  String get settings_keyboard_increase_speed => '提高播放速度';
+
+  @override
+  String get settings_keyboard_decrease_speed => '降低播放速度';
+
+  @override
+  String get settings_keyboard_reset_speed => '重置播放速度';
+
+  @override
+  String get settings_keyboard_close_player => '关闭播放器';
+
+  @override
+  String get settings_keyboard_next_image => '下一张图片';
+
+  @override
+  String get settings_keyboard_prev_image => '上一张图片';
+
+  @override
+  String get settings_keyboard_go_back => '返回';
+
+  @override
+  String get settings_keyboard_play_pause_desc => '在播放和暂停视频之间切换';
+
+  @override
+  String get settings_keyboard_seek_forward_5_desc => '快进 5 秒';
+
+  @override
+  String get settings_keyboard_seek_backward_5_desc => '快退 5 秒';
+
+  @override
+  String get settings_keyboard_seek_forward_10_desc => '快进 10 秒';
+
+  @override
+  String get settings_keyboard_seek_backward_10_desc => '快退 10 秒';
 
   @override
   String get settings_appearance => '外观';
@@ -1893,10 +2349,91 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get common_disable_autoscroll => '禁用自動捲動';
 
   @override
+  String get common_retry => '重試';
+
+  @override
+  String get common_no_items => '未找到項目';
+
+  @override
+  String get common_none => '無';
+
+  @override
+  String get common_any => '任意';
+
+  @override
+  String get common_name => '名稱';
+
+  @override
+  String get common_date => '日期';
+
+  @override
+  String get common_rating => '評分';
+
+  @override
+  String get common_image_count => '圖片數量';
+
+  @override
+  String get common_filepath => '文件路徑';
+
+  @override
+  String get common_random => '隨機';
+
+  @override
+  String get common_no_media_found => '未找到媒體';
+
+  @override
+  String common_not_found(String item) {
+    return '未找到 $item';
+  }
+
+  @override
+  String get common_add_favorite => '添加收藏';
+
+  @override
+  String get common_remove_favorite => '取消收藏';
+
+  @override
   String get details_group => '小組詳情';
 
   @override
+  String get details_synopsis => '劇情簡介';
+
+  @override
+  String get details_media => '媒體';
+
+  @override
+  String get details_galleries => '圖庫';
+
+  @override
+  String get details_tags => '標籤';
+
+  @override
+  String get details_links => '鏈接';
+
+  @override
   String get details_scene_scrape => '擷取中繼資料';
+
+  @override
+  String get details_show_more => '顯示更多';
+
+  @override
+  String get details_show_less => '顯示較少';
+
+  @override
+  String get details_more_from_studio => '來自該製片商的更多內容';
+
+  @override
+  String get details_o_count_incremented => 'O 計數已增加';
+
+  @override
+  String details_failed_update_rating(String error) {
+    return '更新評分失敗：$error';
+  }
+
+  @override
+  String details_failed_increment_o_count(String error) {
+    return '增加 O 計數失敗：$error';
+  }
 
   @override
   String get details_scene_add_performer => '添加演出者';
@@ -1909,6 +2446,90 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get details_scene_remove_url => '移除 URL';
+
+  @override
+  String get groups_title => '小組';
+
+  @override
+  String get groups_unnamed => '未命名小組';
+
+  @override
+  String get groups_untitled => '無標題小組';
+
+  @override
+  String get studios_title => '製片商';
+
+  @override
+  String get studios_galleries_title => '製片商圖庫';
+
+  @override
+  String get studios_media_title => '製片商媒體';
+
+  @override
+  String get studios_sort_title => '製片商排序';
+
+  @override
+  String get galleries_title => '圖库';
+
+  @override
+  String get galleries_sort_title => '圖库排序';
+
+  @override
+  String get galleries_all_images => '所有圖片';
+
+  @override
+  String get galleries_filter_title => '圖库篩選';
+
+  @override
+  String get galleries_min_rating => '最低評分';
+
+  @override
+  String get galleries_image_count => '圖片數量';
+
+  @override
+  String get galleries_organization => '整理';
+
+  @override
+  String get galleries_organized_only => '僅已整理';
+
+  @override
+  String get performers_title => '演職人員';
+
+  @override
+  String get performers_sort_title => '演職人員排序';
+
+  @override
+  String get performers_filter_title => '演职人员篩選';
+
+  @override
+  String get performers_galleries_title => '所有演職人員圖库';
+
+  @override
+  String get performers_media_title => '所有演職人員媒體';
+
+  @override
+  String get performers_gender => '性別';
+
+  @override
+  String get performers_gender_any => '任意';
+
+  @override
+  String get performers_gender_female => '女性';
+
+  @override
+  String get performers_gender_male => '男性';
+
+  @override
+  String get performers_gender_trans_female => '跨性別女性';
+
+  @override
+  String get performers_gender_trans_male => '跨性別男性';
+
+  @override
+  String get performers_gender_intersex => '雙性人';
+
+  @override
+  String get performers_play_count => '播放次數';
 
   @override
   String get random_studio => '隨機製片商';
@@ -1957,6 +2578,69 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get settings_keyboard_subtitle => '可自訂的捷徑和熱鍵';
+
+  @override
+  String get settings_keyboard_title => '鍵盤快捷鍵';
+
+  @override
+  String get settings_keyboard_reset_defaults => '重置為默認值';
+
+  @override
+  String get settings_keyboard_not_bound => '未绑定';
+
+  @override
+  String get settings_keyboard_volume_up => '提高音量';
+
+  @override
+  String get settings_keyboard_volume_down => '降低音量';
+
+  @override
+  String get settings_keyboard_toggle_mute => '切換静音';
+
+  @override
+  String get settings_keyboard_toggle_fullscreen => '切換全屏';
+
+  @override
+  String get settings_keyboard_next_scene => '下一個場景';
+
+  @override
+  String get settings_keyboard_prev_scene => '上一個場景';
+
+  @override
+  String get settings_keyboard_increase_speed => '提高播放速度';
+
+  @override
+  String get settings_keyboard_decrease_speed => '降低播放速度';
+
+  @override
+  String get settings_keyboard_reset_speed => '重置播放速度';
+
+  @override
+  String get settings_keyboard_close_player => '關閉播放器';
+
+  @override
+  String get settings_keyboard_next_image => '下一張圖片';
+
+  @override
+  String get settings_keyboard_prev_image => '上一張圖片';
+
+  @override
+  String get settings_keyboard_go_back => '返回';
+
+  @override
+  String get settings_keyboard_play_pause_desc => '在播放和暫停視頻之間切換';
+
+  @override
+  String get settings_keyboard_seek_forward_5_desc => '快進 5 秒';
+
+  @override
+  String get settings_keyboard_seek_backward_5_desc => '快退 5 秒';
+
+  @override
+  String get settings_keyboard_seek_forward_10_desc => '快進 10 秒';
+
+  @override
+  String get settings_keyboard_seek_backward_10_desc => '快退 10 秒';
 
   @override
   String get settings_appearance => '外觀';

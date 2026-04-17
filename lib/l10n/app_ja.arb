@@ -107,12 +107,65 @@
   "common_clear_logs": "ログをクリア",
   "common_enable_autoscroll": "自動スクロール有効",
   "common_disable_autoscroll": "自動スクロール無効",
+  "common_retry": "再試行",
+  "common_no_items": "項目が見つかりませんでした",
+  "common_none": "なし",
+  "common_any": "任意",
+  "common_name": "名前",
+  "common_date": "日付",
+  "common_rating": "評価",
+  "common_image_count": "画像数",
+  "common_filepath": "ファイルパス",
+  "common_random": "ランダム",
+  "common_no_media_found": "メディアが見つかりませんでした",
+  "common_not_found": "{item} が見つかりません",
+  "common_add_favorite": "お気に入りに追加",
+  "common_remove_favorite": "お気に入りから削除",
+
   "details_group": "グループ詳細",
+  "details_synopsis": "あらすじ",
+  "details_media": "メディア",
+  "details_galleries": "ギャラリー",
+  "details_tags": "タグ",
+  "details_links": "リンク",
   "details_scene_scrape": "メタデータ取得",
   "details_scene_add_performer": "出演者を追加",
   "details_scene_add_tag": "タグを追加",
   "details_scene_add_url": "URLを追加",
   "details_scene_remove_url": "URLを削除",
+
+  "groups_title": "グループ",
+  "groups_unnamed": "名前なしグループ",
+  "groups_untitled": "無題のグループ",
+
+  "studios_title": "スタジオ",
+  "studios_galleries_title": "スタジオギャラリー",
+  "studios_media_title": "スタジオメディア",
+  "studios_sort_title": "スタジオを並べ替え",
+
+  "galleries_title": "ギャラリー",
+  "galleries_sort_title": "ギャラリーを並べ替え",
+  "galleries_all_images": "すべての画像",
+  "galleries_filter_title": "ギャラリーをフィルター",
+  "galleries_min_rating": "最小評価",
+  "galleries_image_count": "画像数",
+  "galleries_organization": "整理状態",
+  "galleries_organized_only": "整理済みのみ",
+
+  "performers_title": "パフォーマー",
+  "performers_sort_title": "パフォーマーを並べ替え",
+  "performers_filter_title": "パフォーマーをフィルター",
+  "performers_galleries_title": "すべてのパフォーマーギャラリー",
+  "performers_media_title": "すべてのパフォーマーメディア",
+  "performers_gender": "性別",
+  "performers_gender_any": "任意",
+  "performers_gender_female": "女性",
+  "performers_gender_male": "男性",
+  "performers_gender_trans_female": "トランス女性",
+  "performers_gender_trans_male": "トランス男性",
+  "performers_gender_intersex": "インターセックス",
+  "performers_play_count": "再生回数",
+
   "random_studio": "ランダムなスタジオ",
   "random_gallery": "ランダムなギャラリー",
   "random_tag": "ランダムなタグ",
@@ -129,6 +182,27 @@
   "settings_playback_subtitle": "プレーヤーの動作と操作",
   "settings_keyboard": "キーボード",
   "settings_keyboard_subtitle": "カスタマイズ可能なショートカットとホットキー",
+  "settings_keyboard_title": "キーボードショートカット",
+  "settings_keyboard_reset_defaults": "デフォルトに戻す",
+  "settings_keyboard_not_bound": "未割り当て",
+  "settings_keyboard_volume_up": "音量を上げる",
+  "settings_keyboard_volume_down": "音量を下げる",
+  "settings_keyboard_toggle_mute": "ミュート切替",
+  "settings_keyboard_toggle_fullscreen": "全画面切替",
+  "settings_keyboard_next_scene": "次のシーン",
+  "settings_keyboard_prev_scene": "前のシーン",
+  "settings_keyboard_increase_speed": "再生速度を上げる",
+  "settings_keyboard_decrease_speed": "再生速度を下げる",
+  "settings_keyboard_reset_speed": "再生速度をリセット",
+  "settings_keyboard_close_player": "プレーヤーを閉じる",
+  "settings_keyboard_next_image": "次の画像",
+  "settings_keyboard_prev_image": "前の画像",
+  "settings_keyboard_go_back": "戻る",
+  "settings_keyboard_play_pause_desc": "動画の再生と一時停止を切り替えます",
+  "settings_keyboard_seek_forward_5_desc": "5秒進む",
+  "settings_keyboard_seek_backward_5_desc": "5秒戻る",
+  "settings_keyboard_seek_forward_10_desc": "10秒進む",
+  "settings_keyboard_seek_backward_10_desc": "10秒戻る",
   "settings_appearance": "外観",
   "settings_appearance_subtitle": "テーマと色",
   "settings_interface": "インターフェース",
@@ -301,6 +375,30 @@
       "message": {
         "type": "String"
       }
+    }
+  },
+  "@common_not_found": {
+    "placeholders": {
+      "item": {
+        "type": "String"
+      }
+    }
+  }
+  ,
+  "details_more_from_studio": "スタジオのその他",
+  "details_o_count_incremented": "Oカウントが増えました",
+  "details_show_less": "簡易表示",
+  "details_show_more": "もっと見る",
+  "details_failed_update_rating": "評価の更新に失敗しました: {error}",
+  "details_failed_increment_o_count": "Oカウントの増加に失敗しました: {error}",
+  "@details_failed_update_rating": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "@details_failed_increment_o_count": {
+    "placeholders": {
+      "error": { "type": "String" }
     }
   }
 }
