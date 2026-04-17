@@ -1,9 +1,9 @@
 name: Nightly Release Build
 
 on:
-  # push:
-  #   branches:
-  #     - dev
+  push:
+    branches:
+      - dev
   schedule:
     - cron: '0 3 * * *' # daily at 03:00 UTC
   workflow_dispatch:
