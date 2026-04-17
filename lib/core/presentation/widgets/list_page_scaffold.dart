@@ -205,6 +205,41 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
     );
   }
 
+  int _getEffectivePrefetchDistance(BuildContext context) {
+    final screenHeight = MediaQuery.sizeOf(context).height;
+    final isGrid = widget.gridDelegate != null;
+    double stride;
+    int crossAxisCount = 1;
+
+    if (isGrid) {
+      final delegate =
+          _getResponsiveGridDelegate(context)
+              as SliverGridDelegateWithFixedCrossAxisCount;
+      crossAxisCount = delegate.crossAxisCount;
+      final padding = widget.padding is EdgeInsets
+          ? (widget.padding as EdgeInsets).horizontal
+          : 0.0;
+      final availableWidth = MediaQuery.sizeOf(context).width - padding;
+      final itemWidth =
+          (availableWidth -
+              (delegate.crossAxisSpacing * (crossAxisCount - 1))) /
+          crossAxisCount;
+      final itemHeight =
+          delegate.mainAxisExtent ?? (itemWidth / delegate.childAspectRatio);
+      stride = itemHeight + delegate.mainAxisSpacing;
+    } else {
+      stride = widget.itemExtent ?? _measuredItemExtent ?? 300.0;
+    }
+
+    // Number of rows in two screen heights
+    final double rowsInTwoScreens = (screenHeight * 2.0) / stride;
+    final int itemsInTwoScreens = (rowsInTwoScreens * crossAxisCount).ceil();
+
+    return itemsInTwoScreens > widget.prefetchDistance
+        ? itemsInTwoScreens
+        : widget.prefetchDistance;
+  }
+
   void _handleInitialPrefetch(List<T> items) {
     if (_didPrefetchInitial ||
         items.isEmpty ||
@@ -217,9 +252,10 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
 
-      final count = items.length < widget.prefetchDistance
+      final prefetchDistance = _getEffectivePrefetchDistance(context);
+      final count = items.length < prefetchDistance
           ? items.length
-          : widget.prefetchDistance;
+          : prefetchDistance;
       final headers = ref.read(mediaHeadersProvider);
       final isGrid = widget.gridDelegate != null;
 
@@ -262,7 +298,7 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
     final offset = scrollInfo.metrics.pixels;
     final isGrid = widget.gridDelegate != null;
     final headers = ref.read(mediaHeadersProvider);
-    final prefetchDistance = widget.prefetchDistance;
+    final prefetchDistance = _getEffectivePrefetchDistance(context);
 
     int? memCacheWidth;
     if (widget.memCacheWidthBuilder != null) {
