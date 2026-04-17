@@ -195,8 +195,7 @@ class PerformerDetailsPage extends ConsumerWidget {
                           children: [
                             if (performer.gender != null)
                               _buildChip(context, performer.gender!),
-                            if (age != null)
-                              _buildChip(context, '$age'),
+                            if (age != null) _buildChip(context, '$age'),
                             if (performer.birthdate != null)
                               _buildChip(context, performer.birthdate!),
                             if (performer.country != null)
@@ -273,7 +272,9 @@ class PerformerDetailsPage extends ConsumerWidget {
                                             context,
                                           ).showSnackBar(
                                             SnackBar(
-                                              content: Text(context.l10n.common_error(url)),
+                                              content: Text(
+                                                context.l10n.common_error(url),
+                                              ),
                                             ),
                                           );
                                         }
