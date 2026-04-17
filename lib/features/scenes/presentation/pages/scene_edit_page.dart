@@ -357,6 +357,291 @@ class _SceneEditPageState extends ConsumerState<SceneEditPage> {
     }
   }
 
+  Widget _buildScrapedImage() {
+    if (_scrapedImage == null) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppTheme.spacingMedium),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: _scrapedImage!.startsWith('data:')
+            ? Image.memory(
+                base64Decode(_scrapedImage!.split(',').last),
+                height: 200,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              )
+            : Image.network(
+                _scrapedImage!,
+                height: 200,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
+      ),
+    );
+  }
+
+  Widget _buildBasicInfo() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        TextField(
+          controller: _titleController,
+          decoration: const InputDecoration(
+            labelText: 'Title',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        const SizedBox(height: AppTheme.spacingMedium),
+        TextField(
+          controller: _detailsController,
+          maxLines: 5,
+          decoration: const InputDecoration(
+            labelText: 'Details',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        const SizedBox(height: AppTheme.spacingMedium),
+        TextField(
+          controller: _dateController,
+          readOnly: true,
+          onTap: _pickDate,
+          decoration: const InputDecoration(
+            labelText: 'Release Date',
+            border: OutlineInputBorder(),
+            suffixIcon: Icon(Icons.calendar_today),
+          ),
+        ),
+        const SizedBox(height: AppTheme.spacingMedium),
+      ],
+    );
+  }
+
+  Widget _buildStudioSection(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Studio', style: Theme.of(context).textTheme.labelLarge),
+        const SizedBox(height: AppTheme.spacingSmall),
+        InkWell(
+          onTap: _pickStudio,
+          child: InputDecorator(
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            ),
+            child: Row(
+              children: [
+                Expanded(child: Text(_selectedStudioName ?? 'None')),
+                if (_selectedStudioId != null)
+                  IconButton(
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                    icon: const Icon(Icons.clear, size: 18),
+                    onPressed: () {
+                      setState(() {
+                        _selectedStudioId = null;
+                        _selectedStudioName = null;
+                      });
+                    },
+                  )
+                else
+                  const Icon(Icons.arrow_drop_down),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: AppTheme.spacingMedium),
+      ],
+    );
+  }
+
+  Widget _buildPerformersSection(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text('Performers', style: Theme.of(context).textTheme.labelLarge),
+            const Spacer(),
+            IconButton(
+              onPressed: _pickPerformers,
+              icon: const Icon(Icons.add_circle_outline),
+              tooltip: 'Add Performer',
+            ),
+          ],
+        ),
+        Wrap(
+          spacing: 8,
+          children: [
+            for (int i = 0; i < _selectedPerformerIds.length; i++)
+              InputChip(
+                label: Text(_selectedPerformerNames[i]),
+                onDeleted: () {
+                  setState(() {
+                    _selectedPerformerIds.removeAt(i);
+                    _selectedPerformerNames.removeAt(i);
+                  });
+                },
+              ),
+          ],
+        ),
+        const SizedBox(height: AppTheme.spacingSmall),
+      ],
+    );
+  }
+
+  Widget _buildTagsSection(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text('Tags', style: Theme.of(context).textTheme.labelLarge),
+            const Spacer(),
+            IconButton(
+              onPressed: _pickTags,
+              icon: const Icon(Icons.add_circle_outline),
+              tooltip: 'Add Tag',
+            ),
+          ],
+        ),
+        Wrap(
+          spacing: 8,
+          children: [
+            for (int i = 0; i < _selectedTagIds.length; i++)
+              InputChip(
+                label: Text(_selectedTagNames[i]),
+                onDeleted: () {
+                  setState(() {
+                    _selectedTagIds.removeAt(i);
+                    _selectedTagNames.removeAt(i);
+                  });
+                },
+              ),
+          ],
+        ),
+        const SizedBox(height: AppTheme.spacingMedium),
+      ],
+    );
+  }
+
+  Widget _buildUrlsSection(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text('URLs', style: Theme.of(context).textTheme.titleMedium),
+            const Spacer(),
+            IconButton(
+              onPressed: _addUrlField,
+              icon: const Icon(Icons.add_circle_outline),
+              tooltip: 'Add URL',
+            ),
+          ],
+        ),
+        ..._urlControllers.asMap().entries.map((entry) {
+          final index = entry.key;
+          final controller = entry.value;
+          return Padding(
+            padding: const EdgeInsets.only(bottom: AppTheme.spacingSmall),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: controller,
+                    decoration: const InputDecoration(
+                      labelText: 'URL',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => _removeUrlField(index),
+                  icon: const Icon(Icons.remove_circle_outline),
+                  tooltip: 'Remove URL',
+                ),
+              ],
+            ),
+          );
+        }),
+      ],
+    );
+  }
+
+  Widget _buildUnmatchedTags(
+    BuildContext context,
+    List<ScrapedTag> unmatchedTags,
+  ) {
+    if (unmatchedTags.isEmpty) return const SizedBox.shrink();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: AppTheme.spacingMedium),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            'Unmatched Scraped Tags',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+        ),
+        const SizedBox(height: AppTheme.spacingSmall),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Wrap(
+            spacing: 6,
+            runSpacing: 6,
+            children: unmatchedTags
+                .map(
+                  (t) => Chip(
+                    label: Text(t.name),
+                    backgroundColor: context.colors.error.withValues(
+                      alpha: 0.1,
+                    ),
+                  ),
+                )
+                .toList(),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildUnmatchedPerformers(
+    BuildContext context,
+    List<ScrapedPerformer> unmatchedPerformers,
+  ) {
+    if (unmatchedPerformers.isEmpty) return const SizedBox.shrink();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: AppTheme.spacingMedium),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            'Unmatched Scraped Performers',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+        ),
+        const SizedBox(height: AppTheme.spacingSmall),
+        Column(
+          children: unmatchedPerformers
+              .map(
+                (p) => ListTile(
+                  dense: true,
+                  title: Text(p.name ?? 'Unknown'),
+                  subtitle: const Text(
+                    'No matching performer found in library',
+                  ),
+                  leading: const Icon(Icons.person_off_outlined),
+                ),
+              )
+              .toList(),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final scrapeEnabled = ref.watch(scrapeEnabledProvider);
@@ -420,241 +705,14 @@ class _SceneEditPageState extends ConsumerState<SceneEditPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (_scrapedImage != null)
-              Padding(
-                padding: const EdgeInsets.only(bottom: AppTheme.spacingMedium),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: _scrapedImage!.startsWith('data:')
-                      ? Image.memory(
-                          base64Decode(_scrapedImage!.split(',').last),
-                          height: 200,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                        )
-                      : Image.network(
-                          _scrapedImage!,
-                          height: 200,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                        ),
-                ),
-              ),
-            TextField(
-              controller: _titleController,
-              decoration: const InputDecoration(
-                labelText: 'Title',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: AppTheme.spacingMedium),
-            TextField(
-              controller: _detailsController,
-              maxLines: 5,
-              decoration: const InputDecoration(
-                labelText: 'Details',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: AppTheme.spacingMedium),
-            TextField(
-              controller: _dateController,
-              readOnly: true,
-              onTap: _pickDate,
-              decoration: const InputDecoration(
-                labelText: 'Release Date',
-                border: OutlineInputBorder(),
-                suffixIcon: Icon(Icons.calendar_today),
-              ),
-            ),
-            const SizedBox(height: AppTheme.spacingMedium),
-
-            // Studio
-            Text('Studio', style: Theme.of(context).textTheme.labelLarge),
-            const SizedBox(height: AppTheme.spacingSmall),
-            InkWell(
-              onTap: _pickStudio,
-              child: InputDecorator(
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(child: Text(_selectedStudioName ?? 'None')),
-                    if (_selectedStudioId != null)
-                      IconButton(
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                        icon: const Icon(Icons.clear, size: 18),
-                        onPressed: () {
-                          setState(() {
-                            _selectedStudioId = null;
-                            _selectedStudioName = null;
-                          });
-                        },
-                      )
-                    else
-                      const Icon(Icons.arrow_drop_down),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: AppTheme.spacingMedium),
-
-            // Performers
-            Row(
-              children: [
-                Text(
-                  'Performers',
-                  style: Theme.of(context).textTheme.labelLarge,
-                ),
-                const Spacer(),
-                IconButton(
-                  onPressed: _pickPerformers,
-                  icon: const Icon(Icons.add_circle_outline),
-                  tooltip: 'Add Performer',
-                ),
-              ],
-            ),
-            Wrap(
-              spacing: 8,
-              children: [
-                for (int i = 0; i < _selectedPerformerIds.length; i++)
-                  InputChip(
-                    label: Text(_selectedPerformerNames[i]),
-                    onDeleted: () {
-                      setState(() {
-                        _selectedPerformerIds.removeAt(i);
-                        _selectedPerformerNames.removeAt(i);
-                      });
-                    },
-                  ),
-              ],
-            ),
-            const SizedBox(height: AppTheme.spacingSmall),
-
-            // Tags
-            Row(
-              children: [
-                Text('Tags', style: Theme.of(context).textTheme.labelLarge),
-                const Spacer(),
-                IconButton(
-                  onPressed: _pickTags,
-                  icon: const Icon(Icons.add_circle_outline),
-                  tooltip: 'Add Tag',
-                ),
-              ],
-            ),
-            Wrap(
-              spacing: 8,
-              children: [
-                for (int i = 0; i < _selectedTagIds.length; i++)
-                  InputChip(
-                    label: Text(_selectedTagNames[i]),
-                    onDeleted: () {
-                      setState(() {
-                        _selectedTagIds.removeAt(i);
-                        _selectedTagNames.removeAt(i);
-                      });
-                    },
-                  ),
-              ],
-            ),
-            const SizedBox(height: AppTheme.spacingMedium),
-
-            Row(
-              children: [
-                Text('URLs', style: Theme.of(context).textTheme.titleMedium),
-                const Spacer(),
-                IconButton(
-                  onPressed: _addUrlField,
-                  icon: const Icon(Icons.add_circle_outline),
-                  tooltip: 'Add URL',
-                ),
-              ],
-            ),
-            ..._urlControllers.asMap().entries.map((entry) {
-              final index = entry.key;
-              final controller = entry.value;
-              return Padding(
-                padding: const EdgeInsets.only(bottom: AppTheme.spacingSmall),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: controller,
-                        decoration: const InputDecoration(
-                          labelText: 'URL',
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () => _removeUrlField(index),
-                      icon: const Icon(Icons.remove_circle_outline),
-                      tooltip: 'Remove URL',
-                    ),
-                  ],
-                ),
-              );
-            }),
-            if (unmatchedScrapedTags.isNotEmpty) ...[
-              const SizedBox(height: AppTheme.spacingMedium),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Unmatched Scraped Tags',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-              ),
-              const SizedBox(height: AppTheme.spacingSmall),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Wrap(
-                  spacing: 6,
-                  runSpacing: 6,
-                  children: unmatchedScrapedTags
-                      .map(
-                        (t) => Chip(
-                          label: Text(t.name),
-                          backgroundColor: context.colors.error.withValues(
-                            alpha: 0.1,
-                          ),
-                        ),
-                      )
-                      .toList(),
-                ),
-              ),
-            ],
-            if (unmatchedScrapedPerformers.isNotEmpty) ...[
-              const SizedBox(height: AppTheme.spacingMedium),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Unmatched Scraped Performers',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-              ),
-              const SizedBox(height: AppTheme.spacingSmall),
-              Column(
-                children: unmatchedScrapedPerformers
-                    .map(
-                      (p) => ListTile(
-                        dense: true,
-                        title: Text(p.name ?? 'Unknown'),
-                        subtitle: const Text(
-                          'No matching performer found in library',
-                        ),
-                        leading: const Icon(Icons.person_off_outlined),
-                      ),
-                    )
-                    .toList(),
-              ),
-            ],
+            _buildScrapedImage(),
+            _buildBasicInfo(),
+            _buildStudioSection(context),
+            _buildPerformersSection(context),
+            _buildTagsSection(context),
+            _buildUrlsSection(context),
+            _buildUnmatchedTags(context, unmatchedScrapedTags),
+            _buildUnmatchedPerformers(context, unmatchedScrapedPerformers),
           ],
         ),
       ),
