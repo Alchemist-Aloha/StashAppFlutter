@@ -9,10 +9,6 @@ class PerformerScrapeNotifier {
   PerformerScrapeNotifier(this.ref);
 
   Future<List<Scraper>> listAvailableScrapers() async {
-    final repo = ref.read(performerRepositoryProvider);
-    //listScrapers is in SceneRepository, so we might need a common scraper repository or just use SceneRepository for now
-    // Actually, SceneRepository.listScrapers takes types.
-    // For now, let's use SceneRepository since it handles all scraper types.
     final sceneRepo = ref.read(sceneRepositoryProvider);
     return sceneRepo.listScrapers(types: ['PERFORMER']);
   }
@@ -30,6 +26,19 @@ class PerformerScrapeNotifier {
       performerId: performerId,
       query: query,
     );
+  }
+
+  Future<ScrapedPerformer?> scrapePerformerURL(String url) async {
+    final repo = ref.read(performerRepositoryProvider);
+    return repo.scrapePerformerURL(url);
+  }
+
+  Future<void> updatePerformer({
+    required String id,
+    required Map<String, dynamic> input,
+  }) async {
+    final repo = ref.read(performerRepositoryProvider);
+    await repo.updatePerformer(id: id, input: input);
   }
 }
 

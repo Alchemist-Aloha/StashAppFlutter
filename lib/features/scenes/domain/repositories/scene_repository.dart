@@ -25,6 +25,7 @@ abstract class SceneRepository {
     String? sceneId,
     String? query,
   });
+  Future<ScrapedScene?> scrapeSceneURL(String url);
   Future<void> generatePhash(String sceneId);
   Future<void> saveScrapedScene({
     required String sceneId,

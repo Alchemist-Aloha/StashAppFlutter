@@ -183,12 +183,18 @@ class _SceneEditPageState extends ConsumerState<SceneEditPage> {
 
     setState(() => _isScraping = true);
     try {
-      final results = await ref.read(sceneScrapeProvider).scrapeScene(
-            scraperId: scrapeRequest.scraperId,
-            stashBoxEndpoint: scrapeRequest.stashBoxEndpoint,
-            sceneId: scrapeRequest.useFingerprints ? widget.scene.id : null,
-            query: scrapeRequest.query,
-          );
+      List<ScrapedScene> results = [];
+      if (scrapeRequest.url != null) {
+        final res = await ref.read(sceneScrapeProvider).scrapeSceneURL(scrapeRequest.url!);
+        if (res != null) results = [res];
+      } else {
+        results = await ref.read(sceneScrapeProvider).scrapeScene(
+              scraperId: scrapeRequest.scraperId,
+              stashBoxEndpoint: scrapeRequest.stashBoxEndpoint,
+              sceneId: scrapeRequest.useFingerprints ? widget.scene.id : null,
+              query: scrapeRequest.query,
+            );
+      }
 
       if (!mounted) return;
 
@@ -244,6 +250,7 @@ class _SceneEditPageState extends ConsumerState<SceneEditPage> {
         builder: (context) => EnhancedScrapeDialog(
           original: original,
           scraped: selected,
+          type: ScrapeEntityType.scene,
         ),
       );
 

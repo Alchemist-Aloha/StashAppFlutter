@@ -29,6 +29,11 @@ class SceneScrapeNotifier {
     );
   }
 
+  Future<ScrapedScene?> scrapeSceneURL(String url) async {
+    final repo = ref.read(sceneRepositoryProvider);
+    return repo.scrapeSceneURL(url);
+  }
+
   Future<void> generatePhash(String sceneId) async {
     final repo = ref.read(sceneRepositoryProvider);
     await repo.generatePhash(sceneId);

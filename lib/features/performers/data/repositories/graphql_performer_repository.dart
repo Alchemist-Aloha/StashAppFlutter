@@ -276,4 +276,34 @@ class GraphQLPerformerRepository implements PerformerRepository {
 
     return raw.map((e) => ScrapedPerformer.fromJson(e.toJson())).toList();
   }
+
+  @override
+  Future<ScrapedPerformer?> scrapePerformerURL(String url) async {
+    final result = await client.query$ScrapePerformerURL(
+      Options$Query$ScrapePerformerURL(
+        variables: Variables$Query$ScrapePerformerURL(url: url),
+      ),
+    );
+
+    if (result.hasException) throw result.exception!;
+
+    final raw = result.parsedData?.scrapePerformerURL;
+    return raw != null ? ScrapedPerformer.fromJson(raw.toJson()) : null;
+  }
+
+  @override
+  Future<void> updatePerformer({
+    required String id,
+    required Map<String, dynamic> input,
+  }) async {
+    final result = await client.mutate$PerformerUpdate(
+      Options$Mutation$PerformerUpdate(
+        variables: Variables$Mutation$PerformerUpdate(
+          input: Input$PerformerUpdateInput.fromJson({...input, 'id': id}),
+        ),
+      ),
+    );
+
+    if (result.hasException) throw result.exception!;
+  }
 }

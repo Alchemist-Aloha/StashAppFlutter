@@ -154,6 +154,34 @@ query ScrapeSingleScene($source: ScraperSourceInput!, $input: ScrapeSingleSceneI
   }
 }
 
+query ScrapeSceneURL($url: String!) {
+  scrapeSceneURL(url: $url) {
+    title
+    code
+    details
+    director
+    urls
+    date
+    image
+    remote_site_id
+    studio {
+      name
+      stored_id
+    }
+    tags {
+      name
+      stored_id
+    }
+    performers {
+      name
+      remote_site_id
+      urls
+      images
+      stored_id
+    }
+  }
+}
+
 mutation SceneMerge($input: SceneMergeInput!) {
   sceneMerge(input: $input) {
     id

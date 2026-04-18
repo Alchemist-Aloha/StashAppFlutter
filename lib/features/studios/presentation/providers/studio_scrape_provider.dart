@@ -27,6 +27,19 @@ class StudioScrapeNotifier {
       query: query,
     );
   }
+
+  Future<ScrapedStudio?> scrapeStudioURL(String url) async {
+    final repo = ref.read(studioRepositoryProvider);
+    return repo.scrapeStudioURL(url);
+  }
+
+  Future<void> updateStudio({
+    required String id,
+    required Map<String, dynamic> input,
+  }) async {
+    final repo = ref.read(studioRepositoryProvider);
+    await repo.updateStudio(id: id, input: input);
+  }
 }
 
 final studioScrapeProvider = Provider<StudioScrapeNotifier>((ref) {

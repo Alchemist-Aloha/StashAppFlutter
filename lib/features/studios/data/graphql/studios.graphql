@@ -34,6 +34,12 @@ mutation UpdateStudioFavorite($id: ID!, $favorite: Boolean!) {
   }
 }
 
+mutation StudioUpdate($input: StudioUpdateInput!) {
+  studioUpdate(input: $input) {
+    id
+  }
+}
+
 query ScrapeSingleStudio($source: ScraperSourceInput!, $input: ScrapeSingleStudioInput!) {
   scrapeSingleStudio(source: $source, input: $input) {
     name

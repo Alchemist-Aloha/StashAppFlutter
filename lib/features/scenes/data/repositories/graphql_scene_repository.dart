@@ -517,6 +517,20 @@ class GraphQLSceneRepository implements SceneRepository {
   }
 
   @override
+  Future<ScrapedScene?> scrapeSceneURL(String url) async {
+    final result = await client.query$ScrapeSceneURL(
+      Options$Query$ScrapeSceneURL(
+        variables: Variables$Query$ScrapeSceneURL(url: url),
+      ),
+    );
+
+    if (result.hasException) throw result.exception!;
+
+    final raw = result.parsedData?.scrapeSceneURL;
+    return raw != null ? ScrapedScene.fromJson(raw.toJson()) : null;
+  }
+
+  @override
   Future<void> generatePhash(String sceneId) async {
     final result = await client.mutate$MetadataGenerate(
       Options$Mutation$MetadataGenerate(

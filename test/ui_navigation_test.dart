@@ -100,6 +100,9 @@ class MockSceneRepository implements SceneRepository {
   }) async => [];
 
   @override
+  Future<ScrapedScene?> scrapeSceneURL(String url) async => null;
+
+  @override
   Future<void> generatePhash(String sceneId) async {}
 
   @override
@@ -171,6 +174,15 @@ class MockPerformerRepository implements PerformerRepository {
     String? performerId,
     String? query,
   }) async => [];
+
+  @override
+  Future<ScrapedPerformer?> scrapePerformerURL(String url) async => null;
+
+  @override
+  Future<void> updatePerformer({
+    required String id,
+    required Map<String, dynamic> input,
+  }) async {}
 }
 
 class MockStudioRepository implements StudioRepository {
@@ -208,6 +220,15 @@ class MockStudioRepository implements StudioRepository {
     String? studioId,
     String? query,
   }) async => [];
+
+  @override
+  Future<ScrapedStudio?> scrapeStudioURL(String url) async => null;
+
+  @override
+  Future<void> updateStudio({
+    required String id,
+    required Map<String, dynamic> input,
+  }) async {}
 }
 
 class MockTagRepository implements TagRepository {

@@ -122,6 +122,12 @@ class MockSceneRepository extends MockRepositoryState<Scene>
   }
 
   @override
+  Future<ScrapedScene?> scrapeSceneURL(String url) async {
+    if (shouldThrow) throw Exception(errorMessage);
+    return null;
+  }
+
+  @override
   Future<void> generatePhash(String sceneId) async {
     if (shouldThrow) throw Exception(errorMessage);
   }
@@ -190,6 +196,20 @@ class MockPerformerRepository extends MockRepositoryState<Performer>
     if (shouldThrow) throw Exception(errorMessage);
     return [];
   }
+
+  @override
+  Future<ScrapedPerformer?> scrapePerformerURL(String url) async {
+    if (shouldThrow) throw Exception(errorMessage);
+    return null;
+  }
+
+  @override
+  Future<void> updatePerformer({
+    required String id,
+    required Map<String, dynamic> input,
+  }) async {
+    if (shouldThrow) throw Exception(errorMessage);
+  }
 }
 
 class MockStudioRepository extends MockRepositoryState<Studio>
@@ -227,6 +247,20 @@ class MockStudioRepository extends MockRepositoryState<Studio>
   }) async {
     if (shouldThrow) throw Exception(errorMessage);
     return [];
+  }
+
+  @override
+  Future<ScrapedStudio?> scrapeStudioURL(String url) async {
+    if (shouldThrow) throw Exception(errorMessage);
+    return null;
+  }
+
+  @override
+  Future<void> updateStudio({
+    required String id,
+    required Map<String, dynamic> input,
+  }) async {
+    if (shouldThrow) throw Exception(errorMessage);
   }
 }
 

@@ -2072,6 +2072,494 @@ class _CopyWithStubImpl$Mutation$UpdateStudioFavorite$studioUpdate<TRes>
   call({String? id, bool? favorite, String? $__typename}) => _res;
 }
 
+class Variables$Mutation$StudioUpdate {
+  factory Variables$Mutation$StudioUpdate({
+    required Input$StudioUpdateInput input,
+  }) => Variables$Mutation$StudioUpdate._({r'input': input});
+
+  Variables$Mutation$StudioUpdate._(this._$data);
+
+  factory Variables$Mutation$StudioUpdate.fromJson(Map<String, dynamic> data) {
+    final result$data = <String, dynamic>{};
+    final l$input = data['input'];
+    result$data['input'] = Input$StudioUpdateInput.fromJson(
+      (l$input as Map<String, dynamic>),
+    );
+    return Variables$Mutation$StudioUpdate._(result$data);
+  }
+
+  Map<String, dynamic> _$data;
+
+  Input$StudioUpdateInput get input =>
+      (_$data['input'] as Input$StudioUpdateInput);
+
+  Map<String, dynamic> toJson() {
+    final result$data = <String, dynamic>{};
+    final l$input = input;
+    result$data['input'] = l$input.toJson();
+    return result$data;
+  }
+
+  CopyWith$Variables$Mutation$StudioUpdate<Variables$Mutation$StudioUpdate>
+  get copyWith => CopyWith$Variables$Mutation$StudioUpdate(this, (i) => i);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (other is! Variables$Mutation$StudioUpdate ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$input = input;
+    final lOther$input = other.input;
+    if (l$input != lOther$input) {
+      return false;
+    }
+    return true;
+  }
+
+  @override
+  int get hashCode {
+    final l$input = input;
+    return Object.hashAll([l$input]);
+  }
+}
+
+abstract class CopyWith$Variables$Mutation$StudioUpdate<TRes> {
+  factory CopyWith$Variables$Mutation$StudioUpdate(
+    Variables$Mutation$StudioUpdate instance,
+    TRes Function(Variables$Mutation$StudioUpdate) then,
+  ) = _CopyWithImpl$Variables$Mutation$StudioUpdate;
+
+  factory CopyWith$Variables$Mutation$StudioUpdate.stub(TRes res) =
+      _CopyWithStubImpl$Variables$Mutation$StudioUpdate;
+
+  TRes call({Input$StudioUpdateInput? input});
+}
+
+class _CopyWithImpl$Variables$Mutation$StudioUpdate<TRes>
+    implements CopyWith$Variables$Mutation$StudioUpdate<TRes> {
+  _CopyWithImpl$Variables$Mutation$StudioUpdate(this._instance, this._then);
+
+  final Variables$Mutation$StudioUpdate _instance;
+
+  final TRes Function(Variables$Mutation$StudioUpdate) _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({Object? input = _undefined}) => _then(
+    Variables$Mutation$StudioUpdate._({
+      ..._instance._$data,
+      if (input != _undefined && input != null)
+        'input': (input as Input$StudioUpdateInput),
+    }),
+  );
+}
+
+class _CopyWithStubImpl$Variables$Mutation$StudioUpdate<TRes>
+    implements CopyWith$Variables$Mutation$StudioUpdate<TRes> {
+  _CopyWithStubImpl$Variables$Mutation$StudioUpdate(this._res);
+
+  TRes _res;
+
+  call({Input$StudioUpdateInput? input}) => _res;
+}
+
+class Mutation$StudioUpdate {
+  Mutation$StudioUpdate({this.studioUpdate, this.$__typename = 'Mutation'});
+
+  factory Mutation$StudioUpdate.fromJson(Map<String, dynamic> json) {
+    final l$studioUpdate = json['studioUpdate'];
+    final l$$__typename = json['__typename'];
+    return Mutation$StudioUpdate(
+      studioUpdate: l$studioUpdate == null
+          ? null
+          : Mutation$StudioUpdate$studioUpdate.fromJson(
+              (l$studioUpdate as Map<String, dynamic>),
+            ),
+      $__typename: (l$$__typename as String),
+    );
+  }
+
+  final Mutation$StudioUpdate$studioUpdate? studioUpdate;
+
+  final String $__typename;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$studioUpdate = studioUpdate;
+    _resultData['studioUpdate'] = l$studioUpdate?.toJson();
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$studioUpdate = studioUpdate;
+    final l$$__typename = $__typename;
+    return Object.hashAll([l$studioUpdate, l$$__typename]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (other is! Mutation$StudioUpdate || runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$studioUpdate = studioUpdate;
+    final lOther$studioUpdate = other.studioUpdate;
+    if (l$studioUpdate != lOther$studioUpdate) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Mutation$StudioUpdate on Mutation$StudioUpdate {
+  CopyWith$Mutation$StudioUpdate<Mutation$StudioUpdate> get copyWith =>
+      CopyWith$Mutation$StudioUpdate(this, (i) => i);
+}
+
+abstract class CopyWith$Mutation$StudioUpdate<TRes> {
+  factory CopyWith$Mutation$StudioUpdate(
+    Mutation$StudioUpdate instance,
+    TRes Function(Mutation$StudioUpdate) then,
+  ) = _CopyWithImpl$Mutation$StudioUpdate;
+
+  factory CopyWith$Mutation$StudioUpdate.stub(TRes res) =
+      _CopyWithStubImpl$Mutation$StudioUpdate;
+
+  TRes call({
+    Mutation$StudioUpdate$studioUpdate? studioUpdate,
+    String? $__typename,
+  });
+  CopyWith$Mutation$StudioUpdate$studioUpdate<TRes> get studioUpdate;
+}
+
+class _CopyWithImpl$Mutation$StudioUpdate<TRes>
+    implements CopyWith$Mutation$StudioUpdate<TRes> {
+  _CopyWithImpl$Mutation$StudioUpdate(this._instance, this._then);
+
+  final Mutation$StudioUpdate _instance;
+
+  final TRes Function(Mutation$StudioUpdate) _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({
+    Object? studioUpdate = _undefined,
+    Object? $__typename = _undefined,
+  }) => _then(
+    Mutation$StudioUpdate(
+      studioUpdate: studioUpdate == _undefined
+          ? _instance.studioUpdate
+          : (studioUpdate as Mutation$StudioUpdate$studioUpdate?),
+      $__typename: $__typename == _undefined || $__typename == null
+          ? _instance.$__typename
+          : ($__typename as String),
+    ),
+  );
+
+  CopyWith$Mutation$StudioUpdate$studioUpdate<TRes> get studioUpdate {
+    final local$studioUpdate = _instance.studioUpdate;
+    return local$studioUpdate == null
+        ? CopyWith$Mutation$StudioUpdate$studioUpdate.stub(_then(_instance))
+        : CopyWith$Mutation$StudioUpdate$studioUpdate(
+            local$studioUpdate,
+            (e) => call(studioUpdate: e),
+          );
+  }
+}
+
+class _CopyWithStubImpl$Mutation$StudioUpdate<TRes>
+    implements CopyWith$Mutation$StudioUpdate<TRes> {
+  _CopyWithStubImpl$Mutation$StudioUpdate(this._res);
+
+  TRes _res;
+
+  call({
+    Mutation$StudioUpdate$studioUpdate? studioUpdate,
+    String? $__typename,
+  }) => _res;
+
+  CopyWith$Mutation$StudioUpdate$studioUpdate<TRes> get studioUpdate =>
+      CopyWith$Mutation$StudioUpdate$studioUpdate.stub(_res);
+}
+
+const documentNodeMutationStudioUpdate = DocumentNode(
+  definitions: [
+    OperationDefinitionNode(
+      type: OperationType.mutation,
+      name: NameNode(value: 'StudioUpdate'),
+      variableDefinitions: [
+        VariableDefinitionNode(
+          variable: VariableNode(name: NameNode(value: 'input')),
+          type: NamedTypeNode(
+            name: NameNode(value: 'StudioUpdateInput'),
+            isNonNull: true,
+          ),
+          defaultValue: DefaultValueNode(value: null),
+          directives: [],
+        ),
+      ],
+      directives: [],
+      selectionSet: SelectionSetNode(
+        selections: [
+          FieldNode(
+            name: NameNode(value: 'studioUpdate'),
+            alias: null,
+            arguments: [
+              ArgumentNode(
+                name: NameNode(value: 'input'),
+                value: VariableNode(name: NameNode(value: 'input')),
+              ),
+            ],
+            directives: [],
+            selectionSet: SelectionSetNode(
+              selections: [
+                FieldNode(
+                  name: NameNode(value: 'id'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null,
+                ),
+                FieldNode(
+                  name: NameNode(value: '__typename'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null,
+                ),
+              ],
+            ),
+          ),
+          FieldNode(
+            name: NameNode(value: '__typename'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null,
+          ),
+        ],
+      ),
+    ),
+  ],
+);
+Mutation$StudioUpdate _parserFn$Mutation$StudioUpdate(
+  Map<String, dynamic> data,
+) => Mutation$StudioUpdate.fromJson(data);
+typedef OnMutationCompleted$Mutation$StudioUpdate =
+    FutureOr<void> Function(Map<String, dynamic>?, Mutation$StudioUpdate?);
+
+class Options$Mutation$StudioUpdate
+    extends graphql.MutationOptions<Mutation$StudioUpdate> {
+  Options$Mutation$StudioUpdate({
+    String? operationName,
+    required Variables$Mutation$StudioUpdate variables,
+    graphql.FetchPolicy? fetchPolicy,
+    graphql.ErrorPolicy? errorPolicy,
+    graphql.CacheRereadPolicy? cacheRereadPolicy,
+    Object? optimisticResult,
+    Mutation$StudioUpdate? typedOptimisticResult,
+    graphql.Context? context,
+    OnMutationCompleted$Mutation$StudioUpdate? onCompleted,
+    graphql.OnMutationUpdate<Mutation$StudioUpdate>? update,
+    graphql.OnError? onError,
+  }) : onCompletedWithParsed = onCompleted,
+       super(
+         variables: variables.toJson(),
+         operationName: operationName,
+         fetchPolicy: fetchPolicy,
+         errorPolicy: errorPolicy,
+         cacheRereadPolicy: cacheRereadPolicy,
+         optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
+         context: context,
+         onCompleted: onCompleted == null
+             ? null
+             : (data) => onCompleted(
+                 data,
+                 data == null ? null : _parserFn$Mutation$StudioUpdate(data),
+               ),
+         update: update,
+         onError: onError,
+         document: documentNodeMutationStudioUpdate,
+         parserFn: _parserFn$Mutation$StudioUpdate,
+       );
+
+  final OnMutationCompleted$Mutation$StudioUpdate? onCompletedWithParsed;
+
+  @override
+  List<Object?> get properties => [
+    ...super.onCompleted == null
+        ? super.properties
+        : super.properties.where((property) => property != onCompleted),
+    onCompletedWithParsed,
+  ];
+}
+
+class WatchOptions$Mutation$StudioUpdate
+    extends graphql.WatchQueryOptions<Mutation$StudioUpdate> {
+  WatchOptions$Mutation$StudioUpdate({
+    String? operationName,
+    required Variables$Mutation$StudioUpdate variables,
+    graphql.FetchPolicy? fetchPolicy,
+    graphql.ErrorPolicy? errorPolicy,
+    graphql.CacheRereadPolicy? cacheRereadPolicy,
+    Object? optimisticResult,
+    Mutation$StudioUpdate? typedOptimisticResult,
+    graphql.Context? context,
+    Duration? pollInterval,
+    bool? eagerlyFetchResults,
+    bool carryForwardDataOnException = true,
+    bool fetchResults = false,
+  }) : super(
+         variables: variables.toJson(),
+         operationName: operationName,
+         fetchPolicy: fetchPolicy,
+         errorPolicy: errorPolicy,
+         cacheRereadPolicy: cacheRereadPolicy,
+         optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
+         context: context,
+         document: documentNodeMutationStudioUpdate,
+         pollInterval: pollInterval,
+         eagerlyFetchResults: eagerlyFetchResults,
+         carryForwardDataOnException: carryForwardDataOnException,
+         fetchResults: fetchResults,
+         parserFn: _parserFn$Mutation$StudioUpdate,
+       );
+}
+
+extension ClientExtension$Mutation$StudioUpdate on graphql.GraphQLClient {
+  Future<graphql.QueryResult<Mutation$StudioUpdate>> mutate$StudioUpdate(
+    Options$Mutation$StudioUpdate options,
+  ) async => await this.mutate(options);
+
+  graphql.ObservableQuery<Mutation$StudioUpdate> watchMutation$StudioUpdate(
+    WatchOptions$Mutation$StudioUpdate options,
+  ) => this.watchMutation(options);
+}
+
+class Mutation$StudioUpdate$studioUpdate {
+  Mutation$StudioUpdate$studioUpdate({
+    required this.id,
+    this.$__typename = 'Studio',
+  });
+
+  factory Mutation$StudioUpdate$studioUpdate.fromJson(
+    Map<String, dynamic> json,
+  ) {
+    final l$id = json['id'];
+    final l$$__typename = json['__typename'];
+    return Mutation$StudioUpdate$studioUpdate(
+      id: (l$id as String),
+      $__typename: (l$$__typename as String),
+    );
+  }
+
+  final String id;
+
+  final String $__typename;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$id = id;
+    _resultData['id'] = l$id;
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$id = id;
+    final l$$__typename = $__typename;
+    return Object.hashAll([l$id, l$$__typename]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (other is! Mutation$StudioUpdate$studioUpdate ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$id = id;
+    final lOther$id = other.id;
+    if (l$id != lOther$id) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Mutation$StudioUpdate$studioUpdate
+    on Mutation$StudioUpdate$studioUpdate {
+  CopyWith$Mutation$StudioUpdate$studioUpdate<
+    Mutation$StudioUpdate$studioUpdate
+  >
+  get copyWith => CopyWith$Mutation$StudioUpdate$studioUpdate(this, (i) => i);
+}
+
+abstract class CopyWith$Mutation$StudioUpdate$studioUpdate<TRes> {
+  factory CopyWith$Mutation$StudioUpdate$studioUpdate(
+    Mutation$StudioUpdate$studioUpdate instance,
+    TRes Function(Mutation$StudioUpdate$studioUpdate) then,
+  ) = _CopyWithImpl$Mutation$StudioUpdate$studioUpdate;
+
+  factory CopyWith$Mutation$StudioUpdate$studioUpdate.stub(TRes res) =
+      _CopyWithStubImpl$Mutation$StudioUpdate$studioUpdate;
+
+  TRes call({String? id, String? $__typename});
+}
+
+class _CopyWithImpl$Mutation$StudioUpdate$studioUpdate<TRes>
+    implements CopyWith$Mutation$StudioUpdate$studioUpdate<TRes> {
+  _CopyWithImpl$Mutation$StudioUpdate$studioUpdate(this._instance, this._then);
+
+  final Mutation$StudioUpdate$studioUpdate _instance;
+
+  final TRes Function(Mutation$StudioUpdate$studioUpdate) _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({Object? id = _undefined, Object? $__typename = _undefined}) =>
+      _then(
+        Mutation$StudioUpdate$studioUpdate(
+          id: id == _undefined || id == null ? _instance.id : (id as String),
+          $__typename: $__typename == _undefined || $__typename == null
+              ? _instance.$__typename
+              : ($__typename as String),
+        ),
+      );
+}
+
+class _CopyWithStubImpl$Mutation$StudioUpdate$studioUpdate<TRes>
+    implements CopyWith$Mutation$StudioUpdate$studioUpdate<TRes> {
+  _CopyWithStubImpl$Mutation$StudioUpdate$studioUpdate(this._res);
+
+  TRes _res;
+
+  call({String? id, String? $__typename}) => _res;
+}
+
 class Variables$Query$ScrapeSingleStudio {
   factory Variables$Query$ScrapeSingleStudio({
     required Input$ScraperSourceInput source,

@@ -4,28 +4,31 @@ import '../../../../core/utils/l10n_extensions.dart';
 import '../providers/scene_scrape_provider.dart';
 import '../../../setup/presentation/providers/stashbox_provider.dart';
 import '../../domain/models/scraper.dart';
+import 'enhanced_scrape_dialog.dart';
 
 class ScrapeRequest {
   final String? scraperId;
   final String? stashBoxEndpoint;
   final String? query;
+  final String? url;
   final bool useFingerprints;
 
   ScrapeRequest({
     this.scraperId,
     this.stashBoxEndpoint,
     this.query,
+    this.url,
     this.useFingerprints = false,
   });
 }
 
 class ScrapeQueryDialog extends ConsumerStatefulWidget {
   final String initialQuery;
-  final String entityType; // 'SCENE', 'PERFORMER', 'STUDIO'
+  final ScrapeEntityType entityType;
 
   const ScrapeQueryDialog({
     required this.initialQuery,
-    this.entityType = 'SCENE',
+    this.entityType = ScrapeEntityType.scene,
     super.key,
   });
 
@@ -35,6 +38,7 @@ class ScrapeQueryDialog extends ConsumerStatefulWidget {
 
 class _ScrapeQueryDialogState extends ConsumerState<ScrapeQueryDialog> {
   late TextEditingController _queryController;
+  late TextEditingController _urlController;
   String? _selectedScraperId;
   String? _selectedStashBoxEndpoint;
   bool _useFingerprints = false;
@@ -43,17 +47,30 @@ class _ScrapeQueryDialogState extends ConsumerState<ScrapeQueryDialog> {
   void initState() {
     super.initState();
     _queryController = TextEditingController(text: widget.initialQuery);
+    _urlController = TextEditingController();
   }
 
   @override
   void dispose() {
     _queryController.dispose();
+    _urlController.dispose();
     super.dispose();
+  }
+
+  String _getEntityTypeString() {
+    switch (widget.entityType) {
+      case ScrapeEntityType.scene:
+        return 'SCENE';
+      case ScrapeEntityType.performer:
+        return 'PERFORMER';
+      case ScrapeEntityType.studio:
+        return 'STUDIO';
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final scrapersAsync = ref.watch(availableScrapersProvider([widget.entityType]));
+    final scrapersAsync = ref.watch(availableScrapersProvider([_getEntityTypeString()]));
     final stashBoxesAsync = ref.watch(stashBoxEndpointsProvider);
 
     return AlertDialog(
@@ -64,13 +81,34 @@ class _ScrapeQueryDialogState extends ConsumerState<ScrapeQueryDialog> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextField(
+              controller: _urlController,
+              decoration: InputDecoration(
+                labelText: 'Scrape from URL',
+                hintText: 'https://...',
+                border: const OutlineInputBorder(),
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.download),
+                  onPressed: () {
+                    if (_urlController.text.isNotEmpty) {
+                      Navigator.of(context).pop(ScrapeRequest(
+                        url: _urlController.text,
+                      ));
+                    }
+                  },
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Center(child: Text('OR')),
+            const SizedBox(height: 16),
+            TextField(
               controller: _queryController,
               decoration: InputDecoration(
                 labelText: context.l10n.common_search_placeholder,
                 border: const OutlineInputBorder(),
               ),
             ),
-            if (widget.entityType == 'SCENE') ...[
+            if (widget.entityType == ScrapeEntityType.scene) ...[
               const SizedBox(height: 16),
               Row(
                 children: [

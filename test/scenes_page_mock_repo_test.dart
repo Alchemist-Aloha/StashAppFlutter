@@ -63,6 +63,9 @@ class FakeSceneRepository implements SceneRepository {
   }) async => [];
 
   @override
+  Future<ScrapedScene?> scrapeSceneURL(String url) async => null;
+
+  @override
   Future<void> generatePhash(String sceneId) async {}
 
   @override

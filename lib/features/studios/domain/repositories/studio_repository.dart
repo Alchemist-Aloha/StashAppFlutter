@@ -18,4 +18,9 @@ abstract class StudioRepository {
     String? studioId,
     String? query,
   });
+  Future<ScrapedStudio?> scrapeStudioURL(String url);
+  Future<void> updateStudio({
+    required String id,
+    required Map<String, dynamic> input,
+  });
 }

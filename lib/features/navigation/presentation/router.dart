@@ -4,12 +4,16 @@ import 'package:go_router/go_router.dart';
 import '../../../core/data/graphql/graphql_client.dart';
 import '../../scenes/presentation/pages/scenes_page.dart';
 import '../../scenes/presentation/pages/scene_details_page.dart';
+import '../../performers/domain/entities/performer.dart';
 import '../../performers/presentation/pages/performers_page.dart';
 import '../../performers/presentation/pages/performer_details_page.dart';
+import '../../performers/presentation/pages/performer_edit_page.dart';
 import '../../performers/presentation/pages/performer_media_grid_page.dart';
 import '../../performers/presentation/pages/performer_galleries_grid_page.dart';
+import '../../studios/domain/entities/studio.dart';
 import '../../studios/presentation/pages/studios_page.dart';
 import '../../studios/presentation/pages/studio_details_page.dart';
+import '../../studios/presentation/pages/studio_edit_page.dart';
 import '../../studios/presentation/pages/studio_media_grid_page.dart';
 import '../../studios/presentation/pages/studio_galleries_grid_page.dart';
 import '../../tags/presentation/pages/tags_page.dart';
@@ -116,6 +120,18 @@ GoRouter router(Ref ref) {
                     ),
                     routes: [
                       GoRoute(
+                        path: 'edit',
+                        builder: (context, state) {
+                          final performer = state.extra as Performer?;
+                          if (performer != null) {
+                            return PerformerEditPage(performer: performer);
+                          }
+                          return PerformerDetailsPage(
+                            performerId: state.pathParameters['id']!,
+                          );
+                        },
+                      ),
+                      GoRoute(
                         path: 'media',
                         builder: (context, state) => PerformerMediaGridPage(
                           performerId: state.pathParameters['id']!,
@@ -145,6 +161,18 @@ GoRouter router(Ref ref) {
                       studioId: state.pathParameters['id']!,
                     ),
                     routes: [
+                      GoRoute(
+                        path: 'edit',
+                        builder: (context, state) {
+                          final studio = state.extra as Studio?;
+                          if (studio != null) {
+                            return StudioEditPage(studio: studio);
+                          }
+                          return StudioDetailsPage(
+                            studioId: state.pathParameters['id']!,
+                          );
+                        },
+                      ),
                       GoRoute(
                         path: 'media',
                         builder: (context, state) => StudioMediaGridPage(

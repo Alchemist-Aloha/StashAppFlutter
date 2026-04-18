@@ -2538,6 +2538,18 @@ abstract class AppLocalizations {
   /// **'URLs'**
   String get scenes_field_urls;
 
+  /// No description provided for @scenes_edit_performer.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Performer'**
+  String get scenes_edit_performer;
+
+  /// No description provided for @scenes_edit_studio.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Studio'**
+  String get scenes_edit_studio;
+
   /// No description provided for @common_no_title.
   ///
   /// In en, this message translates to:

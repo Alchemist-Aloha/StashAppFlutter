@@ -19,6 +19,7 @@ abstract class PerformerRepository {
     String? performerId,
     String? query,
   });
+  Future<ScrapedPerformer?> scrapePerformerURL(String url);
   Future<void> updatePerformer({
     required String id,
     required Map<String, dynamic> input,

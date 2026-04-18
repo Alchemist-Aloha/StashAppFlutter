@@ -1,5 +1,7 @@
 {
   "de": [
+    "scenes_edit_performer",
+    "scenes_edit_studio",
     "details_scene_fingerprint_query",
     "scenes_available_scrapers",
     "scrape_results_existing",
@@ -7,6 +9,8 @@
   ],
 
   "es": [
+    "scenes_edit_performer",
+    "scenes_edit_studio",
     "details_scene_fingerprint_query",
     "scenes_available_scrapers",
     "scrape_results_existing",
@@ -14,6 +18,8 @@
   ],
 
   "fr": [
+    "scenes_edit_performer",
+    "scenes_edit_studio",
     "details_scene_fingerprint_query",
     "scenes_available_scrapers",
     "scrape_results_existing",
@@ -21,6 +27,8 @@
   ],
 
   "it": [
+    "scenes_edit_performer",
+    "scenes_edit_studio",
     "details_scene_fingerprint_query",
     "scenes_available_scrapers",
     "scrape_results_existing",
@@ -28,6 +36,8 @@
   ],
 
   "ja": [
+    "scenes_edit_performer",
+    "scenes_edit_studio",
     "details_scene_fingerprint_query",
     "scenes_available_scrapers",
     "scrape_results_existing",
@@ -35,6 +45,8 @@
   ],
 
   "ko": [
+    "scenes_edit_performer",
+    "scenes_edit_studio",
     "details_scene_fingerprint_query",
     "scenes_available_scrapers",
     "scrape_results_existing",
@@ -42,6 +54,8 @@
   ],
 
   "ru": [
+    "scenes_edit_performer",
+    "scenes_edit_studio",
     "details_scene_fingerprint_query",
     "scenes_available_scrapers",
     "scrape_results_existing",
@@ -49,6 +63,8 @@
   ],
 
   "zh": [
+    "scenes_edit_performer",
+    "scenes_edit_studio",
     "details_scene_fingerprint_query",
     "scenes_available_scrapers",
     "scrape_results_existing",
@@ -56,6 +72,8 @@
   ],
 
   "zh_Hans": [
+    "scenes_edit_performer",
+    "scenes_edit_studio",
     "details_scene_fingerprint_query",
     "scenes_available_scrapers",
     "scrape_results_existing",
@@ -63,6 +81,8 @@
   ],
 
   "zh_Hant": [
+    "scenes_edit_performer",
+    "scenes_edit_studio",
     "details_scene_fingerprint_query",
     "scenes_available_scrapers",
     "scrape_results_existing",

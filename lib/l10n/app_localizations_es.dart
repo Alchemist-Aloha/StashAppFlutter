@@ -1386,6 +1386,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get scenes_field_urls => 'URLs';
 
   @override
+  String get scenes_edit_performer => 'Edit Performer';
+
+  @override
+  String get scenes_edit_studio => 'Edit Studio';
+
+  @override
   String get common_no_title => 'Sin título';
 
   @override

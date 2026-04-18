@@ -499,6 +499,8 @@
   "scenes_field_studio": "Studio",
   "scenes_field_tags": "Tags",
   "scenes_field_urls": "URLs",
+  "scenes_edit_performer": "Edit Performer",
+  "scenes_edit_studio": "Edit Studio",
   "common_no_title": "No title"
   ,
   "scenes_select_studio": "Select Studio",

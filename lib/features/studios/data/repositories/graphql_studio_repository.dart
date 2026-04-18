@@ -213,4 +213,26 @@ class GraphQLStudioRepository implements StudioRepository {
 
     return raw.map((e) => ScrapedStudio.fromJson(e.toJson())).toList();
   }
+
+  @override
+  Future<ScrapedStudio?> scrapeStudioURL(String url) async {
+    final results = await scrapeStudio(query: url);
+    return results.isNotEmpty ? results.first : null;
+  }
+
+  @override
+  Future<void> updateStudio({
+    required String id,
+    required Map<String, dynamic> input,
+  }) async {
+    final result = await client.mutate$StudioUpdate(
+      Options$Mutation$StudioUpdate(
+        variables: Variables$Mutation$StudioUpdate(
+          input: Input$StudioUpdateInput.fromJson({...input, 'id': id}),
+        ),
+      ),
+    );
+
+    if (result.hasException) throw result.exception!;
+  }
 }
