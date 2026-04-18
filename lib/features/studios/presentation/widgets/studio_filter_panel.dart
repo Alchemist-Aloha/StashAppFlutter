@@ -9,6 +9,7 @@ import '../../../../core/presentation/widgets/filter_widgets.dart';
 import '../../../scenes/presentation/widgets/entity_picker.dart';
 import '../../domain/entities/studio.dart';
 import '../../../tags/domain/entities/tag.dart';
+import '../../../../core/domain/entities/filter_options.dart';
 
 class StudioFilterPanel extends ConsumerStatefulWidget {
   const StudioFilterPanel({super.key});
@@ -163,7 +164,7 @@ class _StudioFilterPanelState extends ConsumerState<StudioFilterPanel> {
           onChanged: (val) => setState(() => _tempFilter = _tempFilter.copyWith(aliases: val)),
         ),
         _buildBooleanFilter('Favorite', _tempFilter.favorite, (val) => setState(() => _tempFilter = _tempFilter.copyWith(favorite: val))),
-        _buildBooleanFilter('Organized', _tempFilter.organized, (val) => setState(() => _tempFilter = _tempFilter.copyWith(organized: val))),
+        _buildOrganizedFilter(),
         _buildEntityFilter<Studio>(
           'Parent Studios',
           'studio',
@@ -232,6 +233,29 @@ class _StudioFilterPanelState extends ConsumerState<StudioFilterPanel> {
           label: 'Updated At',
           value: _tempFilter.updatedAt,
           onChanged: (val) => setState(() => _tempFilter = _tempFilter.copyWith(updatedAt: val)),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildOrganizedFilter() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Organized', style: context.textTheme.labelLarge),
+        Wrap(
+          spacing: 8,
+          children: OrganizedFilter.values.map((option) {
+            return ChoiceChip(
+              label: Text(option.name.toUpperCase()),
+              selected: OrganizedFilter.fromBool(_tempFilter.organized) == option,
+              onSelected: (selected) {
+                if (selected) {
+                  setState(() => _tempFilter = _tempFilter.copyWith(organized: option.toBool()));
+                }
+              },
+            );
+          }).toList(),
         ),
       ],
     );

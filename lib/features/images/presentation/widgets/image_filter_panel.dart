@@ -10,6 +10,7 @@ import '../../../scenes/presentation/widgets/entity_picker.dart';
 import '../../../studios/domain/entities/studio.dart';
 import '../../../performers/domain/entities/performer.dart';
 import '../../../tags/domain/entities/tag.dart';
+import '../../../../core/domain/entities/filter_options.dart';
 
 import '../../../galleries/domain/entities/gallery.dart';
 
@@ -22,13 +23,13 @@ class ImageFilterPanel extends ConsumerStatefulWidget {
 
 class _ImageFilterPanelState extends ConsumerState<ImageFilterPanel> {
   late ImageFilter _tempFilter;
-  late bool _tempOrganizedOnly;
+  late OrganizedFilter _tempOrganized;
 
   @override
   void initState() {
     super.initState();
     _tempFilter = ref.read(imageFilterStateProvider).filter;
-    _tempOrganizedOnly = ref.read(imageOrganizedOnlyProvider);
+    _tempOrganized = ref.read(imageOrganizedOnlyProvider);
   }
 
   @override
@@ -64,7 +65,7 @@ class _ImageFilterPanelState extends ConsumerState<ImageFilterPanel> {
                       onPressed: () {
                         setState(() {
                           _tempFilter = ImageFilter.empty();
-                          _tempOrganizedOnly = false;
+                          _tempOrganized = OrganizedFilter.all;
                         });
                       },
                       child: Text(context.l10n.common_reset),
@@ -101,7 +102,7 @@ class _ImageFilterPanelState extends ConsumerState<ImageFilterPanel> {
                               .updateFilter(_tempFilter);
                           ref
                               .read(imageOrganizedOnlyProvider.notifier)
-                              .set(_tempOrganizedOnly);
+                              .set(_tempOrganized);
                           Navigator.pop(context);
                         },
                         style: ElevatedButton.styleFrom(
@@ -124,7 +125,7 @@ class _ImageFilterPanelState extends ConsumerState<ImageFilterPanel> {
                               .updateFilter(_tempFilter);
                           ref
                               .read(imageOrganizedOnlyProvider.notifier)
-                              .set(_tempOrganizedOnly);
+                              .set(_tempOrganized);
                           await ref
                               .read(imageFilterStateProvider.notifier)
                               .saveAsDefault();
@@ -280,7 +281,26 @@ class _ImageFilterPanelState extends ConsumerState<ImageFilterPanel> {
   }
 
   Widget _buildOrganizedFilter() {
-    return _buildBooleanFilter(context.l10n.galleries_organized_only, _tempOrganizedOnly, (val) => setState(() => _tempOrganizedOnly = val ?? false));
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Organized', style: context.textTheme.labelLarge),
+        Wrap(
+          spacing: 8,
+          children: OrganizedFilter.values.map((option) {
+            return ChoiceChip(
+              label: Text(option.name.toUpperCase()),
+              selected: _tempOrganized == option,
+              onSelected: (selected) {
+                if (selected) {
+                  setState(() => _tempOrganized = option);
+                }
+              },
+            );
+          }).toList(),
+        ),
+      ],
+    );
   }
 
   Widget _buildBooleanFilter(String label, bool? value, ValueChanged<bool?> onChanged) {

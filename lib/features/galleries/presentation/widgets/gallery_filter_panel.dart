@@ -10,6 +10,7 @@ import '../../../scenes/presentation/widgets/entity_picker.dart';
 import '../../../studios/domain/entities/studio.dart';
 import '../../../performers/domain/entities/performer.dart';
 import '../../../tags/domain/entities/tag.dart';
+import '../../../../core/domain/entities/filter_options.dart';
 
 class GalleryFilterPanel extends ConsumerStatefulWidget {
   const GalleryFilterPanel({super.key});
@@ -20,13 +21,13 @@ class GalleryFilterPanel extends ConsumerStatefulWidget {
 
 class _GalleryFilterPanelState extends ConsumerState<GalleryFilterPanel> {
   late GalleryFilter _tempFilter;
-  late bool _tempOrganizedOnly;
+  late OrganizedFilter _tempOrganized;
 
   @override
   void initState() {
     super.initState();
     _tempFilter = ref.read(galleryFilterStateProvider);
-    _tempOrganizedOnly = ref.read(galleryOrganizedOnlyProvider);
+    _tempOrganized = ref.read(galleryOrganizedOnlyProvider);
   }
 
   @override
@@ -62,7 +63,7 @@ class _GalleryFilterPanelState extends ConsumerState<GalleryFilterPanel> {
                       onPressed: () {
                         setState(() {
                           _tempFilter = GalleryFilter.empty();
-                          _tempOrganizedOnly = false;
+                          _tempOrganized = OrganizedFilter.all;
                         });
                       },
                       child: Text(context.l10n.common_reset),
@@ -98,7 +99,7 @@ class _GalleryFilterPanelState extends ConsumerState<GalleryFilterPanel> {
                               .update(_tempFilter);
                           ref
                               .read(galleryOrganizedOnlyProvider.notifier)
-                              .set(_tempOrganizedOnly);
+                              .set(_tempOrganized);
                           Navigator.pop(context);
                         },
                         style: ElevatedButton.styleFrom(
@@ -121,7 +122,7 @@ class _GalleryFilterPanelState extends ConsumerState<GalleryFilterPanel> {
                               .update(_tempFilter);
                           ref
                               .read(galleryOrganizedOnlyProvider.notifier)
-                              .set(_tempOrganizedOnly);
+                              .set(_tempOrganized);
                           await ref
                               .read(galleryFilterStateProvider.notifier)
                               .saveAsDefault();
@@ -307,7 +308,26 @@ class _GalleryFilterPanelState extends ConsumerState<GalleryFilterPanel> {
   }
 
   Widget _buildOrganizedFilter() {
-    return _buildBooleanFilter(context.l10n.galleries_organized_only, _tempOrganizedOnly, (val) => setState(() => _tempOrganizedOnly = val ?? false));
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Organized', style: context.textTheme.labelLarge),
+        Wrap(
+          spacing: 8,
+          children: OrganizedFilter.values.map((option) {
+            return ChoiceChip(
+              label: Text(option.name.toUpperCase()),
+              selected: _tempOrganized == option,
+              onSelected: (selected) {
+                if (selected) {
+                  setState(() => _tempOrganized = option);
+                }
+              },
+            );
+          }).toList(),
+        ),
+      ],
+    );
   }
 
   Widget _buildBooleanFilter(String label, bool? value, ValueChanged<bool?> onChanged) {
