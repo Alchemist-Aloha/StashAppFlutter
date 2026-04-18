@@ -14,6 +14,7 @@ import '../../../../core/presentation/widgets/grid_utils.dart';
 
 import '../widgets/gallery_filter_panel.dart';
 import '../../domain/entities/gallery_filter.dart';
+import '../../../../core/domain/entities/filter_options.dart';
 import '../../../../core/data/graphql/url_resolver.dart';
 import '../../../../core/data/preferences/shared_preferences_provider.dart';
 import '../../../../core/data/graphql/graphql_client.dart';
@@ -298,8 +299,8 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
     final filterActive = ref.watch(
       galleryFilterStateProvider.select((s) => s != GalleryFilter.empty()),
     );
-    final organizedOnly = ref.watch(galleryOrganizedOnlyProvider);
-    final hasActiveFilters = filterActive || organizedOnly;
+    final organizedFilter = ref.watch(galleryOrganizedOnlyProvider);
+    final hasActiveFilters = filterActive || organizedFilter != OrganizedFilter.all;
     final randomNavigationEnabled = ref.watch(randomNavigationEnabledProvider);
 
     return ListPageScaffold<Gallery>(

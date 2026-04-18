@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'dart:math';
 import '../../domain/entities/scene.dart';
 import '../../domain/entities/scene_filter.dart';
+import '../../../../core/domain/entities/filter_options.dart';
 import '../providers/scene_list_provider.dart';
 import '../providers/playback_queue_provider.dart';
 import '../widgets/scene_card.dart';
@@ -423,12 +424,12 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
     final filterActive = ref.watch(
       sceneFilterStateProvider.select((s) => s != SceneFilter.empty()),
     );
-    final organizedOnly = ref.watch(sceneOrganizedOnlyProvider);
+    final organizedFilter = ref.watch(sceneOrganizedOnlyProvider);
     final randomNavigationEnabled = ref.watch(randomNavigationEnabledProvider);
     final isFullScreen = ref.watch(fullScreenModeProvider);
     final scrollController = ref.watch(sceneScrollControllerProvider);
 
-    final hasActiveFilters = filterActive || organizedOnly;
+    final hasActiveFilters = filterActive || organizedFilter != OrganizedFilter.all;
 
     return ListPageScaffold<Scene>(
       title: context.l10n.appTitle,

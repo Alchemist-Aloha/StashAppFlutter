@@ -208,7 +208,7 @@ class SceneList extends _$SceneList {
     final query = ref.watch(sceneSearchQueryProvider);
     final sortConfig = ref.watch(sceneSortProvider);
     final filter = ref.watch(sceneFilterStateProvider);
-    final organizedOnly = ref.watch(sceneOrganizedOnlyProvider);
+    final organizedFilter = ref.watch(sceneOrganizedOnlyProvider);
     final repository = ref.read(sceneRepositoryProvider);
 
     String? effectiveSort = sortConfig.sort;
@@ -222,7 +222,7 @@ class SceneList extends _$SceneList {
       filter: query.isEmpty ? null : query,
       sort: effectiveSort,
       descending: sortConfig.descending,
-      organized: organizedOnly.toBool(),
+      organized: organizedFilter.toBool(),
       sceneFilter: filter,
     );
 
@@ -277,7 +277,7 @@ class SceneList extends _$SceneList {
     final query = ref.read(sceneSearchQueryProvider);
     final sortConfig = ref.read(sceneSortProvider);
     final filter = ref.read(sceneFilterStateProvider);
-    final organizedOnly = ref.read(sceneOrganizedOnlyProvider);
+    final organizedFilter = ref.read(sceneOrganizedOnlyProvider);
 
     String? effectiveSort = sortConfig.sort;
     if (effectiveSort == 'random' && sortConfig.randomSeed != null) {
@@ -292,7 +292,7 @@ class SceneList extends _$SceneList {
         filter: query.isEmpty ? null : query,
         sort: effectiveSort,
         descending: sortConfig.descending,
-        organized: organizedOnly.toBool(),
+        organized: organizedFilter.toBool(),
         sceneFilter: filter,
       );
 

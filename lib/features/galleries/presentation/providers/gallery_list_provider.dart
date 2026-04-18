@@ -172,7 +172,7 @@ class GalleryList extends _$GalleryList {
     final query = ref.watch(gallerySearchQueryProvider);
     final sortConfig = ref.watch(gallerySortProvider);
     final filter = ref.watch(galleryFilterStateProvider);
-    final organizedOnly = ref.watch(galleryOrganizedOnlyProvider);
+    final organizedFilter = ref.watch(galleryOrganizedOnlyProvider);
     final repository = ref.watch(galleryRepositoryProvider);
 
     String? effectiveSort = sortConfig.sort;
@@ -229,7 +229,7 @@ class GalleryList extends _$GalleryList {
     final query = ref.read(gallerySearchQueryProvider);
     final sortConfig = ref.read(gallerySortProvider);
     final filter = ref.read(galleryFilterStateProvider);
-    final organizedOnly = ref.read(galleryOrganizedOnlyProvider);
+    final organizedFilter = ref.read(galleryOrganizedOnlyProvider);
 
     String? effectiveSort = sortConfig.sort;
     if (effectiveSort == 'random' && sortConfig.randomSeed != null) {

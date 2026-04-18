@@ -146,7 +146,7 @@ class ImageList extends _$ImageList {
     final query = ref.watch(imageSearchQueryProvider);
     final sortConfig = ref.watch(imageSortProvider);
     final filterState = ref.watch(imageFilterStateProvider);
-    final organizedOnly = ref.watch(imageOrganizedOnlyProvider);
+    final organizedFilter = ref.watch(imageOrganizedOnlyProvider);
     final repository = ref.read(imageRepositoryProvider);
 
     String? effectiveSort = sortConfig.sort;
@@ -162,7 +162,7 @@ class ImageList extends _$ImageList {
       descending: sortConfig.descending,
       galleryId: filterState.galleryId,
       imageFilter: filterState.filter.copyWith(
-        organized: organizedOnly.toBool() ?? filterState.filter.organized,
+        organized: organizedFilter.toBool() ?? filterState.filter.organized,
       ),
     );
   }
@@ -204,7 +204,7 @@ class ImageList extends _$ImageList {
     final query = ref.read(imageSearchQueryProvider);
     final sortConfig = ref.read(imageSortProvider);
     final filterState = ref.read(imageFilterStateProvider);
-    final organizedOnly = ref.read(imageOrganizedOnlyProvider);
+    final organizedFilter = ref.read(imageOrganizedOnlyProvider);
 
     String? effectiveSort = sortConfig.sort;
     if (effectiveSort == 'random' && sortConfig.randomSeed != null) {
@@ -221,7 +221,7 @@ class ImageList extends _$ImageList {
         descending: sortConfig.descending,
         galleryId: filterState.galleryId,
         imageFilter: filterState.filter.copyWith(
-          organized: organizedOnly.toBool() ?? filterState.filter.organized,
+          organized: organizedFilter.toBool() ?? filterState.filter.organized,
         ),
       );
 

@@ -16,6 +16,7 @@ import '../../domain/entities/image.dart' as entity;
 
 import '../widgets/image_filter_panel.dart';
 import '../../domain/entities/image_filter.dart';
+import '../../../../core/domain/entities/filter_options.dart';
 
 enum _ImageSortOption {
   title,
@@ -316,8 +317,8 @@ class _ImagesPageState extends ConsumerState<ImagesPage> {
     final filterActive = ref.watch(
       imageFilterStateProvider.select((s) => s.filter != const ImageFilter()),
     );
-    final organizedOnly = ref.watch(imageOrganizedOnlyProvider);
-    final hasActiveFilters = filterActive || organizedOnly;
+    final organizedFilter = ref.watch(imageOrganizedOnlyProvider);
+    final hasActiveFilters = filterActive || organizedFilter != OrganizedFilter.all;
 
     int crossAxisCount = gridColumns ?? (isTablet ? 3 : (isMobile ? 2 : 5));
 
