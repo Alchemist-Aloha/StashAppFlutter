@@ -19,7 +19,6 @@ import '../../domain/entities/scene_title_utils.dart';
 import '../../../studios/presentation/providers/studio_media_provider.dart';
 import '../providers/scene_details_provider.dart';
 import '../providers/scene_list_provider.dart';
-import './scene_edit_page.dart';
 import '../providers/video_player_provider.dart';
 import '../../../setup/presentation/providers/navigation_customization_provider.dart';
 import '../../../setup/presentation/providers/scrape_customization_provider.dart';

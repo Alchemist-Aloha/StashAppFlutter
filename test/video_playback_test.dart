@@ -86,7 +86,15 @@ class MockSceneRepository implements SceneRepository {
 
 class MockStreamResolver extends StreamResolver {
   @override
-  Future<String?> resolveStreamUrl(String rawUrl) async => rawUrl;
+  void build() {}
+
+  @override
+  Future<StreamChoice?> resolvePreferredStream(Scene scene) async {
+    return StreamChoice(
+      url: scene.paths.stream ?? '',
+      mimeType: 'video/mp4',
+    );
+  }
 }
 
 void main() {

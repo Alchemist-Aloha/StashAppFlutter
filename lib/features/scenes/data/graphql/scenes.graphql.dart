@@ -7789,6 +7789,130 @@ const documentNodeQueryListScrapers = DocumentNode(
                   selectionSet: null,
                 ),
                 FieldNode(
+                  name: NameNode(value: 'scene'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: SelectionSetNode(
+                    selections: [
+                      FieldNode(
+                        name: NameNode(value: 'urls'),
+                        alias: null,
+                        arguments: [],
+                        directives: [],
+                        selectionSet: null,
+                      ),
+                      FieldNode(
+                        name: NameNode(value: 'supported_scrapes'),
+                        alias: null,
+                        arguments: [],
+                        directives: [],
+                        selectionSet: null,
+                      ),
+                      FieldNode(
+                        name: NameNode(value: '__typename'),
+                        alias: null,
+                        arguments: [],
+                        directives: [],
+                        selectionSet: null,
+                      ),
+                    ],
+                  ),
+                ),
+                FieldNode(
+                  name: NameNode(value: 'performer'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: SelectionSetNode(
+                    selections: [
+                      FieldNode(
+                        name: NameNode(value: 'urls'),
+                        alias: null,
+                        arguments: [],
+                        directives: [],
+                        selectionSet: null,
+                      ),
+                      FieldNode(
+                        name: NameNode(value: 'supported_scrapes'),
+                        alias: null,
+                        arguments: [],
+                        directives: [],
+                        selectionSet: null,
+                      ),
+                      FieldNode(
+                        name: NameNode(value: '__typename'),
+                        alias: null,
+                        arguments: [],
+                        directives: [],
+                        selectionSet: null,
+                      ),
+                    ],
+                  ),
+                ),
+                FieldNode(
+                  name: NameNode(value: 'gallery'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: SelectionSetNode(
+                    selections: [
+                      FieldNode(
+                        name: NameNode(value: 'urls'),
+                        alias: null,
+                        arguments: [],
+                        directives: [],
+                        selectionSet: null,
+                      ),
+                      FieldNode(
+                        name: NameNode(value: 'supported_scrapes'),
+                        alias: null,
+                        arguments: [],
+                        directives: [],
+                        selectionSet: null,
+                      ),
+                      FieldNode(
+                        name: NameNode(value: '__typename'),
+                        alias: null,
+                        arguments: [],
+                        directives: [],
+                        selectionSet: null,
+                      ),
+                    ],
+                  ),
+                ),
+                FieldNode(
+                  name: NameNode(value: 'image'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: SelectionSetNode(
+                    selections: [
+                      FieldNode(
+                        name: NameNode(value: 'urls'),
+                        alias: null,
+                        arguments: [],
+                        directives: [],
+                        selectionSet: null,
+                      ),
+                      FieldNode(
+                        name: NameNode(value: 'supported_scrapes'),
+                        alias: null,
+                        arguments: [],
+                        directives: [],
+                        selectionSet: null,
+                      ),
+                      FieldNode(
+                        name: NameNode(value: '__typename'),
+                        alias: null,
+                        arguments: [],
+                        directives: [],
+                        selectionSet: null,
+                      ),
+                    ],
+                  ),
+                ),
+                FieldNode(
                   name: NameNode(value: '__typename'),
                   alias: null,
                   arguments: [],
@@ -7945,16 +8069,44 @@ class Query$ListScrapers$listScrapers {
   Query$ListScrapers$listScrapers({
     required this.id,
     required this.name,
+    this.scene,
+    this.performer,
+    this.gallery,
+    this.image,
     this.$__typename = 'Scraper',
   });
 
   factory Query$ListScrapers$listScrapers.fromJson(Map<String, dynamic> json) {
     final l$id = json['id'];
     final l$name = json['name'];
+    final l$scene = json['scene'];
+    final l$performer = json['performer'];
+    final l$gallery = json['gallery'];
+    final l$image = json['image'];
     final l$$__typename = json['__typename'];
     return Query$ListScrapers$listScrapers(
       id: (l$id as String),
       name: (l$name as String),
+      scene: l$scene == null
+          ? null
+          : Query$ListScrapers$listScrapers$scene.fromJson(
+              (l$scene as Map<String, dynamic>),
+            ),
+      performer: l$performer == null
+          ? null
+          : Query$ListScrapers$listScrapers$performer.fromJson(
+              (l$performer as Map<String, dynamic>),
+            ),
+      gallery: l$gallery == null
+          ? null
+          : Query$ListScrapers$listScrapers$gallery.fromJson(
+              (l$gallery as Map<String, dynamic>),
+            ),
+      image: l$image == null
+          ? null
+          : Query$ListScrapers$listScrapers$image.fromJson(
+              (l$image as Map<String, dynamic>),
+            ),
       $__typename: (l$$__typename as String),
     );
   }
@@ -7962,6 +8114,14 @@ class Query$ListScrapers$listScrapers {
   final String id;
 
   final String name;
+
+  final Query$ListScrapers$listScrapers$scene? scene;
+
+  final Query$ListScrapers$listScrapers$performer? performer;
+
+  final Query$ListScrapers$listScrapers$gallery? gallery;
+
+  final Query$ListScrapers$listScrapers$image? image;
 
   final String $__typename;
 
@@ -7971,6 +8131,14 @@ class Query$ListScrapers$listScrapers {
     _resultData['id'] = l$id;
     final l$name = name;
     _resultData['name'] = l$name;
+    final l$scene = scene;
+    _resultData['scene'] = l$scene?.toJson();
+    final l$performer = performer;
+    _resultData['performer'] = l$performer?.toJson();
+    final l$gallery = gallery;
+    _resultData['gallery'] = l$gallery?.toJson();
+    final l$image = image;
+    _resultData['image'] = l$image?.toJson();
     final l$$__typename = $__typename;
     _resultData['__typename'] = l$$__typename;
     return _resultData;
@@ -7980,8 +8148,20 @@ class Query$ListScrapers$listScrapers {
   int get hashCode {
     final l$id = id;
     final l$name = name;
+    final l$scene = scene;
+    final l$performer = performer;
+    final l$gallery = gallery;
+    final l$image = image;
     final l$$__typename = $__typename;
-    return Object.hashAll([l$id, l$name, l$$__typename]);
+    return Object.hashAll([
+      l$id,
+      l$name,
+      l$scene,
+      l$performer,
+      l$gallery,
+      l$image,
+      l$$__typename,
+    ]);
   }
 
   @override
@@ -8001,6 +8181,26 @@ class Query$ListScrapers$listScrapers {
     final l$name = name;
     final lOther$name = other.name;
     if (l$name != lOther$name) {
+      return false;
+    }
+    final l$scene = scene;
+    final lOther$scene = other.scene;
+    if (l$scene != lOther$scene) {
+      return false;
+    }
+    final l$performer = performer;
+    final lOther$performer = other.performer;
+    if (l$performer != lOther$performer) {
+      return false;
+    }
+    final l$gallery = gallery;
+    final lOther$gallery = other.gallery;
+    if (l$gallery != lOther$gallery) {
+      return false;
+    }
+    final l$image = image;
+    final lOther$image = other.image;
+    if (l$image != lOther$image) {
       return false;
     }
     final l$$__typename = $__typename;
@@ -8027,7 +8227,19 @@ abstract class CopyWith$Query$ListScrapers$listScrapers<TRes> {
   factory CopyWith$Query$ListScrapers$listScrapers.stub(TRes res) =
       _CopyWithStubImpl$Query$ListScrapers$listScrapers;
 
-  TRes call({String? id, String? name, String? $__typename});
+  TRes call({
+    String? id,
+    String? name,
+    Query$ListScrapers$listScrapers$scene? scene,
+    Query$ListScrapers$listScrapers$performer? performer,
+    Query$ListScrapers$listScrapers$gallery? gallery,
+    Query$ListScrapers$listScrapers$image? image,
+    String? $__typename,
+  });
+  CopyWith$Query$ListScrapers$listScrapers$scene<TRes> get scene;
+  CopyWith$Query$ListScrapers$listScrapers$performer<TRes> get performer;
+  CopyWith$Query$ListScrapers$listScrapers$gallery<TRes> get gallery;
+  CopyWith$Query$ListScrapers$listScrapers$image<TRes> get image;
 }
 
 class _CopyWithImpl$Query$ListScrapers$listScrapers<TRes>
@@ -8043,6 +8255,10 @@ class _CopyWithImpl$Query$ListScrapers$listScrapers<TRes>
   TRes call({
     Object? id = _undefined,
     Object? name = _undefined,
+    Object? scene = _undefined,
+    Object? performer = _undefined,
+    Object? gallery = _undefined,
+    Object? image = _undefined,
     Object? $__typename = _undefined,
   }) => _then(
     Query$ListScrapers$listScrapers(
@@ -8050,11 +8266,67 @@ class _CopyWithImpl$Query$ListScrapers$listScrapers<TRes>
       name: name == _undefined || name == null
           ? _instance.name
           : (name as String),
+      scene: scene == _undefined
+          ? _instance.scene
+          : (scene as Query$ListScrapers$listScrapers$scene?),
+      performer: performer == _undefined
+          ? _instance.performer
+          : (performer as Query$ListScrapers$listScrapers$performer?),
+      gallery: gallery == _undefined
+          ? _instance.gallery
+          : (gallery as Query$ListScrapers$listScrapers$gallery?),
+      image: image == _undefined
+          ? _instance.image
+          : (image as Query$ListScrapers$listScrapers$image?),
       $__typename: $__typename == _undefined || $__typename == null
           ? _instance.$__typename
           : ($__typename as String),
     ),
   );
+
+  CopyWith$Query$ListScrapers$listScrapers$scene<TRes> get scene {
+    final local$scene = _instance.scene;
+    return local$scene == null
+        ? CopyWith$Query$ListScrapers$listScrapers$scene.stub(_then(_instance))
+        : CopyWith$Query$ListScrapers$listScrapers$scene(
+            local$scene,
+            (e) => call(scene: e),
+          );
+  }
+
+  CopyWith$Query$ListScrapers$listScrapers$performer<TRes> get performer {
+    final local$performer = _instance.performer;
+    return local$performer == null
+        ? CopyWith$Query$ListScrapers$listScrapers$performer.stub(
+            _then(_instance),
+          )
+        : CopyWith$Query$ListScrapers$listScrapers$performer(
+            local$performer,
+            (e) => call(performer: e),
+          );
+  }
+
+  CopyWith$Query$ListScrapers$listScrapers$gallery<TRes> get gallery {
+    final local$gallery = _instance.gallery;
+    return local$gallery == null
+        ? CopyWith$Query$ListScrapers$listScrapers$gallery.stub(
+            _then(_instance),
+          )
+        : CopyWith$Query$ListScrapers$listScrapers$gallery(
+            local$gallery,
+            (e) => call(gallery: e),
+          );
+  }
+
+  CopyWith$Query$ListScrapers$listScrapers$image<TRes> get image {
+    final local$image = _instance.image;
+    return local$image == null
+        ? CopyWith$Query$ListScrapers$listScrapers$image.stub(_then(_instance))
+        : CopyWith$Query$ListScrapers$listScrapers$image(
+            local$image,
+            (e) => call(image: e),
+          );
+  }
 }
 
 class _CopyWithStubImpl$Query$ListScrapers$listScrapers<TRes>
@@ -8063,7 +8335,699 @@ class _CopyWithStubImpl$Query$ListScrapers$listScrapers<TRes>
 
   TRes _res;
 
-  call({String? id, String? name, String? $__typename}) => _res;
+  call({
+    String? id,
+    String? name,
+    Query$ListScrapers$listScrapers$scene? scene,
+    Query$ListScrapers$listScrapers$performer? performer,
+    Query$ListScrapers$listScrapers$gallery? gallery,
+    Query$ListScrapers$listScrapers$image? image,
+    String? $__typename,
+  }) => _res;
+
+  CopyWith$Query$ListScrapers$listScrapers$scene<TRes> get scene =>
+      CopyWith$Query$ListScrapers$listScrapers$scene.stub(_res);
+
+  CopyWith$Query$ListScrapers$listScrapers$performer<TRes> get performer =>
+      CopyWith$Query$ListScrapers$listScrapers$performer.stub(_res);
+
+  CopyWith$Query$ListScrapers$listScrapers$gallery<TRes> get gallery =>
+      CopyWith$Query$ListScrapers$listScrapers$gallery.stub(_res);
+
+  CopyWith$Query$ListScrapers$listScrapers$image<TRes> get image =>
+      CopyWith$Query$ListScrapers$listScrapers$image.stub(_res);
+}
+
+class Query$ListScrapers$listScrapers$scene {
+  Query$ListScrapers$listScrapers$scene({
+    this.urls,
+    required this.supported_scrapes,
+    this.$__typename = 'ScraperSpec',
+  });
+
+  factory Query$ListScrapers$listScrapers$scene.fromJson(
+    Map<String, dynamic> json,
+  ) {
+    final l$urls = json['urls'];
+    final l$supported_scrapes = json['supported_scrapes'];
+    final l$$__typename = json['__typename'];
+    return Query$ListScrapers$listScrapers$scene(
+      urls: (l$urls as List<dynamic>?)?.map((e) => (e as String)).toList(),
+      supported_scrapes: (l$supported_scrapes as List<dynamic>)
+          .map((e) => fromJson$Enum$ScrapeType((e as String)))
+          .toList(),
+      $__typename: (l$$__typename as String),
+    );
+  }
+
+  final List<String>? urls;
+
+  final List<Enum$ScrapeType> supported_scrapes;
+
+  final String $__typename;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$urls = urls;
+    _resultData['urls'] = l$urls?.map((e) => e).toList();
+    final l$supported_scrapes = supported_scrapes;
+    _resultData['supported_scrapes'] = l$supported_scrapes
+        .map((e) => toJson$Enum$ScrapeType(e))
+        .toList();
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$urls = urls;
+    final l$supported_scrapes = supported_scrapes;
+    final l$$__typename = $__typename;
+    return Object.hashAll([
+      l$urls == null ? null : Object.hashAll(l$urls.map((v) => v)),
+      Object.hashAll(l$supported_scrapes.map((v) => v)),
+      l$$__typename,
+    ]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (other is! Query$ListScrapers$listScrapers$scene ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$urls = urls;
+    final lOther$urls = other.urls;
+    if (l$urls != null && lOther$urls != null) {
+      if (l$urls.length != lOther$urls.length) {
+        return false;
+      }
+      for (int i = 0; i < l$urls.length; i++) {
+        final l$urls$entry = l$urls[i];
+        final lOther$urls$entry = lOther$urls[i];
+        if (l$urls$entry != lOther$urls$entry) {
+          return false;
+        }
+      }
+    } else if (l$urls != lOther$urls) {
+      return false;
+    }
+    final l$supported_scrapes = supported_scrapes;
+    final lOther$supported_scrapes = other.supported_scrapes;
+    if (l$supported_scrapes.length != lOther$supported_scrapes.length) {
+      return false;
+    }
+    for (int i = 0; i < l$supported_scrapes.length; i++) {
+      final l$supported_scrapes$entry = l$supported_scrapes[i];
+      final lOther$supported_scrapes$entry = lOther$supported_scrapes[i];
+      if (l$supported_scrapes$entry != lOther$supported_scrapes$entry) {
+        return false;
+      }
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Query$ListScrapers$listScrapers$scene
+    on Query$ListScrapers$listScrapers$scene {
+  CopyWith$Query$ListScrapers$listScrapers$scene<
+    Query$ListScrapers$listScrapers$scene
+  >
+  get copyWith =>
+      CopyWith$Query$ListScrapers$listScrapers$scene(this, (i) => i);
+}
+
+abstract class CopyWith$Query$ListScrapers$listScrapers$scene<TRes> {
+  factory CopyWith$Query$ListScrapers$listScrapers$scene(
+    Query$ListScrapers$listScrapers$scene instance,
+    TRes Function(Query$ListScrapers$listScrapers$scene) then,
+  ) = _CopyWithImpl$Query$ListScrapers$listScrapers$scene;
+
+  factory CopyWith$Query$ListScrapers$listScrapers$scene.stub(TRes res) =
+      _CopyWithStubImpl$Query$ListScrapers$listScrapers$scene;
+
+  TRes call({
+    List<String>? urls,
+    List<Enum$ScrapeType>? supported_scrapes,
+    String? $__typename,
+  });
+}
+
+class _CopyWithImpl$Query$ListScrapers$listScrapers$scene<TRes>
+    implements CopyWith$Query$ListScrapers$listScrapers$scene<TRes> {
+  _CopyWithImpl$Query$ListScrapers$listScrapers$scene(
+    this._instance,
+    this._then,
+  );
+
+  final Query$ListScrapers$listScrapers$scene _instance;
+
+  final TRes Function(Query$ListScrapers$listScrapers$scene) _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({
+    Object? urls = _undefined,
+    Object? supported_scrapes = _undefined,
+    Object? $__typename = _undefined,
+  }) => _then(
+    Query$ListScrapers$listScrapers$scene(
+      urls: urls == _undefined ? _instance.urls : (urls as List<String>?),
+      supported_scrapes:
+          supported_scrapes == _undefined || supported_scrapes == null
+          ? _instance.supported_scrapes
+          : (supported_scrapes as List<Enum$ScrapeType>),
+      $__typename: $__typename == _undefined || $__typename == null
+          ? _instance.$__typename
+          : ($__typename as String),
+    ),
+  );
+}
+
+class _CopyWithStubImpl$Query$ListScrapers$listScrapers$scene<TRes>
+    implements CopyWith$Query$ListScrapers$listScrapers$scene<TRes> {
+  _CopyWithStubImpl$Query$ListScrapers$listScrapers$scene(this._res);
+
+  TRes _res;
+
+  call({
+    List<String>? urls,
+    List<Enum$ScrapeType>? supported_scrapes,
+    String? $__typename,
+  }) => _res;
+}
+
+class Query$ListScrapers$listScrapers$performer {
+  Query$ListScrapers$listScrapers$performer({
+    this.urls,
+    required this.supported_scrapes,
+    this.$__typename = 'ScraperSpec',
+  });
+
+  factory Query$ListScrapers$listScrapers$performer.fromJson(
+    Map<String, dynamic> json,
+  ) {
+    final l$urls = json['urls'];
+    final l$supported_scrapes = json['supported_scrapes'];
+    final l$$__typename = json['__typename'];
+    return Query$ListScrapers$listScrapers$performer(
+      urls: (l$urls as List<dynamic>?)?.map((e) => (e as String)).toList(),
+      supported_scrapes: (l$supported_scrapes as List<dynamic>)
+          .map((e) => fromJson$Enum$ScrapeType((e as String)))
+          .toList(),
+      $__typename: (l$$__typename as String),
+    );
+  }
+
+  final List<String>? urls;
+
+  final List<Enum$ScrapeType> supported_scrapes;
+
+  final String $__typename;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$urls = urls;
+    _resultData['urls'] = l$urls?.map((e) => e).toList();
+    final l$supported_scrapes = supported_scrapes;
+    _resultData['supported_scrapes'] = l$supported_scrapes
+        .map((e) => toJson$Enum$ScrapeType(e))
+        .toList();
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$urls = urls;
+    final l$supported_scrapes = supported_scrapes;
+    final l$$__typename = $__typename;
+    return Object.hashAll([
+      l$urls == null ? null : Object.hashAll(l$urls.map((v) => v)),
+      Object.hashAll(l$supported_scrapes.map((v) => v)),
+      l$$__typename,
+    ]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (other is! Query$ListScrapers$listScrapers$performer ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$urls = urls;
+    final lOther$urls = other.urls;
+    if (l$urls != null && lOther$urls != null) {
+      if (l$urls.length != lOther$urls.length) {
+        return false;
+      }
+      for (int i = 0; i < l$urls.length; i++) {
+        final l$urls$entry = l$urls[i];
+        final lOther$urls$entry = lOther$urls[i];
+        if (l$urls$entry != lOther$urls$entry) {
+          return false;
+        }
+      }
+    } else if (l$urls != lOther$urls) {
+      return false;
+    }
+    final l$supported_scrapes = supported_scrapes;
+    final lOther$supported_scrapes = other.supported_scrapes;
+    if (l$supported_scrapes.length != lOther$supported_scrapes.length) {
+      return false;
+    }
+    for (int i = 0; i < l$supported_scrapes.length; i++) {
+      final l$supported_scrapes$entry = l$supported_scrapes[i];
+      final lOther$supported_scrapes$entry = lOther$supported_scrapes[i];
+      if (l$supported_scrapes$entry != lOther$supported_scrapes$entry) {
+        return false;
+      }
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Query$ListScrapers$listScrapers$performer
+    on Query$ListScrapers$listScrapers$performer {
+  CopyWith$Query$ListScrapers$listScrapers$performer<
+    Query$ListScrapers$listScrapers$performer
+  >
+  get copyWith =>
+      CopyWith$Query$ListScrapers$listScrapers$performer(this, (i) => i);
+}
+
+abstract class CopyWith$Query$ListScrapers$listScrapers$performer<TRes> {
+  factory CopyWith$Query$ListScrapers$listScrapers$performer(
+    Query$ListScrapers$listScrapers$performer instance,
+    TRes Function(Query$ListScrapers$listScrapers$performer) then,
+  ) = _CopyWithImpl$Query$ListScrapers$listScrapers$performer;
+
+  factory CopyWith$Query$ListScrapers$listScrapers$performer.stub(TRes res) =
+      _CopyWithStubImpl$Query$ListScrapers$listScrapers$performer;
+
+  TRes call({
+    List<String>? urls,
+    List<Enum$ScrapeType>? supported_scrapes,
+    String? $__typename,
+  });
+}
+
+class _CopyWithImpl$Query$ListScrapers$listScrapers$performer<TRes>
+    implements CopyWith$Query$ListScrapers$listScrapers$performer<TRes> {
+  _CopyWithImpl$Query$ListScrapers$listScrapers$performer(
+    this._instance,
+    this._then,
+  );
+
+  final Query$ListScrapers$listScrapers$performer _instance;
+
+  final TRes Function(Query$ListScrapers$listScrapers$performer) _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({
+    Object? urls = _undefined,
+    Object? supported_scrapes = _undefined,
+    Object? $__typename = _undefined,
+  }) => _then(
+    Query$ListScrapers$listScrapers$performer(
+      urls: urls == _undefined ? _instance.urls : (urls as List<String>?),
+      supported_scrapes:
+          supported_scrapes == _undefined || supported_scrapes == null
+          ? _instance.supported_scrapes
+          : (supported_scrapes as List<Enum$ScrapeType>),
+      $__typename: $__typename == _undefined || $__typename == null
+          ? _instance.$__typename
+          : ($__typename as String),
+    ),
+  );
+}
+
+class _CopyWithStubImpl$Query$ListScrapers$listScrapers$performer<TRes>
+    implements CopyWith$Query$ListScrapers$listScrapers$performer<TRes> {
+  _CopyWithStubImpl$Query$ListScrapers$listScrapers$performer(this._res);
+
+  TRes _res;
+
+  call({
+    List<String>? urls,
+    List<Enum$ScrapeType>? supported_scrapes,
+    String? $__typename,
+  }) => _res;
+}
+
+class Query$ListScrapers$listScrapers$gallery {
+  Query$ListScrapers$listScrapers$gallery({
+    this.urls,
+    required this.supported_scrapes,
+    this.$__typename = 'ScraperSpec',
+  });
+
+  factory Query$ListScrapers$listScrapers$gallery.fromJson(
+    Map<String, dynamic> json,
+  ) {
+    final l$urls = json['urls'];
+    final l$supported_scrapes = json['supported_scrapes'];
+    final l$$__typename = json['__typename'];
+    return Query$ListScrapers$listScrapers$gallery(
+      urls: (l$urls as List<dynamic>?)?.map((e) => (e as String)).toList(),
+      supported_scrapes: (l$supported_scrapes as List<dynamic>)
+          .map((e) => fromJson$Enum$ScrapeType((e as String)))
+          .toList(),
+      $__typename: (l$$__typename as String),
+    );
+  }
+
+  final List<String>? urls;
+
+  final List<Enum$ScrapeType> supported_scrapes;
+
+  final String $__typename;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$urls = urls;
+    _resultData['urls'] = l$urls?.map((e) => e).toList();
+    final l$supported_scrapes = supported_scrapes;
+    _resultData['supported_scrapes'] = l$supported_scrapes
+        .map((e) => toJson$Enum$ScrapeType(e))
+        .toList();
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$urls = urls;
+    final l$supported_scrapes = supported_scrapes;
+    final l$$__typename = $__typename;
+    return Object.hashAll([
+      l$urls == null ? null : Object.hashAll(l$urls.map((v) => v)),
+      Object.hashAll(l$supported_scrapes.map((v) => v)),
+      l$$__typename,
+    ]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (other is! Query$ListScrapers$listScrapers$gallery ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$urls = urls;
+    final lOther$urls = other.urls;
+    if (l$urls != null && lOther$urls != null) {
+      if (l$urls.length != lOther$urls.length) {
+        return false;
+      }
+      for (int i = 0; i < l$urls.length; i++) {
+        final l$urls$entry = l$urls[i];
+        final lOther$urls$entry = lOther$urls[i];
+        if (l$urls$entry != lOther$urls$entry) {
+          return false;
+        }
+      }
+    } else if (l$urls != lOther$urls) {
+      return false;
+    }
+    final l$supported_scrapes = supported_scrapes;
+    final lOther$supported_scrapes = other.supported_scrapes;
+    if (l$supported_scrapes.length != lOther$supported_scrapes.length) {
+      return false;
+    }
+    for (int i = 0; i < l$supported_scrapes.length; i++) {
+      final l$supported_scrapes$entry = l$supported_scrapes[i];
+      final lOther$supported_scrapes$entry = lOther$supported_scrapes[i];
+      if (l$supported_scrapes$entry != lOther$supported_scrapes$entry) {
+        return false;
+      }
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Query$ListScrapers$listScrapers$gallery
+    on Query$ListScrapers$listScrapers$gallery {
+  CopyWith$Query$ListScrapers$listScrapers$gallery<
+    Query$ListScrapers$listScrapers$gallery
+  >
+  get copyWith =>
+      CopyWith$Query$ListScrapers$listScrapers$gallery(this, (i) => i);
+}
+
+abstract class CopyWith$Query$ListScrapers$listScrapers$gallery<TRes> {
+  factory CopyWith$Query$ListScrapers$listScrapers$gallery(
+    Query$ListScrapers$listScrapers$gallery instance,
+    TRes Function(Query$ListScrapers$listScrapers$gallery) then,
+  ) = _CopyWithImpl$Query$ListScrapers$listScrapers$gallery;
+
+  factory CopyWith$Query$ListScrapers$listScrapers$gallery.stub(TRes res) =
+      _CopyWithStubImpl$Query$ListScrapers$listScrapers$gallery;
+
+  TRes call({
+    List<String>? urls,
+    List<Enum$ScrapeType>? supported_scrapes,
+    String? $__typename,
+  });
+}
+
+class _CopyWithImpl$Query$ListScrapers$listScrapers$gallery<TRes>
+    implements CopyWith$Query$ListScrapers$listScrapers$gallery<TRes> {
+  _CopyWithImpl$Query$ListScrapers$listScrapers$gallery(
+    this._instance,
+    this._then,
+  );
+
+  final Query$ListScrapers$listScrapers$gallery _instance;
+
+  final TRes Function(Query$ListScrapers$listScrapers$gallery) _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({
+    Object? urls = _undefined,
+    Object? supported_scrapes = _undefined,
+    Object? $__typename = _undefined,
+  }) => _then(
+    Query$ListScrapers$listScrapers$gallery(
+      urls: urls == _undefined ? _instance.urls : (urls as List<String>?),
+      supported_scrapes:
+          supported_scrapes == _undefined || supported_scrapes == null
+          ? _instance.supported_scrapes
+          : (supported_scrapes as List<Enum$ScrapeType>),
+      $__typename: $__typename == _undefined || $__typename == null
+          ? _instance.$__typename
+          : ($__typename as String),
+    ),
+  );
+}
+
+class _CopyWithStubImpl$Query$ListScrapers$listScrapers$gallery<TRes>
+    implements CopyWith$Query$ListScrapers$listScrapers$gallery<TRes> {
+  _CopyWithStubImpl$Query$ListScrapers$listScrapers$gallery(this._res);
+
+  TRes _res;
+
+  call({
+    List<String>? urls,
+    List<Enum$ScrapeType>? supported_scrapes,
+    String? $__typename,
+  }) => _res;
+}
+
+class Query$ListScrapers$listScrapers$image {
+  Query$ListScrapers$listScrapers$image({
+    this.urls,
+    required this.supported_scrapes,
+    this.$__typename = 'ScraperSpec',
+  });
+
+  factory Query$ListScrapers$listScrapers$image.fromJson(
+    Map<String, dynamic> json,
+  ) {
+    final l$urls = json['urls'];
+    final l$supported_scrapes = json['supported_scrapes'];
+    final l$$__typename = json['__typename'];
+    return Query$ListScrapers$listScrapers$image(
+      urls: (l$urls as List<dynamic>?)?.map((e) => (e as String)).toList(),
+      supported_scrapes: (l$supported_scrapes as List<dynamic>)
+          .map((e) => fromJson$Enum$ScrapeType((e as String)))
+          .toList(),
+      $__typename: (l$$__typename as String),
+    );
+  }
+
+  final List<String>? urls;
+
+  final List<Enum$ScrapeType> supported_scrapes;
+
+  final String $__typename;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$urls = urls;
+    _resultData['urls'] = l$urls?.map((e) => e).toList();
+    final l$supported_scrapes = supported_scrapes;
+    _resultData['supported_scrapes'] = l$supported_scrapes
+        .map((e) => toJson$Enum$ScrapeType(e))
+        .toList();
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$urls = urls;
+    final l$supported_scrapes = supported_scrapes;
+    final l$$__typename = $__typename;
+    return Object.hashAll([
+      l$urls == null ? null : Object.hashAll(l$urls.map((v) => v)),
+      Object.hashAll(l$supported_scrapes.map((v) => v)),
+      l$$__typename,
+    ]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (other is! Query$ListScrapers$listScrapers$image ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$urls = urls;
+    final lOther$urls = other.urls;
+    if (l$urls != null && lOther$urls != null) {
+      if (l$urls.length != lOther$urls.length) {
+        return false;
+      }
+      for (int i = 0; i < l$urls.length; i++) {
+        final l$urls$entry = l$urls[i];
+        final lOther$urls$entry = lOther$urls[i];
+        if (l$urls$entry != lOther$urls$entry) {
+          return false;
+        }
+      }
+    } else if (l$urls != lOther$urls) {
+      return false;
+    }
+    final l$supported_scrapes = supported_scrapes;
+    final lOther$supported_scrapes = other.supported_scrapes;
+    if (l$supported_scrapes.length != lOther$supported_scrapes.length) {
+      return false;
+    }
+    for (int i = 0; i < l$supported_scrapes.length; i++) {
+      final l$supported_scrapes$entry = l$supported_scrapes[i];
+      final lOther$supported_scrapes$entry = lOther$supported_scrapes[i];
+      if (l$supported_scrapes$entry != lOther$supported_scrapes$entry) {
+        return false;
+      }
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Query$ListScrapers$listScrapers$image
+    on Query$ListScrapers$listScrapers$image {
+  CopyWith$Query$ListScrapers$listScrapers$image<
+    Query$ListScrapers$listScrapers$image
+  >
+  get copyWith =>
+      CopyWith$Query$ListScrapers$listScrapers$image(this, (i) => i);
+}
+
+abstract class CopyWith$Query$ListScrapers$listScrapers$image<TRes> {
+  factory CopyWith$Query$ListScrapers$listScrapers$image(
+    Query$ListScrapers$listScrapers$image instance,
+    TRes Function(Query$ListScrapers$listScrapers$image) then,
+  ) = _CopyWithImpl$Query$ListScrapers$listScrapers$image;
+
+  factory CopyWith$Query$ListScrapers$listScrapers$image.stub(TRes res) =
+      _CopyWithStubImpl$Query$ListScrapers$listScrapers$image;
+
+  TRes call({
+    List<String>? urls,
+    List<Enum$ScrapeType>? supported_scrapes,
+    String? $__typename,
+  });
+}
+
+class _CopyWithImpl$Query$ListScrapers$listScrapers$image<TRes>
+    implements CopyWith$Query$ListScrapers$listScrapers$image<TRes> {
+  _CopyWithImpl$Query$ListScrapers$listScrapers$image(
+    this._instance,
+    this._then,
+  );
+
+  final Query$ListScrapers$listScrapers$image _instance;
+
+  final TRes Function(Query$ListScrapers$listScrapers$image) _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({
+    Object? urls = _undefined,
+    Object? supported_scrapes = _undefined,
+    Object? $__typename = _undefined,
+  }) => _then(
+    Query$ListScrapers$listScrapers$image(
+      urls: urls == _undefined ? _instance.urls : (urls as List<String>?),
+      supported_scrapes:
+          supported_scrapes == _undefined || supported_scrapes == null
+          ? _instance.supported_scrapes
+          : (supported_scrapes as List<Enum$ScrapeType>),
+      $__typename: $__typename == _undefined || $__typename == null
+          ? _instance.$__typename
+          : ($__typename as String),
+    ),
+  );
+}
+
+class _CopyWithStubImpl$Query$ListScrapers$listScrapers$image<TRes>
+    implements CopyWith$Query$ListScrapers$listScrapers$image<TRes> {
+  _CopyWithStubImpl$Query$ListScrapers$listScrapers$image(this._res);
+
+  TRes _res;
+
+  call({
+    List<String>? urls,
+    List<Enum$ScrapeType>? supported_scrapes,
+    String? $__typename,
+  }) => _res;
 }
 
 class Variables$Mutation$MetadataGenerate {

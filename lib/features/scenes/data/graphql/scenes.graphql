@@ -119,6 +119,22 @@ query ListScrapers($types: [ScrapeContentType!]!) {
   listScrapers(types: $types) {
     id
     name
+    scene {
+      urls
+      supported_scrapes
+    }
+    performer {
+      urls
+      supported_scrapes
+    }
+    gallery {
+      urls
+      supported_scrapes
+    }
+    image {
+      urls
+      supported_scrapes
+    }
   }
 }
 

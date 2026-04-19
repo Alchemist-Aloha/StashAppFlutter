@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/utils/l10n_extensions.dart';
+import '../../domain/models/scraper.dart';
 import '../providers/scene_scrape_provider.dart';
 import '../../../setup/presentation/providers/stashbox_provider.dart';
 import 'enhanced_scrape_dialog.dart';
@@ -67,6 +68,26 @@ class _ScrapeQueryDialogState extends ConsumerState<ScrapeQueryDialog> {
     }
   }
 
+  List<Scraper> _filterScrapers(List<Scraper> all) {
+    return all.where((s) {
+      ScraperSpec? spec;
+      switch (widget.entityType) {
+        case ScrapeEntityType.scene:
+          spec = s.scene;
+          break;
+        case ScrapeEntityType.performer:
+          spec = s.performer;
+          break;
+        case ScrapeEntityType.studio:
+          // Studio scrapers are usually handled via SCENE in Stash
+          // or have their own logic. Official webapp uses 'scene' scrapers for studio query.
+          spec = s.scene;
+          break;
+      }
+      return spec?.supportedScrapes.contains('NAME') ?? false;
+    }).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     final scrapersAsync = ref.watch(
@@ -131,53 +152,57 @@ class _ScrapeQueryDialogState extends ConsumerState<ScrapeQueryDialog> {
               style: Theme.of(context).textTheme.titleSmall,
             ),
             const Divider(),
-            stashBoxesAsync.when(
-              data: (endpoints) => Column(
-                children: endpoints
-                    .map(
-                      (e) => RadioListTile<String>(
-                        title: Text(e.name),
-                        subtitle: Text(e.endpoint),
-                        value: e.endpoint,
-                        groupValue:
-                            _selectedStashBoxEndpoint ?? _selectedScraperId,
-                        onChanged: (val) {
-                          setState(() {
-                            _selectedStashBoxEndpoint = val;
-                            _selectedScraperId = null;
-                          });
-                        },
-                      ),
-                    )
-                    .toList(),
+            RadioGroup<String>(
+              groupValue: _selectedStashBoxEndpoint ?? _selectedScraperId,
+              onChanged: (val) {
+                setState(() {
+                  _selectedStashBoxEndpoint = val;
+                  _selectedScraperId = null;
+                });
+              },
+              child: stashBoxesAsync.when(
+                data: (endpoints) => Column(
+                  children: endpoints
+                      .map(
+                        (e) => RadioListTile<String>(
+                          title: Text(e.name),
+                          subtitle: Text(e.endpoint),
+                          value: e.endpoint,
+                        ),
+                      )
+                      .toList(),
+                ),
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error:
+                    (err, _) => Text(context.l10n.common_error(err.toString())),
               ),
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (err, _) => Text(context.l10n.common_error(err.toString())),
             ),
-            scrapersAsync.when(
-              data: (scrapers) => Column(
-                children: scrapers
-                    .map(
-                      (s) => RadioListTile<String>(
-                        title: Text(s.name),
-                        subtitle: s.description != null
-                            ? Text(s.description!)
-                            : null,
-                        value: s.id,
-                        groupValue:
-                            _selectedScraperId ?? _selectedStashBoxEndpoint,
-                        onChanged: (val) {
-                          setState(() {
-                            _selectedScraperId = val;
-                            _selectedStashBoxEndpoint = null;
-                          });
-                        },
-                      ),
-                    )
-                    .toList(),
+            RadioGroup<String>(
+              groupValue: _selectedScraperId ?? _selectedStashBoxEndpoint,
+              onChanged: (val) {
+                setState(() {
+                  _selectedScraperId = val;
+                  _selectedStashBoxEndpoint = null;
+                });
+              },
+              child: scrapersAsync.when(
+                data: (scrapers) {
+                  final filtered = _filterScrapers(scrapers);
+                  return Column(
+                    children: filtered
+                        .map(
+                          (s) => RadioListTile<String>(
+                            title: Text(s.name),
+                            value: s.id,
+                          ),
+                        )
+                        .toList(),
+                  );
+                },
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error:
+                    (err, _) => Text(context.l10n.common_error(err.toString())),
               ),
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (err, _) => Text(context.l10n.common_error(err.toString())),
             ),
           ],
         ),

@@ -4,6 +4,7 @@ import 'package:stash_app_flutter/l10n/app_localizations.dart';
 import '../../../../core/utils/l10n_extensions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/scene.dart';
+import '../../domain/entities/scene_title_utils.dart';
 import '../../domain/models/scraped_scene.dart';
 import '../providers/scene_scrape_provider.dart';
 import '../providers/scene_details_provider.dart';
@@ -171,10 +172,14 @@ class _SceneEditPageState extends ConsumerState<SceneEditPage> {
   }
 
   Future<void> _scrape() async {
+    String query = _titleController.text;
+    if (query.isEmpty) {
+      query = getFilestem(widget.scene.path) ?? '';
+    }
+
     final scrapeRequest = await showDialog<ScrapeRequest>(
       context: context,
-      builder: (context) =>
-          ScrapeQueryDialog(initialQuery: _titleController.text),
+      builder: (context) => ScrapeQueryDialog(initialQuery: query),
     );
 
     if (scrapeRequest == null || !mounted) return;

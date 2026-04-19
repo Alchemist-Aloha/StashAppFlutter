@@ -269,43 +269,38 @@ class _EnhancedScrapeDialogState extends State<EnhancedScrapeDialog> {
           Row(
             children: [
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (original != null && original.isNotEmpty)
+                child: RadioGroup<bool>(
+                  groupValue: _useScraped[field]!,
+                  onChanged: (val) {
+                    setState(() {
+                      _useScraped[field] = val!;
+                      _updateResult();
+                    });
+                  },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (original != null && original.isNotEmpty)
+                        RadioListTile<bool>(
+                          title: Text(
+                            original,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          subtitle: Text(context.l10n.scrape_results_existing),
+                          value: false,
+                        ),
                       RadioListTile<bool>(
                         title: Text(
-                          original,
+                          scraped,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        subtitle: Text(context.l10n.scrape_results_existing),
-                        value: false,
-                        groupValue: _useScraped[field],
-                        onChanged: (val) {
-                          setState(() {
-                            _useScraped[field] = val!;
-                            _updateResult();
-                          });
-                        },
+                        subtitle: Text(context.l10n.scrape_results_scraped),
+                        value: true,
                       ),
-                    RadioListTile<bool>(
-                      title: Text(
-                        scraped,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      subtitle: Text(context.l10n.scrape_results_scraped),
-                      value: true,
-                      groupValue: _useScraped[field],
-                      onChanged: (val) {
-                        setState(() {
-                          _useScraped[field] = val!;
-                          _updateResult();
-                        });
-                      },
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ],

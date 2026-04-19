@@ -30,7 +30,6 @@ void main() {
     expect(find.text('Gravity-controlled orientation'), findsOneWidget);
     expect(find.textContaining('Allow rotating between matching orientations'), findsOneWidget);
 
-    final switchFinder = find.byType(Switch);
     // Find the switch that is part of the gravity orientation ListTile
     // We can use descendant search
     final gravitySwitch = find.descendant(

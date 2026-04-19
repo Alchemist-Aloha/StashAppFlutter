@@ -389,7 +389,7 @@ class _ServerSettingsPageState extends ConsumerState<ServerSettingsPage> {
                         ),
                         const SizedBox(height: AppTheme.spacingMedium),
                         DropdownButtonFormField<AuthMode>(
-                          value: _selectedAuthMode,
+                          initialValue: _selectedAuthMode,
                           decoration: InputDecoration(
                             labelText: l10n.settings_server_auth_method,
                           ),
