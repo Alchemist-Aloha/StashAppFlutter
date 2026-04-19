@@ -51,7 +51,7 @@ class _StudioFilterPanelState extends ConsumerState<StudioFilterPanel> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Studio Filters',
+                      context.l10n.studios_filter_title,
                       style: context.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -76,6 +76,8 @@ class _StudioFilterPanelState extends ConsumerState<StudioFilterPanel> {
                   child: Column(
                     children: [
                       _buildGeneralSection(),
+                      _buildMetadataSection(),
+                      _buildLibrarySection(),
                       _buildSystemSection(),
                     ],
                   ),
@@ -120,7 +122,7 @@ class _StudioFilterPanelState extends ConsumerState<StudioFilterPanel> {
                             Navigator.pop(context);
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text(context.l10n.galleries_filter_saved),
+                                content: Text(context.l10n.studios_filter_saved),
                               ),
                             );
                           }
@@ -148,6 +150,20 @@ class _StudioFilterPanelState extends ConsumerState<StudioFilterPanel> {
       title: 'General',
       initiallyExpanded: true,
       children: [
+        _buildBooleanFilter(
+          'Favorite',
+          _tempFilter.favorite,
+          (val) => setState(() => _tempFilter = _tempFilter.copyWith(favorite: val)),
+        ),
+        _buildRatingFilter(),
+      ],
+    );
+  }
+
+  Widget _buildMetadataSection() {
+    return FilterSection(
+      title: 'Metadata',
+      children: [
         StringCriterionInput(
           label: 'Name',
           value: _tempFilter.name,
@@ -163,36 +179,43 @@ class _StudioFilterPanelState extends ConsumerState<StudioFilterPanel> {
           value: _tempFilter.aliases,
           onChanged: (val) => setState(() => _tempFilter = _tempFilter.copyWith(aliases: val)),
         ),
-        _buildBooleanFilter('Favorite', _tempFilter.favorite, (val) => setState(() => _tempFilter = _tempFilter.copyWith(favorite: val))),
+        StringCriterionInput(
+          label: 'URL',
+          value: _tempFilter.url,
+          onChanged: (val) => setState(() => _tempFilter = _tempFilter.copyWith(url: val)),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLibrarySection() {
+    return FilterSection(
+      title: 'Library',
+      children: [
         _buildOrganizedFilter(),
         _buildEntityFilter<Studio>(
           'Parent Studios',
           'studio',
           _tempFilter.parentStudios,
-          (val) => setState(() => _tempFilter = _tempFilter.copyWith(parentStudios: val as HierarchicalMultiCriterion?)),
+          (val) => setState(
+            () => _tempFilter =
+                _tempFilter.copyWith(parentStudios: val as HierarchicalMultiCriterion?),
+          ),
           true,
         ),
         _buildEntityFilter<Tag>(
           'Tags',
           'tag',
           _tempFilter.tags,
-          (val) => setState(() => _tempFilter = _tempFilter.copyWith(tags: val as HierarchicalMultiCriterion?)),
+          (val) => setState(
+            () => _tempFilter = _tempFilter.copyWith(tags: val as HierarchicalMultiCriterion?),
+          ),
           true,
-        ),
-        StringCriterionInput(
-          label: 'URL',
-          value: _tempFilter.url,
-          onChanged: (val) => setState(() => _tempFilter = _tempFilter.copyWith(url: val)),
         ),
         IntCriterionInput(
           label: 'Tag Count',
           value: _tempFilter.tagCount,
           onChanged: (val) => setState(() => _tempFilter = _tempFilter.copyWith(tagCount: val)),
-        ),
-        IntCriterionInput(
-          label: 'Rating',
-          value: _tempFilter.rating100,
-          onChanged: (val) => setState(() => _tempFilter = _tempFilter.copyWith(rating100: val)),
         ),
       ],
     );
@@ -202,8 +225,16 @@ class _StudioFilterPanelState extends ConsumerState<StudioFilterPanel> {
     return FilterSection(
       title: 'System',
       children: [
-        _buildBooleanFilter('Is Missing', _tempFilter.isMissing, (val) => setState(() => _tempFilter = _tempFilter.copyWith(isMissing: val))),
-        _buildBooleanFilter('Ignore Auto Tag', _tempFilter.ignoreAutoTag, (val) => setState(() => _tempFilter = _tempFilter.copyWith(ignoreAutoTag: val))),
+        _buildBooleanFilter(
+          'Is Missing',
+          _tempFilter.isMissing,
+          (val) => setState(() => _tempFilter = _tempFilter.copyWith(isMissing: val)),
+        ),
+        _buildBooleanFilter(
+          'Ignore Auto Tag',
+          _tempFilter.ignoreAutoTag,
+          (val) => setState(() => _tempFilter = _tempFilter.copyWith(ignoreAutoTag: val)),
+        ),
         IntCriterionInput(
           label: 'Scene Count',
           value: _tempFilter.sceneCount,
@@ -238,6 +269,54 @@ class _StudioFilterPanelState extends ConsumerState<StudioFilterPanel> {
     );
   }
 
+  Widget _buildRatingFilter() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          context.l10n.galleries_min_rating,
+          style: context.textTheme.labelLarge,
+        ),
+        Wrap(
+          spacing: 4,
+          children: [
+            for (var stars = 0; stars <= 5; stars++)
+              ChoiceChip(
+                label: stars == 0
+                    ? const Text('Any')
+                    : Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text('$stars'),
+                          const SizedBox(width: 4),
+                          const Icon(Icons.star, size: 16),
+                        ],
+                      ),
+                selected: (stars == 0 && _tempFilter.rating100 == null) ||
+                    (stars > 0 &&
+                        _tempFilter.rating100?.value == (stars - 1) * 20 &&
+                        _tempFilter.rating100?.modifier == CriterionModifier.greaterThan),
+                onSelected: (_) {
+                  setState(() {
+                    if (stars == 0) {
+                      _tempFilter = _tempFilter.copyWith(rating100: null);
+                    } else {
+                      _tempFilter = _tempFilter.copyWith(
+                        rating100: IntCriterion(
+                          value: (stars - 1) * 20,
+                          modifier: CriterionModifier.greaterThan,
+                        ),
+                      );
+                    }
+                  });
+                },
+              ),
+          ],
+        ),
+      ],
+    );
+  }
+
   Widget _buildOrganizedFilter() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -262,13 +341,35 @@ class _StudioFilterPanelState extends ConsumerState<StudioFilterPanel> {
   }
 
   Widget _buildBooleanFilter(String label, bool? value, ValueChanged<bool?> onChanged) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label),
-        Switch(
-          value: value ?? false,
-          onChanged: onChanged,
+        Text(label, style: context.textTheme.labelLarge),
+        Wrap(
+          spacing: 8,
+          children: [
+            ChoiceChip(
+              label: const Text('Any'),
+              selected: value == null,
+              onSelected: (selected) {
+                if (selected) onChanged(null);
+              },
+            ),
+            ChoiceChip(
+              label: const Text('Yes'),
+              selected: value == true,
+              onSelected: (selected) {
+                if (selected) onChanged(true);
+              },
+            ),
+            ChoiceChip(
+              label: const Text('No'),
+              selected: value == false,
+              onSelected: (selected) {
+                if (selected) onChanged(false);
+              },
+            ),
+          ],
         ),
       ],
     );

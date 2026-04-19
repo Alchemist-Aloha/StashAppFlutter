@@ -5,6 +5,7 @@ import '../auth/auth_mode.dart';
 import '../auth/auth_provider.dart';
 import 'http_client_factory.dart';
 import '../preferences/shared_preferences_provider.dart';
+import '../../utils/environment.dart' as env;
 
 part 'graphql_client.g.dart';
 
@@ -79,6 +80,13 @@ class GraphqlClient extends _$GraphqlClient {
   GraphQLClient build() {
     final url = ref.watch(serverUrlProvider);
     if (url.isEmpty) {
+      if (env.isTestMode) {
+        // Return a dummy client for tests if URL is not configured
+        return GraphQLClient(
+          link: HttpLink('http://localhost'),
+          cache: GraphQLCache(),
+        );
+      }
       throw Exception('Server URL not configured');
     }
 
@@ -105,14 +113,9 @@ class GraphqlClient extends _$GraphqlClient {
       httpClient: httpClient,
     );
 
-    const bool isTestMode = bool.fromEnvironment(
-      'FLUTTER_TEST',
-      defaultValue: false,
-    );
-
     return GraphQLClient(
       link: httpLink,
-      cache: isTestMode ? GraphQLCache() : GraphQLCache(store: HiveStore()),
+      cache: env.isTestMode ? GraphQLCache() : GraphQLCache(store: HiveStore()),
     );
   }
 }

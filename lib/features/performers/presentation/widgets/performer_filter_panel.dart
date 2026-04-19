@@ -7,7 +7,6 @@ import '../providers/performer_list_provider.dart';
 import '../../../../core/presentation/theme/app_theme.dart';
 import '../../../../core/presentation/widgets/filter_widgets.dart';
 import '../../../scenes/presentation/widgets/entity_picker.dart';
-import '../../domain/entities/performer.dart';
 import '../../../studios/domain/entities/studio.dart';
 import '../../../tags/domain/entities/tag.dart';
 import '../../../groups/domain/entities/group.dart';
@@ -77,6 +76,8 @@ class _PerformerFilterPanelState extends ConsumerState<PerformerFilterPanel> {
                   child: Column(
                     children: [
                       _buildGeneralSection(),
+                      _buildMetadataSection(),
+                      _buildLibrarySection(),
                       _buildPhysicalSection(),
                       _buildSystemSection(),
                     ],
@@ -122,7 +123,7 @@ class _PerformerFilterPanelState extends ConsumerState<PerformerFilterPanel> {
                             Navigator.pop(context);
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text(context.l10n.galleries_filter_saved),
+                                content: Text(context.l10n.performers_filter_saved),
                               ),
                             );
                           }
@@ -150,7 +151,21 @@ class _PerformerFilterPanelState extends ConsumerState<PerformerFilterPanel> {
       title: 'General',
       initiallyExpanded: true,
       children: [
-        _buildBooleanFilter('Favorite', _tempFilter.favorite, (val) => setState(() => _tempFilter = _tempFilter.copyWith(favorite: val))),
+        _buildBooleanFilter(
+          'Favorite',
+          _tempFilter.favorite,
+          (val) => setState(() => _tempFilter = _tempFilter.copyWith(favorite: val)),
+        ),
+        _buildRatingFilter(),
+        _buildGenderFilter(),
+      ],
+    );
+  }
+
+  Widget _buildMetadataSection() {
+    return FilterSection(
+      title: 'Metadata',
+      children: [
         StringCriterionInput(
           label: 'Name',
           value: _tempFilter.name,
@@ -165,28 +180,6 @@ class _PerformerFilterPanelState extends ConsumerState<PerformerFilterPanel> {
           label: 'Disambiguation',
           value: _tempFilter.disambiguation,
           onChanged: (val) => setState(() => _tempFilter = _tempFilter.copyWith(disambiguation: val)),
-        ),
-        _buildGenderFilter(),
-        _buildEntityFilter<Studio>(
-          'Studios',
-          'studio',
-          _tempFilter.studios,
-          (val) => setState(() => _tempFilter = _tempFilter.copyWith(studios: val as HierarchicalMultiCriterion?)),
-          true,
-        ),
-        _buildEntityFilter<Tag>(
-          'Tags',
-          'tag',
-          _tempFilter.tags,
-          (val) => setState(() => _tempFilter = _tempFilter.copyWith(tags: val as HierarchicalMultiCriterion?)),
-          true,
-        ),
-        _buildEntityFilter<Group>(
-          'Groups',
-          'group',
-          _tempFilter.groups,
-          (val) => setState(() => _tempFilter = _tempFilter.copyWith(groups: val as HierarchicalMultiCriterion?)),
-          true,
         ),
         StringCriterionInput(
           label: 'URL',
@@ -203,10 +196,86 @@ class _PerformerFilterPanelState extends ConsumerState<PerformerFilterPanel> {
           value: _tempFilter.country,
           onChanged: (val) => setState(() => _tempFilter = _tempFilter.copyWith(country: val)),
         ),
-        IntCriterionInput(
-          label: 'Rating',
-          value: _tempFilter.rating100,
-          onChanged: (val) => setState(() => _tempFilter = _tempFilter.copyWith(rating100: val)),
+      ],
+    );
+  }
+
+  Widget _buildLibrarySection() {
+    return FilterSection(
+      title: 'Library',
+      children: [
+        _buildEntityFilter<Studio>(
+          'Studios',
+          'studio',
+          _tempFilter.studios,
+          (val) => setState(() =>
+              _tempFilter = _tempFilter.copyWith(studios: val as HierarchicalMultiCriterion?)),
+          true,
+        ),
+        _buildEntityFilter<Tag>(
+          'Tags',
+          'tag',
+          _tempFilter.tags,
+          (val) => setState(() =>
+              _tempFilter = _tempFilter.copyWith(tags: val as HierarchicalMultiCriterion?)),
+          true,
+        ),
+        _buildEntityFilter<Group>(
+          'Groups',
+          'group',
+          _tempFilter.groups,
+          (val) => setState(() =>
+              _tempFilter = _tempFilter.copyWith(groups: val as HierarchicalMultiCriterion?)),
+          true,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRatingFilter() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          context.l10n.galleries_min_rating,
+          style: context.textTheme.labelLarge,
+        ),
+        Wrap(
+          spacing: 4,
+          children: [
+            for (var stars = 0; stars <= 5; stars++)
+              ChoiceChip(
+                label: stars == 0
+                    ? const Text('Any')
+                    : Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text('$stars'),
+                          const SizedBox(width: 4),
+                          const Icon(Icons.star, size: 16),
+                        ],
+                      ),
+                selected: (stars == 0 && _tempFilter.rating100 == null) ||
+                    (stars > 0 &&
+                        _tempFilter.rating100?.value == (stars - 1) * 20 &&
+                        _tempFilter.rating100?.modifier ==
+                            CriterionModifier.greaterThan),
+                onSelected: (_) {
+                  setState(() {
+                    if (stars == 0) {
+                      _tempFilter = _tempFilter.copyWith(rating100: null);
+                    } else {
+                      _tempFilter = _tempFilter.copyWith(
+                        rating100: IntCriterion(
+                          value: (stars - 1) * 20,
+                          modifier: CriterionModifier.greaterThan,
+                        ),
+                      );
+                    }
+                  });
+                },
+              ),
+          ],
         ),
       ],
     );
@@ -357,13 +426,35 @@ class _PerformerFilterPanelState extends ConsumerState<PerformerFilterPanel> {
   }
 
   Widget _buildBooleanFilter(String label, bool? value, ValueChanged<bool?> onChanged) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label),
-        Switch(
-          value: value ?? false,
-          onChanged: onChanged,
+        Text(label, style: context.textTheme.labelLarge),
+        Wrap(
+          spacing: 8,
+          children: [
+            ChoiceChip(
+              label: const Text('Any'),
+              selected: value == null,
+              onSelected: (selected) {
+                if (selected) onChanged(null);
+              },
+            ),
+            ChoiceChip(
+              label: const Text('Yes'),
+              selected: value == true,
+              onSelected: (selected) {
+                if (selected) onChanged(true);
+              },
+            ),
+            ChoiceChip(
+              label: const Text('No'),
+              selected: value == false,
+              onSelected: (selected) {
+                if (selected) onChanged(false);
+              },
+            ),
+          ],
         ),
       ],
     );

@@ -555,6 +555,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get scenes_filter_title => 'Filtrer les scènes';
 
   @override
+  String get scenes_filter_saved => 'Filter preferences saved as default';
+
+  @override
   String get scenes_watched => 'Vu';
 
   @override
@@ -1500,6 +1503,12 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get images_title => 'Images';
+
+  @override
+  String get images_filter_title => 'Filter Images';
+
+  @override
+  String get images_filter_saved => 'Filter preferences saved as default';
 
   @override
   String get images_sort_title => 'Trier les images';

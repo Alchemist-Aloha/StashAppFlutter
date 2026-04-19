@@ -553,6 +553,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get scenes_filter_title => 'Фильтровать сцены';
 
   @override
+  String get scenes_filter_saved => 'Filter preferences saved as default';
+
+  @override
   String get scenes_watched => 'Просмотрено';
 
   @override
@@ -1484,6 +1487,12 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get images_title => 'Изображения';
+
+  @override
+  String get images_filter_title => 'Filter Images';
+
+  @override
+  String get images_filter_saved => 'Filter preferences saved as default';
 
   @override
   String get images_sort_title => 'Сортировать изображения';

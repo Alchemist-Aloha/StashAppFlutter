@@ -269,7 +269,7 @@ void main() {
     await tester.tap(find.byIcon(Icons.filter_list));
     await tester.pumpAndSettle();
 
-    final organizedOnly = find.text('Organized only');
+    final organizedOnly = find.text('ORGANIZED');
     await tester.tap(organizedOnly);
     await tester.pumpAndSettle();
 

@@ -3,7 +3,6 @@ import '../../../../core/data/graphql/criterion_mapping.dart';
 import '../../../../core/data/graphql/schema.graphql.dart';
 import '../../../../core/data/graphql/url_resolver.dart';
 import '../../../scenes/domain/models/scraped_scene.dart';
-import 'package:stash_app_flutter/core/domain/entities/criterion.dart' as domain;
 import '../../domain/entities/performer.dart';
 import '../../domain/entities/performer_filter.dart';
 import '../../domain/repositories/performer_repository.dart';

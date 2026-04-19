@@ -1110,6 +1110,12 @@ abstract class AppLocalizations {
   /// **'Filter Scenes'**
   String get scenes_filter_title;
 
+  /// No description provided for @scenes_filter_saved.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter preferences saved as default'**
+  String get scenes_filter_saved;
+
   /// No description provided for @scenes_watched.
   ///
   /// In en, this message translates to:
@@ -2801,6 +2807,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Images'**
   String get images_title;
+
+  /// No description provided for @images_filter_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter Images'**
+  String get images_filter_title;
+
+  /// No description provided for @images_filter_saved.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter preferences saved as default'**
+  String get images_filter_saved;
 
   /// No description provided for @images_sort_title.
   ///

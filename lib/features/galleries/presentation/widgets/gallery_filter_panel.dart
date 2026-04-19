@@ -80,6 +80,8 @@ class _GalleryFilterPanelState extends ConsumerState<GalleryFilterPanel> {
                   child: Column(
                     children: [
                       _buildGeneralSection(),
+                      _buildMetadataSection(),
+                      _buildLibrarySection(),
                       _buildSystemSection(),
                     ],
                   ),
@@ -161,6 +163,15 @@ class _GalleryFilterPanelState extends ConsumerState<GalleryFilterPanel> {
       title: 'General',
       initiallyExpanded: true,
       children: [
+        _buildRatingFilter(),
+      ],
+    );
+  }
+
+  Widget _buildMetadataSection() {
+    return FilterSection(
+      title: 'Metadata',
+      children: [
         StringCriterionInput(
           label: 'Title',
           value: _tempFilter.title,
@@ -170,36 +181,6 @@ class _GalleryFilterPanelState extends ConsumerState<GalleryFilterPanel> {
           label: 'Details',
           value: _tempFilter.details,
           onChanged: (val) => setState(() => _tempFilter = _tempFilter.copyWith(details: val)),
-        ),
-        _buildRatingFilter(),
-        _buildOrganizedFilter(),
-        _buildEntityFilter<Studio>(
-          'Studios',
-          'studio',
-          _tempFilter.studios,
-          (val) => setState(() => _tempFilter = _tempFilter.copyWith(studios: val as HierarchicalMultiCriterion?)),
-          true,
-        ),
-        _buildEntityFilter<Performer>(
-          'Performers',
-          'performer',
-          _tempFilter.performers,
-          (val) => setState(() => _tempFilter = _tempFilter.copyWith(performers: val as MultiCriterion?)),
-          false,
-        ),
-        _buildEntityFilter<Tag>(
-          'Tags',
-          'tag',
-          _tempFilter.tags,
-          (val) => setState(() => _tempFilter = _tempFilter.copyWith(tags: val as HierarchicalMultiCriterion?)),
-          true,
-        ),
-        _buildEntityFilter<Tag>(
-          'Performer Tags',
-          'tag',
-          _tempFilter.performerTags,
-          (val) => setState(() => _tempFilter = _tempFilter.copyWith(performerTags: val as HierarchicalMultiCriterion?)),
-          true,
         ),
         DateCriterionInput(
           label: 'Date',
@@ -212,19 +193,61 @@ class _GalleryFilterPanelState extends ConsumerState<GalleryFilterPanel> {
           onChanged: (val) => setState(() => _tempFilter = _tempFilter.copyWith(performerAge: val)),
         ),
         IntCriterionInput(
+          label: 'Performer Count',
+          value: _tempFilter.performerCount,
+          onChanged: (val) =>
+              setState(() => _tempFilter = _tempFilter.copyWith(performerCount: val)),
+        ),
+        IntCriterionInput(
           label: 'Tag Count',
           value: _tempFilter.tagCount,
           onChanged: (val) => setState(() => _tempFilter = _tempFilter.copyWith(tagCount: val)),
-        ),
-        IntCriterionInput(
-          label: 'Performer Count',
-          value: _tempFilter.performerCount,
-          onChanged: (val) => setState(() => _tempFilter = _tempFilter.copyWith(performerCount: val)),
         ),
         StringCriterionInput(
           label: 'URL',
           value: _tempFilter.url,
           onChanged: (val) => setState(() => _tempFilter = _tempFilter.copyWith(url: val)),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLibrarySection() {
+    return FilterSection(
+      title: 'Library',
+      children: [
+        _buildOrganizedFilter(),
+        _buildEntityFilter<Studio>(
+          'Studios',
+          'studio',
+          _tempFilter.studios,
+          (val) => setState(
+              () => _tempFilter = _tempFilter.copyWith(studios: val as HierarchicalMultiCriterion?)),
+          true,
+        ),
+        _buildEntityFilter<Performer>(
+          'Performers',
+          'performer',
+          _tempFilter.performers,
+          (val) => setState(
+              () => _tempFilter = _tempFilter.copyWith(performers: val as MultiCriterion?)),
+          false,
+        ),
+        _buildEntityFilter<Tag>(
+          'Tags',
+          'tag',
+          _tempFilter.tags,
+          (val) => setState(
+              () => _tempFilter = _tempFilter.copyWith(tags: val as HierarchicalMultiCriterion?)),
+          true,
+        ),
+        _buildEntityFilter<Tag>(
+          'Performer Tags',
+          'tag',
+          _tempFilter.performerTags,
+          (val) => setState(() =>
+              _tempFilter = _tempFilter.copyWith(performerTags: val as HierarchicalMultiCriterion?)),
+          true,
         ),
       ],
     );
@@ -286,16 +309,25 @@ class _GalleryFilterPanelState extends ConsumerState<GalleryFilterPanel> {
           children: [
             for (var stars = 0; stars <= 5; stars++)
               ChoiceChip(
-                label: Text(stars == 0 ? 'Any' : '$stars'),
+                label: stars == 0
+                    ? const Text('Any')
+                    : Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text('$stars'),
+                          const SizedBox(width: 4),
+                          const Icon(Icons.star, size: 16),
+                        ],
+                      ),
                 selected: (stars == 0 && _tempFilter.rating100 == null) || 
-                          (_tempFilter.rating100?.value == stars * 20 && _tempFilter.rating100?.modifier == CriterionModifier.greaterThan),
+                          (stars > 0 && _tempFilter.rating100?.value == (stars - 1) * 20 && _tempFilter.rating100?.modifier == CriterionModifier.greaterThan),
                 onSelected: (_) {
                   setState(() {
                     if (stars == 0) {
                       _tempFilter = _tempFilter.copyWith(rating100: null);
                     } else {
                       _tempFilter = _tempFilter.copyWith(
-                        rating100: IntCriterion(value: stars * 20, modifier: CriterionModifier.greaterThan),
+                        rating100: IntCriterion(value: (stars - 1) * 20, modifier: CriterionModifier.greaterThan),
                       );
                     }
                   });
@@ -331,13 +363,35 @@ class _GalleryFilterPanelState extends ConsumerState<GalleryFilterPanel> {
   }
 
   Widget _buildBooleanFilter(String label, bool? value, ValueChanged<bool?> onChanged) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label),
-        Switch(
-          value: value ?? false,
-          onChanged: onChanged,
+        Text(label, style: context.textTheme.labelLarge),
+        Wrap(
+          spacing: 8,
+          children: [
+            ChoiceChip(
+              label: const Text('Any'),
+              selected: value == null,
+              onSelected: (selected) {
+                if (selected) onChanged(null);
+              },
+            ),
+            ChoiceChip(
+              label: const Text('Yes'),
+              selected: value == true,
+              onSelected: (selected) {
+                if (selected) onChanged(true);
+              },
+            ),
+            ChoiceChip(
+              label: const Text('No'),
+              selected: value == false,
+              onSelected: (selected) {
+                if (selected) onChanged(false);
+              },
+            ),
+          ],
         ),
       ],
     );

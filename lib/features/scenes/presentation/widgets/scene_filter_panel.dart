@@ -141,7 +141,7 @@ class _SceneFilterPanelState extends ConsumerState<SceneFilterPanel> {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text(
-                                  context.l10n.galleries_filter_saved,
+                                  context.l10n.scenes_filter_saved,
                                 ),
                               ),
                             );
@@ -536,10 +536,19 @@ class _SceneFilterPanelState extends ConsumerState<SceneFilterPanel> {
           children: [
             for (var stars = 0; stars <= 5; stars++)
               ChoiceChip(
-                label: Text(stars == 0 ? 'Any' : '$stars'),
-                selected:
-                    (stars == 0 && _tempFilter.rating100 == null) ||
-                    (_tempFilter.rating100?.value == stars * 20 &&
+                label: stars == 0
+                    ? const Text('Any')
+                    : Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text('$stars'),
+                          const SizedBox(width: 4),
+                          const Icon(Icons.star, size: 16),
+                        ],
+                      ),
+                selected: (stars == 0 && _tempFilter.rating100 == null) ||
+                    (stars > 0 &&
+                        _tempFilter.rating100?.value == (stars - 1) * 20 &&
                         _tempFilter.rating100?.modifier ==
                             CriterionModifier.greaterThan),
                 onSelected: (_) {
@@ -549,7 +558,7 @@ class _SceneFilterPanelState extends ConsumerState<SceneFilterPanel> {
                     } else {
                       _tempFilter = _tempFilter.copyWith(
                         rating100: IntCriterion(
-                          value: stars * 20,
+                          value: (stars - 1) * 20,
                           modifier: CriterionModifier.greaterThan,
                         ),
                       );
@@ -591,11 +600,36 @@ class _SceneFilterPanelState extends ConsumerState<SceneFilterPanel> {
     bool? value,
     ValueChanged<bool?> onChanged,
   ) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label),
-        Switch(value: value ?? false, onChanged: onChanged),
+        Text(label, style: context.textTheme.labelLarge),
+        Wrap(
+          spacing: 8,
+          children: [
+            ChoiceChip(
+              label: const Text('Any'),
+              selected: value == null,
+              onSelected: (selected) {
+                if (selected) onChanged(null);
+              },
+            ),
+            ChoiceChip(
+              label: const Text('Yes'),
+              selected: value == true,
+              onSelected: (selected) {
+                if (selected) onChanged(true);
+              },
+            ),
+            ChoiceChip(
+              label: const Text('No'),
+              selected: value == false,
+              onSelected: (selected) {
+                if (selected) onChanged(false);
+              },
+            ),
+          ],
+        ),
       ],
     );
   }
@@ -619,10 +653,11 @@ class _SceneFilterPanelState extends ConsumerState<SceneFilterPanel> {
                   final current = List<String>.from(
                     _tempFilter.resolutions?.value ?? [],
                   );
-                  if (selected)
+                  if (selected) {
                     current.add(res);
-                  else
+                  } else {
                     current.remove(res);
+                  }
                   _tempFilter = _tempFilter.copyWith(
                     resolutions: current.isEmpty
                         ? null
@@ -656,10 +691,11 @@ class _SceneFilterPanelState extends ConsumerState<SceneFilterPanel> {
                   final current = List<String>.from(
                     _tempFilter.orientations?.value ?? [],
                   );
-                  if (selected)
+                  if (selected) {
                     current.add(ori);
-                  else
+                  } else {
                     current.remove(ori);
+                  }
                   _tempFilter = _tempFilter.copyWith(
                     orientations: current.isEmpty
                         ? null

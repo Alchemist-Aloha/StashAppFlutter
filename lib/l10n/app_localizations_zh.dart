@@ -545,6 +545,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get scenes_filter_title => '筛选场景';
 
   @override
+  String get scenes_filter_saved => 'Filter preferences saved as default';
+
+  @override
   String get scenes_watched => '已看';
 
   @override
@@ -1408,6 +1411,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get images_title => '图片';
+
+  @override
+  String get images_filter_title => 'Filter Images';
+
+  @override
+  String get images_filter_saved => 'Filter preferences saved as default';
 
   @override
   String get images_sort_title => '对图片排序';

@@ -44,12 +44,12 @@ class _EnhancedScrapeDialogState extends State<EnhancedScrapeDialog> {
       _useScraped['birthdate'] = p.birthdate != null;
       _useScraped['ethnicity'] = p.ethnicity != null;
       _useScraped['country'] = p.country != null;
-      _useScraped['eye_color'] = p.eye_color != null;
+      _useScraped['eye_color'] = p.eyeColor != null;
       _useScraped['height'] = p.height != null;
       _useScraped['measurements'] = p.measurements != null;
-      _useScraped['fake_tits'] = p.fake_tits != null;
-      _useScraped['career_start'] = p.career_start != null;
-      _useScraped['career_end'] = p.career_end != null;
+      _useScraped['fake_tits'] = p.fakeTits != null;
+      _useScraped['career_start'] = p.careerStart != null;
+      _useScraped['career_end'] = p.careerEnd != null;
       _useScraped['tattoos'] = p.tattoos != null;
       _useScraped['piercings'] = p.piercings != null;
       _useScraped['aliases'] = p.aliases != null;
@@ -96,22 +96,22 @@ class _EnhancedScrapeDialogState extends State<EnhancedScrapeDialog> {
               ? s.ethnicity
               : o.ethnicity,
           country: _useScraped['country'] == true ? s.country : o.country,
-          eye_color: _useScraped['eye_color'] == true
-              ? s.eye_color
-              : o.eye_color,
+          eyeColor: _useScraped['eye_color'] == true
+              ? s.eyeColor
+              : o.eyeColor,
           height: _useScraped['height'] == true ? s.height : o.height,
           measurements: _useScraped['measurements'] == true
               ? s.measurements
               : o.measurements,
-          fake_tits: _useScraped['fake_tits'] == true
-              ? s.fake_tits
-              : o.fake_tits,
-          career_start: _useScraped['career_start'] == true
-              ? s.career_start
-              : o.career_start,
-          career_end: _useScraped['career_end'] == true
-              ? s.career_end
-              : o.career_end,
+          fakeTits: _useScraped['fake_tits'] == true
+              ? s.fakeTits
+              : o.fakeTits,
+          careerStart: _useScraped['career_start'] == true
+              ? s.careerStart
+              : o.careerStart,
+          careerEnd: _useScraped['career_end'] == true
+              ? s.careerEnd
+              : o.careerEnd,
           tattoos: _useScraped['tattoos'] == true ? s.tattoos : o.tattoos,
           piercings: _useScraped['piercings'] == true
               ? s.piercings
@@ -203,7 +203,7 @@ class _EnhancedScrapeDialogState extends State<EnhancedScrapeDialog> {
         _buildMergeRow('birthdate', 'Birthdate', o.birthdate, s.birthdate),
         _buildMergeRow('ethnicity', 'Ethnicity', o.ethnicity, s.ethnicity),
         _buildMergeRow('country', 'Country', o.country, s.country),
-        _buildMergeRow('eye_color', 'Eye Color', o.eye_color, s.eye_color),
+        _buildMergeRow('eye_color', 'Eye Color', o.eyeColor, s.eyeColor),
         _buildMergeRow('height', 'Height', o.height, s.height),
         _buildMergeRow(
           'measurements',
@@ -211,14 +211,14 @@ class _EnhancedScrapeDialogState extends State<EnhancedScrapeDialog> {
           o.measurements,
           s.measurements,
         ),
-        _buildMergeRow('fake_tits', 'Fake Tits', o.fake_tits, s.fake_tits),
+        _buildMergeRow('fake_tits', 'Fake Tits', o.fakeTits, s.fakeTits),
         _buildMergeRow(
           'career_start',
           'Career Start',
-          o.career_start,
-          s.career_start,
+          o.careerStart,
+          s.careerStart,
         ),
-        _buildMergeRow('career_end', 'Career End', o.career_end, s.career_end),
+        _buildMergeRow('career_end', 'Career End', o.careerEnd, s.careerEnd),
         _buildMergeRow('tattoos', 'Tattoos', o.tattoos, s.tattoos),
         _buildMergeRow('piercings', 'Piercings', o.piercings, s.piercings),
         _buildMergeRow('aliases', 'Aliases', o.aliases, s.aliases),

@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:stash_app_flutter/core/presentation/widgets/list_page_scaffold.dart';
 import 'package:stash_app_flutter/core/presentation/widgets/error_state_view.dart';
-import 'package:stash_app_flutter/core/presentation/theme/app_theme.dart';
 import '../../../helpers/test_helpers.dart';
 
 void main() {

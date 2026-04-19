@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/tag_list_provider.dart';
 import '../../../setup/presentation/providers/navigation_customization_provider.dart';
+import '../widgets/tag_filter_panel.dart';
 
 import '../../../../core/presentation/widgets/list_page_scaffold.dart';
 import '../../../../core/utils/l10n_extensions.dart';
@@ -277,109 +278,11 @@ class _TagsPageState extends ConsumerState<TagsPage> {
   }
 
   void _showFilterPanel() {
-    final currentFavoritesOnly = ref.read(tagFavoritesOnlyProvider);
-    var tempFavoritesOnly = currentFavoritesOnly;
-
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setModalState) {
-          return Container(
-            padding: const EdgeInsets.all(AppTheme.spacingMedium),
-            decoration: BoxDecoration(
-              color: context.colors.surface,
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(AppTheme.radiusExtraLarge),
-              ),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      context.l10n.tags_filter_title,
-                      style: context.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        setModalState(() {
-                          tempFavoritesOnly = false;
-                        });
-                      },
-                      child: Text(context.l10n.common_reset),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AppTheme.spacingSmall),
-                SwitchListTile.adaptive(
-                  value: tempFavoritesOnly,
-                  contentPadding: EdgeInsets.zero,
-                  title: Text(context.l10n.common_favorites_only),
-                  onChanged: (value) {
-                    setModalState(() => tempFavoritesOnly = value);
-                  },
-                ),
-                const SizedBox(height: AppTheme.spacingMedium),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      ref
-                          .read(tagListProvider.notifier)
-                          .setFavoritesOnly(tempFavoritesOnly);
-                      Navigator.pop(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: context.colors.primary,
-                      foregroundColor: context.colors.onPrimary,
-                      padding: const EdgeInsets.symmetric(
-                        vertical: AppTheme.spacingMedium,
-                      ),
-                    ),
-                    child: Text(context.l10n.common_apply_filters),
-                  ),
-                ),
-                const SizedBox(height: AppTheme.spacingSmall),
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton(
-                    onPressed: () async {
-                      ref
-                          .read(tagListProvider.notifier)
-                          .setFavoritesOnly(tempFavoritesOnly);
-                      await ref
-                          .read(tagFavoritesOnlyProvider.notifier)
-                          .saveAsDefault();
-                      if (context.mounted) {
-                        Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(context.l10n.tags_filter_saved),
-                          ),
-                        );
-                      }
-                    },
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: AppTheme.spacingMedium,
-                      ),
-                    ),
-                    child: Text(context.l10n.common_save_default),
-                  ),
-                ),
-                const SizedBox(height: AppTheme.spacingMedium),
-              ],
-            ),
-          );
-        },
-      ),
+      builder: (context) => const TagFilterPanel(),
     );
   }
 

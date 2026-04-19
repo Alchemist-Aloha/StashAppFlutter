@@ -56,7 +56,7 @@ class _ImageFilterPanelState extends ConsumerState<ImageFilterPanel> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      context.l10n.galleries_filter_title,
+                      context.l10n.images_filter_title,
                       style: context.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -82,6 +82,8 @@ class _ImageFilterPanelState extends ConsumerState<ImageFilterPanel> {
                   child: Column(
                     children: [
                       _buildGeneralSection(),
+                      _buildMetadataSection(),
+                      _buildLibrarySection(),
                       _buildMediaInfoSection(),
                       _buildSystemSection(),
                     ],
@@ -136,7 +138,7 @@ class _ImageFilterPanelState extends ConsumerState<ImageFilterPanel> {
                             Navigator.pop(context);
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text(context.l10n.galleries_filter_saved),
+                                content: Text(context.l10n.images_filter_saved),
                               ),
                             );
                           }
@@ -164,44 +166,66 @@ class _ImageFilterPanelState extends ConsumerState<ImageFilterPanel> {
       title: 'General',
       initiallyExpanded: true,
       children: [
+        _buildRatingFilter(),
+      ],
+    );
+  }
+
+  Widget _buildMetadataSection() {
+    return FilterSection(
+      title: 'Metadata',
+      children: [
         StringCriterionInput(
           label: 'Title',
           value: _tempFilter.title,
-          onChanged: (val) => setState(() => _tempFilter = _tempFilter.copyWith(title: val)),
+          onChanged: (val) =>
+              setState(() => _tempFilter = _tempFilter.copyWith(title: val)),
         ),
         StringCriterionInput(
           label: 'Details',
           value: _tempFilter.details,
-          onChanged: (val) => setState(() => _tempFilter = _tempFilter.copyWith(details: val)),
+          onChanged: (val) =>
+              setState(() => _tempFilter = _tempFilter.copyWith(details: val)),
         ),
-        _buildRatingFilter(),
+      ],
+    );
+  }
+
+  Widget _buildLibrarySection() {
+    return FilterSection(
+      title: 'Library',
+      children: [
         _buildOrganizedFilter(),
         _buildEntityFilter<Studio>(
           'Studios',
           'studio',
           _tempFilter.studios,
-          (val) => setState(() => _tempFilter = _tempFilter.copyWith(studios: val as HierarchicalMultiCriterion?)),
+          (val) => setState(() =>
+              _tempFilter = _tempFilter.copyWith(studios: val as HierarchicalMultiCriterion?)),
           true,
         ),
         _buildEntityFilter<Performer>(
           'Performers',
           'performer',
           _tempFilter.performers,
-          (val) => setState(() => _tempFilter = _tempFilter.copyWith(performers: val as MultiCriterion?)),
+          (val) => setState(() =>
+              _tempFilter = _tempFilter.copyWith(performers: val as MultiCriterion?)),
           false,
         ),
         _buildEntityFilter<Tag>(
           'Tags',
           'tag',
           _tempFilter.tags,
-          (val) => setState(() => _tempFilter = _tempFilter.copyWith(tags: val as HierarchicalMultiCriterion?)),
+          (val) => setState(() =>
+              _tempFilter = _tempFilter.copyWith(tags: val as HierarchicalMultiCriterion?)),
           true,
         ),
         _buildEntityFilter<Gallery>(
           'Galleries',
           'gallery',
           _tempFilter.galleries,
-          (val) => setState(() => _tempFilter = _tempFilter.copyWith(galleries: val as MultiCriterion?)),
+          (val) => setState(() =>
+              _tempFilter = _tempFilter.copyWith(galleries: val as MultiCriterion?)),
           false,
         ),
       ],
@@ -253,22 +277,37 @@ class _ImageFilterPanelState extends ConsumerState<ImageFilterPanel> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(context.l10n.galleries_min_rating, style: context.textTheme.labelLarge),
+        Text(context.l10n.galleries_min_rating,
+            style: context.textTheme.labelLarge),
         Wrap(
           spacing: 4,
           children: [
             for (var stars = 0; stars <= 5; stars++)
               ChoiceChip(
-                label: Text(stars == 0 ? 'Any' : '$stars'),
-                selected: (stars == 0 && _tempFilter.rating100 == null) || 
-                          (_tempFilter.rating100?.value == stars * 20 && _tempFilter.rating100?.modifier == CriterionModifier.greaterThan),
+                label: stars == 0
+                    ? const Text('Any')
+                    : Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text('$stars'),
+                          const SizedBox(width: 4),
+                          const Icon(Icons.star, size: 16),
+                        ],
+                      ),
+                selected: (stars == 0 && _tempFilter.rating100 == null) ||
+                    (stars > 0 &&
+                        _tempFilter.rating100?.value == (stars - 1) * 20 &&
+                        _tempFilter.rating100?.modifier ==
+                            CriterionModifier.greaterThan),
                 onSelected: (_) {
                   setState(() {
                     if (stars == 0) {
                       _tempFilter = _tempFilter.copyWith(rating100: null);
                     } else {
                       _tempFilter = _tempFilter.copyWith(
-                        rating100: IntCriterion(value: stars * 20, modifier: CriterionModifier.greaterThan),
+                        rating100: IntCriterion(
+                            value: (stars - 1) * 20,
+                            modifier: CriterionModifier.greaterThan),
                       );
                     }
                   });
@@ -304,110 +343,123 @@ class _ImageFilterPanelState extends ConsumerState<ImageFilterPanel> {
   }
 
   Widget _buildBooleanFilter(String label, bool? value, ValueChanged<bool?> onChanged) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label),
-        Switch(
-          value: value ?? false,
-          onChanged: onChanged,
+        Text(label, style: context.textTheme.labelLarge),
+        Wrap(
+          spacing: 8,
+          children: [
+            ChoiceChip(
+              label: const Text('Any'),
+              selected: value == null,
+              onSelected: (selected) {
+                if (selected) onChanged(null);
+              },
+            ),
+            ChoiceChip(
+              label: const Text('Yes'),
+              selected: value == true,
+              onSelected: (selected) {
+                if (selected) onChanged(true);
+              },
+            ),
+            ChoiceChip(
+              label: const Text('No'),
+              selected: value == false,
+              onSelected: (selected) {
+                if (selected) onChanged(false);
+              },
+            ),
+          ],
         ),
       ],
     );
   }
 
   Widget _buildResolutionFilter() {
-    return FilterSection(
-      title: context.l10n.images_resolution_title,
+    final resolutions = [
+      '144p',
+      '240p',
+      '360p',
+      '480p',
+      '540p',
+      '720p',
+      '1080p',
+      '1440p',
+      '1920p',
+      '2160p',
+      '4320p'
+    ];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        DropdownButtonFormField<CriterionModifier>(
-          value: _tempFilter.resolution?.modifier ?? CriterionModifier.equals,
-          decoration: InputDecoration(labelText: context.l10n.filter_modifier),
-          items: [
-            DropdownMenuItem(value: CriterionModifier.equals, child: Text(context.l10n.filter_equals)),
-            DropdownMenuItem(value: CriterionModifier.notEquals, child: Text(context.l10n.filter_not_equals)),
-            DropdownMenuItem(value: CriterionModifier.greaterThan, child: Text(context.l10n.filter_greater_than)),
-            DropdownMenuItem(value: CriterionModifier.lessThan, child: Text(context.l10n.filter_less_than)),
-            DropdownMenuItem(value: CriterionModifier.isNull, child: Text(context.l10n.filter_is_null)),
-            DropdownMenuItem(value: CriterionModifier.notNull, child: Text(context.l10n.filter_not_null)),
-          ],
-          onChanged: (val) {
-            if (val != null) {
-              setState(() {
-                if (_tempFilter.resolution != null) {
-                  _tempFilter = _tempFilter.copyWith(
-                    resolution: MultiCriterion(value: _tempFilter.resolution!.value, modifier: val),
-                  );
-                } else {
-                  _tempFilter = _tempFilter.copyWith(
-                    resolution: MultiCriterion(value: [], modifier: val),
-                  );
-                }
-              });
-            }
-          },
-        ),
-        if (_tempFilter.resolution?.modifier != CriterionModifier.isNull &&
-            _tempFilter.resolution?.modifier != CriterionModifier.notNull)
-          DropdownButtonFormField<String>(
-            value: _tempFilter.resolution?.value.isNotEmpty == true ? _tempFilter.resolution!.value.first : null,
-            decoration: InputDecoration(labelText: context.l10n.filter_value),
-              items: [
-                DropdownMenuItem(value: '144p', child: Text(context.l10n.resolution_144p)),
-                DropdownMenuItem(value: '240p', child: Text(context.l10n.resolution_240p)),
-                DropdownMenuItem(value: '360p', child: Text(context.l10n.resolution_360p)),
-                DropdownMenuItem(value: '480p', child: Text(context.l10n.resolution_480p)),
-                DropdownMenuItem(value: '540p', child: Text(context.l10n.resolution_540p)),
-                DropdownMenuItem(value: '720p', child: Text(context.l10n.resolution_720p)),
-                DropdownMenuItem(value: '1080p', child: Text(context.l10n.resolution_1080p)),
-                DropdownMenuItem(value: '1440p', child: Text(context.l10n.resolution_1440p)),
-                DropdownMenuItem(value: '1920p', child: Text(context.l10n.resolution_1920p)),
-                DropdownMenuItem(value: '2160p', child: Text(context.l10n.resolution_2160p)),
-                DropdownMenuItem(value: '4320p', child: Text(context.l10n.resolution_4320p)),
-              ],
-            onChanged: (val) {
-              if (val != null) {
+        Text(context.l10n.images_resolution_title,
+            style: context.textTheme.labelLarge),
+        Wrap(
+          spacing: 4,
+          children: resolutions.map((res) {
+            final isSelected =
+                _tempFilter.resolution?.value.contains(res) ?? false;
+            return FilterChip(
+              label: Text(res),
+              selected: isSelected,
+              onSelected: (selected) {
                 setState(() {
+                  final current =
+                      List<String>.from(_tempFilter.resolution?.value ?? []);
+                  if (selected) {
+                    current.add(res);
+                  } else {
+                    current.remove(res);
+                  }
                   _tempFilter = _tempFilter.copyWith(
-                    resolution: MultiCriterion(
-                      value: [val],
-                      modifier: _tempFilter.resolution?.modifier ?? CriterionModifier.equals,
-                    ),
+                    resolution: current.isEmpty
+                        ? null
+                        : MultiCriterion(value: current),
                   );
                 });
-              }
-            },
-          ),
+              },
+            );
+          }).toList(),
+        ),
       ],
     );
   }
 
   Widget _buildOrientationFilter() {
-    return FilterSection(
-      title: context.l10n.images_orientation_title,
+    final orientations = ['LANDSCAPE', 'PORTRAIT', 'SQUARE'];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        DropdownButtonFormField<String>(
-          value: _tempFilter.orientation?.value.isNotEmpty == true ? _tempFilter.orientation!.value.first : null,
-          decoration: InputDecoration(labelText: context.l10n.filter_value),
-          items: [
-            DropdownMenuItem(value: 'PORTRAIT', child: Text(context.l10n.common_portrait)),
-            DropdownMenuItem(value: 'LANDSCAPE', child: Text(context.l10n.common_landscape)),
-            DropdownMenuItem(value: 'SQUARE', child: Text(context.l10n.common_square)),
-          ],
-          onChanged: (val) {
-            setState(() {
-              if (val != null) {
-                _tempFilter = _tempFilter.copyWith(
-                  orientation: MultiCriterion(
-                    value: [val],
-                    modifier: _tempFilter.orientation?.modifier ?? CriterionModifier.equals,
-                  ),
-                );
-              } else {
-                _tempFilter = _tempFilter.copyWith(orientation: null);
-              }
-            });
-          },
+        Text(context.l10n.common_orientation,
+            style: context.textTheme.labelLarge),
+        Wrap(
+          spacing: 4,
+          children: orientations.map((ori) {
+            final isSelected =
+                _tempFilter.orientation?.value.contains(ori) ?? false;
+            return FilterChip(
+              label: Text(ori),
+              selected: isSelected,
+              onSelected: (selected) {
+                setState(() {
+                  final current =
+                      List<String>.from(_tempFilter.orientation?.value ?? []);
+                  if (selected) {
+                    current.add(ori);
+                  } else {
+                    current.remove(ori);
+                  }
+                  _tempFilter = _tempFilter.copyWith(
+                    orientation: current.isEmpty
+                        ? null
+                        : MultiCriterion(value: current),
+                  );
+                });
+              },
+            );
+          }).toList(),
         ),
       ],
     );

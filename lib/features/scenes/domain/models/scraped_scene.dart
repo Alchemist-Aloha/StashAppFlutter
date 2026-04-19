@@ -7,14 +7,14 @@ class ScrapedPerformer {
   final String? birthdate;
   final String? ethnicity;
   final String? country;
-  final String? eye_color;
+  final String? eyeColor;
   final String? height;
   final String? measurements;
-  final String? fake_tits;
-  final String? penis_length;
+  final String? fakeTits;
+  final String? penisLength;
   final String? circumcised;
-  final String? career_start;
-  final String? career_end;
+  final String? careerStart;
+  final String? careerEnd;
   final String? tattoos;
   final String? piercings;
   final String? aliases;
@@ -22,8 +22,8 @@ class ScrapedPerformer {
   final List<String> images;
   final String? image;
   final String? details;
-  final String? death_date;
-  final String? hair_color;
+  final String? deathDate;
+  final String? hairColor;
   final String? weight;
   final List<ScrapedTag> tags;
 
@@ -36,14 +36,14 @@ class ScrapedPerformer {
     this.birthdate,
     this.ethnicity,
     this.country,
-    this.eye_color,
+    this.eyeColor,
     this.height,
     this.measurements,
-    this.fake_tits,
-    this.penis_length,
+    this.fakeTits,
+    this.penisLength,
     this.circumcised,
-    this.career_start,
-    this.career_end,
+    this.careerStart,
+    this.careerEnd,
     this.tattoos,
     this.piercings,
     this.aliases,
@@ -51,8 +51,8 @@ class ScrapedPerformer {
     List<String>? images,
     this.image,
     this.details,
-    this.death_date,
-    this.hair_color,
+    this.deathDate,
+    this.hairColor,
     this.weight,
     List<ScrapedTag>? tags,
   }) : urls = urls ?? [],
@@ -69,14 +69,14 @@ class ScrapedPerformer {
         birthdate: json['birthdate'] as String?,
         ethnicity: json['ethnicity'] as String?,
         country: json['country'] as String?,
-        eye_color: json['eye_color'] as String?,
+        eyeColor: json['eye_color'] as String?,
         height: json['height'] as String?,
         measurements: json['measurements'] as String?,
-        fake_tits: json['fake_tits'] as String?,
-        penis_length: json['penis_length'] as String?,
+        fakeTits: json['fake_tits'] as String?,
+        penisLength: json['penis_length'] as String?,
         circumcised: json['circumcised'] as String?,
-        career_start: json['career_start'] as String?,
-        career_end: json['career_end'] as String?,
+        careerStart: json['career_start'] as String?,
+        careerEnd: json['career_end'] as String?,
         tattoos: json['tattoos'] as String?,
         piercings: json['piercings'] as String?,
         aliases: json['aliases'] as String?,
@@ -84,8 +84,8 @@ class ScrapedPerformer {
         images: (json['images'] as List<dynamic>?)?.cast<String>() ?? [],
         image: json['image'] as String?,
         details: json['details'] as String?,
-        death_date: json['death_date'] as String?,
-        hair_color: json['hair_color'] as String?,
+        deathDate: json['death_date'] as String?,
+        hairColor: json['hair_color'] as String?,
         weight: json['weight'] as String?,
         tags:
             (json['tags'] as List<dynamic>?)
@@ -103,14 +103,14 @@ class ScrapedPerformer {
     'birthdate': birthdate,
     'ethnicity': ethnicity,
     'country': country,
-    'eye_color': eye_color,
+    'eye_color': eyeColor,
     'height': height,
     'measurements': measurements,
-    'fake_tits': fake_tits,
-    'penis_length': penis_length,
+    'fake_tits': fakeTits,
+    'penis_length': penisLength,
     'circumcised': circumcised,
-    'career_start': career_start,
-    'career_end': career_end,
+    'career_start': careerStart,
+    'career_end': careerEnd,
     'tattoos': tattoos,
     'piercings': piercings,
     'aliases': aliases,
@@ -118,8 +118,8 @@ class ScrapedPerformer {
     'images': images,
     'image': image,
     'details': details,
-    'death_date': death_date,
-    'hair_color': hair_color,
+    'death_date': deathDate,
+    'hair_color': hairColor,
     'weight': weight,
     'tags': tags.map((t) => t.toJson()).toList(),
   };

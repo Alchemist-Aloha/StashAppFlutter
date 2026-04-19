@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/utils/responsive.dart';
 import '../../../core/utils/l10n_extensions.dart';
+import '../../../core/utils/environment.dart' as env;
 import 'package:flutter/gestures.dart';
 import '../../../core/presentation/providers/desktop_capabilities_provider.dart';
 import '../../../core/presentation/providers/keybinds_provider.dart';
@@ -145,6 +146,7 @@ class _ShellPageState extends ConsumerState<ShellPage> {
   }
 
   void _checkServerConfiguration() {
+    if (env.isTestMode) return;
     final serverUrl = ref.read(serverUrlProvider);
     if (serverUrl.isEmpty && !_dialogShown && mounted) {
       _dialogShown = true;

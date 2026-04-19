@@ -5,7 +5,6 @@ import '../../../../core/utils/l10n_extensions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/scene.dart';
 import '../../domain/models/scraped_scene.dart';
-import '../../domain/models/scraper.dart';
 import '../providers/scene_scrape_provider.dart';
 import '../providers/scene_details_provider.dart';
 import '../providers/scene_list_provider.dart';

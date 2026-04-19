@@ -160,7 +160,7 @@ class _PerformerEditPageState extends ConsumerState<PerformerEditPage> {
             ),
           ),
         );
-        if (picked == null) return;
+        if (picked == null || !mounted) return;
         selected = picked;
       } else {
         selected = results.first;
@@ -173,12 +173,12 @@ class _PerformerEditPageState extends ConsumerState<PerformerEditPage> {
         birthdate: _birthdate?.toIso8601String().split('T').first,
         ethnicity: _ethnicityController.text,
         country: _countryController.text,
-        eye_color: _eyeColorController.text,
+        eyeColor: _eyeColorController.text,
         height: _heightController.text,
         measurements: _measurementsController.text,
-        fake_tits: _fakeTitsController.text,
-        career_start: _careerStartController.text,
-        career_end: _careerEndController.text,
+        fakeTits: _fakeTitsController.text,
+        careerStart: _careerStartController.text,
+        careerEnd: _careerEndController.text,
         tattoos: _tattoosController.text,
         piercings: _piercingsController.text,
         aliases: _aliasControllers.map((c) => c.text).where((t) => t.isNotEmpty).join(', '),
@@ -205,13 +205,14 @@ class _PerformerEditPageState extends ConsumerState<PerformerEditPage> {
         }
         if (merged.ethnicity != null) _ethnicityController.text = merged.ethnicity!;
         if (merged.country != null) _countryController.text = merged.country!;
-        if (merged.eye_color != null) _eyeColorController.text = merged.eye_color!;
+        if (merged.eyeColor != null) _eyeColorController.text = merged.eyeColor!;
         if (merged.height != null) _heightController.text = merged.height!;
         if (merged.measurements != null) _measurementsController.text = merged.measurements!;
-        if (merged.fake_tits != null) _fakeTitsController.text = merged.fake_tits!;
-        if (merged.career_start != null) _careerStartController.text = merged.career_start!;
-        if (merged.career_end != null) _careerEndController.text = merged.career_end!;
+        if (merged.fakeTits != null) _fakeTitsController.text = merged.fakeTits!;
+        if (merged.careerStart != null) _careerStartController.text = merged.careerStart!;
+        if (merged.careerEnd != null) _careerEndController.text = merged.careerEnd!;
         if (merged.tattoos != null) _tattoosController.text = merged.tattoos!;
+
         if (merged.piercings != null) _piercingsController.text = merged.piercings!;
         
         if (merged.aliases != null && merged.aliases!.isNotEmpty) {
@@ -231,8 +232,11 @@ class _PerformerEditPageState extends ConsumerState<PerformerEditPage> {
           if (_urlControllers.isEmpty) _urlControllers.add(TextEditingController());
         }
         
-        if (merged.image != null) _scrapedImage = merged.image;
-        else if (merged.images.isNotEmpty) _scrapedImage = merged.images.first;
+        if (merged.image != null) {
+          _scrapedImage = merged.image;
+        } else if (merged.images.isNotEmpty) {
+          _scrapedImage = merged.images.first;
+        }
       });
 
     } catch (e) {
@@ -329,7 +333,7 @@ class _PerformerEditPageState extends ConsumerState<PerformerEditPage> {
             TextField(controller: _disambiguationController, decoration: InputDecoration(labelText: context.l10n.performers_field_disambiguation, border: const OutlineInputBorder())),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
-              value: _selectedGender,
+              initialValue: _selectedGender,
               decoration: InputDecoration(labelText: context.l10n.performers_gender, border: const OutlineInputBorder()),
               items: [
                 DropdownMenuItem(value: 'MALE', child: Text(context.l10n.performers_gender_male)),
@@ -385,7 +389,7 @@ class _PerformerEditPageState extends ConsumerState<PerformerEditPage> {
             TextField(controller: _penisLengthController, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: context.l10n.performers_field_penis_length, border: const OutlineInputBorder())),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
-              value: _selectedCircumcised,
+              initialValue: _selectedCircumcised,
               decoration: InputDecoration(labelText: context.l10n.performers_circumcised, border: const OutlineInputBorder()),
               items: [
                 DropdownMenuItem(value: 'CUT', child: Text(context.l10n.performers_circumcised_cut)),

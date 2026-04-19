@@ -191,6 +191,7 @@
   "galleries_organized_only": "Organized only",
 
   "scenes_filter_title": "Filter Scenes",
+  "scenes_filter_saved": "Filter preferences saved as default",
   "scenes_watched": "Watched",
   "scenes_unwatched": "Unwatched",
   "scenes_search_hint": "Search scenes...",
@@ -532,6 +533,8 @@
   "common_square": "Square",
   "performers_filter_saved": "Filter preferences saved as default",
   "images_title": "Images",
+  "images_filter_title": "Filter Images",
+  "images_filter_saved": "Filter preferences saved as default",
   "images_sort_title": "Sort Images",
   "images_sort_saved": "Sort preferences saved as default",
   "image_rating_updated": "Image rating updated.",

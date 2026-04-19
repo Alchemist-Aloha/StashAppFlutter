@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/utils/l10n_extensions.dart';
 import '../providers/scene_scrape_provider.dart';
 import '../../../setup/presentation/providers/stashbox_provider.dart';
-import '../../domain/models/scraper.dart';
 import 'enhanced_scrape_dialog.dart';
 
 class ScrapeRequest {

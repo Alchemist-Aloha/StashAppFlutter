@@ -2,8 +2,6 @@ import 'package:graphql/client.dart';
 import '../../../../core/data/graphql/criterion_mapping.dart';
 import '../../../../core/data/graphql/schema.graphql.dart';
 import '../../../../core/data/graphql/url_resolver.dart';
-import '../../../performers/data/graphql/performers.graphql.dart';
-import '../../../tags/data/graphql/tags.graphql.dart';
 import 'package:stash_app_flutter/core/domain/entities/criterion.dart' as domain;
 import '../../domain/entities/scene.dart';
 import '../../domain/entities/scene_filter.dart';
@@ -11,7 +9,6 @@ import '../../domain/repositories/scene_repository.dart';
 import '../../domain/models/scraper.dart';
 import '../../domain/models/scraped_scene.dart';
 import '../graphql/scenes.graphql.dart';
-import '../utils/scrape_normalizer.dart';
 
 class GraphQLSceneRepository implements SceneRepository {
   final GraphQLClient client;

@@ -98,7 +98,7 @@ class _StudioEditPageState extends ConsumerState<StudioEditPage> {
             ),
           ),
         );
-        if (picked == null) return;
+        if (picked == null || !mounted) return;
         selected = picked;
       } else {
         selected = results.first;

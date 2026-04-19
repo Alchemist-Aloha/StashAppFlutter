@@ -13,7 +13,6 @@ import 'package:stash_app_flutter/main.dart';
 import 'package:stash_app_flutter/core/data/graphql/media_headers_provider.dart';
 import 'package:stash_app_flutter/features/scenes/data/repositories/stream_resolver.dart';
 import 'package:stash_app_flutter/features/studios/presentation/providers/studio_media_provider.dart';
-import 'helpers/test_helpers.dart';
 
 class MockSceneRepository implements SceneRepository {
   final List<Scene> scenes;
