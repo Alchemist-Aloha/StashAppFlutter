@@ -10,6 +10,7 @@ import 'error_state_view.dart';
 import '../../utils/pagination.dart';
 import 'stash_image.dart';
 import '../../data/graphql/media_headers_provider.dart';
+import '../../data/preferences/search_history_provider.dart';
 import 'grid_utils.dart';
 
 /// A standardized scaffold for all list and grid pages in StashFlow.
@@ -27,6 +28,7 @@ class ListPageScaffold<T> extends ConsumerStatefulWidget {
     required this.searchHint,
     required this.onSearchChanged,
     required this.provider,
+    this.searchHistoryKey,
     this.itemBuilder,
     this.customBody,
     this.gridDelegate,
@@ -59,6 +61,9 @@ class ListPageScaffold<T> extends ConsumerStatefulWidget {
 
   /// Callback triggered when the search query changes.
   final ValueChanged<String> onSearchChanged;
+
+  /// Optional storage key for search history. Defaults to a sanitized title if null.
+  final String? searchHistoryKey;
 
   /// Optional callback for the sort action in the AppBar.
   final VoidCallback? onSortPressed;
@@ -143,8 +148,8 @@ class ListPageScaffold<T> extends ConsumerStatefulWidget {
 }
 
 class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
-  bool _isSearching = false;
-  final _searchController = TextEditingController();
+  late final String _historyKey;
+  final _searchController = SearchController();
 
   // Prefetch state
   bool _didPrefetchInitial = false;
@@ -154,6 +159,13 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
 
   DateTime? _lastHorizontalSwipeTime;
   static const _horizontalSwipeThreshold = Duration(milliseconds: 500);
+
+  @override
+  void initState() {
+    super.initState();
+    _historyKey = widget.searchHistoryKey ??
+        'search_history_${widget.title.toLowerCase().replaceAll(' ', '_')}';
+  }
 
   @override
   void dispose() {
@@ -405,65 +417,92 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
           ? null
           : AppBar(
               scrolledUnderElevation: 4.0,
-              title: _isSearching
-                  ? TextField(
-                      controller: _searchController,
-                      autofocus: true,
-                      decoration: InputDecoration(
-                        hintText: widget.searchHint,
-                        border: InputBorder.none,
-                        hintStyle: TextStyle(
-                          color: context.colors.onSurface.withValues(
-                            alpha: 0.5,
+              title: Text(
+                widget.title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: -0.5,
+                ),
+              ),
+              actions: [
+                if (widget.onSortPressed != null)
+                  IconButton(
+                    icon: const Icon(Icons.sort),
+                    onPressed: widget.onSortPressed,
+                    tooltip: context.l10n.common_sort,
+                  ),
+                if (widget.onFilterPressed != null)
+                  IconButton(
+                    icon: const Icon(Icons.filter_list),
+                    onPressed: widget.onFilterPressed,
+                    tooltip: context.l10n.common_filter,
+                  ),
+                SearchAnchor(
+                  searchController: _searchController,
+                  builder: (BuildContext context, SearchController controller) {
+                    return IconButton(
+                      icon: const Icon(Icons.search),
+                      onPressed: () => controller.openView(),
+                      tooltip: context.l10n.common_search,
+                    );
+                  },
+                  viewHintText: widget.searchHint,
+                  viewOnSubmitted: (value) {
+                    _searchController.closeView(value);
+                    widget.onSearchChanged(value);
+                    ref.read(searchHistoryProvider(_historyKey).notifier).addQuery(value);
+                  },
+                  suggestionsBuilder: (BuildContext context, SearchController controller) {
+                    final history = ref.watch(searchHistoryProvider(_historyKey));
+                    
+                    return [
+                      if (history.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Recent Searches',
+                                style: TextStyle(
+                                  color: context.colors.onSurface.withValues(alpha: 0.7),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  ref.read(searchHistoryProvider(_historyKey).notifier).clearAll();
+                                },
+                                child: const Text('Clear History'),
+                              ),
+                            ],
                           ),
                         ),
-                      ),
-                      style: TextStyle(color: context.colors.onSurface),
-                      onChanged: widget.onSearchChanged,
-                    )
-                  : Text(
-                      widget.title,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: -0.5,
-                      ),
-                    ),
-              actions: [
-                if (_isSearching)
-                  IconButton(
-                    tooltip: 'Close',
-                    icon: const Icon(Icons.close),
-                    onPressed: () {
-                      setState(() => _isSearching = false);
-                      _searchController.clear();
-                      widget.onSearchChanged('');
-                    },
-                  ),
-                if (!_isSearching) ...[
-                  if (widget.onSortPressed != null)
-                    IconButton(
-                      icon: const Icon(Icons.sort),
-                      onPressed: widget.onSortPressed,
-                      tooltip: context.l10n.common_sort,
-                    ),
-                  if (widget.onFilterPressed != null)
-                    IconButton(
-                      icon: const Icon(Icons.filter_list),
-                      onPressed: widget.onFilterPressed,
-                      tooltip: context.l10n.common_filter,
-                    ),
-                  IconButton(
-                    icon: const Icon(Icons.search),
-                    onPressed: () => setState(() => _isSearching = true),
-                    tooltip: context.l10n.common_search,
-                  ),
-                ],
-                if (!_isSearching)
-                  IconButton(
-                    icon: const Icon(Icons.settings),
-                    onPressed: () => context.push('/settings'),
-                    tooltip: context.l10n.common_settings,
-                  ),
+                      ...history.where((item) => item.toLowerCase().contains(controller.text.toLowerCase())).map((item) {
+                        return ListTile(
+                          leading: const Icon(Icons.history),
+                          title: Text(item),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () {
+                              ref.read(searchHistoryProvider(_historyKey).notifier).removeQuery(item);
+                            },
+                          ),
+                          onTap: () {
+                            controller.closeView(item);
+                            widget.onSearchChanged(item);
+                            ref.read(searchHistoryProvider(_historyKey).notifier).addQuery(item);
+                          },
+                        );
+                      }),
+                    ];
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.settings),
+                  onPressed: () => context.push('/settings'),
+                  tooltip: context.l10n.common_settings,
+                ),
                 ...widget.actions,
               ],
             ),
