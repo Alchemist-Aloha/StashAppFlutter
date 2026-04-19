@@ -270,7 +270,7 @@ class _ImagesPageState extends ConsumerState<ImagesPage> {
                     const SizedBox(height: AppTheme.spacingSmall),
                     SizedBox(
                       width: double.infinity,
-                      child: OutlinedButton(
+                      child: TextButton(
                         onPressed: () async {
                           setState(() {
                             _sortOption = tempOption;
@@ -289,7 +289,7 @@ class _ImagesPageState extends ConsumerState<ImagesPage> {
                             );
                           }
                         },
-                        style: OutlinedButton.styleFrom(
+                        style: TextButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
                             vertical: AppTheme.spacingMedium,
                           ),

@@ -117,7 +117,7 @@ class _GalleryFilterPanelState extends ConsumerState<GalleryFilterPanel> {
                     const SizedBox(height: AppTheme.spacingSmall),
                     SizedBox(
                       width: double.infinity,
-                      child: OutlinedButton(
+                      child: TextButton(
                         onPressed: () async {
                           ref
                               .read(galleryFilterStateProvider.notifier)
@@ -140,7 +140,7 @@ class _GalleryFilterPanelState extends ConsumerState<GalleryFilterPanel> {
                             );
                           }
                         },
-                        style: OutlinedButton.styleFrom(
+                        style: TextButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
                             vertical: AppTheme.spacingMedium,
                           ),

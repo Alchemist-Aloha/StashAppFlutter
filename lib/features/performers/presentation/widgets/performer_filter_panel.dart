@@ -111,7 +111,7 @@ class _PerformerFilterPanelState extends ConsumerState<PerformerFilterPanel> {
                     const SizedBox(height: AppTheme.spacingSmall),
                     SizedBox(
                       width: double.infinity,
-                      child: OutlinedButton(
+                      child: TextButton(
                         onPressed: () async {
                           ref
                               .read(performerFilterStateProvider.notifier)
@@ -128,7 +128,7 @@ class _PerformerFilterPanelState extends ConsumerState<PerformerFilterPanel> {
                             );
                           }
                         },
-                        style: OutlinedButton.styleFrom(
+                        style: TextButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
                             vertical: AppTheme.spacingMedium,
                           ),

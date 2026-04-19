@@ -110,7 +110,7 @@ class _StudioFilterPanelState extends ConsumerState<StudioFilterPanel> {
                     const SizedBox(height: AppTheme.spacingSmall),
                     SizedBox(
                       width: double.infinity,
-                      child: OutlinedButton(
+                      child: TextButton(
                         onPressed: () async {
                           ref
                               .read(studioFilterStateProvider.notifier)
@@ -127,7 +127,7 @@ class _StudioFilterPanelState extends ConsumerState<StudioFilterPanel> {
                             );
                           }
                         },
-                        style: OutlinedButton.styleFrom(
+                        style: TextButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
                             vertical: AppTheme.spacingMedium,
                           ),

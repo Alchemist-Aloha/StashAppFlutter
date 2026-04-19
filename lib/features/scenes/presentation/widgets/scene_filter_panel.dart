@@ -122,7 +122,7 @@ class _SceneFilterPanelState extends ConsumerState<SceneFilterPanel> {
                     const SizedBox(height: AppTheme.spacingSmall),
                     SizedBox(
                       width: double.infinity,
-                      child: OutlinedButton(
+                      child: TextButton(
                         onPressed: () async {
                           ref
                               .read(sceneFilterStateProvider.notifier)
@@ -147,7 +147,7 @@ class _SceneFilterPanelState extends ConsumerState<SceneFilterPanel> {
                             );
                           }
                         },
-                        style: OutlinedButton.styleFrom(
+                        style: TextButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
                             vertical: AppTheme.spacingMedium,
                           ),

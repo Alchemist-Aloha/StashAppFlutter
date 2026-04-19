@@ -120,7 +120,7 @@ class _ImageFilterPanelState extends ConsumerState<ImageFilterPanel> {
                     const SizedBox(height: AppTheme.spacingSmall),
                     SizedBox(
                       width: double.infinity,
-                      child: OutlinedButton(
+                      child: TextButton(
                         onPressed: () async {
                           ref
                               .read(imageFilterStateProvider.notifier)
@@ -143,7 +143,7 @@ class _ImageFilterPanelState extends ConsumerState<ImageFilterPanel> {
                             );
                           }
                         },
-                        style: OutlinedButton.styleFrom(
+                        style: TextButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
                             vertical: AppTheme.spacingMedium,
                           ),

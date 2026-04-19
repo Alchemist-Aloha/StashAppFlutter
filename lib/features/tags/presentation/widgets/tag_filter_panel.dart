@@ -101,7 +101,7 @@ class _TagFilterPanelState extends ConsumerState<TagFilterPanel> {
                     const SizedBox(height: AppTheme.spacingSmall),
                     SizedBox(
                       width: double.infinity,
-                      child: OutlinedButton(
+                      child: TextButton(
                         onPressed: () async {
                           ref
                               .read(tagListProvider.notifier)
@@ -120,7 +120,7 @@ class _TagFilterPanelState extends ConsumerState<TagFilterPanel> {
                             );
                           }
                         },
-                        style: OutlinedButton.styleFrom(
+                        style: TextButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
                             vertical: AppTheme.spacingMedium,
                           ),
