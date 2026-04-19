@@ -9,3 +9,7 @@
 ## 2024-05-30 - [Hoist Invariant Calculations from SliverMasonryGrid itemBuilder]
 **Learning:** Just like with ListView.builder, performing invariant calculations like MediaQuery.sizeOf(context) inside SliverMasonryGrid.count's itemBuilder causes an O(N) performance bottleneck during fast scroll events due to continuous redundant math operations and inherited widget lookups.
 **Action:** Always hoist invariant layout variables out of the itemBuilder and into the parent build method to ensure O(1) performance.
+
+## 2024-06-03 - [Use MediaQuery.sizeOf over MediaQuery.of]
+**Learning:** Using `MediaQuery.of(context).size` inside a widget `build` method binds that widget to the entire `MediaQueryData` object. This causes the widget to rebuild whenever *any* property of `MediaQueryData` changes (like `viewInsets` when a keyboard appears, or text scaling), even if the screen `size` itself hasn't changed.
+**Action:** Always use specific getters like `MediaQuery.sizeOf(context)`, `MediaQuery.paddingOf(context)`, etc., to restrict dependencies strictly to the needed properties and avoid unnecessary rebuilds.

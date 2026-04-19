@@ -68,7 +68,8 @@ class _EntityPickerState<T> extends ConsumerState<EntityPicker<T>> {
       contentPadding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
       content: SizedBox(
         width: double.maxFinite,
-        height: MediaQuery.of(context).size.height * 0.6,
+        // Use sizeOf to prevent unnecessary rebuilds on other MediaQuery changes
+        height: MediaQuery.sizeOf(context).height * 0.6,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

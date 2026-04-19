@@ -234,7 +234,8 @@ class _PerformersPageState extends ConsumerState<PerformersPage> {
                 Flexible(
                   child: ConstrainedBox(
                     constraints: BoxConstraints(
-                      maxHeight: MediaQuery.of(context).size.height * 0.35,
+                      // Use sizeOf to prevent unnecessary rebuilds on other MediaQuery changes
+                      maxHeight: MediaQuery.sizeOf(context).height * 0.35,
                     ),
                     child: Scrollbar(
                       thumbVisibility: true,
