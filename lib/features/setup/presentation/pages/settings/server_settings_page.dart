@@ -388,42 +388,61 @@ class _ServerSettingsPageState extends ConsumerState<ServerSettingsPage> {
                           },
                         ),
                         const SizedBox(height: AppTheme.spacingMedium),
-                        Text(
-                          l10n.settings_server_auth_method,
-                          style: Theme.of(context).textTheme.titleSmall,
-                        ),
-                        const SizedBox(height: AppTheme.spacingSmall),
-                        SegmentedButton<AuthMode>(
-                          segments: [
-                            ButtonSegment<AuthMode>(
+                        DropdownButtonFormField<AuthMode>(
+                          value: _selectedAuthMode,
+                          decoration: InputDecoration(
+                            labelText: l10n.settings_server_auth_method,
+                          ),
+                          items: [
+                            DropdownMenuItem<AuthMode>(
                               value: AuthMode.apiKey,
-                              label: Text(l10n.settings_server_auth_apikey),
-                              icon: const Icon(Icons.vpn_key_rounded),
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.vpn_key_rounded),
+                                  const SizedBox(width: AppTheme.spacingSmall),
+                                  Text(l10n.settings_server_auth_apikey),
+                                ],
+                              ),
                             ),
                             if (!kIsWeb || _allowWebPasswordLogin)
-                              ButtonSegment<AuthMode>(
+                              DropdownMenuItem<AuthMode>(
                                 value: AuthMode.password,
-                                label: Text(l10n.settings_server_auth_password),
-                                icon: const Icon(Icons.password_rounded),
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.password_rounded),
+                                    const SizedBox(width: AppTheme.spacingSmall),
+                                    Text(l10n.settings_server_auth_password),
+                                  ],
+                                ),
                               ),
                             if (proxyAuthEnabled) ...[
-                              ButtonSegment<AuthMode>(
+                              DropdownMenuItem<AuthMode>(
                                 value: AuthMode.basic,
-                                label: Text(l10n.settings_server_auth_basic),
-                                icon: const Icon(Icons.badge_rounded),
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.badge_rounded),
+                                    const SizedBox(width: AppTheme.spacingSmall),
+                                    Text(l10n.settings_server_auth_basic),
+                                  ],
+                                ),
                               ),
-                              ButtonSegment<AuthMode>(
+                              DropdownMenuItem<AuthMode>(
                                 value: AuthMode.bearer,
-                                label: Text(l10n.settings_server_auth_bearer),
-                                icon: const Icon(Icons.generating_tokens_rounded),
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.generating_tokens_rounded),
+                                    const SizedBox(width: AppTheme.spacingSmall),
+                                    Text(l10n.settings_server_auth_bearer),
+                                  ],
+                                ),
                               ),
                             ],
                           ],
-                          selected: <AuthMode>{_selectedAuthMode},
-                          onSelectionChanged: (selection) async {
-                            final selected = selection.first;
-                            setState(() => _selectedAuthMode = selected);
-                            await _saveServerSettings();
+                          onChanged: (selected) async {
+                            if (selected != null) {
+                              setState(() => _selectedAuthMode = selected);
+                              await _saveServerSettings();
+                            }
                           },
                         ),
                         const SizedBox(height: AppTheme.spacingSmall),
