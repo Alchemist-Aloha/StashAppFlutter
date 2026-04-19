@@ -150,6 +150,8 @@ class ListPageScaffold<T> extends ConsumerStatefulWidget {
 class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
   late final String _historyKey;
   final _searchController = SearchController();
+  String? _currentQuery;
+  String? _lastSubmittedText;
 
   // Prefetch state
   bool _didPrefetchInitial = false;
@@ -439,62 +441,81 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
                   ),
                 SearchAnchor(
                   searchController: _searchController,
+                  viewOnClose: () {
+                    final text = _searchController.text;
+                    if (text != _lastSubmittedText) {
+                      _lastSubmittedText = text;
+                      setState(() {
+                        _currentQuery = text.isEmpty ? null : text;
+                      });
+                      widget.onSearchChanged(text);
+                      if (text.isNotEmpty) {
+                        ref.read(searchHistoryProvider(_historyKey).notifier).addQuery(text);
+                      }
+                    }
+                  },
                   builder: (BuildContext context, SearchController controller) {
                     return IconButton(
                       icon: const Icon(Icons.search),
-                      onPressed: () => controller.openView(),
+                      onPressed: () {
+                        _lastSubmittedText = _searchController.text;
+                        controller.openView();
+                      },
                       tooltip: context.l10n.common_search,
                     );
                   },
                   viewHintText: widget.searchHint,
                   viewOnSubmitted: (value) {
                     _searchController.closeView(value);
-                    widget.onSearchChanged(value);
-                    ref.read(searchHistoryProvider(_historyKey).notifier).addQuery(value);
                   },
                   suggestionsBuilder: (BuildContext context, SearchController controller) {
-                    final history = ref.watch(searchHistoryProvider(_historyKey));
-                    
                     return [
-                      if (history.isNotEmpty)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      Consumer(
+                        builder: (context, ref, _) {
+                          final history = ref.watch(searchHistoryProvider(_historyKey));
+                          return Column(
                             children: [
-                              Text(
-                                'Recent Searches',
-                                style: TextStyle(
-                                  color: context.colors.onSurface.withValues(alpha: 0.7),
-                                  fontWeight: FontWeight.bold,
+                              if (history.isNotEmpty)
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Recent Searches',
+                                        style: TextStyle(
+                                          color: context.colors.onSurface.withValues(alpha: 0.7),
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          ref.read(searchHistoryProvider(_historyKey).notifier).clearAll();
+                                        },
+                                        child: const Text('Clear History'),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  ref.read(searchHistoryProvider(_historyKey).notifier).clearAll();
-                                },
-                                child: const Text('Clear History'),
-                              ),
+                              ...history.map((item) {
+                                return ListTile(
+                                  leading: const Icon(Icons.history),
+                                  title: Text(item),
+                                  trailing: IconButton(
+                                    icon: const Icon(Icons.close),
+                                    onPressed: () {
+                                      ref.read(searchHistoryProvider(_historyKey).notifier).removeQuery(item);
+                                    },
+                                  ),
+                                  onTap: () {
+                                    controller.closeView(item);
+                                  },
+                                );
+                                }),
                             ],
-                          ),
-                        ),
-                      ...history.where((item) => item.toLowerCase().contains(controller.text.toLowerCase())).map((item) {
-                        return ListTile(
-                          leading: const Icon(Icons.history),
-                          title: Text(item),
-                          trailing: IconButton(
-                            icon: const Icon(Icons.close),
-                            onPressed: () {
-                              ref.read(searchHistoryProvider(_historyKey).notifier).removeQuery(item);
-                            },
-                          ),
-                          onTap: () {
-                            controller.closeView(item);
-                            widget.onSearchChanged(item);
-                            ref.read(searchHistoryProvider(_historyKey).notifier).addQuery(item);
-                          },
-                        );
-                      }),
+                          );
+                        },
+                      ),
                     ];
                   },
                 ),
@@ -537,6 +558,33 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
         },
         child: Column(
           children: [
+            if (_currentQuery != null)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                color: context.colors.surfaceVariant,
+                child: Row(
+                  children: [
+                    const Icon(Icons.search, size: 16),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Searching for: "$_currentQuery"',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close, size: 20),
+                      onPressed: () {
+                        setState(() {
+                          _currentQuery = null;
+                        });
+                        widget.onSearchChanged('');
+                      },
+                    ),
+                  ],
+                ),
+              ),
             if (widget.sortBar != null) widget.sortBar!,
             Expanded(
               child: widget.provider.when(
