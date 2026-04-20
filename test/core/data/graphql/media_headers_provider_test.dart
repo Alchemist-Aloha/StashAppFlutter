@@ -16,59 +16,7 @@ class MockAuthProvider extends AuthProvider {
 
 void main() {
   group('mediaHeadersProvider', () {
-    test('injects Basic Authorization header when mode is basic', () {
-      final container = ProviderContainer(
-        overrides: [
-          serverApiKeyProvider.overrideWithValue(''),
-          authProvider.overrideWith(() => MockAuthProvider(AuthState.initial().copyWith(
-            mode: AuthMode.basic,
-            username: 'alice',
-            password: 'secret',
-          ))),
-        ],
-      );
-      addTearDown(container.dispose);
-
-      final headers = container.read(mediaHeadersProvider);
-      
-      final expectedBase64 = base64Encode(utf8.encode('alice:secret'));
-      expect(headers['Authorization'], 'Basic $expectedBase64');
-    });
-
-    test('injects Bearer Authorization header when mode is bearer', () {
-      final container = ProviderContainer(
-        overrides: [
-          serverApiKeyProvider.overrideWithValue('some-token'),
-          authProvider.overrideWith(() => MockAuthProvider(AuthState.initial().copyWith(
-            mode: AuthMode.bearer,
-          ))),
-        ],
-      );
-      addTearDown(container.dispose);
-
-      final headers = container.read(mediaHeadersProvider);
-      
-      expect(headers['Authorization'], 'Bearer some-token');
-    });
-
-    test('injects both ApiKey and Bearer when both are available', () {
-      final container = ProviderContainer(
-        overrides: [
-          serverApiKeyProvider.overrideWithValue('some-token'),
-          authProvider.overrideWith(() => MockAuthProvider(AuthState.initial().copyWith(
-            mode: AuthMode.bearer,
-          ))),
-        ],
-      );
-      addTearDown(container.dispose);
-
-      final headers = container.read(mediaHeadersProvider);
-      
-      expect(headers['ApiKey'], 'some-token');
-      expect(headers['Authorization'], 'Bearer some-token');
-    });
-
-    test('injects both ApiKey and Basic when both are available', () {
+    test('injects Basic Authorization header and EXCLUDES ApiKey when mode is basic', () {
       final container = ProviderContainer(
         overrides: [
           serverApiKeyProvider.overrideWithValue('some-token'),
@@ -84,16 +32,33 @@ void main() {
       final headers = container.read(mediaHeadersProvider);
       
       final expectedBase64 = base64Encode(utf8.encode('alice:secret'));
-      expect(headers['ApiKey'], 'some-token');
       expect(headers['Authorization'], 'Basic $expectedBase64');
+      expect(headers.containsKey('ApiKey'), false);
+    });
+
+    test('injects Bearer Authorization header and EXCLUDES ApiKey when mode is bearer', () {
+      final container = ProviderContainer(
+        overrides: [
+          serverApiKeyProvider.overrideWithValue('some-token'),
+          authProvider.overrideWith(() => MockAuthProvider(AuthState.initial().copyWith(
+            mode: AuthMode.bearer,
+          ))),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      final headers = container.read(mediaHeadersProvider);
+      
+      expect(headers['Authorization'], 'Bearer some-token');
+      expect(headers.containsKey('ApiKey'), false);
     });
   });
 
   group('mediaPlaybackHeadersProvider', () {
-    test('injects Basic Authorization header when mode is basic', () {
+    test('injects Basic Authorization header and EXCLUDES ApiKey when mode is basic', () {
       final container = ProviderContainer(
         overrides: [
-          serverApiKeyProvider.overrideWithValue(''),
+          serverApiKeyProvider.overrideWithValue('some-token'),
           authProvider.overrideWith(() => MockAuthProvider(AuthState.initial().copyWith(
             mode: AuthMode.basic,
             username: 'alice',
@@ -107,9 +72,10 @@ void main() {
       
       final expectedBase64 = base64Encode(utf8.encode('alice:secret'));
       expect(headers['Authorization'], 'Basic $expectedBase64');
+      expect(headers.containsKey('ApiKey'), false);
     });
 
-    test('injects Bearer Authorization header when mode is bearer', () {
+    test('injects Bearer Authorization header and EXCLUDES ApiKey when mode is bearer', () {
       final container = ProviderContainer(
         overrides: [
           serverApiKeyProvider.overrideWithValue('some-token'),
@@ -123,6 +89,7 @@ void main() {
       final headers = container.read(mediaPlaybackHeadersProvider);
       
       expect(headers['Authorization'], 'Bearer some-token');
+      expect(headers.containsKey('ApiKey'), false);
     });
   });
 }
