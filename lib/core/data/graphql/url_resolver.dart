@@ -68,9 +68,9 @@ String applyWebMediaAuthFallback({
   final trimmedUrl = url.trim();
   if (trimmedUrl.isEmpty) return trimmedUrl;
 
-  // Keep password mode relying on browser cookie sessions.
-  if (authMode == AuthMode.password) return trimmedUrl;
-
+  // Priority: If we have an API key, it's our best fallback for the URL itself.
+  // Note: We primarily rely on custom headers now (XHR on Web), but this
+  // remains for environments that don't support custom headers or as a backup.
   final trimmedApiKey = apiKey.trim();
   if (trimmedApiKey.isNotEmpty) {
     return appendApiKey(trimmedUrl, trimmedApiKey);
