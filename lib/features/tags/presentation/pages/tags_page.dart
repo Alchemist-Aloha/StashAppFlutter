@@ -164,7 +164,7 @@ class _TagsPageState extends ConsumerState<TagsPage> {
                 Flexible(
                   child: ConstrainedBox(
                     constraints: BoxConstraints(
-                      maxHeight: MediaQuery.of(context).size.height * 0.35,
+                      maxHeight: MediaQuery.sizeOf(context).height * 0.35,
                     ),
                     child: Scrollbar(
                       thumbVisibility: true,
