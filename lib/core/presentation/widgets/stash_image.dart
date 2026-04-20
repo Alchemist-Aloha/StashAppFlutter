@@ -277,6 +277,7 @@ class StashImage extends ConsumerWidget {
         // Avoid custom headers on web; browser manages credentials/cookies.
         width: width,
         height: height,
+        headers: headers,
         fit: fit,
         errorBuilder: (context, error, stackTrace) => _buildError(context),
         loadingBuilder: (context, child, loadingProgress) {
