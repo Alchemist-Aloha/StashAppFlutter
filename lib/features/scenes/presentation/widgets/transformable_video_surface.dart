@@ -60,10 +60,11 @@ class _TransformableVideoSurfaceState extends State<TransformableVideoSurface> {
     return ClipRect(
       child: Transform(
         transform: _transformationMatrix,
-        alignment: Alignment.center,
-        child: AspectRatio(
-          aspectRatio: widget.aspectRatio,
-          child: VideoPlayer(widget.controller),
+        child: Center(
+          child: AspectRatio(
+            aspectRatio: widget.aspectRatio,
+            child: VideoPlayer(widget.controller),
+          ),
         ),
       ),
     );

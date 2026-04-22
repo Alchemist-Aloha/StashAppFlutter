@@ -332,12 +332,10 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
                 Positioned.fill(
                   child: Container(
                     color: Colors.black,
-                    child: Center(
-                      child: TransformableVideoSurface(
-                        controller: controller,
-                        aspectRatio: controller.value.aspectRatio,
-                        transformationNotifier: _transformationNotifier,
-                      ),
+                    child: TransformableVideoSurface(
+                      controller: controller,
+                      aspectRatio: controller.value.aspectRatio,
+                      transformationNotifier: _transformationNotifier,
                     ),
                   ),
                 ),
@@ -721,12 +719,10 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
                   Positioned.fill(
                     child: Container(
                       color: Colors.black,
-                      child: Center(
-                        child: TransformableVideoSurface(
-                          controller: controller,
-                          aspectRatio: controller.value.aspectRatio,
-                          transformationNotifier: _transformationNotifier,
-                        ),
+                      child: TransformableVideoSurface(
+                        controller: controller,
+                        aspectRatio: controller.value.aspectRatio,
+                        transformationNotifier: _transformationNotifier,
                       ),
                     ),
                   ),
