@@ -64,6 +64,35 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
   /// Local state to track initial player startup for UI feedback.
   bool _isStarting = false;
 
+  final ValueNotifier<Matrix4> _transformationNotifier =
+      ValueNotifier(Matrix4.identity());
+  double _lastScale = 1.0;
+  double _lastRotation = 0.0;
+
+  void _onScaleStart(ScaleStartDetails details) {
+    _lastScale = 1.0;
+    _lastRotation = 0.0;
+  }
+
+  void _onScaleUpdate(ScaleUpdateDetails details) {
+    if (details.pointerCount < 2) return;
+
+    final double deltaScale = details.scale / _lastScale;
+    final double deltaRotation = details.rotation - _lastRotation;
+    final Offset focalPoint = details.localFocalPoint;
+
+    final Matrix4 matrix = Matrix4.identity()
+      ..translate(focalPoint.dx, focalPoint.dy)
+      ..rotateZ(deltaRotation)
+      ..scale(deltaScale)
+      ..translate(-focalPoint.dx, -focalPoint.dy)
+      ..translate(details.focalPointDelta.dx, details.focalPointDelta.dy);
+
+    _transformationNotifier.value = matrix * _transformationNotifier.value;
+    _lastScale = details.scale;
+    _lastRotation = details.rotation;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -303,6 +332,7 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
                       child: TransformableVideoSurface(
                         controller: controller,
                         aspectRatio: controller.value.aspectRatio,
+                        transformationNotifier: _transformationNotifier,
                       ),
                     ),
                   ),
@@ -336,6 +366,8 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
                       enableNativePip: playerState.enableNativePip,
                       onFullScreenToggle: _toggleFullScreen,
                       scene: widget.scene,
+                      onScaleStart: _onScaleStart,
+                      onScaleUpdate: _onScaleUpdate,
                     ),
                   ),
                 ),
@@ -369,6 +401,35 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
   bool _wasMaximizedBeforeFullscreen = false;
   bool _wasPlayingBeforeExit = false;
   VideoPlayerController? _currentListenedController;
+
+  final ValueNotifier<Matrix4> _transformationNotifier =
+      ValueNotifier(Matrix4.identity());
+  double _lastScale = 1.0;
+  double _lastRotation = 0.0;
+
+  void _onScaleStart(ScaleStartDetails details) {
+    _lastScale = 1.0;
+    _lastRotation = 0.0;
+  }
+
+  void _onScaleUpdate(ScaleUpdateDetails details) {
+    if (details.pointerCount < 2) return;
+
+    final double deltaScale = details.scale / _lastScale;
+    final double deltaRotation = details.rotation - _lastRotation;
+    final Offset focalPoint = details.localFocalPoint;
+
+    final Matrix4 matrix = Matrix4.identity()
+      ..translate(focalPoint.dx, focalPoint.dy)
+      ..rotateZ(deltaRotation)
+      ..scale(deltaScale)
+      ..translate(-focalPoint.dx, -focalPoint.dy)
+      ..translate(details.focalPointDelta.dx, details.focalPointDelta.dy);
+
+    _transformationNotifier.value = matrix * _transformationNotifier.value;
+    _lastScale = details.scale;
+    _lastRotation = details.rotation;
+  }
 
   void _onControllerUpdate() {
     if (!_isPopping && _currentListenedController != null) {
@@ -655,6 +716,7 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
                         child: TransformableVideoSurface(
                           controller: controller,
                           aspectRatio: controller.value.aspectRatio,
+                          transformationNotifier: _transformationNotifier,
                         ),
                       ),
                     ),
@@ -688,6 +750,8 @@ class _FullscreenPlayerPageState extends ConsumerState<FullscreenPlayerPage> {
                         enableNativePip: playerState.enableNativePip,
                         onFullScreenToggle: _toggleFullScreen,
                         scene: scene,
+                        onScaleStart: _onScaleStart,
+                        onScaleUpdate: _onScaleUpdate,
                       ),
                     ),
                   ),

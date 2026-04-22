@@ -31,6 +31,9 @@ class NativeVideoControls extends ConsumerStatefulWidget {
     required this.enableNativePip,
     this.onFullScreenToggle,
     required this.scene,
+    this.onScaleStart,
+    this.onScaleUpdate,
+    this.onScaleEnd,
     super.key,
   });
 
@@ -39,6 +42,9 @@ class NativeVideoControls extends ConsumerStatefulWidget {
   final bool enableNativePip;
   final VoidCallback? onFullScreenToggle;
   final Scene scene;
+  final GestureScaleStartCallback? onScaleStart;
+  final GestureScaleUpdateCallback? onScaleUpdate;
+  final GestureScaleEndCallback? onScaleEnd;
 
   @override
   ConsumerState<NativeVideoControls> createState() =>
@@ -259,7 +265,7 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
     );
   }
 
-  void _updateDragSeek(DragUpdateDetails details, double dragAreaWidth) {
+  void _updateDragSeek(ScaleUpdateDetails details, double dragAreaWidth) {
     final isActive =
         ref.read(playerStateProvider).activeScene?.id == widget.scene.id;
     if (!isActive) return;
@@ -271,7 +277,7 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
     final duration = widget.controller.value.duration;
     if (duration <= Duration.zero) return;
 
-    _dragSeekAccumulatedDx += details.primaryDelta ?? 0;
+    _dragSeekAccumulatedDx += details.focalPointDelta.dx;
     final linearDragRatio = _dragSeekAccumulatedDx / dragAreaWidth;
     final curvedMagnitude = math
         .pow(linearDragRatio.abs(), _dragSeekCurveExponent)
@@ -806,21 +812,30 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls>
                                   widget.onFullScreenToggle?.call();
                                 }
                               : null,
-                          onHorizontalDragStart: !widget.useDoubleTapSeek
-                              ? (_) => _beginDragSeek()
-                              : null,
-                          onHorizontalDragUpdate: !widget.useDoubleTapSeek
-                              ? (details) => _updateDragSeek(
-                                  details,
-                                  constraints.maxWidth,
-                                )
-                              : null,
-                          onHorizontalDragEnd: !widget.useDoubleTapSeek
-                              ? (_) => _endDragSeek()
-                              : null,
-                          onHorizontalDragCancel: !widget.useDoubleTapSeek
-                              ? () => _endDragSeek()
-                              : null,
+                          onScaleStart: (details) {
+                            if (details.pointerCount == 1) {
+                              if (!widget.useDoubleTapSeek) {
+                                _beginDragSeek();
+                              }
+                            } else if (details.pointerCount >= 2) {
+                              widget.onScaleStart?.call(details);
+                            }
+                          },
+                          onScaleUpdate: (details) {
+                            if (details.pointerCount == 1) {
+                              if (!widget.useDoubleTapSeek) {
+                                _updateDragSeek(details, constraints.maxWidth);
+                              }
+                            } else if (details.pointerCount >= 2) {
+                              widget.onScaleUpdate?.call(details);
+                            }
+                          },
+                          onScaleEnd: (details) {
+                            if (_dragSeekStartPosition != null) {
+                              _endDragSeek();
+                            }
+                            widget.onScaleEnd?.call(details);
+                          },
                           child: const ColoredBox(color: Colors.transparent),
                         ),
                       ),
