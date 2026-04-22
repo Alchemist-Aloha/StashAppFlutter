@@ -721,21 +721,41 @@ class _TiktokSceneItemState extends ConsumerState<TiktokSceneItem> {
                     ),
                   ),
 
-                  // Minimum Progress Bar
+                  // Progress Bar
                   Positioned(
                     bottom: 0,
                     left: 0,
                     right: 0,
-                    child: SizedBox(
-                      height: 2,
-                      child: VideoProgressIndicator(
-                        controller,
-                        allowScrubbing: true,
-                        padding: EdgeInsets.zero,
-                        colors: VideoProgressColors(
-                          playedColor: Colors.white.withValues(alpha: 0.8),
-                          bufferedColor: Colors.white.withValues(alpha: 0.2),
-                          backgroundColor: Colors.transparent,
+                    child: SliderTheme(
+                      data: SliderTheme.of(context).copyWith(
+                        trackHeight: 4,
+                        thumbShape: const RoundSliderThumbShape(
+                          enabledThumbRadius: 6,
+                          elevation: 2,
+                          pressedElevation: 4,
+                        ),
+                        overlayShape: SliderComponentShape.noOverlay,
+                        activeTrackColor: Colors.white,
+                        inactiveTrackColor: Colors.white.withValues(alpha: 0.3),
+                        thumbColor: Colors.white,
+                        trackShape: const RectangularSliderTrackShape(),
+                      ),
+                      child: SizedBox(
+                        height: 24, // Larger tap target
+                        child: ListenableBuilder(
+                          listenable: controller,
+                          builder: (context, child) {
+                            final value = controller.value;
+                            final duration = value.duration.inMilliseconds.toDouble();
+                            final position = value.position.inMilliseconds.toDouble();
+                            return Slider(
+                              value: position.clamp(0.0, duration),
+                              max: duration > 0 ? duration : 1.0,
+                              onChanged: (val) {
+                                controller.seekTo(Duration(milliseconds: val.toInt()));
+                              },
+                            );
+                          },
                         ),
                       ),
                     ),
@@ -813,11 +833,21 @@ class _OverlayButton extends StatelessWidget {
         message: tooltip ?? '',
         child: Container(
           padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: Colors.black.withValues(alpha: 0.5),
+          decoration: const BoxDecoration(
+            color: Colors.transparent,
             shape: BoxShape.circle,
           ),
-          child: Icon(icon, color: Colors.white, size: 28),
+          child: Icon(
+            icon,
+            color: Colors.white,
+            size: 28,
+            shadows: [
+              Shadow(
+                color: Colors.black.withValues(alpha: 0.5),
+                blurRadius: 8,
+              ),
+            ],
+          ),
         ),
       ),
     );
