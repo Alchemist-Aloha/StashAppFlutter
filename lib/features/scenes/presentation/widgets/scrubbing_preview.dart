@@ -124,34 +124,40 @@ class _SpriteImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CachedNetworkImage(
-      imageUrl: sprite.url,
-      httpHeaders: headers,
-      imageBuilder: (context, imageProvider) {
-        final scaleX = targetWidth / sprite.w;
-        final scaleY = targetHeight / sprite.h;
+    final scaleX = targetWidth / sprite.w;
+    final scaleY = targetHeight / sprite.h;
 
-        return ClipRect(
-          child: OverflowBox(
-            maxWidth: double.infinity,
-            maxHeight: double.infinity,
-            alignment: Alignment.topLeft,
-            child: Transform.translate(
-              offset: Offset(-sprite.x * scaleX, -sprite.y * scaleY),
-              child: Transform.scale(
+    Widget buildImage(ImageProvider imageProvider) {
+      return ClipRect(
+        child: OverflowBox(
+          maxWidth: double.infinity,
+          maxHeight: double.infinity,
+          alignment: Alignment.topLeft,
+          child: Transform.translate(
+            offset: Offset(-sprite.x * scaleX, -sprite.y * scaleY),
+            child: Transform.scale(
+              alignment: Alignment.topLeft,
+              scaleX: scaleX,
+              scaleY: scaleY,
+              child: Image(
+                image: imageProvider,
                 alignment: Alignment.topLeft,
-                scaleX: scaleX,
-                scaleY: scaleY,
-                child: Image(
-                  image: imageProvider,
-                  alignment: Alignment.topLeft,
-                  fit: BoxFit.none,
-                ),
+                fit: BoxFit.none,
               ),
             ),
           ),
-        );
-      },
+        ),
+      );
+    }
+
+    if (kIsWeb) {
+      return buildImage(NetworkImage(sprite.url, headers: headers));
+    }
+
+    return CachedNetworkImage(
+      imageUrl: sprite.url,
+      httpHeaders: headers,
+      imageBuilder: (context, imageProvider) => buildImage(imageProvider),
       placeholder: (context, url) => const Center(
         child: SizedBox(
           width: 24,
