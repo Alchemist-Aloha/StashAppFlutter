@@ -431,7 +431,7 @@ class _SceneDetailsPageState extends ConsumerState<SceneDetailsPage> {
             icon: Icons.star,
             iconColor: context.colors.ratingColor,
           ),
-        _buildChip(context, '${scene.oCounter} O-counts', icon: Icons.water_drop),
+        _buildChip(context, '${scene.playCount} plays', icon: Icons.play_arrow),
       ],
     );
   }
@@ -520,7 +520,7 @@ class _SceneDetailsPageState extends ConsumerState<SceneDetailsPage> {
             minimumSize: const Size(0, 32),
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
           ),
-          icon: const Icon(Icons.water_drop),
+          icon: const Icon(Icons.water_drop_outlined),
           label: Text('${scene.oCounter}'),
         ),
       ],

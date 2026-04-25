@@ -125,8 +125,8 @@ class _SceneCardState extends ConsumerState<SceneCard> {
           left: 0,
           right: 0,
           child: _ThumbnailMetadataOverlay(
-            count: widget.isGrid ? widget.scene.oCounter : widget.scene.playCount,
-            icon: widget.isGrid ? Icons.thumb_up : Icons.visibility,
+            count: widget.scene.oCounter,
+            icon: Icons.water_drop_outlined,
             rating: widget.scene.rating100,
             duration: _isScrubbing
                 ? _formatDuration(_scrubTime)
