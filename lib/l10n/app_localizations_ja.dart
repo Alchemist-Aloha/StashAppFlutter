@@ -1022,6 +1022,14 @@ class AppLocalizationsJa extends AppLocalizations {
   String get settings_interface_galleries_layout_subtitle => 'ギャラリーのデフォルト閲覧モード';
 
   @override
+  String get settings_interface_max_performer_avatars =>
+      'Max Performer Avatars (Desktop)';
+
+  @override
+  String get settings_interface_max_performer_avatars_subtitle =>
+      'Maximum number of performer avatars to show in the scene card on desktop.';
+
+  @override
   String get settings_interface_layout_default => 'デフォルトレイアウト';
 
   @override

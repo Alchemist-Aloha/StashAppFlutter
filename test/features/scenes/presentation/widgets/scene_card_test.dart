@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -231,4 +232,68 @@ void main() {
 
     expect(tapped, isTrue);
   });
+
+  testWidgets('SceneCard shows metadata overlay', (tester) async {
+    await tester.pumpWidget(
+      buildTestWidget(SceneCard(scene: defaultTestScene, isGrid: false)),
+    );
+
+    await tester.pumpAndSettle();
+
+    // Check for visibility and star icons in the overlay
+    expect(find.byIcon(Icons.visibility), findsOneWidget);
+    expect(find.byIcon(Icons.star), findsOneWidget);
+
+    // Check values
+    expect(find.text('10'), findsOneWidget); // playCount
+    expect(find.text('2.0'), findsOneWidget); // rating100: 40 -> 40/20 = 2.0
+  });
+
+  testWidgets('SceneCard shows performer avatars on desktop', (tester) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.linux;
+
+    final sceneWithPerformers = defaultTestScene.copyWith(
+      performerNames: ['Performer 1', 'Performer 2'],
+      performerImagePaths: ['path/1', 'path/2'],
+    );
+
+    await tester.pumpWidget(
+      buildTestWidget(SceneCard(scene: sceneWithPerformers, isGrid: false)),
+    );
+
+    await tester.pump();
+
+    // Should find the Tooltips with performer names
+    // Note: Icons.more_vert also uses Tooltip "More"
+    expect(find.byType(Tooltip), findsNWidgets(3));
+
+    // Check if CircleAvatar is present (one for each performer)
+    expect(find.byType(CircleAvatar), findsNWidgets(2));
+
+    debugDefaultTargetPlatformOverride = null;
+  });
+
+  testWidgets('SceneCard hides performer avatars on mobile', (tester) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.android;
+
+    final sceneWithPerformers = defaultTestScene.copyWith(
+      performerNames: ['Performer 1', 'Performer 2'],
+      performerImagePaths: ['path/1', 'path/2'],
+    );
+
+    await tester.pumpWidget(
+      buildTestWidget(SceneCard(scene: sceneWithPerformers, isGrid: false)),
+    );
+
+    await tester.pump();
+
+    // Should only find 1 Tooltip (the "More" button)
+    expect(find.byType(Tooltip), findsOneWidget);
+
+    // Should not find any CircleAvatar
+    expect(find.byType(CircleAvatar), findsNothing);
+
+    debugDefaultTargetPlatformOverride = null;
+  });
 }
+
