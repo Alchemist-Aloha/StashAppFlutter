@@ -86,6 +86,9 @@ class _SceneCardState extends ConsumerState<SceneCard> {
     double? duration,
     double aspectRatio,
   ) {
+    final isDesktop = kIsWeb ||
+        (defaultTargetPlatform != TargetPlatform.android &&
+            defaultTargetPlatform != TargetPlatform.iOS);
     final headers = ref.watch(mediaHeadersProvider);
     final totalDuration = widget.scene.files.isNotEmpty
         ? (widget.scene.files.first.duration ?? 0.0)
@@ -94,6 +97,60 @@ class _SceneCardState extends ConsumerState<SceneCard> {
     final rawVttUrl = widget.scene.paths.vtt ?? '';
     final apiKey = ref.read(serverApiKeyProvider);
     final vttUrl = appendApiKey(rawVttUrl, apiKey);
+
+    Widget content = Stack(
+      children: [
+        StashImage(
+          imageUrl: widget.scene.paths.screenshot,
+          memCacheWidth: widget.memCacheWidth,
+          memCacheHeight: widget.memCacheHeight,
+          // Use double.infinity for both dimensions with BoxFit.cover
+          // to ensure the image fills the AspectRatio container completely.
+          width: double.infinity,
+          height: double.infinity,
+          fit: BoxFit.cover,
+        ),
+        if (_isScrubbing && vttUrl.isNotEmpty)
+          Positioned.fill(
+            child: ScrubbingPreview(
+              vttUrl: vttUrl,
+              timeInSeconds: _scrubTime,
+              headers: headers,
+              width: double.infinity,
+              height: double.infinity,
+            ),
+          ),
+        Positioned(
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: _ThumbnailMetadataOverlay(
+            playCount: widget.scene.playCount,
+            rating: widget.scene.rating100,
+            duration: _isScrubbing
+                ? _formatDuration(_scrubTime)
+                : _formatDuration(duration),
+            isGrid: widget.isGrid,
+          ),
+        ),
+      ],
+    );
+
+    if (isDesktop && vttUrl.isNotEmpty) {
+      content = MouseRegion(
+        onEnter: (_) => setState(() => _isScrubbing = true),
+        onExit: (_) => setState(() => _isScrubbing = false),
+        onHover: (details) {
+          final box = context.findRenderObject() as RenderBox;
+          final localPos = details.localPosition;
+          final relativePos = (localPos.dx / box.size.width).clamp(0.0, 1.0);
+          setState(() {
+            _scrubTime = relativePos * totalDuration;
+          });
+        },
+        child: content,
+      );
+    }
 
     return Hero(
       tag: 'scene_player_${widget.scene.id}',
@@ -116,61 +173,22 @@ class _SceneCardState extends ConsumerState<SceneCard> {
           }
         },
         onHorizontalDragEnd: (_) {
-          setState(() {
-            _isScrubbing = false;
-          });
+          if (!isDesktop) {
+            setState(() {
+              _isScrubbing = false;
+            });
+          }
         },
         onHorizontalDragCancel: () {
-          setState(() {
-            _isScrubbing = false;
-          });
+          if (!isDesktop) {
+            setState(() {
+              _isScrubbing = false;
+            });
+          }
         },
         child: Material(
           color: Colors.transparent,
-          child: Stack(
-            children: [
-              StashImage(
-                imageUrl: widget.scene.paths.screenshot,
-                memCacheWidth: widget.memCacheWidth,
-                memCacheHeight: widget.memCacheHeight,
-                // Use double.infinity for both dimensions with BoxFit.cover
-                // to ensure the image fills the AspectRatio container completely.
-                width: double.infinity,
-                height: double.infinity,
-                fit: BoxFit.cover,
-              ),
-              if (_isScrubbing && vttUrl.isNotEmpty)
-                Positioned.fill(
-                  child: ScrubbingPreview(
-                    vttUrl: vttUrl,
-                    timeInSeconds: _scrubTime,
-                    headers: headers,
-                    width: double.infinity,
-                    height: double.infinity,
-                  ),
-                ),
-              Positioned(
-                bottom: widget.isGrid ? 4 : 8,
-                right: widget.isGrid ? 4 : 8,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 4,
-                    vertical: 2,
-                  ),
-                  color: Colors.black.withAlpha(200),
-                  child: Text(
-                    _isScrubbing
-                        ? _formatDuration(_scrubTime)
-                        : _formatDuration(duration),
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: widget.isGrid ? 10 : 12,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+          child: content,
         ),
       ),
     );
@@ -215,6 +233,10 @@ class _SceneCardState extends ConsumerState<SceneCard> {
     double? duration,
     double aspectRatio,
   ) {
+    final isDesktop = kIsWeb ||
+        (defaultTargetPlatform != TargetPlatform.android &&
+            defaultTargetPlatform != TargetPlatform.iOS);
+
     return InkWell(
       onTap: widget.onTap,
       onLongPress: () => _showMenu(context, ref),
@@ -260,6 +282,13 @@ class _SceneCardState extends ConsumerState<SceneCard> {
                           fontSize: 12,
                         ),
                       ),
+                      if (isDesktop && widget.scene.performerNames.isNotEmpty) ...[
+                        const SizedBox(height: 8),
+                        _PerformerAvatarRow(
+                          performerImagePaths: widget.scene.performerImagePaths,
+                          performerNames: widget.scene.performerNames,
+                        ),
+                      ],
                     ],
                   ),
                 ),
@@ -288,6 +317,10 @@ class _SceneCardState extends ConsumerState<SceneCard> {
     double? duration,
     double aspectRatio,
   ) {
+    final isDesktop = kIsWeb ||
+        (defaultTargetPlatform != TargetPlatform.android &&
+            defaultTargetPlatform != TargetPlatform.iOS);
+
     return InkWell(
       onTap: widget.onTap,
       onLongPress: () => _showMenu(context, ref),
@@ -332,6 +365,13 @@ class _SceneCardState extends ConsumerState<SceneCard> {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
+                      if (isDesktop && widget.scene.performerNames.isNotEmpty) ...[
+                        const SizedBox(height: 4),
+                        _PerformerAvatarRow(
+                          performerImagePaths: widget.scene.performerImagePaths,
+                          performerNames: widget.scene.performerNames,
+                        ),
+                      ],
                     ],
                   ),
                 ),
