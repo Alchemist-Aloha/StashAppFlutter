@@ -42,6 +42,8 @@ class _InterfaceSettingsPageState extends ConsumerState<InterfaceSettingsPage> {
   int? _studioGridColumns;
   int? _tagGridColumns;
 
+  int _maxPerformerAvatars = 3;
+
   // New settings
   bool _performerMediaGridLayout = true;
   bool _performerGalleriesGridLayout = true;
@@ -77,6 +79,8 @@ class _InterfaceSettingsPageState extends ConsumerState<InterfaceSettingsPage> {
     _studioGridColumns = ref.read(studioGridColumnsProvider);
     _tagGridColumns = ref.read(tagGridColumnsProvider);
 
+    _maxPerformerAvatars = ref.read(maxPerformerAvatarsProvider);
+
     _performerMediaGridLayout = ref.read(performerMediaGridLayoutProvider);
     _performerGalleriesGridLayout = ref.read(
       performerGalleriesGridLayoutProvider,
@@ -109,6 +113,8 @@ class _InterfaceSettingsPageState extends ConsumerState<InterfaceSettingsPage> {
     ref.read(imageGridColumnsProvider.notifier).set(_imageGridColumns);
     ref.read(studioGridColumnsProvider.notifier).set(_studioGridColumns);
     ref.read(tagGridColumnsProvider.notifier).set(_tagGridColumns);
+
+    ref.read(maxPerformerAvatarsProvider.notifier).set(_maxPerformerAvatars);
 
     ref
         .read(performerMediaGridLayoutProvider.notifier)
@@ -360,6 +366,15 @@ class _InterfaceSettingsPageState extends ConsumerState<InterfaceSettingsPage> {
                             },
                           ),
                         ],
+                        const Divider(height: AppTheme.spacingLarge),
+                        _buildGridColumnSetting(
+                          label: context.l10n.settings_interface_max_performer_avatars,
+                          value: _maxPerformerAvatars == 3 ? null : _maxPerformerAvatars,
+                          onChanged: (value) async {
+                            setState(() => _maxPerformerAvatars = value ?? 3);
+                            await _saveSettings();
+                          },
+                        ),
                       ],
                     ),
                   ),
