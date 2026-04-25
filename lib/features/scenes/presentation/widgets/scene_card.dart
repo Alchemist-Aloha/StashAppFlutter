@@ -125,7 +125,8 @@ class _SceneCardState extends ConsumerState<SceneCard> {
           left: 0,
           right: 0,
           child: _ThumbnailMetadataOverlay(
-            playCount: widget.scene.playCount,
+            count: widget.isGrid ? widget.scene.oCounter : widget.scene.playCount,
+            icon: widget.isGrid ? Icons.thumb_up : Icons.visibility,
             rating: widget.scene.rating100,
             duration: _isScrubbing
                 ? _formatDuration(_scrubTime)
@@ -393,13 +394,15 @@ class _SceneCardState extends ConsumerState<SceneCard> {
 
 class _ThumbnailMetadataOverlay extends StatelessWidget {
   const _ThumbnailMetadataOverlay({
-    required this.playCount,
+    required this.count,
+    required this.icon,
     required this.rating,
     required this.duration,
     required this.isGrid,
   });
 
-  final int playCount;
+  final int count;
+  final IconData icon;
   final int? rating;
   final String duration;
   final bool isGrid;
@@ -414,7 +417,7 @@ class _ThumbnailMetadataOverlay extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _buildItem(Icons.visibility, playCount.toString()),
+          _buildItem(icon, count.toString()),
           if (rating != null)
             _buildItem(Icons.star, (rating! / 20.0).toStringAsFixed(1)),
           Text(

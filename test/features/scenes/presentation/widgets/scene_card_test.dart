@@ -233,7 +233,7 @@ void main() {
     expect(tapped, isTrue);
   });
 
-  testWidgets('SceneCard shows metadata overlay', (tester) async {
+  testWidgets('SceneCard shows metadata overlay in list mode', (tester) async {
     await tester.pumpWidget(
       buildTestWidget(SceneCard(scene: defaultTestScene, isGrid: false)),
     );
@@ -246,6 +246,22 @@ void main() {
 
     // Check values
     expect(find.text('10'), findsOneWidget); // playCount
+    expect(find.text('2.0'), findsOneWidget); // rating100: 40 -> 40/20 = 2.0
+  });
+
+  testWidgets('SceneCard shows metadata overlay in grid mode', (tester) async {
+    await tester.pumpWidget(
+      buildTestWidget(SceneCard(scene: defaultTestScene, isGrid: true)),
+    );
+
+    await tester.pumpAndSettle();
+
+    // Check for thumb_up and star icons in the overlay
+    expect(find.byIcon(Icons.thumb_up), findsOneWidget);
+    expect(find.byIcon(Icons.star), findsOneWidget);
+
+    // Check values
+    expect(find.text('5'), findsOneWidget); // oCounter
     expect(find.text('2.0'), findsOneWidget); // rating100: 40 -> 40/20 = 2.0
   });
 
