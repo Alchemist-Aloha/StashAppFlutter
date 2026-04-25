@@ -156,14 +156,14 @@ class _SceneCardState extends ConsumerState<SceneCard> {
     return Hero(
       tag: 'scene_player_${widget.scene.id}',
       child: GestureDetector(
-        onHorizontalDragStart: (_) {
+        onPanStart: (_) {
           if (vttUrl.isNotEmpty) {
             setState(() {
               _isScrubbing = true;
             });
           }
         },
-        onHorizontalDragUpdate: (details) {
+        onPanUpdate: (details) {
           if (_isScrubbing) {
             final box = context.findRenderObject() as RenderBox;
             final localPos = box.globalToLocal(details.globalPosition);
@@ -173,14 +173,14 @@ class _SceneCardState extends ConsumerState<SceneCard> {
             });
           }
         },
-        onHorizontalDragEnd: (_) {
+        onPanEnd: (_) {
           if (!isDesktop) {
             setState(() {
               _isScrubbing = false;
             });
           }
         },
-        onHorizontalDragCancel: () {
+        onPanCancel: () {
           if (!isDesktop) {
             setState(() {
               _isScrubbing = false;
