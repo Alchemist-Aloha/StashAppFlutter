@@ -11,6 +11,7 @@ import 'scrubbing_preview.dart';
 import '../../../../core/data/graphql/media_headers_provider.dart';
 import '../../../../core/data/graphql/url_resolver.dart';
 import '../../../../core/data/graphql/graphql_client.dart';
+import '../../../../core/presentation/providers/layout_settings_provider.dart';
 
 /// A card widget that displays a summary of a [Scene].
 ///
@@ -401,6 +402,56 @@ class _ThumbnailMetadataOverlay extends StatelessWidget {
             fontSize: isGrid ? 10 : 12,
           ),
         ),
+      ],
+    );
+  }
+}
+
+class _PerformerAvatarRow extends ConsumerWidget {
+  const _PerformerAvatarRow({
+    required this.performerImagePaths,
+    required this.performerNames,
+  });
+
+  final List<String?> performerImagePaths;
+  final List<String> performerNames;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final limit = ref.watch(maxPerformerAvatarsProvider);
+    final count = performerImagePaths.length;
+    final displayCount = count > limit ? limit : count;
+    final overflow = count > limit ? count - limit : 0;
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        for (int i = 0; i < displayCount; i++)
+          Padding(
+            padding: const EdgeInsets.only(right: 4.0),
+            child: CircleAvatar(
+              radius: 8,
+              backgroundColor: context.colors.surfaceContainerHighest,
+              child: ClipOval(
+                child: StashImage(
+                  imageUrl: performerImagePaths[i],
+                  width: 16,
+                  height: 16,
+                  fit: BoxFit.cover,
+                  errorWidget: const Icon(Icons.person, size: 8),
+                ),
+              ),
+            ),
+          ),
+        if (overflow > 0)
+          Text(
+            '+$overflow',
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+              color: context.colors.onSurfaceVariant,
+            ),
+          ),
       ],
     );
   }
