@@ -649,6 +649,9 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
                   }
 
                   final isGrid = widget.gridDelegate != null;
+                  final responsiveDelegate = isGrid ? _getResponsiveGridDelegate(context) : null;
+                  final fixedDelegate = responsiveDelegate is SliverGridDelegateWithFixedCrossAxisCount ? responsiveDelegate : null;
+
                   int? memCacheWidth;
                   if (widget.itemBuilder != null) {
                     if (widget.memCacheWidthBuilder != null) {
@@ -658,12 +661,9 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
                       );
                     } else {
                       final screenWidth = MediaQuery.sizeOf(context).width;
-                      if (isGrid) {
-                        final delegate =
-                            _getResponsiveGridDelegate(context)
-                                as SliverGridDelegateWithFixedCrossAxisCount;
+                      if (fixedDelegate != null) {
                         memCacheWidth =
-                            (screenWidth / delegate.crossAxisCount * 1.5)
+                            (screenWidth / fixedDelegate.crossAxisCount * 1.5)
                                 .toInt();
                       } else {
                         memCacheWidth = screenWidth > 600
@@ -674,26 +674,17 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
                   }
 
                   Widget body = widget.customBody ??
-                      (widget.gridDelegate != null
+                      (isGrid
                           ? (widget.useMasonry
                               ? MasonryGridView.builder(
                                   controller: widget.scrollController,
                                   padding: widget.padding,
                                   gridDelegate:
                                       SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount:
-                                            (_getResponsiveGridDelegate(context)
-                                                    as SliverGridDelegateWithFixedCrossAxisCount)
-                                                .crossAxisCount,
+                                        crossAxisCount: fixedDelegate?.crossAxisCount ?? 1,
                                       ),
-                                  mainAxisSpacing:
-                                      (_getResponsiveGridDelegate(context)
-                                              as SliverGridDelegateWithFixedCrossAxisCount)
-                                          .mainAxisSpacing,
-                                  crossAxisSpacing:
-                                      (_getResponsiveGridDelegate(context)
-                                              as SliverGridDelegateWithFixedCrossAxisCount)
-                                          .crossAxisSpacing,
+                                  mainAxisSpacing: fixedDelegate?.mainAxisSpacing ?? 0.0,
+                                  crossAxisSpacing: fixedDelegate?.crossAxisSpacing ?? 0.0,
                                   itemCount: items.length,
                                   itemBuilder: (context, index) {
                                     if (index == 0 &&
@@ -733,8 +724,7 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
                               : GridView.builder(
                                   controller: widget.scrollController,
                                   padding: widget.padding,
-                                  gridDelegate:
-                                      _getResponsiveGridDelegate(context),
+                                  gridDelegate: responsiveDelegate!,
                                   itemCount: items.length,
                                   itemBuilder: (context, index) {
                                     if (index == 0 &&
