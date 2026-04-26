@@ -59,6 +59,17 @@ class _SceneCardState extends ConsumerState<SceneCard> {
   bool _isScrubbing = false;
   double _scrubTime = 0;
 
+  @override
+  void didUpdateWidget(SceneCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Reset scrubbing state when the scene changes to prevent state leakage
+    // during list item reuse (scrolling).
+    if (oldWidget.scene.id != widget.scene.id) {
+      _isScrubbing = false;
+      _scrubTime = 0;
+    }
+  }
+
   /// Displays a custom scene info sheet for navigation actions.
   void _showMenu(BuildContext context, WidgetRef ref) {
     showModalBottomSheet(
@@ -100,8 +111,17 @@ class _SceneCardState extends ConsumerState<SceneCard> {
         : 0.0;
 
     final rawVttUrl = widget.scene.paths.vtt ?? '';
-    final hasVtt = rawVttUrl.isNotEmpty;
-    final vttUrl = appendApiKey(rawVttUrl, apiKey);
+    final hasVtt = rawVttUrl.isNotEmpty && totalDuration > 0;
+    final vttUrl = hasVtt ? appendApiKey(rawVttUrl, apiKey) : '';
+
+    // Safety guard: if VTT is not available, ensure scrubbing is disabled.
+    if (!hasVtt && _isScrubbing) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _isScrubbing) {
+          setState(() => _isScrubbing = false);
+        }
+      });
+    }
 
     Widget content = Stack(
       children: [
@@ -182,20 +202,16 @@ class _SceneCardState extends ConsumerState<SceneCard> {
             : null,
         onPanEnd: hasVtt
             ? (_) {
-                if (!isDesktop) {
-                  setState(() {
-                    _isScrubbing = false;
-                  });
-                }
+                setState(() {
+                  _isScrubbing = false;
+                });
               }
             : null,
         onPanCancel: hasVtt
             ? () {
-                if (!isDesktop) {
-                  setState(() {
-                    _isScrubbing = false;
-                  });
-                }
+                setState(() {
+                  _isScrubbing = false;
+                });
               }
             : null,
         child: Material(
