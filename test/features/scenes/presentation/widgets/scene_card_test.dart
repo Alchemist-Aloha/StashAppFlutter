@@ -48,6 +48,7 @@ void main() {
       screenshot: null,
       preview: null,
       stream: 'http://test.com/stream.mp4',
+      vtt: 'http://test.com/sprites.vtt',
     ),
     studioId: 'st1',
     studioName: 'Test Studio',
@@ -413,6 +414,26 @@ void main() {
     expect(detector.onPanStart, isNull);
     expect(detector.onPanUpdate, isNull);
     expect(detector.onPanEnd, isNull);
+    expect(detector.onPanCancel, isNull);
+  });
+
+  testWidgets('SceneCard pan gesture is enabled when VTT is present', (tester) async {
+    await tester.pumpWidget(
+      buildTestWidget(SceneCard(scene: defaultTestScene, isGrid: true)),
+    );
+
+    await tester.pumpAndSettle();
+
+    final detectorFinder = find.descendant(
+      of: find.byType(Hero),
+      matching: find.byType(GestureDetector),
+    );
+    final detector = tester.widget<GestureDetector>(detectorFinder);
+
+    expect(detector.onPanStart, isNotNull);
+    expect(detector.onPanUpdate, isNotNull);
+    expect(detector.onPanEnd, isNotNull);
+    expect(detector.onPanCancel, isNotNull);
   });
 }
 
