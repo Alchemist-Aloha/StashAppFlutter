@@ -11,11 +11,15 @@ class PerformerGalleryItem {
     required this.galleryId,
     required this.title,
     required this.thumbnailUrl,
+    this.width,
+    this.height,
   });
 
   final String galleryId;
   final String title;
   final String thumbnailUrl;
+  final int? width;
+  final int? height;
 }
 
 @riverpod
@@ -49,6 +53,8 @@ FutureOr<List<PerformerGalleryItem>> performerGalleries(
             rawUrl: gallery.coverPath ?? '/gallery/${gallery.id}/thumbnail',
             graphqlEndpoint: endpoint,
           ),
+          width: gallery.coverWidth,
+          height: gallery.coverHeight,
         ),
       )
       .toList();

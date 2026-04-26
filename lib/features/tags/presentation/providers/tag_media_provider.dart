@@ -14,11 +14,15 @@ class TagMediaItem {
     required this.sceneId,
     required this.title,
     required this.thumbnailUrl,
+    this.width,
+    this.height,
   });
 
   final String sceneId;
   final String title;
   final String thumbnailUrl;
+  final int? width;
+  final int? height;
 }
 
 @riverpod
@@ -54,17 +58,19 @@ FutureOr<List<TagMediaItem>> tagMedia(Ref ref, String tagId) async {
   return result.parsedData!.findScenes.scenes
       .map(
         (scene) => TagMediaItem(
-          sceneId: scene.id,
-          title: buildSceneDisplayTitle(
-            title: scene.title,
-            filePath: scene.files.isNotEmpty ? scene.files.first.path : null,
-            streamPath: scene.paths.stream,
+            sceneId: scene.id,
+            title: buildSceneDisplayTitle(
+              title: scene.title,
+              filePath: scene.files.isNotEmpty ? scene.files.first.path : null,
+              streamPath: scene.paths.stream,
+            ),
+            thumbnailUrl: resolveGraphqlMediaUrl(
+              rawUrl: scene.paths.screenshot ?? scene.paths.preview,
+              graphqlEndpoint: endpoint,
+            ),
+            width: scene.files.isNotEmpty ? scene.files.first.width : null,
+            height: scene.files.isNotEmpty ? scene.files.first.height : null,
           ),
-          thumbnailUrl: resolveGraphqlMediaUrl(
-            rawUrl: scene.paths.screenshot ?? scene.paths.preview,
-            graphqlEndpoint: endpoint,
-          ),
-        ),
       )
       .where((item) => item.thumbnailUrl.isNotEmpty)
       .toList();

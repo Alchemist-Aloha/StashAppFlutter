@@ -18,6 +18,8 @@ class GridCard extends ConsumerWidget {
     this.isGrid = true,
     this.memCacheWidth,
     this.memCacheHeight,
+    this.useMasonry = false,
+    this.aspectRatio,
     super.key,
   });
 
@@ -44,6 +46,10 @@ class GridCard extends ConsumerWidget {
 
   /// Optional memory cache height for image optimization.
   final int? memCacheHeight;
+  /// Whether to allow masonry (dynamic) aspect ratio when in grid mode.
+  final bool useMasonry;
+  /// Optional aspect ratio to use when `useMasonry` is true.
+  final double? aspectRatio;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -63,7 +69,9 @@ class GridCard extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           AspectRatio(
-            aspectRatio: 16 / 9,
+            aspectRatio: (useMasonry && aspectRatio != null)
+              ? (aspectRatio!).clamp(0.5, 2.5).toDouble()
+              : 16 / 9,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
               child: Stack(

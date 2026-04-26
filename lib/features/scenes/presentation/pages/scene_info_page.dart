@@ -18,13 +18,30 @@ class SceneInfoPage extends ConsumerWidget {
     final theme = Theme.of(context);
     final mediaHeaders = ref.watch(mediaHeadersProvider);
 
-    return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.details_scene)),
-      body: SingleChildScrollView(
+    // Bottom-sheet / dialog friendly content (no Scaffold) so it can be shown
+    // inside a modal bottom sheet without expanding to full screen.
+    return SafeArea(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  context.l10n.details_scene,
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
             if (scene.details != null && scene.details!.isNotEmpty) ...[
               Text(
                 context.l10n.common_details,
@@ -55,8 +72,8 @@ class SceneInfoPage extends ConsumerWidget {
                       : null;
                   final performerImagePath =
                       index < scene.performerImagePaths.length
-                      ? scene.performerImagePaths[index]
-                      : null;
+                          ? scene.performerImagePaths[index]
+                          : null;
                   final hasImage =
                       performerImagePath != null &&
                       performerImagePath.trim().isNotEmpty &&
