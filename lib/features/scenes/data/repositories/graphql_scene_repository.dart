@@ -86,8 +86,8 @@ class GraphQLSceneRepository implements SceneRepository {
                 .map(
                   (f) => SceneFile(
                     format: null,
-                    width: null,
-                    height: null,
+                    width: f.width,
+                    height: f.height,
                     videoCodec: null,
                     audioCodec: null,
                     bitRate: null,
@@ -121,6 +121,10 @@ class GraphQLSceneRepository implements SceneRepository {
               ),
               vtt: resolveGraphqlMediaUrl(
                 rawUrl: s.paths.vtt,
+                graphqlEndpoint: _graphqlEndpoint,
+              ),
+              sprite: resolveGraphqlMediaUrl(
+                rawUrl: s.paths.sprite,
                 graphqlEndpoint: _graphqlEndpoint,
               ),
             ),
@@ -345,6 +349,10 @@ class GraphQLSceneRepository implements SceneRepository {
         ),
         vtt: resolveGraphqlMediaUrl(
           rawUrl: s.paths.vtt,
+          graphqlEndpoint: _graphqlEndpoint,
+        ),
+        sprite: resolveGraphqlMediaUrl(
+          rawUrl: s.paths.sprite,
           graphqlEndpoint: _graphqlEndpoint,
         ),
       ),

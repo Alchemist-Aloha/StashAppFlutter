@@ -11,6 +11,8 @@ import 'scrubbing_preview.dart';
 import '../../../../core/data/graphql/media_headers_provider.dart';
 import '../../../../core/data/graphql/url_resolver.dart';
 import '../../../../core/data/graphql/graphql_client.dart';
+import '../../../../core/presentation/providers/layout_settings_provider.dart';
+import '../../../../core/utils/vtt_service.dart';
 
 /// A card widget that displays a summary of a [Scene].
 ///
@@ -25,6 +27,7 @@ class SceneCard extends ConsumerStatefulWidget {
   const SceneCard({
     required this.scene,
     this.isGrid = false,
+    this.useMasonry = false,
     this.onTap,
     this.memCacheWidth,
     this.memCacheHeight,
@@ -36,6 +39,9 @@ class SceneCard extends ConsumerStatefulWidget {
 
   /// Whether to display in a compact grid format or a wide list format.
   final bool isGrid;
+
+  /// Whether to use dynamic aspect ratio in grid mode (for masonry layouts).
+  final bool useMasonry;
 
   /// Callback triggered when the card is tapped.
   final VoidCallback? onTap;
@@ -53,6 +59,87 @@ class SceneCard extends ConsumerStatefulWidget {
 class _SceneCardState extends ConsumerState<SceneCard> {
   bool _isScrubbing = false;
   double _scrubTime = 0;
+  bool _isVttValid = true;
+  _SpriteAvailability _spriteAvailability = _SpriteAvailability.unknown;
+
+  @override
+  void initState() {
+    super.initState();
+    _refreshSpriteAvailability();
+  }
+
+  @override
+  void didUpdateWidget(SceneCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Reset scrubbing state when the scene changes to prevent state leakage
+    // during list item reuse (scrolling).
+    if (oldWidget.scene.id != widget.scene.id ||
+        oldWidget.scene.paths.vtt != widget.scene.paths.vtt ||
+        oldWidget.scene.paths.sprite != widget.scene.paths.sprite) {
+      _isScrubbing = false;
+      _scrubTime = 0;
+      _isVttValid = true;
+      _spriteAvailability = _SpriteAvailability.unknown;
+      _refreshSpriteAvailability();
+    }
+  }
+
+  bool _isPlaceholderSpritePath(String rawUrl) {
+    final trimmed = rawUrl.trim();
+    if (trimmed.isEmpty) return true;
+
+    final uri = Uri.tryParse(trimmed);
+    final path = uri?.path ?? trimmed;
+    final fileName = path.split('/').last;
+    return fileName.startsWith('_sprite.');
+  }
+
+  Future<void> _refreshSpriteAvailability() async {
+    final rawVttUrl = widget.scene.paths.vtt?.trim() ?? '';
+    final rawSpriteUrl = widget.scene.paths.sprite?.trim() ?? '';
+    final totalDuration = widget.scene.files.isNotEmpty
+        ? (widget.scene.files.first.duration ?? 0.0)
+        : 0.0;
+
+    if (rawVttUrl.isEmpty ||
+        rawSpriteUrl.isEmpty ||
+        totalDuration <= 0 ||
+        _isPlaceholderSpritePath(rawSpriteUrl)) {
+      if (mounted) {
+        setState(() {
+          _spriteAvailability = _SpriteAvailability.invalid;
+        });
+      }
+      return;
+    }
+
+    if (mounted) {
+      setState(() {
+        _spriteAvailability = _SpriteAvailability.unknown;
+      });
+    }
+
+    final sceneId = widget.scene.id;
+    final vttService = ref.read(vttServiceProvider);
+    final headers = ref.read(mediaHeadersProvider);
+    final sprites = await vttService.fetchSpriteInfo(rawVttUrl, headers);
+
+    if (!mounted || widget.scene.id != sceneId) return;
+
+    final hasUsableSprite = sprites != null &&
+        sprites.isNotEmpty &&
+        sprites.any(
+          (sprite) =>
+              sprite.w > 0 &&
+              sprite.h > 0 &&
+              !_isPlaceholderSpritePath(sprite.url),
+        );
+
+    setState(() {
+      _spriteAvailability =
+          hasUsableSprite ? _SpriteAvailability.valid : _SpriteAvailability.invalid;
+    });
+  }
 
   /// Displays a custom scene info sheet for navigation actions.
   void _showMenu(BuildContext context, WidgetRef ref) {
@@ -84,92 +171,133 @@ class _SceneCardState extends ConsumerState<SceneCard> {
     BuildContext context,
     double? duration,
     double aspectRatio,
+    String apiKey,
   ) {
+    final isDesktop = kIsWeb ||
+        (defaultTargetPlatform != TargetPlatform.android &&
+            defaultTargetPlatform != TargetPlatform.iOS);
     final headers = ref.watch(mediaHeadersProvider);
     final totalDuration = widget.scene.files.isNotEmpty
         ? (widget.scene.files.first.duration ?? 0.0)
         : 0.0;
 
     final rawVttUrl = widget.scene.paths.vtt ?? '';
-    final apiKey = ref.read(serverApiKeyProvider);
-    final vttUrl = appendApiKey(rawVttUrl, apiKey);
+    final hasValidSprite =
+        _spriteAvailability == _SpriteAvailability.valid && _isVttValid;
+    final vttUrl = hasValidSprite ? appendApiKey(rawVttUrl, apiKey) : '';
+
+    // Safety guard: if VTT is not available, ensure scrubbing is disabled.
+    if (!hasValidSprite && _isScrubbing) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _isScrubbing) {
+          setState(() => _isScrubbing = false);
+        }
+      });
+    }
+
+    Widget content = Stack(
+      children: [
+        StashImage(
+          imageUrl: widget.scene.paths.screenshot,
+          memCacheWidth: widget.memCacheWidth,
+          memCacheHeight: widget.memCacheHeight,
+          // Use double.infinity for both dimensions with BoxFit.cover
+          // to ensure the image fills the AspectRatio container completely.
+          width: double.infinity,
+          height: double.infinity,
+          fit: BoxFit.cover,
+        ),
+        if (_isScrubbing && hasValidSprite)
+          Positioned.fill(
+            child: ScrubbingPreview(
+              vttUrl: vttUrl,
+              timeInSeconds: _scrubTime,
+              headers: headers,
+              width: double.infinity,
+              height: double.infinity,
+              onVttUnavailable: () {
+                if (mounted) {
+                  setState(() {
+                    _isVttValid = false;
+                    _spriteAvailability = _SpriteAvailability.invalid;
+                    _isScrubbing = false;
+                  });
+                }
+              },
+            ),
+          ),
+        Positioned(
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: _ThumbnailMetadataOverlay(
+            count: widget.scene.oCounter,
+            icon: Icons.water_drop_outlined,
+            rating: widget.scene.rating100,
+            duration: _isScrubbing
+                ? _formatDuration(_scrubTime)
+                : _formatDuration(duration),
+            isGrid: widget.isGrid,
+          ),
+        ),
+      ],
+    );
+
+    if (isDesktop && hasValidSprite) {
+      content = MouseRegion(
+        onEnter: (_) => setState(() => _isScrubbing = true),
+        onExit: (_) => setState(() => _isScrubbing = false),
+        onHover: (details) {
+          final box = context.findRenderObject() as RenderBox;
+          final localPos = details.localPosition;
+          final relativePos = (localPos.dx / box.size.width).clamp(0.0, 1.0);
+          setState(() {
+            _scrubTime = relativePos * totalDuration;
+          });
+        },
+        child: content,
+      );
+    }
 
     return Hero(
       tag: 'scene_player_${widget.scene.id}',
       child: GestureDetector(
-        onHorizontalDragStart: (_) {
-          if (vttUrl.isNotEmpty) {
-            setState(() {
-              _isScrubbing = true;
-            });
-          }
-        },
-        onHorizontalDragUpdate: (details) {
-          if (_isScrubbing) {
-            final box = context.findRenderObject() as RenderBox;
-            final localPos = box.globalToLocal(details.globalPosition);
-            final relativePos = (localPos.dx / box.size.width).clamp(0.0, 1.0);
-            setState(() {
-              _scrubTime = relativePos * totalDuration;
-            });
-          }
-        },
-        onHorizontalDragEnd: (_) {
-          setState(() {
-            _isScrubbing = false;
-          });
-        },
-        onHorizontalDragCancel: () {
-          setState(() {
-            _isScrubbing = false;
-          });
-        },
+        onHorizontalDragStart: hasValidSprite
+            ? (_) {
+                setState(() {
+                  _isScrubbing = true;
+                });
+              }
+            : null,
+        onHorizontalDragUpdate: hasValidSprite
+            ? (details) {
+                if (_isScrubbing) {
+                  final box = context.findRenderObject() as RenderBox;
+                  final relativePos =
+                      (details.localPosition.dx / box.size.width).clamp(0.0, 1.0);
+                  setState(() {
+                    _scrubTime = relativePos * totalDuration;
+                  });
+                }
+              }
+            : null,
+        onHorizontalDragEnd: hasValidSprite
+            ? (_) {
+                setState(() {
+                  _isScrubbing = false;
+                });
+              }
+            : null,
+        onHorizontalDragCancel: hasValidSprite
+            ? () {
+                setState(() {
+                  _isScrubbing = false;
+                });
+              }
+            : null,
         child: Material(
           color: Colors.transparent,
-          child: Stack(
-            children: [
-              StashImage(
-                imageUrl: widget.scene.paths.screenshot,
-                memCacheWidth: widget.memCacheWidth,
-                memCacheHeight: widget.memCacheHeight,
-                // Use double.infinity for both dimensions with BoxFit.cover
-                // to ensure the image fills the AspectRatio container completely.
-                width: double.infinity,
-                height: double.infinity,
-                fit: BoxFit.cover,
-              ),
-              if (_isScrubbing && vttUrl.isNotEmpty)
-                Positioned.fill(
-                  child: ScrubbingPreview(
-                    vttUrl: vttUrl,
-                    timeInSeconds: _scrubTime,
-                    headers: headers,
-                    width: double.infinity,
-                    height: double.infinity,
-                  ),
-                ),
-              Positioned(
-                bottom: widget.isGrid ? 4 : 8,
-                right: widget.isGrid ? 4 : 8,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 4,
-                    vertical: 2,
-                  ),
-                  color: Colors.black.withAlpha(200),
-                  child: Text(
-                    _isScrubbing
-                        ? _formatDuration(_scrubTime)
-                        : _formatDuration(duration),
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: widget.isGrid ? 10 : 12,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+          child: content,
         ),
       ),
     );
@@ -177,6 +305,8 @@ class _SceneCardState extends ConsumerState<SceneCard> {
 
   @override
   Widget build(BuildContext context) {
+    final apiKey = ref.watch(serverApiKeyProvider);
+    final titleFontSize = ref.watch(cardTitleFontSizeProvider);
     final duration = widget.scene.files.isNotEmpty
         ? widget.scene.files.first.duration
         : null;
@@ -193,16 +323,18 @@ class _SceneCardState extends ConsumerState<SceneCard> {
 
     // Force square videos to 9/16 portrait on mobile to avoid the "fat" look.
     if (fileAspectRatio != null &&
-        (fileAspectRatio! - 1.0).abs() < 0.01 &&
+        (fileAspectRatio - 1.0).abs() < 0.01 &&
         (defaultTargetPlatform == TargetPlatform.android ||
             defaultTargetPlatform == TargetPlatform.iOS)) {
       fileAspectRatio = 9 / 16;
     }
 
     if (widget.isGrid) {
-      return _buildGridCard(context, ref, duration, fileAspectRatio ?? 16 / 9);
+      return _buildGridCard(
+          context, ref, duration, fileAspectRatio ?? 16 / 9, apiKey, titleFontSize);
     }
-    return _buildListCard(context, ref, duration, fileAspectRatio ?? 16 / 9);
+    return _buildListCard(
+        context, ref, duration, fileAspectRatio ?? 16 / 9, apiKey, titleFontSize);
   }
 
   /// Builds the full-width list variant of the card.
@@ -213,7 +345,13 @@ class _SceneCardState extends ConsumerState<SceneCard> {
     WidgetRef ref,
     double? duration,
     double aspectRatio,
+    String apiKey,
+    double? titleFontSize,
   ) {
+    final isDesktop = kIsWeb ||
+        (defaultTargetPlatform != TargetPlatform.android &&
+            defaultTargetPlatform != TargetPlatform.iOS);
+
     return InkWell(
       onTap: widget.onTap,
       onLongPress: () => _showMenu(context, ref),
@@ -227,7 +365,7 @@ class _SceneCardState extends ConsumerState<SceneCard> {
             aspectRatio: aspectRatio.clamp(0.5, 2.5),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
-              child: _buildThumbnail(context, duration, aspectRatio),
+              child: _buildThumbnail(context, duration, aspectRatio, apiKey),
             ),
           ),
           Padding(
@@ -243,7 +381,7 @@ class _SceneCardState extends ConsumerState<SceneCard> {
                         widget.scene.displayTitle,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 14,
+                          fontSize: titleFontSize ?? 14,
                           color: context.colors.onSurface,
                         ),
                         maxLines: 2,
@@ -259,6 +397,13 @@ class _SceneCardState extends ConsumerState<SceneCard> {
                           fontSize: 12,
                         ),
                       ),
+                      if (isDesktop && widget.scene.performerNames.isNotEmpty) ...[
+                        const SizedBox(height: 8),
+                        _PerformerAvatarRow(
+                          performerImagePaths: widget.scene.performerImagePaths,
+                          performerNames: widget.scene.performerNames,
+                        ),
+                      ],
                     ],
                   ),
                 ),
@@ -286,7 +431,13 @@ class _SceneCardState extends ConsumerState<SceneCard> {
     WidgetRef ref,
     double? duration,
     double aspectRatio,
+    String apiKey,
+    double? titleFontSize,
   ) {
+    final isDesktop = kIsWeb ||
+        (defaultTargetPlatform != TargetPlatform.android &&
+            defaultTargetPlatform != TargetPlatform.iOS);
+
     return InkWell(
       onTap: widget.onTap,
       onLongPress: () => _showMenu(context, ref),
@@ -295,10 +446,15 @@ class _SceneCardState extends ConsumerState<SceneCard> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           AspectRatio(
-            aspectRatio: 16 / 9, // Keep grid items consistent
+            aspectRatio: widget.useMasonry ? aspectRatio.clamp(0.5, 2.5) : 16 / 9,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
-              child: _buildThumbnail(context, duration, 16 / 9),
+              child: _buildThumbnail(
+                context,
+                duration,
+                widget.useMasonry ? aspectRatio.clamp(0.5, 2.5) : 16 / 9,
+                apiKey,
+              ),
             ),
           ),
           Padding(
@@ -313,7 +469,7 @@ class _SceneCardState extends ConsumerState<SceneCard> {
                         widget.scene.displayTitle,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 12,
+                          fontSize: titleFontSize ?? 12,
                           color: context.colors.onSurface,
                         ),
                         maxLines: 2,
@@ -331,6 +487,13 @@ class _SceneCardState extends ConsumerState<SceneCard> {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
+                      if (isDesktop && widget.scene.performerNames.isNotEmpty) ...[
+                        const SizedBox(height: 4),
+                        _PerformerAvatarRow(
+                          performerImagePaths: widget.scene.performerImagePaths,
+                          performerNames: widget.scene.performerNames,
+                        ),
+                      ],
                     ],
                   ),
                 ),
@@ -346,6 +509,127 @@ class _SceneCardState extends ConsumerState<SceneCard> {
           ),
         ],
       ),
+    );
+  }
+}
+
+enum _SpriteAvailability {
+  unknown,
+  valid,
+  invalid,
+}
+
+class _ThumbnailMetadataOverlay extends StatelessWidget {
+  const _ThumbnailMetadataOverlay({
+    required this.count,
+    required this.icon,
+    required this.rating,
+    required this.duration,
+    required this.isGrid,
+  });
+
+  final int count;
+  final IconData icon;
+  final int? rating;
+  final String duration;
+  final bool isGrid;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.6),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _buildItem(icon, count.toString()),
+          if (rating != null)
+            _buildItem(Icons.star, (rating! / 20.0).toStringAsFixed(1)),
+          Text(
+            duration,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: isGrid ? 10 : 12,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildItem(IconData icon, String text) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, color: Colors.white, size: isGrid ? 10 : 12),
+        const SizedBox(width: 2),
+        Text(
+          text,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: isGrid ? 10 : 12,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _PerformerAvatarRow extends ConsumerWidget {
+  const _PerformerAvatarRow({
+    required this.performerImagePaths,
+    required this.performerNames,
+  });
+
+  final List<String?> performerImagePaths;
+  final List<String> performerNames;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final limit = ref.watch(maxPerformerAvatarsProvider);
+    final count = performerImagePaths.length;
+    final displayCount = count > limit ? limit : count;
+    final overflow = count > limit ? count - limit : 0;
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        for (int i = 0; i < displayCount; i++)
+          Padding(
+            padding: const EdgeInsets.only(right: 4.0),
+            child: Tooltip(
+              message: performerNames[i],
+              child: CircleAvatar(
+                radius: 8,
+                backgroundColor:
+                    Theme.of(context).colorScheme.surfaceContainerHighest,
+                child: performerImagePaths[i] != null &&
+                        performerImagePaths[i]!.isNotEmpty &&
+                        !performerImagePaths[i]!.contains('default=true')
+                    ? ClipOval(
+                        child: StashImage(
+                          imageUrl: performerImagePaths[i],
+                          width: 16,
+                          height: 16,
+                          fit: BoxFit.cover,
+                        ),
+                      )
+                    : const Icon(Icons.person, size: 10),
+              ),
+            ),
+          ),
+        if (overflow > 0)
+          Text(
+            '+$overflow',
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+              color: context.colors.onSurface.withValues(alpha: 0.75),
+            ),
+          ),
+      ],
     );
   }
 }

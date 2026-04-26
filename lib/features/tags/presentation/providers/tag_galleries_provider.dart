@@ -32,6 +32,8 @@ FutureOr<List<PerformerGalleryItem>> tagGalleries(Ref ref, String tagId) async {
             rawUrl: gallery.coverPath ?? '/gallery/${gallery.id}/thumbnail',
             graphqlEndpoint: endpoint,
           ),
+          width: gallery.coverWidth,
+          height: gallery.coverHeight,
         ),
       )
       .toList();
@@ -81,6 +83,8 @@ class TagGalleriesGrid extends _$TagGalleriesGrid {
               rawUrl: gallery.coverPath ?? '/gallery/${gallery.id}/thumbnail',
               graphqlEndpoint: endpoint,
             ),
+            width: gallery.coverWidth,
+            height: gallery.coverHeight,
           ),
         )
         .toList();

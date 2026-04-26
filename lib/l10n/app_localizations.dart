@@ -2034,6 +2034,18 @@ abstract class AppLocalizations {
   /// **'Default browsing mode for galleries'**
   String get settings_interface_galleries_layout_subtitle;
 
+  /// No description provided for @settings_interface_max_performer_avatars.
+  ///
+  /// In en, this message translates to:
+  /// **'Max Performer Avatars (Desktop)'**
+  String get settings_interface_max_performer_avatars;
+
+  /// No description provided for @settings_interface_max_performer_avatars_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum number of performer avatars to show in the scene card on desktop.'**
+  String get settings_interface_max_performer_avatars_subtitle;
+
   /// No description provided for @settings_interface_layout_default.
   ///
   /// In en, this message translates to:

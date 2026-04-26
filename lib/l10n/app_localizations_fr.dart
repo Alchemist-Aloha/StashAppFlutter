@@ -1050,6 +1050,14 @@ class AppLocalizationsFr extends AppLocalizations {
       'Mode de navigation par défaut pour les galeries';
 
   @override
+  String get settings_interface_max_performer_avatars =>
+      'Nombre maximum d\'avatars d\'acteurs (Bureau)';
+
+  @override
+  String get settings_interface_max_performer_avatars_subtitle =>
+      'Nombre maximum d\'avatars d\'acteurs à afficher sur la carte de la scène sur le bureau.';
+
+  @override
   String get settings_interface_layout_default => 'Disposition par défaut';
 
   @override

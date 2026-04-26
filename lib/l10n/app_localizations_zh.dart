@@ -1015,6 +1015,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settings_interface_galleries_layout_subtitle => '图库的默认浏览模式';
 
   @override
+  String get settings_interface_max_performer_avatars => '最多出演者头像（桌面）';
+
+  @override
+  String get settings_interface_max_performer_avatars_subtitle =>
+      '在桌面场景卡上显示的出演者头像的最大数量。';
+
+  @override
   String get settings_interface_layout_default => '默认布局';
 
   @override
@@ -2614,6 +2621,13 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String get settings_interface_galleries_layout_subtitle => '图库的默认浏览模式';
+
+  @override
+  String get settings_interface_max_performer_avatars => '最多出演者头像（桌面）';
+
+  @override
+  String get settings_interface_max_performer_avatars_subtitle =>
+      '在桌面场景卡上显示的出演者头像的最大数量。';
 
   @override
   String get settings_interface_layout_default => '默认布局';
@@ -4217,6 +4231,13 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get settings_interface_galleries_layout_subtitle => '圖庫的預設瀏覽模式';
+
+  @override
+  String get settings_interface_max_performer_avatars => '最多演出者頭像（桌面）';
+
+  @override
+  String get settings_interface_max_performer_avatars_subtitle =>
+      '在桌面場景卡上顯示的演出者頭像的最大數量。';
 
   @override
   String get settings_interface_layout_default => '預設佈局';

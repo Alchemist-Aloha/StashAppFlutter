@@ -1049,6 +1049,14 @@ class AppLocalizationsDe extends AppLocalizations {
       'Standard-Browsing-Modus für Galerien';
 
   @override
+  String get settings_interface_max_performer_avatars =>
+      'Maximale Darsteller-Avatare (Desktop)';
+
+  @override
+  String get settings_interface_max_performer_avatars_subtitle =>
+      'Maximale Anzahl der Darsteller-Avatare, die in der Szenenkarte auf dem Desktop angezeigt werden.';
+
+  @override
   String get settings_interface_layout_default => 'Standard-Layout';
 
   @override

@@ -1036,6 +1036,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'Default browsing mode for galleries';
 
   @override
+  String get settings_interface_max_performer_avatars =>
+      'Max Performer Avatars (Desktop)';
+
+  @override
+  String get settings_interface_max_performer_avatars_subtitle =>
+      'Maximum number of performer avatars to show in the scene card on desktop.';
+
+  @override
   String get settings_interface_layout_default => 'Default Layout';
 
   @override

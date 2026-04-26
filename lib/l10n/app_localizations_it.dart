@@ -1054,6 +1054,14 @@ class AppLocalizationsIt extends AppLocalizations {
       'Modalità di navigazione predefinita per le gallerie';
 
   @override
+  String get settings_interface_max_performer_avatars =>
+      'Numero massimo di avatar degli attori (Desktop)';
+
+  @override
+  String get settings_interface_max_performer_avatars_subtitle =>
+      'Numero massimo di avatar degli attori da mostrare nella scheda della scena su desktop.';
+
+  @override
   String get settings_interface_layout_default => 'Layout Predefinito';
 
   @override

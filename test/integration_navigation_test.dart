@@ -1,6 +1,7 @@
 import 'package:stash_app_flutter/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stash_app_flutter/core/presentation/theme/app_theme.dart';
@@ -423,23 +424,30 @@ void main() {
 
     await pumpApp();
 
-    GridView gridView = tester.widget(find.byType(GridView).first);
-    expect(
-      (gridView.gridDelegate as SliverGridDelegateWithFixedCrossAxisCount)
-          .crossAxisCount,
-      2,
-    );
+    int getCrossAxisCount() {
+      final gridFinder = find.byType(GridView);
+      if (gridFinder.evaluate().isNotEmpty) {
+        final grid = tester.widget<GridView>(gridFinder.first);
+        return (grid.gridDelegate as SliverGridDelegateWithFixedCrossAxisCount)
+            .crossAxisCount;
+      }
+      final masonryFinder = find.byType(MasonryGridView);
+      if (masonryFinder.evaluate().isNotEmpty) {
+        final masonry = tester.widget<MasonryGridView>(masonryFinder.first);
+        return (masonry.gridDelegate
+                as SliverSimpleGridDelegateWithFixedCrossAxisCount)
+            .crossAxisCount;
+      }
+      throw StateError('No GridView or MasonryGridView found');
+    }
+
+    expect(getCrossAxisCount(), 2);
 
     // 2. Test Tablet (3 columns)
     tester.view.physicalSize = const Size(1200, 800);
     await pumpApp();
 
-    gridView = tester.widget(find.byType(GridView).first);
-    expect(
-      (gridView.gridDelegate as SliverGridDelegateWithFixedCrossAxisCount)
-          .crossAxisCount,
-      3,
-    );
+    expect(getCrossAxisCount(), 3);
   });
 
   testWidgets(

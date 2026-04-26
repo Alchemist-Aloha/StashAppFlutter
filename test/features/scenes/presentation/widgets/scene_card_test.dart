@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -47,6 +48,8 @@ void main() {
       screenshot: null,
       preview: null,
       stream: 'http://test.com/stream.mp4',
+      vtt: 'http://test.com/sprites.vtt',
+      sprite: 'http://test.com/sprites.jpg',
     ),
     studioId: 'st1',
     studioName: 'Test Studio',
@@ -231,4 +234,207 @@ void main() {
 
     expect(tapped, isTrue);
   });
+
+  testWidgets('SceneCard shows metadata overlay in list mode', (tester) async {
+    await tester.pumpWidget(
+      buildTestWidget(SceneCard(scene: defaultTestScene, isGrid: false)),
+    );
+
+    await tester.pumpAndSettle();
+
+    // Check for water_drop_outlined and star icons in the overlay
+    expect(find.byIcon(Icons.water_drop_outlined), findsOneWidget);
+    expect(find.byIcon(Icons.star), findsOneWidget);
+
+    // Check values
+    expect(find.text('5'), findsOneWidget); // oCounter
+    expect(find.text('2.0'), findsOneWidget); // rating100: 40 -> 40/20 = 2.0
+  });
+
+  testWidgets('SceneCard shows metadata overlay in grid mode', (tester) async {
+    await tester.pumpWidget(
+      buildTestWidget(SceneCard(scene: defaultTestScene, isGrid: true)),
+    );
+
+    await tester.pumpAndSettle();
+
+    // Check for water_drop_outlined and star icons in the overlay
+    expect(find.byIcon(Icons.water_drop_outlined), findsOneWidget);
+    expect(find.byIcon(Icons.star), findsOneWidget);
+
+    // Check values
+    expect(find.text('5'), findsOneWidget); // oCounter
+    expect(find.text('2.0'), findsOneWidget); // rating100: 40 -> 40/20 = 2.0
+  });
+
+  testWidgets('SceneCard shows performer avatars on desktop', (tester) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.linux;
+
+    final sceneWithPerformers = defaultTestScene.copyWith(
+      performerNames: ['Performer 1', 'Performer 2'],
+      performerImagePaths: ['path/1', 'path/2'],
+    );
+
+    await tester.pumpWidget(
+      buildTestWidget(SceneCard(scene: sceneWithPerformers, isGrid: false)),
+    );
+
+    await tester.pump();
+
+    // Should find the Tooltips with performer names
+    // Note: Icons.more_vert also uses Tooltip "More"
+    expect(find.byType(Tooltip), findsNWidgets(3));
+
+    // Check if CircleAvatar is present (one for each performer)
+    expect(find.byType(CircleAvatar), findsNWidgets(2));
+
+    debugDefaultTargetPlatformOverride = null;
+  });
+
+  testWidgets('SceneCard hides performer avatars on mobile', (tester) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.android;
+
+    final sceneWithPerformers = defaultTestScene.copyWith(
+      performerNames: ['Performer 1', 'Performer 2'],
+      performerImagePaths: ['path/1', 'path/2'],
+    );
+
+    await tester.pumpWidget(
+      buildTestWidget(SceneCard(scene: sceneWithPerformers, isGrid: false)),
+    );
+
+    await tester.pump();
+
+    // Should only find 1 Tooltip (the "More" button)
+    expect(find.byType(Tooltip), findsOneWidget);
+
+    // Should not find any CircleAvatar
+    expect(find.byType(CircleAvatar), findsNothing);
+
+    debugDefaultTargetPlatformOverride = null;
+  });
+
+  testWidgets('SceneCard uses dynamic aspect ratio when useMasonry is true', (
+    tester,
+  ) async {
+    final portraitScene = defaultTestScene.copyWith(
+      files: [
+        const SceneFile(
+          width: 1000,
+          height: 2000, // 0.5 aspect ratio
+          duration: 100,
+          format: 'mp4',
+          videoCodec: 'h264',
+          audioCodec: 'aac',
+          bitRate: 5000,
+          frameRate: 30,
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(
+      buildTestWidget(
+        Center(
+          child: SizedBox(
+            width: 200,
+            child: SceneCard(scene: portraitScene, isGrid: true, useMasonry: true),
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    final aspectRatioWidget = tester.widget<AspectRatio>(
+      find.byType(AspectRatio),
+    );
+    expect(aspectRatioWidget.aspectRatio, closeTo(0.5, 0.01));
+  });
+
+  testWidgets(
+    'SceneCard uses fixed 16/9 aspect ratio when useMasonry is false in grid mode',
+    (tester) async {
+      final portraitScene = defaultTestScene.copyWith(
+        files: [
+          const SceneFile(
+            width: 1000,
+            height: 2000, // 0.5 aspect ratio
+            duration: 100,
+            format: 'mp4',
+            videoCodec: 'h264',
+            audioCodec: 'aac',
+            bitRate: 5000,
+            frameRate: 30,
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(
+        buildTestWidget(
+          Center(
+            child: SizedBox(
+              width: 200,
+              child: SceneCard(
+                scene: portraitScene,
+                isGrid: true,
+                useMasonry: false,
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      final aspectRatioWidget = tester.widget<AspectRatio>(
+        find.byType(AspectRatio),
+      );
+      expect(aspectRatioWidget.aspectRatio, closeTo(16 / 9, 0.01));
+    },
+  );
+
+  testWidgets('SceneCard pan gesture is disabled when VTT is missing', (
+    tester,
+  ) async {
+    final sceneNoVtt = defaultTestScene.copyWith(
+      paths: defaultTestScene.paths.copyWith(vtt: null),
+    );
+
+    await tester.pumpWidget(
+      buildTestWidget(SceneCard(scene: sceneNoVtt, isGrid: true)),
+    );
+
+    await tester.pumpAndSettle();
+
+    final detectorFinder = find.descendant(
+      of: find.byType(Hero),
+      matching: find.byType(GestureDetector),
+    );
+    final detector = tester.widget<GestureDetector>(detectorFinder);
+
+    expect(detector.onPanStart, isNull);
+    expect(detector.onPanUpdate, isNull);
+    expect(detector.onPanEnd, isNull);
+    expect(detector.onPanCancel, isNull);
+  });
+
+  testWidgets('SceneCard pan gesture is enabled when VTT is present', (tester) async {
+    await tester.pumpWidget(
+      buildTestWidget(SceneCard(scene: defaultTestScene, isGrid: true)),
+    );
+
+    await tester.pumpAndSettle();
+
+    final detectorFinder = find.descendant(
+      of: find.byType(Hero),
+      matching: find.byType(GestureDetector),
+    );
+    final detector = tester.widget<GestureDetector>(detectorFinder);
+
+    expect(detector.onPanStart, isNotNull);
+    expect(detector.onPanUpdate, isNotNull);
+    expect(detector.onPanEnd, isNotNull);
+    expect(detector.onPanCancel, isNotNull);
+  });
 }
+

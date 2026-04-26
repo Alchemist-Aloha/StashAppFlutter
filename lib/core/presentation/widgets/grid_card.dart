@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../theme/app_theme.dart';
 import 'stash_image.dart';
+import '../providers/layout_settings_provider.dart';
 
 /// A generic card widget for grid layouts.
 ///
 /// This component provides a consistent visual style for grid items,
 /// including a 16:9 thumbnail, title, optional subtitle, and badge.
-class GridCard extends StatelessWidget {
+class GridCard extends ConsumerWidget {
   const GridCard({
     required this.title,
     this.subtitle,
@@ -16,6 +18,8 @@ class GridCard extends StatelessWidget {
     this.isGrid = true,
     this.memCacheWidth,
     this.memCacheHeight,
+    this.useMasonry = false,
+    this.aspectRatio,
     super.key,
   });
 
@@ -42,16 +46,22 @@ class GridCard extends StatelessWidget {
 
   /// Optional memory cache height for image optimization.
   final int? memCacheHeight;
+  /// Whether to allow masonry (dynamic) aspect ratio when in grid mode.
+  final bool useMasonry;
+  /// Optional aspect ratio to use when `useMasonry` is true.
+  final double? aspectRatio;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final titleFontSize = ref.watch(cardTitleFontSizeProvider);
+
     if (isGrid) {
-      return _buildGridCard(context);
+      return _buildGridCard(context, titleFontSize);
     }
-    return _buildListCard(context);
+    return _buildListCard(context, titleFontSize);
   }
 
-  Widget _buildGridCard(BuildContext context) {
+  Widget _buildGridCard(BuildContext context, double? titleFontSize) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
@@ -59,7 +69,9 @@ class GridCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           AspectRatio(
-            aspectRatio: 16 / 9,
+            aspectRatio: (useMasonry && aspectRatio != null)
+              ? (aspectRatio!).clamp(0.5, 2.5).toDouble()
+              : 16 / 9,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
               child: Stack(
@@ -108,6 +120,7 @@ class GridCard extends StatelessWidget {
                   style: context.textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: context.colors.onSurface,
+                    fontSize: titleFontSize,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -131,7 +144,7 @@ class GridCard extends StatelessWidget {
     );
   }
 
-  Widget _buildListCard(BuildContext context) {
+  Widget _buildListCard(BuildContext context, double? titleFontSize) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
@@ -187,6 +200,7 @@ class GridCard extends StatelessWidget {
                   title,
                   style: context.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
+                    fontSize: titleFontSize,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,

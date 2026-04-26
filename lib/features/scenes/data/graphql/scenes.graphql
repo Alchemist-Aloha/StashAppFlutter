@@ -11,6 +11,8 @@ fragment SlimSceneData on Scene {
   files {
     path
     duration
+    width
+    height
     fingerprints {
       type
       value
@@ -22,6 +24,7 @@ fragment SlimSceneData on Scene {
     stream
     caption
     vtt
+    sprite
   }
   captions {
     language_code

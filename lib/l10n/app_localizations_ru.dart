@@ -1041,6 +1041,14 @@ class AppLocalizationsRu extends AppLocalizations {
       'Режим просмотра по умолчанию для галерей';
 
   @override
+  String get settings_interface_max_performer_avatars =>
+      'Максимальное количество аватаров исполнителей (на рабочем столе)';
+
+  @override
+  String get settings_interface_max_performer_avatars_subtitle =>
+      'Максимальное количество аватаров исполнителей, отображаемых в карточке сцены на рабочем столе.';
+
+  @override
   String get settings_interface_layout_default => 'Макет по умолчанию';
 
   @override

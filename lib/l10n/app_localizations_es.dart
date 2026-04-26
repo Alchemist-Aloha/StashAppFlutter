@@ -1058,6 +1058,14 @@ class AppLocalizationsEs extends AppLocalizations {
       'Modo de navegación predeterminado para galerías';
 
   @override
+  String get settings_interface_max_performer_avatars =>
+      'Avatares máximos de actores (Escritorio)';
+
+  @override
+  String get settings_interface_max_performer_avatars_subtitle =>
+      'Número máximo de avatares de actores para mostrar en la tarjeta de escena en el escritorio.';
+
+  @override
   String get settings_interface_layout_default => 'Diseño predeterminado';
 
   @override

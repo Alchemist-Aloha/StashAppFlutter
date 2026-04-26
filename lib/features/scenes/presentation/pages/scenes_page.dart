@@ -460,6 +460,7 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
       },
       customBody: isTiktokLayout ? const TiktokScenesView() : null,
       scrollController: scrollController,
+      useMasonry: isGridView,
       hideAppBar: isTiktokLayout && isFullScreen,
       onRefresh: () => ref.read(sceneListProvider.notifier).refresh(),
       onFetchNextPage: () =>
@@ -524,6 +525,7 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
         return SceneCard(
           scene: scene,
           isGrid: isGridView,
+          useMasonry: isGridView,
           memCacheWidth: memCacheWidth,
           memCacheHeight: memCacheHeight,
           onTap: () {

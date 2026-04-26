@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:stash_app_flutter/core/data/preferences/shared_preferences_provider.dart';
@@ -42,6 +43,10 @@ class _InterfaceSettingsPageState extends ConsumerState<InterfaceSettingsPage> {
   int? _studioGridColumns;
   int? _tagGridColumns;
 
+  double? _cardTitleFontSize;
+
+  int _maxPerformerAvatars = 3;
+
   // New settings
   bool _performerMediaGridLayout = true;
   bool _performerGalleriesGridLayout = true;
@@ -77,6 +82,10 @@ class _InterfaceSettingsPageState extends ConsumerState<InterfaceSettingsPage> {
     _studioGridColumns = ref.read(studioGridColumnsProvider);
     _tagGridColumns = ref.read(tagGridColumnsProvider);
 
+    _cardTitleFontSize = ref.read(cardTitleFontSizeProvider);
+
+    _maxPerformerAvatars = ref.read(maxPerformerAvatarsProvider);
+
     _performerMediaGridLayout = ref.read(performerMediaGridLayoutProvider);
     _performerGalleriesGridLayout = ref.read(
       performerGalleriesGridLayoutProvider,
@@ -110,6 +119,10 @@ class _InterfaceSettingsPageState extends ConsumerState<InterfaceSettingsPage> {
     ref.read(studioGridColumnsProvider.notifier).set(_studioGridColumns);
     ref.read(tagGridColumnsProvider.notifier).set(_tagGridColumns);
 
+    ref.read(cardTitleFontSizeProvider.notifier).set(_cardTitleFontSize);
+
+    ref.read(maxPerformerAvatarsProvider.notifier).set(_maxPerformerAvatars);
+
     ref
         .read(performerMediaGridLayoutProvider.notifier)
         .set(_performerMediaGridLayout);
@@ -137,6 +150,7 @@ class _InterfaceSettingsPageState extends ConsumerState<InterfaceSettingsPage> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+    final isDesktop = kIsWeb || (defaultTargetPlatform != TargetPlatform.android && defaultTargetPlatform != TargetPlatform.iOS);
 
     return SettingsPageShell(
       title: context.l10n.settings_interface_title,
@@ -360,6 +374,26 @@ class _InterfaceSettingsPageState extends ConsumerState<InterfaceSettingsPage> {
                             },
                           ),
                         ],
+                        if (isDesktop) ...[
+                          const Divider(height: AppTheme.spacingLarge),
+                          _buildGridColumnSetting(
+                            label: context.l10n.settings_interface_max_performer_avatars,
+                            value: _maxPerformerAvatars == 3 ? null : _maxPerformerAvatars,
+                            onChanged: (value) async {
+                              setState(() => _maxPerformerAvatars = value ?? 3);
+                              await _saveSettings();
+                            },
+                          ),
+                        ],
+                        const Divider(height: AppTheme.spacingLarge),
+                        _buildFontSizeSetting(
+                          label: 'Card Title Font Size',
+                          value: _cardTitleFontSize,
+                          onChanged: (value) async {
+                            setState(() => _cardTitleFontSize = value);
+                            await _saveSettings();
+                          },
+                        ),
                       ],
                     ),
                   ),
@@ -793,6 +827,39 @@ class _InterfaceSettingsPageState extends ConsumerState<InterfaceSettingsPage> {
             ...List.generate(10, (index) => index + 1).map(
               (i) =>
                   DropdownMenuItem<int?>(value: i, child: Text(i.toString())),
+            ),
+          ],
+          onChanged: onChanged,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFontSizeSetting({
+    required String label,
+    required double? value,
+    required ValueChanged<double?> onChanged,
+  }) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(label, style: const TextStyle(fontSize: 16)),
+        DropdownButton<double?>(
+          value: value,
+          dropdownColor: colorScheme.surface,
+          items: [
+            DropdownMenuItem<double?>(
+              value: null,
+              child: Text(l10n.common_default),
+            ),
+            ...[10.0, 12.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0].map(
+              (i) => DropdownMenuItem<double?>(
+                value: i,
+                child: Text('${i.toInt()} pt'),
+              ),
             ),
           ],
           onChanged: onChanged,

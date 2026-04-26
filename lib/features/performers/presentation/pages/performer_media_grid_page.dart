@@ -40,14 +40,23 @@ class PerformerMediaGridPage extends ConsumerWidget {
       gridDelegate: isGridView
           ? GridUtils.createDelegate(crossAxisCount: gridColumns ?? 2)
           : null,
+      useMasonry: isGridView,
       padding: isGridView ? GridUtils.defaultPadding : EdgeInsets.zero,
-      itemBuilder: (context, item, memCacheWidth, memCacheHeight) => GridCard(
-        title: item.title,
-        imageUrl: item.thumbnailUrl,
-        isGrid: isGridView,
-        memCacheWidth: memCacheWidth,
-        onTap: () => context.push('/scenes/scene/${item.sceneId}'),
-      ),
+      itemBuilder: (context, item, memCacheWidth, memCacheHeight) {
+        double? ratio;
+        if (item.width != null && item.height != null && item.height! > 0) {
+          ratio = item.width!.toDouble() / item.height!.toDouble();
+        }
+        return GridCard(
+          title: item.title,
+          imageUrl: item.thumbnailUrl,
+          isGrid: isGridView,
+          useMasonry: isGridView,
+          aspectRatio: ratio,
+          memCacheWidth: memCacheWidth,
+          onTap: () => context.push('/scenes/scene/${item.sceneId}'),
+        );
+      },
     );
   }
 }
