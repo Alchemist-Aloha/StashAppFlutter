@@ -91,7 +91,7 @@ class StudioDetailsPage extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (studio.imagePath != null)
+                  if (studio.imagePath != null && studio.imagePath!.isNotEmpty)
                     Container(
                       height: 200,
                       width: double.infinity,

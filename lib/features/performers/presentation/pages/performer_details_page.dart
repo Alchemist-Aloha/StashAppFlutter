@@ -115,7 +115,7 @@ class PerformerDetailsPage extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (performer.imagePath != null)
+                  if (performer.imagePath != null && performer.imagePath!.isNotEmpty)
                     Container(
                       height: 300,
                       width: double.infinity,
