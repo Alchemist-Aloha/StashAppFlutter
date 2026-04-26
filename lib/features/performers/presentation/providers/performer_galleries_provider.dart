@@ -107,6 +107,8 @@ class PerformerGalleriesGrid extends _$PerformerGalleriesGrid {
               rawUrl: gallery.coverPath ?? '/gallery/${gallery.id}/thumbnail',
               graphqlEndpoint: endpoint,
             ),
+            width: gallery.coverWidth,
+            height: gallery.coverHeight,
           ),
         )
         .toList();

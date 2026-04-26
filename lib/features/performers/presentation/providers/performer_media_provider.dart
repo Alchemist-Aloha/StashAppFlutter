@@ -140,6 +140,8 @@ class PerformerMediaGrid extends _$PerformerMediaGrid {
               rawUrl: scene.paths.screenshot ?? scene.paths.preview,
               graphqlEndpoint: endpoint,
             ),
+            width: scene.files.isNotEmpty ? scene.files.first.width : null,
+            height: scene.files.isNotEmpty ? scene.files.first.height : null,
           ),
         )
         .where((item) => item.thumbnailUrl.isNotEmpty)
