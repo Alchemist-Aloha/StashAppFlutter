@@ -25,6 +25,7 @@ import 'package:stash_app_flutter/features/tags/presentation/providers/tag_detai
 import 'package:stash_app_flutter/features/tags/presentation/providers/tag_list_provider.dart';
 import 'package:stash_app_flutter/features/tags/presentation/providers/tag_media_provider.dart';
 import 'package:stash_app_flutter/l10n/app_localizations.dart';
+import 'package:stash_app_flutter/core/data/auth/auth_mode.dart';
 import 'package:stash_app_flutter/core/data/auth/auth_provider.dart';
 
 import '../../widgets/settings_page_shell.dart';
@@ -96,9 +97,14 @@ class _ServerSettingsPageState extends ConsumerState<ServerSettingsPage> {
     final l10n = AppLocalizations.of(context)!;
     final profiles = ref.watch(serverProfilesProvider);
 
-    ref.listen(activeServerProfileIdProvider, (previous, next) {
+    ref.listen(activeServerProfileIdProvider, (previous, next) async {
       if (previous != next && next != null) {
-        _flushRuntimeCachesAfterServerChange();
+        await _flushRuntimeCachesAfterServerChange();
+        
+        final profile = ref.read(activeProfileProvider);
+        if (profile != null && profile.authMode == AuthMode.password) {
+          ref.read(authProvider.notifier).login();
+        }
       }
     });
 

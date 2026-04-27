@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../features/setup/domain/models/server_profile.dart';
@@ -209,6 +210,7 @@ class AuthProvider extends Notifier<AuthState> {
       loginStatus: AuthLoginStatus.loggingIn,
       clearError: true,
     );
+    debugPrint('AuthProvider: Initiating login process...');
 
     try {
       final service = await ref.read(authServiceProvider.future);
@@ -220,6 +222,7 @@ class AuthProvider extends Notifier<AuthState> {
       );
 
       if (!ok) {
+        debugPrint('AuthProvider: Login failed (invalid credentials or server error).');
         state = state.copyWith(
           loginStatus: AuthLoginStatus.error,
           errorMessage: 'Invalid username or password.',
@@ -230,6 +233,7 @@ class AuthProvider extends Notifier<AuthState> {
       final cookieHeader = await service.cookieHeaderFor(
         requestUri: endpointUri,
       );
+      debugPrint('AuthProvider: Cookie header acquired: ${cookieHeader.isNotEmpty}');
       final secureStorage = ref.read(secureStorageProvider);
       if (cookieHeader.isEmpty) {
         await secureStorage.delete(key: _getCookieHeaderKey(profile.id));

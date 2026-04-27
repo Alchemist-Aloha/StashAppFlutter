@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stash_app_flutter/l10n/app_localizations.dart';
 import '../../../../core/data/auth/auth_mode.dart';
+import '../../../../core/data/auth/auth_provider.dart';
+import '../../../../core/data/graphql/graphql_client.dart';
 import '../../../../core/data/preferences/secure_storage_provider.dart';
 import '../../domain/models/server_profile.dart';
 import '../providers/connection_provider.dart';
@@ -79,24 +81,52 @@ class _ServerProfileDrawerState extends ConsumerState<ServerProfileDrawer> {
     });
 
     try {
+      final baseUrl = _urlController.text.trim();
+      final username = _usernameController.text.trim();
+      final password = _passwordController.text;
+
+      if (_authMode == AuthMode.password) {
+        setState(() => _testResult = 'Attempting login...');
+        final service = await ref.read(authServiceProvider.future);
+        final endpointUri = Uri.parse(baseUrl);
+        final loggedIn = await service.login(
+          graphqlEndpoint: endpointUri,
+          username: username,
+          password: password,
+        );
+
+        if (!loggedIn) {
+          setState(() => _testResult = 'Error: Login failed. Check credentials.');
+          return;
+        }
+
+        final cookie = await service.cookieHeaderFor(requestUri: endpointUri);
+        final secureStorage = ref.read(secureStorageProvider);
+        await secureStorage.write(key: 'profile_test_cookie_header', value: cookie);
+      }
+
       final tempProfile = ServerProfile(
         id: 'test',
         name: _nameController.text,
-        baseUrl: _urlController.text,
+        baseUrl: baseUrl,
         authMode: _authMode,
         allowWebPasswordLogin: _allowWebPasswordLogin,
       );
 
-      // We need to temporarily set credentials for the test profile in secure storage
-      // or modify connectionStatusProvider to take explicit credentials.
-      // For simplicity here, we'll use a temporary profile ID and cleanup.
       final profilesNotifier = ref.read(serverProfilesProvider.notifier);
       await profilesNotifier.updateProfileCredentials(
         profileId: 'test',
         apiKey: _apiKeyController.text,
-        username: _usernameController.text,
-        password: _passwordController.text,
+        username: username,
+        password: password,
       );
+
+      // Invalidate providers to ensure they pick up the new credentials/cookies
+      ref.invalidate(profileApiKeyProvider('test'));
+      ref.invalidate(profileUsernameProvider('test'));
+      ref.invalidate(profilePasswordProvider('test'));
+      ref.invalidate(profileCookieHeaderProvider('test'));
+      ref.invalidate(profileGraphqlClientProvider(tempProfile));
 
       final result = await ref.refresh(connectionStatusProvider(tempProfile).future);
       setState(() {
@@ -235,7 +265,7 @@ class _ServerProfileDrawerState extends ConsumerState<ServerProfileDrawer> {
                     decoration: BoxDecoration(
                       color: _testResult!.startsWith('Error')
                           ? Theme.of(context).colorScheme.errorContainer
-                          : Colors.green.withOpacity(0.1),
+                          : Colors.green.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(

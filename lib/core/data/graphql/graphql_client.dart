@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -98,23 +99,37 @@ Future<String> profilePassword(Ref ref, String profileId) async {
 }
 
 @riverpod
-GraphQLClient profileGraphqlClient(Ref ref, ServerProfile profile) {
+Future<String> profileCookieHeader(Ref ref, String profileId) async {
+  final secureStorage = ref.read(secureStorageProvider);
+  return await secureStorage.read(key: 'profile_${profileId}_cookie_header') ?? '';
+}
+
+@riverpod
+Future<GraphQLClient> profileGraphqlClient(Ref ref, ServerProfile profile) async {
   final url = normalizeGraphqlServerUrl(profile.baseUrl);
   if (url.isEmpty) {
     throw Exception('Invalid profile URL');
   }
 
-  final apiKey = ref.watch(profileApiKeyProvider(profile.id)).value ?? '';
-  final username = ref.watch(profileUsernameProvider(profile.id)).value ?? '';
-  final password = ref.watch(profilePasswordProvider(profile.id)).value ?? '';
+  final apiKey = await ref.watch(profileApiKeyProvider(profile.id).future);
+  final username = await ref.watch(profileUsernameProvider(profile.id).future);
+  final password = await ref.watch(profilePasswordProvider(profile.id).future);
+  final cookieHeader =
+      await ref.watch(profileCookieHeaderProvider(profile.id).future);
 
   final authState = const AuthState.initial().copyWith(
     mode: profile.authMode,
     username: username,
     password: password,
+    cookieHeader: cookieHeader,
   );
 
   final headers = getAuthHeaders(authState: authState, apiKey: apiKey);
+  debugPrint('profileGraphqlClient: URL: $url');
+  debugPrint('profileGraphqlClient: AuthMode: ${profile.authMode}');
+  debugPrint('profileGraphqlClient: Cookie present: ${cookieHeader.isNotEmpty}');
+  debugPrint('profileGraphqlClient: Headers: ${headers.keys.join(', ')}');
+
   final isPasswordMode = profile.authMode == AuthMode.password;
   final httpClient = createGraphqlHttpClient(withCredentials: isPasswordMode);
 

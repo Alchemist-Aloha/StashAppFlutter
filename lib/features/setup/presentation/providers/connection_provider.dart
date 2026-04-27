@@ -12,7 +12,7 @@ final connectionStatusProvider = FutureProvider.family.autoDispose<String, Serve
     return 'Not Configured';
   }
 
-  final client = ref.watch(profileGraphqlClientProvider(profile));
+  final client = await ref.watch(profileGraphqlClientProvider(profile).future);
 
   try {
     final result = await client.query$GetVersion(
