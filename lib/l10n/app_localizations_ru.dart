@@ -1156,11 +1156,11 @@ class AppLocalizationsRu extends AppLocalizations {
       'Настройте адрес и метод аутентификации';
 
   @override
-  String get settings_server_url => 'URL GraphQL-сервера';
+  String get settings_server_url => 'URL-адрес Stash';
 
   @override
   String get settings_server_url_helper =>
-      'Пример формата: http(s)://host:port.';
+      'Введите URL-адрес вашего сервера Stash. Если настроен пользовательский путь, укажите его здесь.';
 
   @override
   String get settings_server_url_example => 'http://192.168.1.100:9999';

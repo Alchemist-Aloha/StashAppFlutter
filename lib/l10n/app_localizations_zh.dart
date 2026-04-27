@@ -1116,10 +1116,11 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settings_server_details_subtitle => '配置端点和身份验证方式';
 
   @override
-  String get settings_server_url => 'GraphQL 服务器 URL';
+  String get settings_server_url => 'Stash URL';
 
   @override
-  String get settings_server_url_helper => '示例格式：http(s)://host:port/graphql。';
+  String get settings_server_url_helper =>
+      '输入 Stash 服务器的 URL。如果配置了自定义路径，请在此处包含它。';
 
   @override
   String get settings_server_url_example => 'http://192.168.1.100:9999';
@@ -2761,10 +2762,11 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get settings_server_details_subtitle => '配置端点和身份验证方式';
 
   @override
-  String get settings_server_url => 'GraphQL 服务器 URL';
+  String get settings_server_url => 'Stash URL';
 
   @override
-  String get settings_server_url_helper => '示例格式：http(s)://host:port/graphql。';
+  String get settings_server_url_helper =>
+      '输入 Stash 服务器的 URL。如果配置了自定义路径，请在此处包含它。';
 
   @override
   String get settings_server_url_example => 'http://192.168.1.100:9999';
@@ -4408,10 +4410,11 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get settings_server_details_subtitle => '設定端點和驗證方式';
 
   @override
-  String get settings_server_url => 'GraphQL 伺服器網址';
+  String get settings_server_url => 'Stash URL';
 
   @override
-  String get settings_server_url_helper => '範例格式：http(s)://主機:連接埠/graphql。';
+  String get settings_server_url_helper =>
+      '輸入 Stash 伺服器的 URL。如果配置了自定義路徑，請在此處包含它。';
 
   @override
   String get settings_server_url_example => 'http://192.168.1.100:9999';

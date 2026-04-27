@@ -2235,13 +2235,13 @@ abstract class AppLocalizations {
   /// No description provided for @settings_server_url.
   ///
   /// In en, this message translates to:
-  /// **'GraphQL server URL'**
+  /// **'Stash URL'**
   String get settings_server_url;
 
   /// No description provided for @settings_server_url_helper.
   ///
   /// In en, this message translates to:
-  /// **'Example format: http(s)://host:port.'**
+  /// **'Enter the URL of your Stash server. If configured with a custom path, include it here.'**
   String get settings_server_url_helper;
 
   /// No description provided for @settings_server_url_example.

@@ -1167,11 +1167,11 @@ class AppLocalizationsFr extends AppLocalizations {
       'Configurer le point de terminaison et la méthode d\'authentification';
 
   @override
-  String get settings_server_url => 'URL du serveur GraphQL';
+  String get settings_server_url => 'URL de Stash';
 
   @override
   String get settings_server_url_helper =>
-      'Exemple de format : http(s)://hôte:port.';
+      'Entrez l\'URL de votre serveur Stash. Si un chemin personnalisé est configuré, incluez-le ici.';
 
   @override
   String get settings_server_url_example => 'http://192.168.1.100:9999';

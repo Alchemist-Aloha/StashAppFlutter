@@ -1126,10 +1126,11 @@ class AppLocalizationsKo extends AppLocalizations {
   String get settings_server_details_subtitle => '엔드포인트 및 인증 방식 설정';
 
   @override
-  String get settings_server_url => 'GraphQL 서버 URL';
+  String get settings_server_url => 'Stash URL';
 
   @override
-  String get settings_server_url_helper => '예시 형식: http(s)://host:port.';
+  String get settings_server_url_helper =>
+      'Stash 서버의 URL을 입력하세요. 사용자 정의 경로가 구성된 경우 여기에 포함하세요.';
 
   @override
   String get settings_server_url_example => 'http://192.168.1.100:9999';

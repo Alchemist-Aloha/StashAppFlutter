@@ -1174,11 +1174,11 @@ class AppLocalizationsEs extends AppLocalizations {
       'Configurar el endpoint y el método de autenticación';
 
   @override
-  String get settings_server_url => 'URL del servidor GraphQL';
+  String get settings_server_url => 'URL de Stash';
 
   @override
   String get settings_server_url_helper =>
-      'Formato de ejemplo: http(s)://host:puerto.';
+      'Introduce la URL de tu servidor Stash. Si está configurado con una ruta personalizada, inclúyela aquí.';
 
   @override
   String get settings_server_url_example => 'http://192.168.1.100:9999';

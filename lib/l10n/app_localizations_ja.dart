@@ -1128,10 +1128,11 @@ class AppLocalizationsJa extends AppLocalizations {
   String get settings_server_details_subtitle => 'エンドポイントと認証方法を設定します';
 
   @override
-  String get settings_server_url => 'GraphQLサーバーのURL';
+  String get settings_server_url => 'StashのURL';
 
   @override
-  String get settings_server_url_helper => '例: http(s)://host:port/graphql';
+  String get settings_server_url_helper =>
+      'StashサーバーのURLを入力してください。カスタムパスが設定されている場合は、それを含めてください。';
 
   @override
   String get settings_server_url_example => 'http://192.168.1.100:9999';

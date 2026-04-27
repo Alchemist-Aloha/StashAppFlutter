@@ -1150,11 +1150,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'Configure endpoint and authentication method';
 
   @override
-  String get settings_server_url => 'GraphQL server URL';
+  String get settings_server_url => 'Stash URL';
 
   @override
   String get settings_server_url_helper =>
-      'Example format: http(s)://host:port.';
+      'Enter the URL of your Stash server. If configured with a custom path, include it here.';
 
   @override
   String get settings_server_url_example => 'http://192.168.1.100:9999';
