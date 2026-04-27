@@ -234,7 +234,7 @@ class _ServerProfileDrawerState extends ConsumerState<ServerProfileDrawer> {
                   controller: _urlController,
                   decoration: InputDecoration(
                     labelText: l10n.common_url,
-                    hintText: 'http://localhost:9999/graphql',
+                    hintText: l10n.settings_server_url_example,
                     border: const OutlineInputBorder(),
                   ),
                   validator: (value) {
