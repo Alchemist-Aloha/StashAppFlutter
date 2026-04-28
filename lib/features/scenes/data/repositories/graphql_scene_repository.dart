@@ -533,11 +533,26 @@ class GraphQLSceneRepository implements SceneRepository {
 
   @override
   Future<void> incrementScenePlayCount(String id) async {
-    final scene = await getSceneById(id);
-    final result = await client.mutate$SceneUpdate(
-      Options$Mutation$SceneUpdate(
-        variables: Variables$Mutation$SceneUpdate(
-          input: Input$SceneUpdateInput(id: id, play_count: scene.playCount + 1),
+    final result = await client.mutate$SceneIncrementPlayCount(
+      Options$Mutation$SceneIncrementPlayCount(
+        variables: Variables$Mutation$SceneIncrementPlayCount(id: id),
+      ),
+    );
+    if (result.hasException) throw result.exception!;
+  }
+
+  @override
+  Future<void> saveSceneActivity(
+    String id, {
+    double? resumeTime,
+    double? playDuration,
+  }) async {
+    final result = await client.mutate$SceneSaveActivity(
+      Options$Mutation$SceneSaveActivity(
+        variables: Variables$Mutation$SceneSaveActivity(
+          id: id,
+          resume_time: resumeTime,
+          play_duration: playDuration,
         ),
       ),
     );

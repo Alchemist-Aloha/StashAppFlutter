@@ -104,6 +104,13 @@ class LocalMockSceneRepository implements SceneRepository {
   Future<void> incrementScenePlayCount(String id) async {}
 
   @override
+  Future<void> saveSceneActivity(
+    String id, {
+    double? resumeTime,
+    double? playDuration,
+  }) async {}
+
+  @override
   Future<List<Scraper>> listScrapers({required List<String> types}) async => [];
 
   @override

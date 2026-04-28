@@ -345,20 +345,25 @@ class _TiktokSceneItemState extends ConsumerState<TiktokSceneItem> {
   bool _playCountIncremented = false;
   int? _localRating;
 
+  // Activity tracking
+  DateTime? _playStartTime;
+  double _accumulatedDuration = 0;
+  Timer? _periodicSaveTimer;
+
   @override
   void initState() {
     super.initState();
     _localRating = widget.scene.rating100;
     widget.controller?.addListener(_onControllerChanged);
     if (widget.controller?.value.isPlaying == true) {
-      _startPlayCountTimer();
+      _startActivityTracking();
     }
   }
 
   @override
   void dispose() {
     widget.controller?.removeListener(_onControllerChanged);
-    _playCountTimer?.cancel();
+    _stopActivityTracking();
     super.dispose();
   }
 
@@ -373,18 +378,76 @@ class _TiktokSceneItemState extends ConsumerState<TiktokSceneItem> {
     }
     if (oldWidget.controller != widget.controller) {
       oldWidget.controller?.removeListener(_onControllerChanged);
+      _stopActivityTracking();
+
       widget.controller?.addListener(_onControllerChanged);
       if (widget.controller?.value.isPlaying == true) {
-        _startPlayCountTimer();
+        _startActivityTracking();
       }
     }
   }
 
   void _onControllerChanged() {
     if (widget.controller?.value.isPlaying == true) {
-      _startPlayCountTimer();
+      _startActivityTracking();
     } else {
-      _playCountTimer?.cancel();
+      _stopActivityTracking();
+    }
+  }
+
+  void _startActivityTracking() {
+    if (_playStartTime != null) return; // Already tracking
+
+    _startPlayCountTimer();
+    _playStartTime = DateTime.now();
+    
+    _periodicSaveTimer?.cancel();
+    _periodicSaveTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
+      _saveActivity();
+    });
+  }
+
+  void _stopActivityTracking() {
+    _playCountTimer?.cancel();
+    _periodicSaveTimer?.cancel();
+    _periodicSaveTimer = null;
+
+    if (_playStartTime != null) {
+      final now = DateTime.now();
+      _accumulatedDuration +=
+          now.difference(_playStartTime!).inMilliseconds / 1000.0;
+      _playStartTime = null;
+    }
+
+    if (_accumulatedDuration > 0) {
+      _saveActivity();
+    }
+  }
+
+  Future<void> _saveActivity() async {
+    final controller = widget.controller;
+    if (controller == null) return;
+
+    double durationToSave = _accumulatedDuration;
+    if (_playStartTime != null) {
+      final now = DateTime.now();
+      durationToSave += now.difference(_playStartTime!).inMilliseconds / 1000.0;
+      _playStartTime = now;
+    }
+
+    if (durationToSave < 0.1) return;
+
+    final resumeTime = controller.value.position.inMilliseconds / 1000.0;
+    _accumulatedDuration = 0;
+
+    try {
+      await ref.read(sceneRepositoryProvider).saveSceneActivity(
+        widget.scene.id,
+        resumeTime: resumeTime,
+        playDuration: durationToSave,
+      );
+    } catch (e) {
+      debugPrint('TikTok failed to save scene activity: $e');
     }
   }
 

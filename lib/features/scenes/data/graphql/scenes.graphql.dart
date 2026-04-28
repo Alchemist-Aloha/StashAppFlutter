@@ -7575,6 +7575,783 @@ class _CopyWithStubImpl$Mutation$SceneAddPlay$sceneAddPlay<TRes>
   call({int? count, String? $__typename}) => _res;
 }
 
+class Variables$Mutation$SceneIncrementPlayCount {
+  factory Variables$Mutation$SceneIncrementPlayCount({required String id}) =>
+      Variables$Mutation$SceneIncrementPlayCount._({r'id': id});
+
+  Variables$Mutation$SceneIncrementPlayCount._(this._$data);
+
+  factory Variables$Mutation$SceneIncrementPlayCount.fromJson(
+    Map<String, dynamic> data,
+  ) {
+    final result$data = <String, dynamic>{};
+    final l$id = data['id'];
+    result$data['id'] = (l$id as String);
+    return Variables$Mutation$SceneIncrementPlayCount._(result$data);
+  }
+
+  Map<String, dynamic> _$data;
+
+  String get id => (_$data['id'] as String);
+
+  Map<String, dynamic> toJson() {
+    final result$data = <String, dynamic>{};
+    final l$id = id;
+    result$data['id'] = l$id;
+    return result$data;
+  }
+
+  CopyWith$Variables$Mutation$SceneIncrementPlayCount<
+    Variables$Mutation$SceneIncrementPlayCount
+  >
+  get copyWith =>
+      CopyWith$Variables$Mutation$SceneIncrementPlayCount(this, (i) => i);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (other is! Variables$Mutation$SceneIncrementPlayCount ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$id = id;
+    final lOther$id = other.id;
+    if (l$id != lOther$id) {
+      return false;
+    }
+    return true;
+  }
+
+  @override
+  int get hashCode {
+    final l$id = id;
+    return Object.hashAll([l$id]);
+  }
+}
+
+abstract class CopyWith$Variables$Mutation$SceneIncrementPlayCount<TRes> {
+  factory CopyWith$Variables$Mutation$SceneIncrementPlayCount(
+    Variables$Mutation$SceneIncrementPlayCount instance,
+    TRes Function(Variables$Mutation$SceneIncrementPlayCount) then,
+  ) = _CopyWithImpl$Variables$Mutation$SceneIncrementPlayCount;
+
+  factory CopyWith$Variables$Mutation$SceneIncrementPlayCount.stub(TRes res) =
+      _CopyWithStubImpl$Variables$Mutation$SceneIncrementPlayCount;
+
+  TRes call({String? id});
+}
+
+class _CopyWithImpl$Variables$Mutation$SceneIncrementPlayCount<TRes>
+    implements CopyWith$Variables$Mutation$SceneIncrementPlayCount<TRes> {
+  _CopyWithImpl$Variables$Mutation$SceneIncrementPlayCount(
+    this._instance,
+    this._then,
+  );
+
+  final Variables$Mutation$SceneIncrementPlayCount _instance;
+
+  final TRes Function(Variables$Mutation$SceneIncrementPlayCount) _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({Object? id = _undefined}) => _then(
+    Variables$Mutation$SceneIncrementPlayCount._({
+      ..._instance._$data,
+      if (id != _undefined && id != null) 'id': (id as String),
+    }),
+  );
+}
+
+class _CopyWithStubImpl$Variables$Mutation$SceneIncrementPlayCount<TRes>
+    implements CopyWith$Variables$Mutation$SceneIncrementPlayCount<TRes> {
+  _CopyWithStubImpl$Variables$Mutation$SceneIncrementPlayCount(this._res);
+
+  TRes _res;
+
+  call({String? id}) => _res;
+}
+
+class Mutation$SceneIncrementPlayCount {
+  Mutation$SceneIncrementPlayCount({
+    required this.sceneIncrementPlayCount,
+    this.$__typename = 'Mutation',
+  });
+
+  factory Mutation$SceneIncrementPlayCount.fromJson(Map<String, dynamic> json) {
+    final l$sceneIncrementPlayCount = json['sceneIncrementPlayCount'];
+    final l$$__typename = json['__typename'];
+    return Mutation$SceneIncrementPlayCount(
+      sceneIncrementPlayCount: (l$sceneIncrementPlayCount as int),
+      $__typename: (l$$__typename as String),
+    );
+  }
+
+  @Deprecated('Use sceneAddPlay instead')
+  final int sceneIncrementPlayCount;
+
+  final String $__typename;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$sceneIncrementPlayCount = sceneIncrementPlayCount;
+    _resultData['sceneIncrementPlayCount'] = l$sceneIncrementPlayCount;
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$sceneIncrementPlayCount = sceneIncrementPlayCount;
+    final l$$__typename = $__typename;
+    return Object.hashAll([l$sceneIncrementPlayCount, l$$__typename]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (other is! Mutation$SceneIncrementPlayCount ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$sceneIncrementPlayCount = sceneIncrementPlayCount;
+    final lOther$sceneIncrementPlayCount = other.sceneIncrementPlayCount;
+    if (l$sceneIncrementPlayCount != lOther$sceneIncrementPlayCount) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Mutation$SceneIncrementPlayCount
+    on Mutation$SceneIncrementPlayCount {
+  CopyWith$Mutation$SceneIncrementPlayCount<Mutation$SceneIncrementPlayCount>
+  get copyWith => CopyWith$Mutation$SceneIncrementPlayCount(this, (i) => i);
+}
+
+abstract class CopyWith$Mutation$SceneIncrementPlayCount<TRes> {
+  factory CopyWith$Mutation$SceneIncrementPlayCount(
+    Mutation$SceneIncrementPlayCount instance,
+    TRes Function(Mutation$SceneIncrementPlayCount) then,
+  ) = _CopyWithImpl$Mutation$SceneIncrementPlayCount;
+
+  factory CopyWith$Mutation$SceneIncrementPlayCount.stub(TRes res) =
+      _CopyWithStubImpl$Mutation$SceneIncrementPlayCount;
+
+  TRes call({int? sceneIncrementPlayCount, String? $__typename});
+}
+
+class _CopyWithImpl$Mutation$SceneIncrementPlayCount<TRes>
+    implements CopyWith$Mutation$SceneIncrementPlayCount<TRes> {
+  _CopyWithImpl$Mutation$SceneIncrementPlayCount(this._instance, this._then);
+
+  final Mutation$SceneIncrementPlayCount _instance;
+
+  final TRes Function(Mutation$SceneIncrementPlayCount) _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({
+    Object? sceneIncrementPlayCount = _undefined,
+    Object? $__typename = _undefined,
+  }) => _then(
+    Mutation$SceneIncrementPlayCount(
+      sceneIncrementPlayCount:
+          sceneIncrementPlayCount == _undefined ||
+              sceneIncrementPlayCount == null
+          ? _instance.sceneIncrementPlayCount
+          : (sceneIncrementPlayCount as int),
+      $__typename: $__typename == _undefined || $__typename == null
+          ? _instance.$__typename
+          : ($__typename as String),
+    ),
+  );
+}
+
+class _CopyWithStubImpl$Mutation$SceneIncrementPlayCount<TRes>
+    implements CopyWith$Mutation$SceneIncrementPlayCount<TRes> {
+  _CopyWithStubImpl$Mutation$SceneIncrementPlayCount(this._res);
+
+  TRes _res;
+
+  call({int? sceneIncrementPlayCount, String? $__typename}) => _res;
+}
+
+const documentNodeMutationSceneIncrementPlayCount = DocumentNode(
+  definitions: [
+    OperationDefinitionNode(
+      type: OperationType.mutation,
+      name: NameNode(value: 'SceneIncrementPlayCount'),
+      variableDefinitions: [
+        VariableDefinitionNode(
+          variable: VariableNode(name: NameNode(value: 'id')),
+          type: NamedTypeNode(name: NameNode(value: 'ID'), isNonNull: true),
+          defaultValue: DefaultValueNode(value: null),
+          directives: [],
+        ),
+      ],
+      directives: [],
+      selectionSet: SelectionSetNode(
+        selections: [
+          FieldNode(
+            name: NameNode(value: 'sceneIncrementPlayCount'),
+            alias: null,
+            arguments: [
+              ArgumentNode(
+                name: NameNode(value: 'id'),
+                value: VariableNode(name: NameNode(value: 'id')),
+              ),
+            ],
+            directives: [],
+            selectionSet: null,
+          ),
+          FieldNode(
+            name: NameNode(value: '__typename'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null,
+          ),
+        ],
+      ),
+    ),
+  ],
+);
+Mutation$SceneIncrementPlayCount _parserFn$Mutation$SceneIncrementPlayCount(
+  Map<String, dynamic> data,
+) => Mutation$SceneIncrementPlayCount.fromJson(data);
+typedef OnMutationCompleted$Mutation$SceneIncrementPlayCount =
+    FutureOr<void> Function(
+      Map<String, dynamic>?,
+      Mutation$SceneIncrementPlayCount?,
+    );
+
+class Options$Mutation$SceneIncrementPlayCount
+    extends graphql.MutationOptions<Mutation$SceneIncrementPlayCount> {
+  Options$Mutation$SceneIncrementPlayCount({
+    String? operationName,
+    required Variables$Mutation$SceneIncrementPlayCount variables,
+    graphql.FetchPolicy? fetchPolicy,
+    graphql.ErrorPolicy? errorPolicy,
+    graphql.CacheRereadPolicy? cacheRereadPolicy,
+    Object? optimisticResult,
+    Mutation$SceneIncrementPlayCount? typedOptimisticResult,
+    graphql.Context? context,
+    OnMutationCompleted$Mutation$SceneIncrementPlayCount? onCompleted,
+    graphql.OnMutationUpdate<Mutation$SceneIncrementPlayCount>? update,
+    graphql.OnError? onError,
+  }) : onCompletedWithParsed = onCompleted,
+       super(
+         variables: variables.toJson(),
+         operationName: operationName,
+         fetchPolicy: fetchPolicy,
+         errorPolicy: errorPolicy,
+         cacheRereadPolicy: cacheRereadPolicy,
+         optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
+         context: context,
+         onCompleted: onCompleted == null
+             ? null
+             : (data) => onCompleted(
+                 data,
+                 data == null
+                     ? null
+                     : _parserFn$Mutation$SceneIncrementPlayCount(data),
+               ),
+         update: update,
+         onError: onError,
+         document: documentNodeMutationSceneIncrementPlayCount,
+         parserFn: _parserFn$Mutation$SceneIncrementPlayCount,
+       );
+
+  final OnMutationCompleted$Mutation$SceneIncrementPlayCount?
+  onCompletedWithParsed;
+
+  @override
+  List<Object?> get properties => [
+    ...super.onCompleted == null
+        ? super.properties
+        : super.properties.where((property) => property != onCompleted),
+    onCompletedWithParsed,
+  ];
+}
+
+class WatchOptions$Mutation$SceneIncrementPlayCount
+    extends graphql.WatchQueryOptions<Mutation$SceneIncrementPlayCount> {
+  WatchOptions$Mutation$SceneIncrementPlayCount({
+    String? operationName,
+    required Variables$Mutation$SceneIncrementPlayCount variables,
+    graphql.FetchPolicy? fetchPolicy,
+    graphql.ErrorPolicy? errorPolicy,
+    graphql.CacheRereadPolicy? cacheRereadPolicy,
+    Object? optimisticResult,
+    Mutation$SceneIncrementPlayCount? typedOptimisticResult,
+    graphql.Context? context,
+    Duration? pollInterval,
+    bool? eagerlyFetchResults,
+    bool carryForwardDataOnException = true,
+    bool fetchResults = false,
+  }) : super(
+         variables: variables.toJson(),
+         operationName: operationName,
+         fetchPolicy: fetchPolicy,
+         errorPolicy: errorPolicy,
+         cacheRereadPolicy: cacheRereadPolicy,
+         optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
+         context: context,
+         document: documentNodeMutationSceneIncrementPlayCount,
+         pollInterval: pollInterval,
+         eagerlyFetchResults: eagerlyFetchResults,
+         carryForwardDataOnException: carryForwardDataOnException,
+         fetchResults: fetchResults,
+         parserFn: _parserFn$Mutation$SceneIncrementPlayCount,
+       );
+}
+
+extension ClientExtension$Mutation$SceneIncrementPlayCount
+    on graphql.GraphQLClient {
+  Future<graphql.QueryResult<Mutation$SceneIncrementPlayCount>>
+  mutate$SceneIncrementPlayCount(
+    Options$Mutation$SceneIncrementPlayCount options,
+  ) async => await this.mutate(options);
+
+  graphql.ObservableQuery<Mutation$SceneIncrementPlayCount>
+  watchMutation$SceneIncrementPlayCount(
+    WatchOptions$Mutation$SceneIncrementPlayCount options,
+  ) => this.watchMutation(options);
+}
+
+class Variables$Mutation$SceneSaveActivity {
+  factory Variables$Mutation$SceneSaveActivity({
+    required String id,
+    double? resume_time,
+    double? play_duration,
+  }) => Variables$Mutation$SceneSaveActivity._({
+    r'id': id,
+    if (resume_time != null) r'resume_time': resume_time,
+    if (play_duration != null) r'play_duration': play_duration,
+  });
+
+  Variables$Mutation$SceneSaveActivity._(this._$data);
+
+  factory Variables$Mutation$SceneSaveActivity.fromJson(
+    Map<String, dynamic> data,
+  ) {
+    final result$data = <String, dynamic>{};
+    final l$id = data['id'];
+    result$data['id'] = (l$id as String);
+    if (data.containsKey('resume_time')) {
+      final l$resume_time = data['resume_time'];
+      result$data['resume_time'] = (l$resume_time as num?)?.toDouble();
+    }
+    if (data.containsKey('play_duration')) {
+      final l$play_duration = data['play_duration'];
+      result$data['play_duration'] = (l$play_duration as num?)?.toDouble();
+    }
+    return Variables$Mutation$SceneSaveActivity._(result$data);
+  }
+
+  Map<String, dynamic> _$data;
+
+  String get id => (_$data['id'] as String);
+
+  double? get resume_time => (_$data['resume_time'] as double?);
+
+  double? get play_duration => (_$data['play_duration'] as double?);
+
+  Map<String, dynamic> toJson() {
+    final result$data = <String, dynamic>{};
+    final l$id = id;
+    result$data['id'] = l$id;
+    if (_$data.containsKey('resume_time')) {
+      final l$resume_time = resume_time;
+      result$data['resume_time'] = l$resume_time;
+    }
+    if (_$data.containsKey('play_duration')) {
+      final l$play_duration = play_duration;
+      result$data['play_duration'] = l$play_duration;
+    }
+    return result$data;
+  }
+
+  CopyWith$Variables$Mutation$SceneSaveActivity<
+    Variables$Mutation$SceneSaveActivity
+  >
+  get copyWith => CopyWith$Variables$Mutation$SceneSaveActivity(this, (i) => i);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (other is! Variables$Mutation$SceneSaveActivity ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$id = id;
+    final lOther$id = other.id;
+    if (l$id != lOther$id) {
+      return false;
+    }
+    final l$resume_time = resume_time;
+    final lOther$resume_time = other.resume_time;
+    if (_$data.containsKey('resume_time') !=
+        other._$data.containsKey('resume_time')) {
+      return false;
+    }
+    if (l$resume_time != lOther$resume_time) {
+      return false;
+    }
+    final l$play_duration = play_duration;
+    final lOther$play_duration = other.play_duration;
+    if (_$data.containsKey('play_duration') !=
+        other._$data.containsKey('play_duration')) {
+      return false;
+    }
+    if (l$play_duration != lOther$play_duration) {
+      return false;
+    }
+    return true;
+  }
+
+  @override
+  int get hashCode {
+    final l$id = id;
+    final l$resume_time = resume_time;
+    final l$play_duration = play_duration;
+    return Object.hashAll([
+      l$id,
+      _$data.containsKey('resume_time') ? l$resume_time : const {},
+      _$data.containsKey('play_duration') ? l$play_duration : const {},
+    ]);
+  }
+}
+
+abstract class CopyWith$Variables$Mutation$SceneSaveActivity<TRes> {
+  factory CopyWith$Variables$Mutation$SceneSaveActivity(
+    Variables$Mutation$SceneSaveActivity instance,
+    TRes Function(Variables$Mutation$SceneSaveActivity) then,
+  ) = _CopyWithImpl$Variables$Mutation$SceneSaveActivity;
+
+  factory CopyWith$Variables$Mutation$SceneSaveActivity.stub(TRes res) =
+      _CopyWithStubImpl$Variables$Mutation$SceneSaveActivity;
+
+  TRes call({String? id, double? resume_time, double? play_duration});
+}
+
+class _CopyWithImpl$Variables$Mutation$SceneSaveActivity<TRes>
+    implements CopyWith$Variables$Mutation$SceneSaveActivity<TRes> {
+  _CopyWithImpl$Variables$Mutation$SceneSaveActivity(
+    this._instance,
+    this._then,
+  );
+
+  final Variables$Mutation$SceneSaveActivity _instance;
+
+  final TRes Function(Variables$Mutation$SceneSaveActivity) _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({
+    Object? id = _undefined,
+    Object? resume_time = _undefined,
+    Object? play_duration = _undefined,
+  }) => _then(
+    Variables$Mutation$SceneSaveActivity._({
+      ..._instance._$data,
+      if (id != _undefined && id != null) 'id': (id as String),
+      if (resume_time != _undefined) 'resume_time': (resume_time as double?),
+      if (play_duration != _undefined)
+        'play_duration': (play_duration as double?),
+    }),
+  );
+}
+
+class _CopyWithStubImpl$Variables$Mutation$SceneSaveActivity<TRes>
+    implements CopyWith$Variables$Mutation$SceneSaveActivity<TRes> {
+  _CopyWithStubImpl$Variables$Mutation$SceneSaveActivity(this._res);
+
+  TRes _res;
+
+  call({String? id, double? resume_time, double? play_duration}) => _res;
+}
+
+class Mutation$SceneSaveActivity {
+  Mutation$SceneSaveActivity({
+    required this.sceneSaveActivity,
+    this.$__typename = 'Mutation',
+  });
+
+  factory Mutation$SceneSaveActivity.fromJson(Map<String, dynamic> json) {
+    final l$sceneSaveActivity = json['sceneSaveActivity'];
+    final l$$__typename = json['__typename'];
+    return Mutation$SceneSaveActivity(
+      sceneSaveActivity: (l$sceneSaveActivity as bool),
+      $__typename: (l$$__typename as String),
+    );
+  }
+
+  final bool sceneSaveActivity;
+
+  final String $__typename;
+
+  Map<String, dynamic> toJson() {
+    final _resultData = <String, dynamic>{};
+    final l$sceneSaveActivity = sceneSaveActivity;
+    _resultData['sceneSaveActivity'] = l$sceneSaveActivity;
+    final l$$__typename = $__typename;
+    _resultData['__typename'] = l$$__typename;
+    return _resultData;
+  }
+
+  @override
+  int get hashCode {
+    final l$sceneSaveActivity = sceneSaveActivity;
+    final l$$__typename = $__typename;
+    return Object.hashAll([l$sceneSaveActivity, l$$__typename]);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (other is! Mutation$SceneSaveActivity ||
+        runtimeType != other.runtimeType) {
+      return false;
+    }
+    final l$sceneSaveActivity = sceneSaveActivity;
+    final lOther$sceneSaveActivity = other.sceneSaveActivity;
+    if (l$sceneSaveActivity != lOther$sceneSaveActivity) {
+      return false;
+    }
+    final l$$__typename = $__typename;
+    final lOther$$__typename = other.$__typename;
+    if (l$$__typename != lOther$$__typename) {
+      return false;
+    }
+    return true;
+  }
+}
+
+extension UtilityExtension$Mutation$SceneSaveActivity
+    on Mutation$SceneSaveActivity {
+  CopyWith$Mutation$SceneSaveActivity<Mutation$SceneSaveActivity>
+  get copyWith => CopyWith$Mutation$SceneSaveActivity(this, (i) => i);
+}
+
+abstract class CopyWith$Mutation$SceneSaveActivity<TRes> {
+  factory CopyWith$Mutation$SceneSaveActivity(
+    Mutation$SceneSaveActivity instance,
+    TRes Function(Mutation$SceneSaveActivity) then,
+  ) = _CopyWithImpl$Mutation$SceneSaveActivity;
+
+  factory CopyWith$Mutation$SceneSaveActivity.stub(TRes res) =
+      _CopyWithStubImpl$Mutation$SceneSaveActivity;
+
+  TRes call({bool? sceneSaveActivity, String? $__typename});
+}
+
+class _CopyWithImpl$Mutation$SceneSaveActivity<TRes>
+    implements CopyWith$Mutation$SceneSaveActivity<TRes> {
+  _CopyWithImpl$Mutation$SceneSaveActivity(this._instance, this._then);
+
+  final Mutation$SceneSaveActivity _instance;
+
+  final TRes Function(Mutation$SceneSaveActivity) _then;
+
+  static const _undefined = <dynamic, dynamic>{};
+
+  TRes call({
+    Object? sceneSaveActivity = _undefined,
+    Object? $__typename = _undefined,
+  }) => _then(
+    Mutation$SceneSaveActivity(
+      sceneSaveActivity:
+          sceneSaveActivity == _undefined || sceneSaveActivity == null
+          ? _instance.sceneSaveActivity
+          : (sceneSaveActivity as bool),
+      $__typename: $__typename == _undefined || $__typename == null
+          ? _instance.$__typename
+          : ($__typename as String),
+    ),
+  );
+}
+
+class _CopyWithStubImpl$Mutation$SceneSaveActivity<TRes>
+    implements CopyWith$Mutation$SceneSaveActivity<TRes> {
+  _CopyWithStubImpl$Mutation$SceneSaveActivity(this._res);
+
+  TRes _res;
+
+  call({bool? sceneSaveActivity, String? $__typename}) => _res;
+}
+
+const documentNodeMutationSceneSaveActivity = DocumentNode(
+  definitions: [
+    OperationDefinitionNode(
+      type: OperationType.mutation,
+      name: NameNode(value: 'SceneSaveActivity'),
+      variableDefinitions: [
+        VariableDefinitionNode(
+          variable: VariableNode(name: NameNode(value: 'id')),
+          type: NamedTypeNode(name: NameNode(value: 'ID'), isNonNull: true),
+          defaultValue: DefaultValueNode(value: null),
+          directives: [],
+        ),
+        VariableDefinitionNode(
+          variable: VariableNode(name: NameNode(value: 'resume_time')),
+          type: NamedTypeNode(name: NameNode(value: 'Float'), isNonNull: false),
+          defaultValue: DefaultValueNode(value: null),
+          directives: [],
+        ),
+        VariableDefinitionNode(
+          variable: VariableNode(name: NameNode(value: 'play_duration')),
+          type: NamedTypeNode(name: NameNode(value: 'Float'), isNonNull: false),
+          defaultValue: DefaultValueNode(value: null),
+          directives: [],
+        ),
+      ],
+      directives: [],
+      selectionSet: SelectionSetNode(
+        selections: [
+          FieldNode(
+            name: NameNode(value: 'sceneSaveActivity'),
+            alias: null,
+            arguments: [
+              ArgumentNode(
+                name: NameNode(value: 'id'),
+                value: VariableNode(name: NameNode(value: 'id')),
+              ),
+              ArgumentNode(
+                name: NameNode(value: 'resume_time'),
+                value: VariableNode(name: NameNode(value: 'resume_time')),
+              ),
+              ArgumentNode(
+                name: NameNode(value: 'playDuration'),
+                value: VariableNode(name: NameNode(value: 'play_duration')),
+              ),
+            ],
+            directives: [],
+            selectionSet: null,
+          ),
+          FieldNode(
+            name: NameNode(value: '__typename'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null,
+          ),
+        ],
+      ),
+    ),
+  ],
+);
+Mutation$SceneSaveActivity _parserFn$Mutation$SceneSaveActivity(
+  Map<String, dynamic> data,
+) => Mutation$SceneSaveActivity.fromJson(data);
+typedef OnMutationCompleted$Mutation$SceneSaveActivity =
+    FutureOr<void> Function(Map<String, dynamic>?, Mutation$SceneSaveActivity?);
+
+class Options$Mutation$SceneSaveActivity
+    extends graphql.MutationOptions<Mutation$SceneSaveActivity> {
+  Options$Mutation$SceneSaveActivity({
+    String? operationName,
+    required Variables$Mutation$SceneSaveActivity variables,
+    graphql.FetchPolicy? fetchPolicy,
+    graphql.ErrorPolicy? errorPolicy,
+    graphql.CacheRereadPolicy? cacheRereadPolicy,
+    Object? optimisticResult,
+    Mutation$SceneSaveActivity? typedOptimisticResult,
+    graphql.Context? context,
+    OnMutationCompleted$Mutation$SceneSaveActivity? onCompleted,
+    graphql.OnMutationUpdate<Mutation$SceneSaveActivity>? update,
+    graphql.OnError? onError,
+  }) : onCompletedWithParsed = onCompleted,
+       super(
+         variables: variables.toJson(),
+         operationName: operationName,
+         fetchPolicy: fetchPolicy,
+         errorPolicy: errorPolicy,
+         cacheRereadPolicy: cacheRereadPolicy,
+         optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
+         context: context,
+         onCompleted: onCompleted == null
+             ? null
+             : (data) => onCompleted(
+                 data,
+                 data == null
+                     ? null
+                     : _parserFn$Mutation$SceneSaveActivity(data),
+               ),
+         update: update,
+         onError: onError,
+         document: documentNodeMutationSceneSaveActivity,
+         parserFn: _parserFn$Mutation$SceneSaveActivity,
+       );
+
+  final OnMutationCompleted$Mutation$SceneSaveActivity? onCompletedWithParsed;
+
+  @override
+  List<Object?> get properties => [
+    ...super.onCompleted == null
+        ? super.properties
+        : super.properties.where((property) => property != onCompleted),
+    onCompletedWithParsed,
+  ];
+}
+
+class WatchOptions$Mutation$SceneSaveActivity
+    extends graphql.WatchQueryOptions<Mutation$SceneSaveActivity> {
+  WatchOptions$Mutation$SceneSaveActivity({
+    String? operationName,
+    required Variables$Mutation$SceneSaveActivity variables,
+    graphql.FetchPolicy? fetchPolicy,
+    graphql.ErrorPolicy? errorPolicy,
+    graphql.CacheRereadPolicy? cacheRereadPolicy,
+    Object? optimisticResult,
+    Mutation$SceneSaveActivity? typedOptimisticResult,
+    graphql.Context? context,
+    Duration? pollInterval,
+    bool? eagerlyFetchResults,
+    bool carryForwardDataOnException = true,
+    bool fetchResults = false,
+  }) : super(
+         variables: variables.toJson(),
+         operationName: operationName,
+         fetchPolicy: fetchPolicy,
+         errorPolicy: errorPolicy,
+         cacheRereadPolicy: cacheRereadPolicy,
+         optimisticResult: optimisticResult ?? typedOptimisticResult?.toJson(),
+         context: context,
+         document: documentNodeMutationSceneSaveActivity,
+         pollInterval: pollInterval,
+         eagerlyFetchResults: eagerlyFetchResults,
+         carryForwardDataOnException: carryForwardDataOnException,
+         fetchResults: fetchResults,
+         parserFn: _parserFn$Mutation$SceneSaveActivity,
+       );
+}
+
+extension ClientExtension$Mutation$SceneSaveActivity on graphql.GraphQLClient {
+  Future<graphql.QueryResult<Mutation$SceneSaveActivity>>
+  mutate$SceneSaveActivity(Options$Mutation$SceneSaveActivity options) async =>
+      await this.mutate(options);
+
+  graphql.ObservableQuery<Mutation$SceneSaveActivity>
+  watchMutation$SceneSaveActivity(
+    WatchOptions$Mutation$SceneSaveActivity options,
+  ) => this.watchMutation(options);
+}
+
 class Variables$Query$ListScrapers {
   factory Variables$Query$ListScrapers({
     required List<Enum$ScrapeContentType> types,
