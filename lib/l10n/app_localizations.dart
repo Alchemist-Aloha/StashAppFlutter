@@ -162,6 +162,12 @@ abstract class AppLocalizations {
   /// **'{count, plural, =0{no performers} =1{1 performer} other{{count} performers}}'**
   String nPerformers(num count);
 
+  /// No description provided for @nPlays.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{no plays} =1{1 play} other{{count} plays}}'**
+  String nPlays(num count);
+
   /// No description provided for @common_reset.
   ///
   /// In en, this message translates to:

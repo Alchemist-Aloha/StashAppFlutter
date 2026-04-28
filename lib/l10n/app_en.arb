@@ -24,6 +24,15 @@
       }
     }
   },
+  "nPlays": "{count, plural, =0{no plays} =1{1 play} other{{count} plays}}",
+  "@nPlays": {
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "format": "compact"
+      }
+    }
+  },
   "common_reset": "Reset",
   "common_apply": "Apply",
   "common_save_default": "Save as Default",

@@ -14,6 +14,7 @@ class Fragment$SlimSceneData {
     required this.interactive,
     this.resume_time,
     this.play_count,
+    this.play_duration,
     required this.files,
     required this.paths,
     this.captions,
@@ -34,6 +35,7 @@ class Fragment$SlimSceneData {
     final l$interactive = json['interactive'];
     final l$resume_time = json['resume_time'];
     final l$play_count = json['play_count'];
+    final l$play_duration = json['play_duration'];
     final l$files = json['files'];
     final l$paths = json['paths'];
     final l$captions = json['captions'];
@@ -52,6 +54,7 @@ class Fragment$SlimSceneData {
       interactive: (l$interactive as bool),
       resume_time: (l$resume_time as num?)?.toDouble(),
       play_count: (l$play_count as int?),
+      play_duration: (l$play_duration as num?)?.toDouble(),
       files: (l$files as List<dynamic>)
           .map(
             (e) => Fragment$SlimSceneData$files.fromJson(
@@ -111,6 +114,8 @@ class Fragment$SlimSceneData {
 
   final int? play_count;
 
+  final double? play_duration;
+
   final List<Fragment$SlimSceneData$files> files;
 
   final Fragment$SlimSceneData$paths paths;
@@ -147,6 +152,8 @@ class Fragment$SlimSceneData {
     _resultData['resume_time'] = l$resume_time;
     final l$play_count = play_count;
     _resultData['play_count'] = l$play_count;
+    final l$play_duration = play_duration;
+    _resultData['play_duration'] = l$play_duration;
     final l$files = files;
     _resultData['files'] = l$files.map((e) => e.toJson()).toList();
     final l$paths = paths;
@@ -177,6 +184,7 @@ class Fragment$SlimSceneData {
     final l$interactive = interactive;
     final l$resume_time = resume_time;
     final l$play_count = play_count;
+    final l$play_duration = play_duration;
     final l$files = files;
     final l$paths = paths;
     final l$captions = captions;
@@ -195,6 +203,7 @@ class Fragment$SlimSceneData {
       l$interactive,
       l$resume_time,
       l$play_count,
+      l$play_duration,
       Object.hashAll(l$files.map((v) => v)),
       l$paths,
       l$captions == null ? null : Object.hashAll(l$captions.map((v) => v)),
@@ -257,6 +266,11 @@ class Fragment$SlimSceneData {
     final l$play_count = play_count;
     final lOther$play_count = other.play_count;
     if (l$play_count != lOther$play_count) {
+      return false;
+    }
+    final l$play_duration = play_duration;
+    final lOther$play_duration = other.play_duration;
+    if (l$play_duration != lOther$play_duration) {
       return false;
     }
     final l$files = files;
@@ -366,6 +380,7 @@ abstract class CopyWith$Fragment$SlimSceneData<TRes> {
     bool? interactive,
     double? resume_time,
     int? play_count,
+    double? play_duration,
     List<Fragment$SlimSceneData$files>? files,
     Fragment$SlimSceneData$paths? paths,
     List<Fragment$SlimSceneData$captions>? captions,
@@ -435,6 +450,7 @@ class _CopyWithImpl$Fragment$SlimSceneData<TRes>
     Object? interactive = _undefined,
     Object? resume_time = _undefined,
     Object? play_count = _undefined,
+    Object? play_duration = _undefined,
     Object? files = _undefined,
     Object? paths = _undefined,
     Object? captions = _undefined,
@@ -466,6 +482,9 @@ class _CopyWithImpl$Fragment$SlimSceneData<TRes>
       play_count: play_count == _undefined
           ? _instance.play_count
           : (play_count as int?),
+      play_duration: play_duration == _undefined
+          ? _instance.play_duration
+          : (play_duration as double?),
       files: files == _undefined || files == null
           ? _instance.files
           : (files as List<Fragment$SlimSceneData$files>),
@@ -592,6 +611,7 @@ class _CopyWithStubImpl$Fragment$SlimSceneData<TRes>
     bool? interactive,
     double? resume_time,
     int? play_count,
+    double? play_duration,
     List<Fragment$SlimSceneData$files>? files,
     Fragment$SlimSceneData$paths? paths,
     List<Fragment$SlimSceneData$captions>? captions,
@@ -683,6 +703,13 @@ const fragmentDefinitionSlimSceneData = FragmentDefinitionNode(
       ),
       FieldNode(
         name: NameNode(value: 'play_count'),
+        alias: null,
+        arguments: [],
+        directives: [],
+        selectionSet: null,
+      ),
+      FieldNode(
+        name: NameNode(value: 'play_duration'),
         alias: null,
         arguments: [],
         directives: [],
@@ -2166,6 +2193,7 @@ class Fragment$SceneData implements Fragment$SlimSceneData {
     required this.interactive,
     this.resume_time,
     this.play_count,
+    this.play_duration,
     required this.files,
     required this.paths,
     this.captions,
@@ -2188,6 +2216,7 @@ class Fragment$SceneData implements Fragment$SlimSceneData {
     final l$interactive = json['interactive'];
     final l$resume_time = json['resume_time'];
     final l$play_count = json['play_count'];
+    final l$play_duration = json['play_duration'];
     final l$files = json['files'];
     final l$paths = json['paths'];
     final l$captions = json['captions'];
@@ -2208,6 +2237,7 @@ class Fragment$SceneData implements Fragment$SlimSceneData {
       interactive: (l$interactive as bool),
       resume_time: (l$resume_time as num?)?.toDouble(),
       play_count: (l$play_count as int?),
+      play_duration: (l$play_duration as num?)?.toDouble(),
       files: (l$files as List<dynamic>)
           .map(
             (e) =>
@@ -2267,6 +2297,8 @@ class Fragment$SceneData implements Fragment$SlimSceneData {
 
   final int? play_count;
 
+  final double? play_duration;
+
   final List<Fragment$SceneData$files> files;
 
   final Fragment$SceneData$paths paths;
@@ -2307,6 +2339,8 @@ class Fragment$SceneData implements Fragment$SlimSceneData {
     _resultData['resume_time'] = l$resume_time;
     final l$play_count = play_count;
     _resultData['play_count'] = l$play_count;
+    final l$play_duration = play_duration;
+    _resultData['play_duration'] = l$play_duration;
     final l$files = files;
     _resultData['files'] = l$files.map((e) => e.toJson()).toList();
     final l$paths = paths;
@@ -2341,6 +2375,7 @@ class Fragment$SceneData implements Fragment$SlimSceneData {
     final l$interactive = interactive;
     final l$resume_time = resume_time;
     final l$play_count = play_count;
+    final l$play_duration = play_duration;
     final l$files = files;
     final l$paths = paths;
     final l$captions = captions;
@@ -2361,6 +2396,7 @@ class Fragment$SceneData implements Fragment$SlimSceneData {
       l$interactive,
       l$resume_time,
       l$play_count,
+      l$play_duration,
       Object.hashAll(l$files.map((v) => v)),
       l$paths,
       l$captions == null ? null : Object.hashAll(l$captions.map((v) => v)),
@@ -2425,6 +2461,11 @@ class Fragment$SceneData implements Fragment$SlimSceneData {
     final l$play_count = play_count;
     final lOther$play_count = other.play_count;
     if (l$play_count != lOther$play_count) {
+      return false;
+    }
+    final l$play_duration = play_duration;
+    final lOther$play_duration = other.play_duration;
+    if (l$play_duration != lOther$play_duration) {
       return false;
     }
     final l$files = files;
@@ -2544,6 +2585,7 @@ abstract class CopyWith$Fragment$SceneData<TRes> {
     bool? interactive,
     double? resume_time,
     int? play_count,
+    double? play_duration,
     List<Fragment$SceneData$files>? files,
     Fragment$SceneData$paths? paths,
     List<Fragment$SceneData$captions>? captions,
@@ -2607,6 +2649,7 @@ class _CopyWithImpl$Fragment$SceneData<TRes>
     Object? interactive = _undefined,
     Object? resume_time = _undefined,
     Object? play_count = _undefined,
+    Object? play_duration = _undefined,
     Object? files = _undefined,
     Object? paths = _undefined,
     Object? captions = _undefined,
@@ -2640,6 +2683,9 @@ class _CopyWithImpl$Fragment$SceneData<TRes>
       play_count: play_count == _undefined
           ? _instance.play_count
           : (play_count as int?),
+      play_duration: play_duration == _undefined
+          ? _instance.play_duration
+          : (play_duration as double?),
       files: files == _undefined || files == null
           ? _instance.files
           : (files as List<Fragment$SceneData$files>),
@@ -2760,6 +2806,7 @@ class _CopyWithStubImpl$Fragment$SceneData<TRes>
     bool? interactive,
     double? resume_time,
     int? play_count,
+    double? play_duration,
     List<Fragment$SceneData$files>? files,
     Fragment$SceneData$paths? paths,
     List<Fragment$SceneData$captions>? captions,

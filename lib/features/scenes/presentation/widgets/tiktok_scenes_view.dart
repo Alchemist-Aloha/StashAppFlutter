@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:clock/clock.dart';
 import '../../../../core/utils/l10n_extensions.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,6 +11,7 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../../domain/entities/scene.dart';
 import '../../domain/entities/scene_title_utils.dart';
+import '../providers/scene_details_provider.dart';
 import '../providers/scene_list_provider.dart';
 import '../providers/video_player_provider.dart';
 import '../providers/playback_queue_provider.dart';
@@ -399,7 +401,7 @@ class _TiktokSceneItemState extends ConsumerState<TiktokSceneItem> {
     if (_playStartTime != null) return; // Already tracking
 
     _startPlayCountTimer();
-    _playStartTime = DateTime.now();
+    _playStartTime = clock.now();
     
     _periodicSaveTimer?.cancel();
     _periodicSaveTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
@@ -413,7 +415,7 @@ class _TiktokSceneItemState extends ConsumerState<TiktokSceneItem> {
     _periodicSaveTimer = null;
 
     if (_playStartTime != null) {
-      final now = DateTime.now();
+      final now = clock.now();
       _accumulatedDuration +=
           now.difference(_playStartTime!).inMilliseconds / 1000.0;
       _playStartTime = null;
@@ -430,7 +432,7 @@ class _TiktokSceneItemState extends ConsumerState<TiktokSceneItem> {
 
     double durationToSave = _accumulatedDuration;
     if (_playStartTime != null) {
-      final now = DateTime.now();
+      final now = clock.now();
       durationToSave += now.difference(_playStartTime!).inMilliseconds / 1000.0;
       _playStartTime = now;
     }
@@ -446,6 +448,9 @@ class _TiktokSceneItemState extends ConsumerState<TiktokSceneItem> {
         resumeTime: resumeTime,
         playDuration: durationToSave,
       );
+      if (mounted) {
+        ref.invalidate(sceneDetailsProvider(widget.scene.id));
+      }
     } catch (e) {
       debugPrint('TikTok failed to save scene activity: $e');
     }
@@ -461,10 +466,9 @@ class _TiktokSceneItemState extends ConsumerState<TiktokSceneItem> {
             .read(sceneRepositoryProvider)
             .incrementScenePlayCount(widget.scene.id);
         _playCountIncremented = true;
-        // Invalidate list to keep play counts accurate in other views,
-        // but we don't necessarily need to trigger a full refresh of the current TikTok view
-        // as it might be disruptive. For now, let's just invalidate.
-        ref.invalidate(sceneListProvider);
+        if (mounted) {
+          ref.invalidate(sceneDetailsProvider(widget.scene.id));
+        }
       } catch (e) {
         debugPrint('Failed to increment play count: $e');
       }

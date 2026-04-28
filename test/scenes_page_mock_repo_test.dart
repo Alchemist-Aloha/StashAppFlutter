@@ -113,6 +113,7 @@ void main() {
         interactive: false,
         resumeTime: null,
         playCount: 1,
+        playDuration: 0,
         files: const [],
         paths: const ScenePaths(screenshot: null, preview: null, stream: null),
         urls: const [],

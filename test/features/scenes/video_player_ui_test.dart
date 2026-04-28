@@ -32,6 +32,7 @@ void main() {
     interactive: false,
     resumeTime: null,
     playCount: 10,
+        playDuration: 0,
     files: [],
     paths: const ScenePaths(
       screenshot: null,
@@ -162,6 +163,7 @@ void main() {
         interactive: false,
         resumeTime: null,
         playCount: 1,
+        playDuration: 0,
         files: [],
         paths: const ScenePaths(
           screenshot: null,

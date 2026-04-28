@@ -63,7 +63,7 @@ class TestController extends VideoPlayerController {
 
   @override
   Future<void> dispose() async {
-    // Don't call super.dispose() to avoid platform calls
+    await super.dispose();
   }
 }
 
@@ -99,6 +99,7 @@ void main() {
       interactive: false,
       resumeTime: null,
       playCount: 0,
+      playDuration: 0,
       files: const [],
       paths: const ScenePaths(screenshot: null, preview: null, stream: 'https://example.com'),
       urls: const [],

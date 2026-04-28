@@ -33,6 +33,7 @@ Scene createTestScene({
     interactive: false,
     resumeTime: null,
     playCount: 0,
+        playDuration: 0,
     files: [],
     paths: const ScenePaths(screenshot: null, preview: null, stream: null),
     urls: [],

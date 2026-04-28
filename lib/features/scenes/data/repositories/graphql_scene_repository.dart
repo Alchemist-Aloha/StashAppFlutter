@@ -82,6 +82,7 @@ class GraphQLSceneRepository implements SceneRepository {
             interactive: s.interactive,
             resumeTime: s.resume_time,
             playCount: s.play_count ?? 0,
+            playDuration: s.play_duration,
             files: s.files
                 .map(
                   (f) => SceneFile(
@@ -310,6 +311,7 @@ class GraphQLSceneRepository implements SceneRepository {
       interactive: s.interactive,
       resumeTime: s.resume_time,
       playCount: s.play_count ?? 0,
+      playDuration: s.play_duration,
       files: s.files
           .map(
             (f) => SceneFile(

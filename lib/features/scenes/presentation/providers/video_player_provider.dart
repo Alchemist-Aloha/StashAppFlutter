@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import '../../domain/entities/scene.dart';
 import '../../domain/repositories/scene_repository.dart';
 import 'playback_queue_provider.dart';
+import 'scene_details_provider.dart';
 import 'scene_list_provider.dart';
 import '../../data/repositories/stream_resolver.dart';
 import '../../../../core/utils/pip_mode.dart';
@@ -245,6 +246,9 @@ class PlayerState extends _$PlayerState {
   /// Whether the current controller was "borrowed" (e.g. from TikTok view)
   /// and should not be disposed by this provider when stopping/switching.
   bool _isUsingBorrowedController = false;
+
+  /// Internal flag to track playback state changes across listener fires.
+  bool? _lastIsPlaying;
 
   // Activity tracking state
   Timer? _playCountTimer;
@@ -625,6 +629,7 @@ class PlayerState extends _$PlayerState {
     _videoControllerRef = videoController;
     _activeSceneRef = scene;
     _firstFrameLoggedSceneId = null;
+    _lastIsPlaying = null;
 
     final stopwatch = Stopwatch()..start();
 
@@ -762,6 +767,7 @@ class PlayerState extends _$PlayerState {
     _activeSceneRef = scene;
     _firstFrameLoggedSceneId = null;
     _isUsingBorrowedController = true;
+    _lastIsPlaying = null;
 
     state = state.copyWith(
       activeScene: scene,
@@ -845,6 +851,7 @@ class PlayerState extends _$PlayerState {
       unawaited(WakelockPlus.disable());
     }
     _activeSceneRef = null;
+    _lastIsPlaying = null;
     if (!ref.mounted) return;
 
     state = GlobalPlayerState(
@@ -907,6 +914,8 @@ class PlayerState extends _$PlayerState {
     final scene = state.activeScene;
     if (scene == null) return;
 
+    if (_playStartTime != null) return; // Already tracking
+
     AppLogStore.instance.add(
       'PlayerState _startActivityTracking for scene=${scene.id}',
       source: 'player_provider',
@@ -922,6 +931,7 @@ class PlayerState extends _$PlayerState {
               .read(sceneRepositoryProvider)
               .incrementScenePlayCount(scene.id);
           _playCountIncremented = true;
+          ref.invalidate(sceneDetailsProvider(scene.id));
           AppLogStore.instance.add(
             'PlayerState play count incremented for scene=${scene.id}',
             source: 'player_provider',
@@ -1009,6 +1019,9 @@ class PlayerState extends _$PlayerState {
         resumeTime: resumeTime,
         playDuration: durationToSave,
       );
+      if (ref.mounted) {
+        ref.invalidate(sceneDetailsProvider(effectiveScene.id));
+      }
     } catch (e) {
       debugPrint('Failed to save scene activity: $e');
       // On failure, we might want to put the duration back into the accumulator
@@ -1033,12 +1046,16 @@ class PlayerState extends _$PlayerState {
         );
       }
 
-      if (controller.value.isPlaying != state.isPlaying) {
-        state = state.copyWith(isPlaying: controller.value.isPlaying);
+      if (controller.value.isPlaying != _lastIsPlaying) {
+        final wasPlaying = _lastIsPlaying ?? false;
+        final isPlayingNow = controller.value.isPlaying;
+        _lastIsPlaying = isPlayingNow;
 
-        if (controller.value.isPlaying) {
+        state = state.copyWith(isPlaying: isPlayingNow);
+
+        if (isPlayingNow) {
           _startActivityTracking();
-        } else {
+        } else if (wasPlaying) {
           _stopActivityTracking();
         }
 

@@ -61,6 +61,23 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String nPlays(num count) {
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.compact(
+      locale: localeName,
+    );
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString plays',
+      one: '1 play',
+      zero: 'no plays',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get common_reset => 'Restablecer';
 
   @override

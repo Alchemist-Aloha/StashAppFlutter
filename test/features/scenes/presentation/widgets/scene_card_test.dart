@@ -32,6 +32,7 @@ void main() {
     interactive: false,
     resumeTime: null,
     playCount: 10,
+        playDuration: 0,
     urls: [],
     files: [
       const SceneFile(
@@ -120,6 +121,7 @@ void main() {
       interactive: false,
       resumeTime: null,
       playCount: 0,
+        playDuration: 0,
       urls: [],
       files: [], // empty
       paths: const ScenePaths(screenshot: null, preview: null, stream: null),
@@ -155,6 +157,7 @@ void main() {
       interactive: false,
       resumeTime: null,
       playCount: 0,
+        playDuration: 0,
       urls: [],
       files: [], // empty
       paths: const ScenePaths(screenshot: null, preview: null, stream: null),
@@ -190,6 +193,7 @@ void main() {
       interactive: false,
       resumeTime: null,
       playCount: 0,
+        playDuration: 0,
       urls: [],
       files: [], // empty
       paths: const ScenePaths(screenshot: null, preview: null, stream: null),
