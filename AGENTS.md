@@ -35,7 +35,7 @@ worktree unless the user explicitly requests one for a task.
 
 ## Design Specifications
 
-- **Single source of truth:** [SPECS.md](SPECS.md) — all design specs in one categorized file.
+- **Single source of truth:** [SPECS.md](docs/SPECS.md) — all design specs in one categorized file.
 - **No individual spec files:** The old `docs/superpowers/specs/` directory has been removed.
 - **Finding a spec:** Browse the category index at the top of `SPECS.md`; the file describes current contracts, while implementation history belongs in Git.
 - **Updating specs:** Edit the owning category instead of adding a dated duplicate. Keep goals, invariants, ownership, and verification guidance; put migration plans and change narratives in issues or pull requests.
@@ -54,4 +54,4 @@ worktree unless the user explicitly requests one for a task.
 - Replace remaining dropdowns in settings pages with bottom sheets / sliders / menu anchors.
 - Run `flutter build apk --split-per-abi` and relevant tests; fix layout/localization regressions.
 
-References: [`SPECS.md`](SPECS.md) (combined spec document).
+References: [`SPECS.md`](docs/SPECS.md) (combined spec document).
