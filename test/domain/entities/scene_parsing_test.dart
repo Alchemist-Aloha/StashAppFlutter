@@ -4,7 +4,7 @@ import 'package:stash_app_flutter/features/scenes/domain/entities/scene.dart';
 void main() {
   group('Scene Entity Parsing', () {
     test('should parse from valid JSON', () {
-      final json = {
+      final json = <String, dynamic>{
         'id': '1',
         'title': 'Test Scene',
         'date': '2024-03-18',
@@ -31,7 +31,7 @@ void main() {
           'preview': 'https://example.com/preview.mp4',
           'stream': 'https://example.com/stream.m3u8',
         },
-        'urls': [],
+        'urls': <String>[],
         'studio_id': 's1',
         'studio_name': 'Test Studio',
         'studio_image_path': null,
@@ -53,7 +53,7 @@ void main() {
     });
 
     test('should handle null technical metadata gracefully', () {
-      final json = {
+      final json = <String, dynamic>{
         'id': '2',
         'title': 'Minimal Scene',
         'date': '2024-03-18',
@@ -63,17 +63,17 @@ void main() {
         'interactive': false,
         'resume_time': null,
         'play_count': 0,
-        'files': [],
+        'files': <dynamic>[],
         'paths': {'screenshot': null, 'preview': null, 'stream': null},
-        'urls': [],
+        'urls': <String>[],
         'studio_id': null,
         'studio_name': null,
         'studio_image_path': null,
-        'performer_ids': [],
-        'performer_names': [],
-        'performer_image_paths': [],
-        'tag_ids': [],
-        'tag_names': [],
+        'performer_ids': <String>[],
+        'performer_names': <String>[],
+        'performer_image_paths': <String?>[],
+        'tag_ids': <String>[],
+        'tag_names': <String>[],
       };
 
       final scene = Scene.fromJson(json);

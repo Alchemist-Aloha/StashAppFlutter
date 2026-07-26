@@ -68,7 +68,9 @@ class ImageFilterState extends _$ImageFilterState {
       try {
         return (
           galleryId: null,
-          filter: ImageFilter.fromJson(jsonDecode(jsonString)),
+          filter: ImageFilter.fromJson(
+            jsonDecode(jsonString) as Map<String, dynamic>,
+          ),
         );
       } catch (_) {
         // Fall through to the empty default for corrupt legacy preferences.

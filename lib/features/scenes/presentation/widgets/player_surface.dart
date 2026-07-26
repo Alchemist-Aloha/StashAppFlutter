@@ -104,13 +104,17 @@ class _PlayerSurfaceState extends ConsumerState<PlayerSurface> {
         Vector3(details.focalPointDelta.dx, details.focalPointDelta.dy, 0),
       );
 
-    _transformationNotifier.value = matrix * _transformationNotifier.value;
+    _transformationNotifier.value = matrix.multiplied(
+      _transformationNotifier.value,
+    );
     _lastScale = details.scale;
     _lastRotation = details.rotation;
   }
 
   void _onTransformationDelta(Matrix4 delta, Offset focalPoint) {
-    _transformationNotifier.value = delta * _transformationNotifier.value;
+    _transformationNotifier.value = delta.multiplied(
+      _transformationNotifier.value,
+    );
   }
 
   bool _updateAndReadLoadingState(GlobalPlayerState playerState) {

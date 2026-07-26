@@ -132,7 +132,7 @@ class _EntitySceneMediaGridState extends ConsumerState<EntitySceneMediaGrid> {
   }
 
   void _showSortPanel() {
-    showFrostedPanelBottomSheet(
+    showFrostedPanelBottomSheet<void>(
       context: context,
       builder: (context) => ListSortBottomSheet<EntitySceneMediaSortField>(
         title: context.l10n.sort_scenes,
@@ -158,7 +158,7 @@ class _EntitySceneMediaGridState extends ConsumerState<EntitySceneMediaGrid> {
   }
 
   void _showFilterPanel() {
-    showFrostedPanelBottomSheet(
+    showFrostedPanelBottomSheet<void>(
       context: context,
       builder: (context) => SceneFilterPanel(
         initialFilter: ref.read(
@@ -214,7 +214,7 @@ class _EntitySceneMediaGridState extends ConsumerState<EntitySceneMediaGrid> {
       filter.copyWith(organized: organizedFilter.toBool() ?? filter.organized),
     );
 
-    showFrostedPanelBottomSheet(
+    showFrostedPanelBottomSheet<void>(
       context: context,
       builder: (context) => SceneSavedFilterDialog(
         searchQuery: ref.read(

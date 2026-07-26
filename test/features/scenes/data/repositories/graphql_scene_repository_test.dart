@@ -25,7 +25,7 @@ void main() {
                 'resume_time': null,
                 'play_count': 0,
                 'play_duration': null,
-                'files': const [],
+                'files': const <dynamic>[],
                 'paths': {
                   '__typename': 'ScenePathsType',
                   'screenshot': null,
@@ -35,8 +35,8 @@ void main() {
                   'vtt': null,
                   'sprite': null,
                 },
-                'captions': const [],
-                'urls': const [],
+                'captions': const <dynamic>[],
+                'urls': const <dynamic>[],
                 'studio': null,
                 'performers': [
                   {
@@ -47,8 +47,8 @@ void main() {
                     'birthdate': '2000-12-31',
                   },
                 ],
-                'tags': const [],
-                'scene_markers': const [],
+                'tags': const <dynamic>[],
+                'scene_markers': const <dynamic>[],
               },
             ],
           },

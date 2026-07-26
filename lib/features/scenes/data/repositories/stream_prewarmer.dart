@@ -15,7 +15,7 @@ part 'stream_prewarmer.g.dart';
 /// 3. Prime the network path for the upcoming media data.
 @Riverpod(keepAlive: true)
 class StreamPrewarmer extends _$StreamPrewarmer {
-  final Map<String, StreamSubscription> _activeRequests = {};
+  final Map<String, StreamSubscription<List<int>>> _activeRequests = {};
   HttpClient? _client;
 
   @override
@@ -66,6 +66,8 @@ class StreamPrewarmer extends _$StreamPrewarmer {
 
       // We MUST consume the response stream to ensure the connection is fully
       // utilized and can be returned to the pool for reuse.
+      // Stored in _activeRequests and cancelled when this provider is disposed.
+      // ignore: cancel_subscriptions
       final subscription = response.listen(
         (data) {
           // Data is discarded; we only care about the side effects of the request.
@@ -77,7 +79,7 @@ class StreamPrewarmer extends _$StreamPrewarmer {
             source: 'stream_prewarmer',
           );
         },
-        onError: (e) {
+        onError: (Object e) {
           _activeRequests.remove(scene.id);
           AppLogStore.instance.add(
             'StreamPrewarmer: prewarm error for scene=${scene.id}: $e',

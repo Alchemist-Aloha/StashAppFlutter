@@ -69,7 +69,9 @@ class PerformerFilterState extends _$PerformerFilterState {
     final jsonString = prefs.getString(_storageKey);
     if (jsonString != null) {
       try {
-        return domain.PerformerFilter.fromJson(jsonDecode(jsonString));
+        return domain.PerformerFilter.fromJson(
+          jsonDecode(jsonString) as Map<String, dynamic>,
+        );
       } catch (_) {
         return domain.PerformerFilter.empty();
       }

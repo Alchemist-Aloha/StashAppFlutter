@@ -34,7 +34,7 @@ class _GlobalFullscreenOverlayState
 
   bool _wasPlayingBeforeExit = false;
   VideoController? _currentListenedController;
-  final List<StreamSubscription> _subscriptions = [];
+  final List<StreamSubscription<dynamic>> _subscriptions = [];
 
   @override
   void initState() {

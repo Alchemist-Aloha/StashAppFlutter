@@ -202,7 +202,7 @@ class _PerformersPageState extends ConsumerState<PerformersPage> {
   }
 
   void _showSortPanel() {
-    showFrostedPanelBottomSheet(
+    showFrostedPanelBottomSheet<void>(
       context: context,
       builder: (context) => ListSortBottomSheet<_PerformerSortOption>(
         title: context.l10n.performers_sort_title,
@@ -227,7 +227,7 @@ class _PerformersPageState extends ConsumerState<PerformersPage> {
   }
 
   void _showFilterPanel() {
-    showFrostedPanelBottomSheet(
+    showFrostedPanelBottomSheet<void>(
       context: context,
       builder: (context) => const PerformerFilterPanel(),
     );
@@ -241,7 +241,7 @@ class _PerformersPageState extends ConsumerState<PerformersPage> {
     final sortConfig = ref.read(performerSortProvider);
     final filter = ref.read(performerFilterStateProvider);
 
-    showFrostedPanelBottomSheet(
+    showFrostedPanelBottomSheet<void>(
       context: context,
       builder: (context) => SavedFilterDialog<PerformerSavedFilterConfig>(
         searchQuery: ref.read(performerSearchQueryProvider),

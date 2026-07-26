@@ -269,7 +269,7 @@ class KeybindsNotifier extends Notifier<Keybinds> {
     final jsonStr = prefs.getString('desktop_keybinds');
     if (jsonStr != null && revision == _revision) {
       try {
-        state = Keybinds.fromJson(json.decode(jsonStr));
+        state = Keybinds.fromJson(json.decode(jsonStr) as Map<String, dynamic>);
       } catch (_) {}
     }
   }

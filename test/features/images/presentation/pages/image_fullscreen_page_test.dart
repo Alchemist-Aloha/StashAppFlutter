@@ -49,7 +49,8 @@ void main() {
       mockResponse.compressionState,
     ).thenReturn(HttpClientResponseCompressionState.notCompressed);
     when(mockResponse.listen(any)).thenAnswer((Invocation invocation) {
-      final void Function(List<int>) onData = invocation.positionalArguments[0];
+      final onData =
+          invocation.positionalArguments[0] as void Function(List<int>);
       return Stream<Uint8List>.fromIterable([Uint8List(0)]).listen(onData);
     });
     when(mockResponse.headers).thenReturn(mockHeaders);
@@ -100,8 +101,8 @@ void main() {
           .setMockMethodCallHandler(windowManagerChannel, (call) async {
             if (call.method == 'isMaximized') return false;
             if (call.method == 'setFullScreen' &&
-                (call.arguments
-                    as Map<Object?, Object?>)['isFullScreen'] == false) {
+                (call.arguments as Map<Object?, Object?>)['isFullScreen'] ==
+                    false) {
               throw PlatformException(
                 code: 'fullscreen_error',
                 message: 'restore failed',
@@ -156,77 +157,78 @@ void main() {
       }
     });
 
-    testWidgets('attempts window_manager exit when system UI restoration fails', (
-      tester,
-    ) async {
-      const windowManagerChannel = MethodChannel('window_manager');
-      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
-      var windowManagerExitInvoked = false;
-      AppLogStore.instance
-        ..isEnabled = true
-        ..clear();
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(windowManagerChannel, (call) async {
-            if (call.method == 'isMaximized') return false;
-            if (call.method == 'setFullScreen' &&
-                (call.arguments
-                    as Map<Object?, Object?>)['isFullScreen'] == false) {
-              windowManagerExitInvoked = true;
-            }
-            return null;
-          });
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(SystemChannels.platform, (call) async {
-            if (call.method == 'SystemChrome.setEnabledSystemUIMode') {
-              throw PlatformException(
-                code: 'system_ui_error',
-                message: 'system UI restore failed',
-              );
-            }
-            return null;
-          });
-
-      try {
-        final image = entity.Image(
-          id: 'system-ui-exit-test',
-          title: 'System UI Exit Test',
-          files: [],
-          paths: const entity.ImagePaths(image: 'http://test.com/image.jpg'),
-        );
-        mockRepository.withData([image]);
-        await pumpTestWidget(
-          tester,
-          child: const ImageFullscreenPage(imageId: 'system-ui-exit-test'),
-          overrides: [
-            imageRepositoryProvider.overrideWithValue(mockRepository),
-          ],
-        );
-        await tester.pump();
-
-        await tester.pumpWidget(const SizedBox.shrink());
-        await tester.pump();
-        await tester.pump();
-
-        expect(windowManagerExitInvoked, isTrue);
-        expect(
-          AppLogStore.instance.entries.any(
-            (entry) => entry.message.contains(
-              'ImageFullscreenPage: error restoring system UI',
-            ),
-          ),
-          isTrue,
-        );
-      } finally {
-        debugDefaultTargetPlatformOverride = null;
+    testWidgets(
+      'attempts window_manager exit when system UI restoration fails',
+      (tester) async {
+        const windowManagerChannel = MethodChannel('window_manager');
+        debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+        var windowManagerExitInvoked = false;
         AppLogStore.instance
-          ..clear()
-          ..isEnabled = false;
+          ..isEnabled = true
+          ..clear();
         TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-            .setMockMethodCallHandler(windowManagerChannel, null);
+            .setMockMethodCallHandler(windowManagerChannel, (call) async {
+              if (call.method == 'isMaximized') return false;
+              if (call.method == 'setFullScreen' &&
+                  (call.arguments as Map<Object?, Object?>)['isFullScreen'] ==
+                      false) {
+                windowManagerExitInvoked = true;
+              }
+              return null;
+            });
         TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-            .setMockMethodCallHandler(SystemChannels.platform, null);
-      }
-    });
+            .setMockMethodCallHandler(SystemChannels.platform, (call) async {
+              if (call.method == 'SystemChrome.setEnabledSystemUIMode') {
+                throw PlatformException(
+                  code: 'system_ui_error',
+                  message: 'system UI restore failed',
+                );
+              }
+              return null;
+            });
+
+        try {
+          final image = entity.Image(
+            id: 'system-ui-exit-test',
+            title: 'System UI Exit Test',
+            files: [],
+            paths: const entity.ImagePaths(image: 'http://test.com/image.jpg'),
+          );
+          mockRepository.withData([image]);
+          await pumpTestWidget(
+            tester,
+            child: const ImageFullscreenPage(imageId: 'system-ui-exit-test'),
+            overrides: [
+              imageRepositoryProvider.overrideWithValue(mockRepository),
+            ],
+          );
+          await tester.pump();
+
+          await tester.pumpWidget(const SizedBox.shrink());
+          await tester.pump();
+          await tester.pump();
+
+          expect(windowManagerExitInvoked, isTrue);
+          expect(
+            AppLogStore.instance.entries.any(
+              (entry) => entry.message.contains(
+                'ImageFullscreenPage: error restoring system UI',
+              ),
+            ),
+            isTrue,
+          );
+        } finally {
+          debugDefaultTargetPlatformOverride = null;
+          AppLogStore.instance
+            ..clear()
+            ..isEnabled = false;
+          TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+              .setMockMethodCallHandler(windowManagerChannel, null);
+          TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+              .setMockMethodCallHandler(SystemChannels.platform, null);
+        }
+      },
+    );
 
     testWidgets('displays images and allows vertical navigation', (
       tester,

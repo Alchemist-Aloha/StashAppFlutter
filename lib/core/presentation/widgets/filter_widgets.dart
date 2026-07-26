@@ -405,11 +405,11 @@ class StringCriterionInput extends StatelessWidget {
                 onChanged: (mod) {
                   if (mod != null) {
                     if (_isNullaryModifier(mod)) {
-                      onChanged(StringCriterion(value: "", modifier: mod));
+                      onChanged(StringCriterion(value: '', modifier: mod));
                     } else {
                       onChanged(
                         StringCriterion(
-                          value: value?.value ?? "",
+                          value: value?.value ?? '',
                           modifier: mod,
                         ),
                       );
@@ -476,11 +476,11 @@ class DateCriterionInput extends StatelessWidget {
                 onChanged: (mod) {
                   if (mod != null) {
                     if (_isNullaryModifier(mod)) {
-                      onChanged(DateCriterion(value: "", modifier: mod));
+                      onChanged(DateCriterion(value: '', modifier: mod));
                     } else {
                       onChanged(
                         DateCriterion(
-                          value: value?.value ?? "",
+                          value: value?.value ?? '',
                           value2: _usesSecondaryValue(mod)
                               ? value?.value2
                               : null,

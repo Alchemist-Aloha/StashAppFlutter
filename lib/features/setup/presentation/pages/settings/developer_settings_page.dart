@@ -62,72 +62,74 @@ class _DeveloperSettingsPageState extends ConsumerState<DeveloperSettingsPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-          SettingsSectionCard(
-            title: l10n.settings_develop_diagnostics,
-            subtitle: l10n.settings_develop_diagnostics_subtitle,
-            child: Column(
-              children: [
-                SwitchListTile(
-                  title: Text(l10n.settings_develop_video_debug),
-                  subtitle: Text(l10n.settings_develop_video_debug_subtitle),
-                  value: _showVideoDebugInfo,
-                  onChanged: (value) {
-                    setState(() => _showVideoDebugInfo = value);
-                    _saveSetting(_showVideoDebugInfoKey, value);
-                    ref
-                        .read(playerStateProvider.notifier)
-                        .setShowVideoDebugInfo(value);
-                  },
-                ),
-                const Divider(height: 1),
-                SwitchListTile(
-                  title: Text(l10n.settings_develop_proxy_auth),
-                  subtitle: Text(l10n.settings_develop_proxy_auth_subtitle),
-                  value: _enableProxyAuthModes,
-                  onChanged: (value) {
-                    setState(() => _enableProxyAuthModes = value);
-                    _saveSetting(_enableProxyAuthModesKey, value);
-                    ref
-                        .read(sharedPreferencesTriggerProvider.notifier)
-                        .trigger();
-                  },
-                ),
-                const Divider(height: 1),
-                SwitchListTile(
-                  title: Text(l10n.settings_develop_enable_logging),
-                  subtitle: Text(l10n.settings_develop_enable_logging_subtitle),
-                  value: _enableDebugLogging,
-                  onChanged: (value) {
-                    setState(() => _enableDebugLogging = value);
-                    _saveSetting(_enableDebugLoggingKey, value);
-                    AppLogStore.instance.isEnabled = value;
-                  },
-                ),
-                const Divider(height: 1),
-                SettingsActionCard(
-                  icon: Icons.bug_report_outlined,
-                  title: l10n.settings_develop_log_viewer,
-                  subtitle: l10n.settings_develop_log_viewer_subtitle,
-                  onTap: () => context.push('/settings/logs'),
-                ),
-              ],
-            ),
-          ),
-          if (kIsWeb) ...[
             SettingsSectionCard(
-              title: l10n.settings_develop_web_overrides,
-              subtitle: l10n.settings_develop_web_overrides_subtitle,
-              child: SwitchListTile(
-                title: Text(l10n.settings_develop_web_auth),
-                subtitle: Text(l10n.settings_develop_web_auth_subtitle),
-                value: _allowWebPasswordLogin,
-                onChanged: (value) {
-                  setState(() => _allowWebPasswordLogin = value);
-                  _saveSetting(_allowWebPasswordLoginKey, value);
-                },
+              title: l10n.settings_develop_diagnostics,
+              subtitle: l10n.settings_develop_diagnostics_subtitle,
+              child: Column(
+                children: [
+                  SwitchListTile(
+                    title: Text(l10n.settings_develop_video_debug),
+                    subtitle: Text(l10n.settings_develop_video_debug_subtitle),
+                    value: _showVideoDebugInfo,
+                    onChanged: (value) {
+                      setState(() => _showVideoDebugInfo = value);
+                      _saveSetting(_showVideoDebugInfoKey, value);
+                      ref
+                          .read(playerStateProvider.notifier)
+                          .setShowVideoDebugInfo(value);
+                    },
+                  ),
+                  const Divider(height: 1),
+                  SwitchListTile(
+                    title: Text(l10n.settings_develop_proxy_auth),
+                    subtitle: Text(l10n.settings_develop_proxy_auth_subtitle),
+                    value: _enableProxyAuthModes,
+                    onChanged: (value) {
+                      setState(() => _enableProxyAuthModes = value);
+                      _saveSetting(_enableProxyAuthModesKey, value);
+                      ref
+                          .read(sharedPreferencesTriggerProvider.notifier)
+                          .trigger();
+                    },
+                  ),
+                  const Divider(height: 1),
+                  SwitchListTile(
+                    title: Text(l10n.settings_develop_enable_logging),
+                    subtitle: Text(
+                      l10n.settings_develop_enable_logging_subtitle,
+                    ),
+                    value: _enableDebugLogging,
+                    onChanged: (value) {
+                      setState(() => _enableDebugLogging = value);
+                      _saveSetting(_enableDebugLoggingKey, value);
+                      AppLogStore.instance.isEnabled = value;
+                    },
+                  ),
+                  const Divider(height: 1),
+                  SettingsActionCard(
+                    icon: Icons.bug_report_outlined,
+                    title: l10n.settings_develop_log_viewer,
+                    subtitle: l10n.settings_develop_log_viewer_subtitle,
+                    onTap: () => context.push('/settings/logs'),
+                  ),
+                ],
               ),
             ),
-          ],
+            if (kIsWeb) ...[
+              SettingsSectionCard(
+                title: l10n.settings_develop_web_overrides,
+                subtitle: l10n.settings_develop_web_overrides_subtitle,
+                child: SwitchListTile(
+                  title: Text(l10n.settings_develop_web_auth),
+                  subtitle: Text(l10n.settings_develop_web_auth_subtitle),
+                  value: _allowWebPasswordLogin,
+                  onChanged: (value) {
+                    setState(() => _allowWebPasswordLogin = value);
+                    _saveSetting(_allowWebPasswordLoginKey, value);
+                  },
+                ),
+              ),
+            ],
           ],
         ),
       ),

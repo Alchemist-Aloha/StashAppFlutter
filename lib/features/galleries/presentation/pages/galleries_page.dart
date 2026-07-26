@@ -143,7 +143,7 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
   }
 
   void _showSortPanel() {
-    showFrostedPanelBottomSheet(
+    showFrostedPanelBottomSheet<void>(
       context: context,
       builder: (context) => ListSortBottomSheet<_GallerySortOption>(
         title: context.l10n.galleries_sort_title,
@@ -168,7 +168,7 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
   }
 
   void _showFilterPanel() {
-    showFrostedPanelBottomSheet(
+    showFrostedPanelBottomSheet<void>(
       context: context,
       builder: (context) => const GalleryFilterPanel(),
     );
@@ -186,7 +186,7 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
       organized: organizedFilter.toBool() ?? filter.organized,
     );
 
-    showFrostedPanelBottomSheet(
+    showFrostedPanelBottomSheet<void>(
       context: context,
       builder: (context) => SavedFilterDialog<GallerySavedFilterConfig>(
         searchQuery: ref.read(gallerySearchQueryProvider),

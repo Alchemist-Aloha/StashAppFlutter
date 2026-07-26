@@ -77,6 +77,7 @@ class _FakeCastSession extends dc.CastSession {
   @override
   Future<void> disconnect() async {
     disconnectCalls++;
+    await _positionController.close();
   }
 
   @override

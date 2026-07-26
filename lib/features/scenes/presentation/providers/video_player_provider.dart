@@ -602,7 +602,7 @@ class PlayerState extends _$PlayerState with WidgetsBindingObserver {
         ),
       );
 
-      final response = await dio.getUri(Uri.parse(effectiveUrl));
+      final response = await dio.getUri<List<int>>(Uri.parse(effectiveUrl));
       if (response.statusCode != 200 || response.data is! List<int>) {
         AppLogStore.instance.add(
           'Failed to fetch scene cover for notification: '
@@ -741,7 +741,7 @@ class PlayerState extends _$PlayerState with WidgetsBindingObserver {
       _viewModeBeforePip = state.viewMode;
       if (!state.isFullScreen) {
         requestEnterFullscreen();
-        await Future.delayed(const Duration(milliseconds: 150));
+        await Future<void>.delayed(const Duration(milliseconds: 150));
       }
       return await PipMode.enterIfAvailable(aspectRatio: aspectRatio);
     } finally {

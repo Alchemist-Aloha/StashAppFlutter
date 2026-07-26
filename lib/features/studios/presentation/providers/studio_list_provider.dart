@@ -64,7 +64,9 @@ class StudioFilterState extends _$StudioFilterState {
     final jsonString = prefs.getString(_storageKey);
     if (jsonString != null) {
       try {
-        return domain.StudioFilter.fromJson(jsonDecode(jsonString));
+        return domain.StudioFilter.fromJson(
+          jsonDecode(jsonString) as Map<String, dynamic>,
+        );
       } catch (_) {
         return domain.StudioFilter.empty();
       }

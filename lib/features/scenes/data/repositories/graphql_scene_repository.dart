@@ -278,7 +278,7 @@ class GraphQLSceneRepository {
             orientation: (sceneFilter?.orientations != null)
                 ? Input$OrientationCriterionInput(
                     value: sceneFilter!.orientations!.value
-                        .map((o) => fromJson$Enum$OrientationEnum(o))
+                        .map(fromJson$Enum$OrientationEnum)
                         .toList(),
                   )
                 : null,
@@ -629,7 +629,7 @@ class GraphQLSceneRepository {
     final result = await _client.query$ListScrapers(
       Options$Query$ListScrapers(
         variables: Variables$Query$ListScrapers(
-          types: types.map((t) => fromJson$Enum$ScrapeContentType(t)).toList(),
+          types: types.map(fromJson$Enum$ScrapeContentType).toList(),
         ),
       ),
     );

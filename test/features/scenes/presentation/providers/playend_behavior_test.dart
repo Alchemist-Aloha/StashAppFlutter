@@ -135,7 +135,7 @@ void main() {
 
     notifier.setPlayEndBehavior(VideoEndBehavior.stop);
     completedStream.add(true);
-    await Future.delayed(Duration.zero);
+    await Future<void>.delayed(Duration.zero);
 
     expect(container.read(playerStateProvider).isFullScreen, isFalse);
     expect(container.read(playerStateProvider).activeScene, isNull);

@@ -83,10 +83,10 @@ void main() {
     FlutterError.onError = (FlutterErrorDetails details) {
       bool isOverflowError = false;
 
-      var exception = details.exception;
+      final exception = details.exception;
       if (exception is FlutterError) {
         isOverflowError = exception.diagnostics.any(
-          (e) => e.value.toString().contains("A RenderFlex overflowed by"),
+          (e) => e.value.toString().contains('A RenderFlex overflowed by'),
         );
       }
 

@@ -74,9 +74,7 @@ class _DebugLogViewerPageState extends State<DebugLogViewerPage> {
           IconButton(
             tooltip: context.l10n.common_clear_logs,
             icon: const Icon(Icons.delete_outline),
-            onPressed: () {
-              AppLogStore.instance.clear();
-            },
+            onPressed: AppLogStore.instance.clear,
           ),
         ],
       ),

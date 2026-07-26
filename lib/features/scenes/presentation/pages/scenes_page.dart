@@ -300,7 +300,7 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
 
   /// Displays the sort selection bottom sheet.
   void _showSortPanel() {
-    showFrostedPanelBottomSheet(
+    showFrostedPanelBottomSheet<void>(
       context: context,
       builder: (context) => ListSortBottomSheet<_SceneSortField>(
         title: context.l10n.sort_scenes,
@@ -326,7 +326,7 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
 
   /// Displays the filter configuration bottom sheet.
   void _showFilterPanel() {
-    showFrostedPanelBottomSheet(
+    showFrostedPanelBottomSheet<void>(
       context: context,
       builder: (context) => const SceneFilterPanel(),
     );
@@ -340,7 +340,7 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
       organized: organizedFilter.toBool() ?? filter.organized,
     );
 
-    showFrostedPanelBottomSheet(
+    showFrostedPanelBottomSheet<void>(
       context: context,
       builder: (context) => SceneSavedFilterDialog(
         searchQuery: ref.read(sceneSearchQueryProvider),

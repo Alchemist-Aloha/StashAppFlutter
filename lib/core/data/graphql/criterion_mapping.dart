@@ -97,9 +97,7 @@ Input$HierarchicalMultiCriterionInput? mapHierarchicalMultiCriterion(
 Input$GenderCriterionInput? mapGenderCriterion(MultiCriterion? criterion) {
   if (criterion == null || criterion.value.isEmpty) return null;
   return Input$GenderCriterionInput(
-    value_list: criterion.value
-        .map((v) => fromJson$Enum$GenderEnum(v))
-        .toList(),
+    value_list: criterion.value.map(fromJson$Enum$GenderEnum).toList(),
     modifier: mapModifier(criterion.modifier),
   );
 }

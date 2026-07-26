@@ -8,7 +8,7 @@ void main() {
       'increments play count after 5 seconds and refreshes scene details',
       () {
         fakeAsync((async) {
-          var now = DateTime(2026, 1, 1, 0, 0, 0);
+          final now = DateTime(2026, 1, 1, 0, 0, 0);
           var incrementCalls = 0;
           var refreshCalls = 0;
 

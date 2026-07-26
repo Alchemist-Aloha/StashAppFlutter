@@ -108,7 +108,7 @@ class _GroupsPageState extends ConsumerState<GroupsPage> {
   }
 
   void _showSortPanel() {
-    showFrostedPanelBottomSheet(
+    showFrostedPanelBottomSheet<void>(
       context: context,
       builder: (context) => ListSortBottomSheet<_GroupSortOption>(
         title: context.l10n.common_sort,
@@ -132,7 +132,7 @@ class _GroupsPageState extends ConsumerState<GroupsPage> {
   }
 
   void _showFilterPanel() {
-    showFrostedPanelBottomSheet(
+    showFrostedPanelBottomSheet<void>(
       context: context,
       builder: (context) => const GroupFilterPanel(),
     );
@@ -142,7 +142,7 @@ class _GroupsPageState extends ConsumerState<GroupsPage> {
     final sortConfig = ref.read(groupSortProvider);
     final currentFilter = ref.read(groupListFilterProvider);
 
-    showFrostedPanelBottomSheet(
+    showFrostedPanelBottomSheet<void>(
       context: context,
       builder: (context) => SavedFilterDialog<GroupSavedFilterConfig>(
         searchQuery: ref.read(groupSearchQueryProvider),

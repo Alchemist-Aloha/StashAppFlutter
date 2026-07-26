@@ -57,7 +57,7 @@ class _MarqueeTextState extends State<MarqueeText> {
     final maxScrollExtent = _scrollController.position.maxScrollExtent;
     if (maxScrollExtent <= 0) return;
 
-    await Future.delayed(widget.pauseDuration);
+    await Future<void>.delayed(widget.pauseDuration);
     if (!_isCurrentGeneration(generation) || !_scrollController.hasClients) {
       return;
     }
@@ -70,7 +70,7 @@ class _MarqueeTextState extends State<MarqueeText> {
 
     if (!_isCurrentGeneration(generation)) return;
 
-    await Future.delayed(widget.pauseDuration);
+    await Future<void>.delayed(widget.pauseDuration);
     if (!_isCurrentGeneration(generation) || !_scrollController.hasClients) {
       return;
     }

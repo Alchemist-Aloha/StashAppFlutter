@@ -6,7 +6,7 @@ import 'studio_list_provider.dart';
 
 final studioRandomNavigationControllerProvider =
     Provider<StudioRandomNavigationController>(
-      (ref) => StudioRandomNavigationController(ref),
+      StudioRandomNavigationController.new,
     );
 
 class StudioRandomNavigationController {

@@ -129,7 +129,7 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
   }
 
   void _showSortPanel() {
-    showFrostedPanelBottomSheet(
+    showFrostedPanelBottomSheet<void>(
       context: context,
       builder: (context) => ListSortBottomSheet<_StudioSortOption>(
         title: context.l10n.studios_sort_title,
@@ -154,7 +154,7 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
   }
 
   void _showFilterPanel() {
-    showFrostedPanelBottomSheet(
+    showFrostedPanelBottomSheet<void>(
       context: context,
       builder: (context) => const StudioFilterPanel(),
     );
@@ -168,7 +168,7 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
     final sortConfig = ref.read(studioSortProvider);
     final filter = ref.read(studioFilterStateProvider);
 
-    showFrostedPanelBottomSheet(
+    showFrostedPanelBottomSheet<void>(
       context: context,
       builder: (context) => SavedFilterDialog<StudioSavedFilterConfig>(
         searchQuery: ref.read(studioSearchQueryProvider),

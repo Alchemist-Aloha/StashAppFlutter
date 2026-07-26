@@ -34,7 +34,7 @@ void main() {
             sharedPreferences: prefs,
           ),
         ),
-        ...overrides,
+        ...overrides.cast(),
       ],
     );
     addTearDown(container.dispose);

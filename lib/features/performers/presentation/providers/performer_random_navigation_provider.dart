@@ -6,7 +6,7 @@ import 'performer_list_provider.dart';
 
 final performerRandomNavigationControllerProvider =
     Provider<PerformerRandomNavigationController>(
-      (ref) => PerformerRandomNavigationController(ref),
+      PerformerRandomNavigationController.new,
     );
 
 class PerformerRandomNavigationController {

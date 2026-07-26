@@ -65,7 +65,9 @@ class GalleryFilterState extends _$GalleryFilterState {
     final jsonStr = prefs.getString(_filterKey);
     if (jsonStr != null) {
       try {
-        return GalleryFilter.fromJson(jsonDecode(jsonStr));
+        return GalleryFilter.fromJson(
+          jsonDecode(jsonStr) as Map<String, dynamic>,
+        );
       } catch (_) {
         return GalleryFilter.empty();
       }

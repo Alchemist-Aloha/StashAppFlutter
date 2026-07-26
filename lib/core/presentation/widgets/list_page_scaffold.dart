@@ -360,9 +360,7 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
                     );
                   },
                   viewHintText: widget.searchHint,
-                  viewOnSubmitted: (value) {
-                    _searchController.closeView(value);
-                  },
+                  viewOnSubmitted: _searchController.closeView,
                   suggestionsBuilder:
                       (BuildContext context, SearchController controller) {
                         return [

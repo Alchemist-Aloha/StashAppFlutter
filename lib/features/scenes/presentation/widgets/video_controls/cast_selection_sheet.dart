@@ -43,7 +43,7 @@ class _CastSelectionSheetState extends ConsumerState<CastSelectionSheet> {
         'CastSelectionSheet: connecting to $deviceName',
         source: 'cast_selection_sheet',
       );
-      showDialog(
+      showDialog<void>(
         context: context,
         barrierDismissible: false,
         builder: (_) => AlertDialog(

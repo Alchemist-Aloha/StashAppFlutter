@@ -68,7 +68,9 @@ class SceneFilterState extends _$SceneFilterState {
     final jsonString = prefs.getString(_storageKey);
     if (jsonString != null) {
       try {
-        return SceneFilter.fromJson(jsonDecode(jsonString));
+        return SceneFilter.fromJson(
+          jsonDecode(jsonString) as Map<String, dynamic>,
+        );
       } catch (_) {
         return SceneFilter.empty();
       }

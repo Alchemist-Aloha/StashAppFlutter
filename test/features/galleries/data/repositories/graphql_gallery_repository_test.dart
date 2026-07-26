@@ -38,10 +38,10 @@ void main() {
               'rating100': 100,
               'organized': true,
               'image_count': 10,
-              'tags': [],
-              'performers': [],
-              'studios': [],
-              'files': [],
+              'tags': <dynamic>[],
+              'performers': <dynamic>[],
+              'studios': <dynamic>[],
+              'files': <dynamic>[],
               'paths': {
                 'cover': 'http://cover.path',
                 '__typename': 'GalleryPathsType',
@@ -98,7 +98,7 @@ void main() {
         data: const {
           'findGalleries': {
             'count': 0,
-            'galleries': [],
+            'galleries': <dynamic>[],
             '__typename': 'GalleryQueryResult',
           },
           '__typename': 'Query',
@@ -148,10 +148,10 @@ void main() {
           'rating100': 100,
           'organized': true,
           'image_count': 10,
-          'tags': [],
-          'performers': [],
-          'studios': [],
-          'files': [],
+          'tags': <dynamic>[],
+          'performers': <dynamic>[],
+          'studios': <dynamic>[],
+          'files': <dynamic>[],
           'paths': {
             'cover': 'http://cover.path',
             '__typename': 'GalleryPathsType',

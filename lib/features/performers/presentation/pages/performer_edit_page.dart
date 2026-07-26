@@ -758,7 +758,7 @@ class _PerformerEditPageState extends ConsumerState<PerformerEditPage> {
     String label,
     List<TextEditingController> controllers,
     VoidCallback onAdd,
-    Function(int) onRemove,
+    void Function(int) onRemove,
   ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

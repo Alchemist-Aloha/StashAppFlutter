@@ -416,7 +416,7 @@ class VideoPlaybackControls extends ConsumerWidget {
                           icon: Icon(Icons.cast_rounded, size: controlIconSize),
                           onPressed: () {
                             onInteract();
-                            showModalBottomSheet(
+                            showModalBottomSheet<void>(
                               context: context,
                               backgroundColor: Colors.transparent,
                               isScrollControlled: true,

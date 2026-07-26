@@ -686,8 +686,10 @@ class _SceneFilterPanelState extends ConsumerState<SceneFilterPanel> {
     ValueChanged<dynamic> onChanged,
     bool isHierarchical,
   ) {
-    final List<String> selectedIds = criterion?.value ?? [];
-    final modifier = criterion?.modifier ?? CriterionModifier.includes;
+    final selectedIds =
+        (criterion?.value as List<dynamic>?)?.cast<String>() ?? <String>[];
+    final modifier =
+        criterion?.modifier as CriterionModifier? ?? CriterionModifier.includes;
 
     return SelectionCriterionInput(
       label: label,
@@ -714,7 +716,7 @@ class _SceneFilterPanelState extends ConsumerState<SceneFilterPanel> {
         );
         if (result == null) return;
 
-        final ids = result.map((entity) => _extractEntityId(entity)).toList();
+        final ids = result.map(_extractEntityId).toList();
         if (ids.isEmpty) {
           onChanged(null);
           return;

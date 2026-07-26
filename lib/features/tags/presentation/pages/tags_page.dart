@@ -127,7 +127,7 @@ class _TagsPageState extends ConsumerState<TagsPage> {
   }
 
   void _showSortPanel() {
-    showFrostedPanelBottomSheet(
+    showFrostedPanelBottomSheet<void>(
       context: context,
       builder: (context) => ListSortBottomSheet<_TagSortOption>(
         title: context.l10n.tags_sort_title,
@@ -151,7 +151,7 @@ class _TagsPageState extends ConsumerState<TagsPage> {
   }
 
   void _showFilterPanel() {
-    showFrostedPanelBottomSheet(
+    showFrostedPanelBottomSheet<void>(
       context: context,
       builder: (context) => const TagFilterPanel(),
     );
@@ -161,7 +161,7 @@ class _TagsPageState extends ConsumerState<TagsPage> {
     final sortConfig = ref.read(tagSortProvider);
     final favoritesOnly = ref.read(tagFavoritesOnlyProvider);
 
-    showFrostedPanelBottomSheet(
+    showFrostedPanelBottomSheet<void>(
       context: context,
       builder: (context) => SavedFilterDialog<TagSavedFilterConfig>(
         searchQuery: ref.read(tagSearchQueryProvider),

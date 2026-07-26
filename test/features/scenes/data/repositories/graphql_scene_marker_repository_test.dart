@@ -36,7 +36,7 @@ void main() {
                   '__typename': 'Scene',
                   'id': 's1',
                   'title': 'Test Scene',
-                  'files': const [],
+                  'files': const <dynamic>[],
                   'performers': [
                     {'__typename': 'Performer', 'id': 'p1', 'name': 'Alice'},
                   ],

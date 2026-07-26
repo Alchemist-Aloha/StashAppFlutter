@@ -579,7 +579,7 @@ Future<void> pumpTestWidget(
     ProviderScope(
       overrides: [
         sharedPreferencesProvider.overrideWithValue(prefs),
-        ...overrides,
+        ...overrides.cast(),
       ],
       child: MaterialApp.router(
         localizationsDelegates: AppLocalizations.localizationsDelegates,

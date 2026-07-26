@@ -110,10 +110,11 @@ void main() {
         MediaControl.pause,
         MediaControl.skipToNext,
       ]);
-      expect(
-        handler.playbackState.value.androidCompactActionIndices,
-        [0, 1, 2],
-      );
+      expect(handler.playbackState.value.androidCompactActionIndices, [
+        0,
+        1,
+        2,
+      ]);
     });
 
     test('publishes the supplied processing state', () {

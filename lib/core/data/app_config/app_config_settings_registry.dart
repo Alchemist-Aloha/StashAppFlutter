@@ -217,11 +217,11 @@ final class AppConfigSettingsRegistry {
     for (final entry in values.entries) {
       final value = entry.value;
       final saved = switch (value) {
-        bool value => await prefs.setBool(entry.key, value),
-        int value => await prefs.setInt(entry.key, value),
-        double value => await prefs.setDouble(entry.key, value),
-        String value => await prefs.setString(entry.key, value),
-        List value => await prefs.setStringList(
+        final bool value => await prefs.setBool(entry.key, value),
+        final int value => await prefs.setInt(entry.key, value),
+        final double value => await prefs.setDouble(entry.key, value),
+        final String value => await prefs.setString(entry.key, value),
+        final List<dynamic> value => await prefs.setStringList(
           entry.key,
           value.cast<String>(),
         ),

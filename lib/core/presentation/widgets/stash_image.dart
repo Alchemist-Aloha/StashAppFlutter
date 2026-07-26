@@ -74,7 +74,7 @@ class _RetryingCachedImageState extends State<_RetryingCachedImage> {
     } catch (_) {}
 
     // Small delay to avoid tight retry loops and allow cache manager state to settle.
-    await Future.delayed(const Duration(milliseconds: 150));
+    await Future<void>.delayed(const Duration(milliseconds: 150));
     if (mounted && generation == _retryGeneration) setState(() {});
     if (generation == _retryGeneration) _retrying = false;
   }
@@ -211,7 +211,7 @@ class StashImage extends ConsumerWidget {
     try {
       // Throttle concurrent prefetches to avoid saturating network / IO.
       while (_ongoingPrefetches >= _maxConcurrentPrefetch) {
-        await Future.delayed(const Duration(milliseconds: 50));
+        await Future<void>.delayed(const Duration(milliseconds: 50));
       }
       if (!context.mounted) return;
       _ongoingPrefetches++;

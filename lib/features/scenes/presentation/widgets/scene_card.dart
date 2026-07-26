@@ -186,7 +186,7 @@ class _SceneCardState extends ConsumerState<SceneCard> {
 
   /// Displays a custom scene info sheet for navigation actions.
   void _showMenu(BuildContext context, WidgetRef ref) {
-    showFrostedPanelBottomSheet(
+    showFrostedPanelBottomSheet<void>(
       context: context,
       useRootNavigator: true,
       constraints: BoxConstraints(

@@ -120,7 +120,7 @@ class _SceneDetailsPageState extends ConsumerState<SceneDetailsPage> {
   }
 
   void _showSceneDetailsSheet(Scene scene) {
-    showFrostedPanelBottomSheet(
+    showFrostedPanelBottomSheet<void>(
       context: context,
       useRootNavigator: true,
       constraints: BoxConstraints(

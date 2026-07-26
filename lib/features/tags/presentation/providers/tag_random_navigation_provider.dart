@@ -5,9 +5,7 @@ import '../../domain/entities/tag.dart';
 import 'tag_list_provider.dart';
 
 final tagRandomNavigationControllerProvider =
-    Provider<TagRandomNavigationController>(
-      (ref) => TagRandomNavigationController(ref),
-    );
+    Provider<TagRandomNavigationController>(TagRandomNavigationController.new);
 
 class TagRandomNavigationController {
   const TagRandomNavigationController(this.ref);

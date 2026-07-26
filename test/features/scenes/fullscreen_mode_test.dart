@@ -183,80 +183,83 @@ void main() {
     expect(cmakeSource, isNot(contains('windows_fullscreen_controller')));
   });
 
-  testWidgets('waits for window_manager exit before hiding fullscreen overlay', (
-    tester,
-  ) async {
-    debugDefaultTargetPlatformOverride = TargetPlatform.windows;
-    try {
-      final exitCompleter = Completer<Object?>();
-      var blockExit = false;
-      var exitInvoked = false;
-      windowManagerHandler = (call) {
-        if (call.method == 'isMaximized') {
-          return Future<Object?>.value(false);
-        }
-        final isExiting = call.method == 'setFullScreen' &&
-            (call.arguments as Map<Object?, Object?>)['isFullScreen'] == false;
-        if (isExiting && blockExit) {
-          exitInvoked = true;
-          return exitCompleter.future;
-        }
-        return Future<Object?>.value();
-      };
-      final mockRepo = MockGraphQLSceneRepository()..withData([testScene]);
+  testWidgets(
+    'waits for window_manager exit before hiding fullscreen overlay',
+    (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      try {
+        final exitCompleter = Completer<Object?>();
+        var blockExit = false;
+        var exitInvoked = false;
+        windowManagerHandler = (call) {
+          if (call.method == 'isMaximized') {
+            return Future<Object?>.value(false);
+          }
+          final isExiting =
+              call.method == 'setFullScreen' &&
+              (call.arguments as Map<Object?, Object?>)['isFullScreen'] ==
+                  false;
+          if (isExiting && blockExit) {
+            exitInvoked = true;
+            return exitCompleter.future;
+          }
+          return Future<Object?>.value();
+        };
+        final mockRepo = MockGraphQLSceneRepository()..withData([testScene]);
 
-      await pumpTestWidget(
-        tester,
-        prefs: prefs,
-        overrides: [sceneRepositoryProvider.overrideWithValue(mockRepo)],
-        child: const GlobalFullscreenOverlay(),
-      );
+        await pumpTestWidget(
+          tester,
+          prefs: prefs,
+          overrides: [sceneRepositoryProvider.overrideWithValue(mockRepo)],
+          child: const GlobalFullscreenOverlay(),
+        );
 
-      final container = tester.element(find.byType(GlobalFullscreenOverlay));
-      final containerRef = ProviderScope.containerOf(container);
-      containerRef.read(playerStateProvider.notifier).setFullScreen(true);
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 500));
+        final container = tester.element(find.byType(GlobalFullscreenOverlay));
+        final containerRef = ProviderScope.containerOf(container);
+        containerRef.read(playerStateProvider.notifier).setFullScreen(true);
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 500));
 
-      blockExit = true;
-      containerRef.read(playerStateProvider.notifier).requestExitFullscreen();
-      await tester.pump();
+        blockExit = true;
+        containerRef.read(playerStateProvider.notifier).requestExitFullscreen();
+        await tester.pump();
 
-      expect(
-        containerRef.read(playerStateProvider).fullscreenPhase,
-        FullscreenPhase.exiting,
-      );
-      expect(containerRef.read(playerStateProvider).isFullScreen, isTrue);
-      expect(
-        containerRef.read(playerStateProvider).viewMode,
-        PlayerViewMode.fullscreen,
-      );
-      expect(
-        find.byKey(const ValueKey('global_fullscreen_overlay_slide')),
-        findsOneWidget,
-      );
-      expect(exitInvoked, isTrue);
+        expect(
+          containerRef.read(playerStateProvider).fullscreenPhase,
+          FullscreenPhase.exiting,
+        );
+        expect(containerRef.read(playerStateProvider).isFullScreen, isTrue);
+        expect(
+          containerRef.read(playerStateProvider).viewMode,
+          PlayerViewMode.fullscreen,
+        );
+        expect(
+          find.byKey(const ValueKey('global_fullscreen_overlay_slide')),
+          findsOneWidget,
+        );
+        expect(exitInvoked, isTrue);
 
-      exitCompleter.complete();
-      await _pumpUntil(
-        tester,
-        () =>
-            containerRef.read(playerStateProvider).fullscreenPhase ==
-            FullscreenPhase.inline,
-      );
+        exitCompleter.complete();
+        await _pumpUntil(
+          tester,
+          () =>
+              containerRef.read(playerStateProvider).fullscreenPhase ==
+              FullscreenPhase.inline,
+        );
 
-      expect(
-        containerRef.read(playerStateProvider).fullscreenPhase,
-        FullscreenPhase.inline,
-      );
-      expect(
-        find.byKey(const ValueKey('global_fullscreen_overlay_slide')),
-        findsNothing,
-      );
-    } finally {
-      debugDefaultTargetPlatformOverride = null;
-    }
-  });
+        expect(
+          containerRef.read(playerStateProvider).fullscreenPhase,
+          FullscreenPhase.inline,
+        );
+        expect(
+          find.byKey(const ValueKey('global_fullscreen_overlay_slide')),
+          findsNothing,
+        );
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+      }
+    },
+  );
 
   testWidgets('playback resume failure does not roll back a successful exit', (
     tester,
@@ -268,7 +271,8 @@ void main() {
       windowManagerHandler = (call) async {
         if (call.method == 'isMaximized') return false;
         if (call.method == 'setFullScreen' &&
-            (call.arguments as Map<Object?, Object?>)['isFullScreen'] == false) {
+            (call.arguments as Map<Object?, Object?>)['isFullScreen'] ==
+                false) {
           exitInvoked = true;
         }
         return null;
@@ -331,7 +335,8 @@ void main() {
       windowManagerHandler = (call) async {
         if (call.method == 'isMaximized') return false;
         if (call.method == 'setFullScreen' &&
-            (call.arguments as Map<Object?, Object?>)['isFullScreen'] == false) {
+            (call.arguments as Map<Object?, Object?>)['isFullScreen'] ==
+                false) {
           exitInvoked = true;
           throw PlatformException(
             code: 'fullscreen_error',

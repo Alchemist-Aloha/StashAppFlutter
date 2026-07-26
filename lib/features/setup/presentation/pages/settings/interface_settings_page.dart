@@ -980,7 +980,7 @@ class _InterfaceSettingsPageState extends ConsumerState<InterfaceSettingsPage> {
         .getString(appLanguagePreferenceKey);
     final languageEntries = supportedLanguages.entries.toList(growable: false);
 
-    showModalBottomSheet(
+    showModalBottomSheet<void>(
       context: context,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
