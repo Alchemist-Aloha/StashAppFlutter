@@ -44,7 +44,12 @@
 
 - **Settings hub**: `SettingsPanelGroup` now supports disabling dividers between items; applied to settings hub for a cleaner look.
 - **Scene details**: action padding balanced and compact metadata reveal action.
-- **Image fullscreen page**: updated layout and interaction patterns.
+- **Image fullscreen page**: updated layout and interaction patterns; integrated with `DesktopFullscreen` singleton; added keyboard shortcut dispatch for image viewer actions.
+- **Desktop drag scrolling**: A new `DesktopScrollBehavior` enables horizontal strips and scroll views to respond to click-and-drag with a mouse on desktop and web platforms.
+- **List page refresh**: Added a refresh icon button on desktop list page toolbars for quick data reloads.
+- **Scene marker cards redesigned**: Cards now use dynamic spacing via `context.dimensions`, display a time-range badge on thumbnails, include image cache hints for smoother scrolling, and have consistent card styling with `primaryContainer` tint.
+- **Bottom sheet frosted panel**: Backdrop blur filter now properly clips to the panel's border radius, preventing the blur effect from bleeding past rounded corners.
+- **Image loading retries**: `StashImage` retry mechanism improved with generation tracking to discard stale retries and deduplication-based prefetch management for more reliable image loading.
 
 ## 🛡️ Playback & Stability
 
@@ -80,7 +85,7 @@
 
 - **Java**: 17 → 21 (`sourceCompatibility`, `targetCompatibility`, Kotlin `jvmTarget`).
 - **AGP**: 8.11.1 → 9.3.0.
-- **Kotlin**: 2.2.20 → 2.4.0.
+- **Kotlin**: 2.2.20 → 2.3.20.
 - Removed `WRITE_EXTERNAL_STORAGE` permission (no longer needed on modern Android).
 - Removed `resConfigs("en")` — all locales are now bundled.
 - Removed `requestLegacyExternalStorage` flag.
@@ -99,11 +104,35 @@
 
 - Added `com.apple.security.files.user-selected.read-write` entitlement for both Debug and Release profiles.
 
+### ProGuard & Platform Cleanup
+
+- Removed unnecessary ProGuard keep rules for Flutter plugins and `AudioService`.
+
+## 🛠️ Code Quality & Infrastructure
+
+### Dart Strict Analysis
+
+- Enabled `strict-casts`, `strict-inference`, and `strict-raw-types` in `analysis_options.yaml` for stronger type safety.
+- Added lint rules: `prefer_single_quotes`, `always_declare_return_types`, `prefer_final_fields`, `prefer_final_locals`, `use_build_context_synchronously`, `only_throw_errors`, and more.
+- Fixed all violations across the codebase.
+
+### CI/CD Workflow Consolidation
+
+- Release workflows (`release.yml`, `nightly-release.yml`, `release-candidate.yml`) refactored to delegate to a shared `reusable-release.yml`, eliminating build-logic duplication.
+- New reusable workflow streamlines multi-platform builds and supports configurable archive suffixes, rolling tags, and prerelease flags.
+
+### Repository Cleanup
+
+- All generated GraphQL Dart files (`*.graphql.dart`) removed from version control — now generated at build time via `build_runner`.
+- Removed the `stash` Git submodule (official Stash source is available separately).
+- Deleted old planning documents and design specs from `docs/superpowers/plans/` and `docs/superpowers/specs/`.
+- Renamed `AGENT.md` → `AGENTS.md` with expanded agent guidance including worktree rules, release-note process, and design spec single-source-of-truth reference.
+
 ### Dependencies
 
 - `audio_service`: 0.18.18 → 0.18.19
 - `window_manager`: 0.5.1 → 0.5.2
-- `screen_retriever`: 0.2.1 → 0.2.2
+- Removed `screen_retriever` (window management now fully handled by `window_manager`)
 - `dio`: 5.9.2 → 5.10.0
 - `extended_image`: 10.0.1 → 10.1.0
 - Added `file_selector` and `share_plus` for config backup file operations.
