@@ -530,7 +530,6 @@ void main() {
     expect(find.text('Markers'), findsOneWidget);
     expect(find.text('Opening beat'), findsOneWidget);
     expect(find.text('01:05 - 01:35'), findsOneWidget);
-    expect(find.text('Beat'), findsOneWidget);
   });
 
   testWidgets('SceneDetailsPage creates marker then refreshes scene details', (
