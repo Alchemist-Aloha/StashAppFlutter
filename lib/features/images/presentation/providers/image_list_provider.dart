@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../domain/entities/image.dart' as entity;
@@ -56,9 +58,25 @@ class ImageSearchQuery extends _$ImageSearchQuery {
 
 @Riverpod(keepAlive: true)
 class ImageFilterState extends _$ImageFilterState {
+  static const _storageKey = 'image_filter_state';
+
   @override
   ({String? galleryId, ImageFilter filter}) build() {
-    return (galleryId: null, filter: const ImageFilter());
+    final prefs = ref.watch(sharedPreferencesProvider);
+    final jsonString = prefs.getString(_storageKey);
+    if (jsonString != null) {
+      try {
+        return (
+          galleryId: null,
+          filter: ImageFilter.fromJson(
+            jsonDecode(jsonString) as Map<String, dynamic>,
+          ),
+        );
+      } catch (_) {
+        // Fall through to the empty default for corrupt legacy preferences.
+      }
+    }
+    return (galleryId: null, filter: ImageFilter.empty());
   }
 
   void setGalleryId(String? id) =>
@@ -69,7 +87,8 @@ class ImageFilterState extends _$ImageFilterState {
   void clearGalleryId() => state = (galleryId: null, filter: state.filter);
 
   Future<void> saveAsDefault() async {
-    // Implementation for saving filter as default if desired.
+    final prefs = ref.read(sharedPreferencesProvider);
+    await prefs.setString(_storageKey, jsonEncode(state.filter.toJson()));
   }
 }
 
@@ -106,9 +125,11 @@ class ImageList extends _$ImageList {
   int _perPage = kDefaultPageSize;
   bool _hasMore = true;
   bool _isLoadingMore = false;
+  int _requestGeneration = 0;
 
   @override
   FutureOr<List<entity.Image>> build() async {
+    _requestGeneration++;
     _currentPage = 1;
     _hasMore = true;
     _isLoadingMore = false;
@@ -169,6 +190,7 @@ class ImageList extends _$ImageList {
   Future<void> fetchNextPage() async {
     if (_isLoadingMore || !_hasMore || state.isLoading) return;
 
+    final generation = _requestGeneration;
     _isLoadingMore = true;
     final repository = ref.read(imageRepositoryProvider);
     final query = ref.read(imageSearchQueryProvider);
@@ -195,6 +217,8 @@ class ImageList extends _$ImageList {
         ),
       );
 
+      if (generation != _requestGeneration) return;
+
       if (nextImages.isEmpty) {
         _hasMore = false;
       } else {
@@ -202,7 +226,7 @@ class ImageList extends _$ImageList {
         state = AsyncData([...state.value ?? [], ...nextImages]);
       }
     } finally {
-      _isLoadingMore = false;
+      if (generation == _requestGeneration) _isLoadingMore = false;
     }
   }
 

@@ -43,21 +43,40 @@ class _RetryingCachedImage extends StatefulWidget {
 
 class _RetryingCachedImageState extends State<_RetryingCachedImage> {
   int _attempt = 0;
+  int _retryGeneration = 0;
+  bool _retrying = false;
+
+  @override
+  void didUpdateWidget(_RetryingCachedImage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.imageUrl != widget.imageUrl ||
+        !mapEquals(oldWidget.headers, widget.headers) ||
+        oldWidget.cacheManager != widget.cacheManager) {
+      _attempt = 0;
+      _retryGeneration++;
+      _retrying = false;
+    }
+  }
 
   Future<void> _handleError() async {
-    if (_attempt >= _RetryingCachedImage.maxRetries) return;
+    if (_retrying || _attempt >= _RetryingCachedImage.maxRetries) return;
+    final generation = _retryGeneration;
+    final imageUrl = widget.imageUrl;
+    final cacheManager = widget.cacheManager;
+    _retrying = true;
     _attempt++;
 
     try {
       // Remove possibly-corrupted cached file and force re-download.
-      if (widget.cacheManager != null) {
-        await widget.cacheManager!.removeFile(widget.imageUrl);
+      if (cacheManager != null) {
+        await cacheManager.removeFile(imageUrl);
       }
     } catch (_) {}
 
     // Small delay to avoid tight retry loops and allow cache manager state to settle.
-    await Future.delayed(const Duration(milliseconds: 150));
-    if (mounted) setState(() {});
+    await Future<void>.delayed(const Duration(milliseconds: 150));
+    if (mounted && generation == _retryGeneration) setState(() {});
+    if (generation == _retryGeneration) _retrying = false;
   }
 
   @override
@@ -167,7 +186,7 @@ class StashImage extends ConsumerWidget {
     );
   }
 
-  static final Set<String> _prefetched = <String>{};
+  static final Set<String> _prefetching = <String>{};
   static const int defaultPrefetchDistance = 40;
   static const int _maxConcurrentPrefetch = 10;
   static int _ongoingPrefetches = 0;
@@ -186,19 +205,18 @@ class StashImage extends ConsumerWidget {
     }
 
     final dedupeKey = '$imageUrl|w${memCacheWidth ?? 0}h${memCacheHeight ?? 0}';
-    if (_prefetched.contains(dedupeKey)) return;
+    if (!_prefetching.add(dedupeKey)) return;
 
-    // Optimistically mark as prefetched to prevent concurrent attempts
-    // from queuing up while we wait on the throttle limit or IO
-    _prefetched.add(dedupeKey);
-
-    // Throttle concurrent prefetches to avoid saturating network / IO.
-    while (_ongoingPrefetches >= _maxConcurrentPrefetch) {
-      await Future.delayed(const Duration(milliseconds: 50));
-    }
-    if (!context.mounted) return;
-    _ongoingPrefetches++;
+    var acquiredSlot = false;
     try {
+      // Throttle concurrent prefetches to avoid saturating network / IO.
+      while (_ongoingPrefetches >= _maxConcurrentPrefetch) {
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+      }
+      if (!context.mounted) return;
+      _ongoingPrefetches++;
+      acquiredSlot = true;
+
       final baseProvider = CachedNetworkImageProvider(
         imageUrl,
         headers: headers,
@@ -218,10 +236,10 @@ class StashImage extends ConsumerWidget {
 
       await precacheImage(provider, context);
     } catch (_) {
-      // If it failed to prefetch, allow future attempts to try again
-      _prefetched.remove(dedupeKey);
+      // A visible image load can retry through the normal widget path.
     } finally {
-      _ongoingPrefetches--;
+      if (acquiredSlot) _ongoingPrefetches--;
+      _prefetching.remove(dedupeKey);
     }
   }
 

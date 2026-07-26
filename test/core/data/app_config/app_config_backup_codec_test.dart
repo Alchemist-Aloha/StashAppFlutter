@@ -79,14 +79,18 @@ void main() {
       {
         ...base,
         'serverProfiles': [
-          ...(base['serverProfiles'] as List),
-          (base['serverProfiles'] as List).first,
+          ...(base['serverProfiles'] as List<dynamic>),
+          (base['serverProfiles'] as List<dynamic>).first,
         ],
       },
       {
         ...base,
         'serverProfiles': [
-          {...(base['serverProfiles'] as List).first, 'baseUrl': 'file:///tmp'},
+          {
+            ...(base['serverProfiles'] as List<dynamic>).first
+                as Map<String, dynamic>,
+            'baseUrl': 'file:///tmp',
+          },
         ],
       },
       {

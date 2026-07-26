@@ -72,7 +72,7 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls> {
   static const _dragSeekSensitivity = 0.30;
   static const _dragSeekCurveExponent = 1.6;
 
-  final List<StreamSubscription> _subscriptions = [];
+  final List<StreamSubscription<dynamic>> _subscriptions = [];
 
   bool _isScrubbing = false;
   double _scrubMs = 0;

@@ -150,7 +150,7 @@ class _FakeSavedFilterClient extends GraphQLClient {
   ) async {
     return QueryResult<TParsed>(
       source: QueryResultSource.network,
-      data: const {'findSavedFilters': []},
+      data: const {'findSavedFilters': <dynamic>[]},
       options: options,
     );
   }

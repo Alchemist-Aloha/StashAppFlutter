@@ -142,7 +142,9 @@ class EntityGalleryFilterState extends _$EntityGalleryFilterState {
     final jsonString = prefs.getString(_storageKey(kind));
     if (jsonString != null) {
       try {
-        return GalleryFilter.fromJson(jsonDecode(jsonString));
+        return GalleryFilter.fromJson(
+          jsonDecode(jsonString) as Map<String, dynamic>,
+        );
       } catch (_) {
         return GalleryFilter.empty();
       }

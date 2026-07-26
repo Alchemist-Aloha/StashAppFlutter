@@ -132,7 +132,7 @@ class _EntitySceneMediaGridState extends ConsumerState<EntitySceneMediaGrid> {
   }
 
   void _showSortPanel() {
-    showFrostedPanelBottomSheet(
+    showFrostedPanelBottomSheet<void>(
       context: context,
       builder: (context) => ListSortBottomSheet<EntitySceneMediaSortField>(
         title: context.l10n.sort_scenes,
@@ -158,7 +158,7 @@ class _EntitySceneMediaGridState extends ConsumerState<EntitySceneMediaGrid> {
   }
 
   void _showFilterPanel() {
-    showFrostedPanelBottomSheet(
+    showFrostedPanelBottomSheet<void>(
       context: context,
       builder: (context) => SceneFilterPanel(
         initialFilter: ref.read(
@@ -214,7 +214,7 @@ class _EntitySceneMediaGridState extends ConsumerState<EntitySceneMediaGrid> {
       filter.copyWith(organized: organizedFilter.toBool() ?? filter.organized),
     );
 
-    showFrostedPanelBottomSheet(
+    showFrostedPanelBottomSheet<void>(
       context: context,
       builder: (context) => SceneSavedFilterDialog(
         searchQuery: ref.read(
@@ -273,10 +273,15 @@ class _EntitySceneMediaGridState extends ConsumerState<EntitySceneMediaGrid> {
       loadingItemBuilder: (context, isGrid, index) =>
           SceneCard.skeleton(isGrid: isGrid, useMasonry: isGrid),
       gridDelegate: widget.isGridView
-          ? GridUtils.createDelegate(crossAxisCount: widget.gridColumns ?? 2)
+          ? GridUtils.createDelegate(
+              context,
+              crossAxisCount: widget.gridColumns ?? 2,
+            )
           : null,
       useMasonry: widget.isGridView,
-      padding: widget.isGridView ? GridUtils.defaultPadding : EdgeInsets.zero,
+      padding: widget.isGridView
+          ? GridUtils.defaultPadding(context)
+          : EdgeInsets.zero,
       actions: [
         Stack(
           children: [

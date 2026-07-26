@@ -32,9 +32,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   late SharedPreferences prefs;
 
-  setUpAll(() {
-    MediaKit.ensureInitialized();
-  });
+  setUpAll(MediaKit.ensureInitialized);
 
   setUp(() async {
     SharedPreferences.setMockInitialValues({

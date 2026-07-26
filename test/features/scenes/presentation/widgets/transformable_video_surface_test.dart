@@ -116,7 +116,7 @@ void main() {
         matching: find.byType(Transform),
       );
       expect(transformFinder, findsOneWidget);
-      var transform = tester.widget<Transform>(transformFinder);
+      final transform = tester.widget<Transform>(transformFinder);
       expect(transform.transform, equals(Matrix4.identity()));
     },
   );

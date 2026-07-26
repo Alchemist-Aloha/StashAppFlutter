@@ -6,7 +6,7 @@ import 'scene_list_provider.dart';
 
 final sceneRandomNavigationControllerProvider =
     Provider<SceneRandomNavigationController>(
-      (ref) => SceneRandomNavigationController(ref),
+      SceneRandomNavigationController.new,
     );
 
 class SceneRandomNavigationController {

@@ -77,7 +77,7 @@ class _TransformableVideoSurfaceState extends State<TransformableVideoSurface> {
   Widget build(BuildContext context) {
     Widget content = Video(
       controller: widget.controller,
-      controls: NoVideoControls, // or just don't pass if default is no controls
+      controls: null,
       pauseUponEnteringBackgroundMode: false,
       subtitleViewConfiguration: SubtitleViewConfiguration(
         visible: true,

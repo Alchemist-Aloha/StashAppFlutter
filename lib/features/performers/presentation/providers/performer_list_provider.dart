@@ -69,7 +69,9 @@ class PerformerFilterState extends _$PerformerFilterState {
     final jsonString = prefs.getString(_storageKey);
     if (jsonString != null) {
       try {
-        return domain.PerformerFilter.fromJson(jsonDecode(jsonString));
+        return domain.PerformerFilter.fromJson(
+          jsonDecode(jsonString) as Map<String, dynamic>,
+        );
       } catch (_) {
         return domain.PerformerFilter.empty();
       }
@@ -92,9 +94,11 @@ class PerformerList extends _$PerformerList {
   int _perPage = kDefaultPageSize;
   bool _hasMore = true;
   bool _isLoadingMore = false;
+  int _requestGeneration = 0;
 
   @override
   FutureOr<List<Performer>> build() async {
+    _requestGeneration++;
     _currentPage = 1;
     _hasMore = true;
     _isLoadingMore = false;
@@ -161,6 +165,7 @@ class PerformerList extends _$PerformerList {
   Future<void> fetchNextPage() async {
     if (_isLoadingMore || !_hasMore || state.isLoading) return;
 
+    final generation = _requestGeneration;
     _isLoadingMore = true;
     final repository = ref.read(performerRepositoryProvider);
     final query = ref.read(performerSearchQueryProvider);
@@ -182,6 +187,7 @@ class PerformerList extends _$PerformerList {
         descending: sortConfig.descending,
         performerFilter: filterState,
       );
+      if (generation != _requestGeneration) return;
 
       if (nextPerformers.isEmpty) {
         _hasMore = false;
@@ -192,7 +198,7 @@ class PerformerList extends _$PerformerList {
     } catch (e) {
       // In a real app, you might want to show a snackbar for error during pagination
     } finally {
-      _isLoadingMore = false;
+      if (generation == _requestGeneration) _isLoadingMore = false;
     }
   }
 

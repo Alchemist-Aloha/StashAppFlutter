@@ -8,9 +8,6 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   const windowManagerChannel = MethodChannel('window_manager');
-  const windowsFullscreenChannel = MethodChannel(
-    'stash_app_flutter/window_fullscreen',
-  );
 
   setUp(() {
     debugDefaultTargetPlatformOverride = TargetPlatform.windows;
@@ -20,33 +17,118 @@ void main() {
     debugDefaultTargetPlatformOverride = null;
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(windowManagerChannel, null);
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(windowsFullscreenChannel, null);
   });
 
-  test('uses the app-owned fullscreen channel on Windows', () async {
-    final windowsCalls = <MethodCall>[];
+  test(
+    'shrinks a maximized Windows window before fullscreen and remaximizes it',
+    () async {
+      final windowManagerCalls = <MethodCall>[];
+      final setBoundsCalls = <Map<Object?, Object?>>[];
+      var isMaximized = true;
+
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(windowManagerChannel, (call) async {
+            windowManagerCalls.add(call);
+            switch (call.method) {
+              case 'isMaximized':
+                return isMaximized;
+              case 'getBounds':
+                return isMaximized
+                    ? <String, double>{
+                        'x': 0,
+                        'y': 0,
+                        'width': 1920,
+                        'height': 1080,
+                      }
+                    : <String, double>{
+                        'x': 200,
+                        'y': 120,
+                        'width': 1100,
+                        'height': 760,
+                      };
+              case 'unmaximize':
+                isMaximized = false;
+                return true;
+              case 'setBounds':
+                setBoundsCalls.add(
+                  Map<Object?, Object?>.from(
+                    call.arguments as Map<Object?, Object?>,
+                  ),
+                );
+                return true;
+              case 'setFullScreen':
+                return true;
+              case 'maximize':
+                isMaximized = true;
+                return true;
+            }
+            fail('Unexpected window_manager call: ${call.method}');
+          });
+
+      await DesktopFullscreen.instance.enter();
+      await DesktopFullscreen.instance.exit();
+
+      expect(windowManagerCalls.map((call) => call.method), [
+        'isMaximized',
+        'getBounds',
+        'unmaximize',
+        'isMaximized',
+        'getBounds',
+        'setBounds',
+        'setFullScreen',
+        'setFullScreen',
+        'setBounds',
+        'maximize',
+        'isMaximized',
+      ]);
+      expect(setBoundsCalls, hasLength(2));
+      expect(setBoundsCalls.first, containsPair('x', 16.0));
+      expect(setBoundsCalls.first, containsPair('y', 16.0));
+      expect(setBoundsCalls.first, containsPair('width', 1888.0));
+      expect(setBoundsCalls.first, containsPair('height', 1048.0));
+      expect(setBoundsCalls.last, containsPair('x', 200.0));
+      expect(setBoundsCalls.last, containsPair('y', 120.0));
+      expect(setBoundsCalls.last, containsPair('width', 1100.0));
+      expect(setBoundsCalls.last, containsPair('height', 760.0));
+      expect(isMaximized, isTrue);
+    },
+  );
+
+  test('does not maximize a Windows window that started smaller', () async {
     final windowManagerCalls = <MethodCall>[];
 
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(windowsFullscreenChannel, (call) async {
-          windowsCalls.add(call);
-          return null;
-        });
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(windowManagerChannel, (call) async {
           windowManagerCalls.add(call);
-          return true;
+          switch (call.method) {
+            case 'isMaximized':
+              return false;
+            case 'setFullScreen':
+              return true;
+          }
+          fail('Unexpected window_manager call: ${call.method}');
         });
 
     await DesktopFullscreen.instance.enter();
     await DesktopFullscreen.instance.exit();
 
-    expect(windowsCalls.map((call) => call.method), ['enter', 'exit']);
-    expect(windowManagerCalls, isEmpty);
+    expect(windowManagerCalls.map((call) => call.method), [
+      'isMaximized',
+      'setFullScreen',
+      'setFullScreen',
+    ]);
+    final fullscreenCalls = windowManagerCalls.where(
+      (call) => call.method == 'setFullScreen',
+    );
+    expect(
+      fullscreenCalls.map(
+        (call) => (call.arguments as Map<Object?, Object?>)['isFullScreen'],
+      ),
+      [true, false],
+    );
   });
 
-  test('keeps window_manager fullscreen on non-Windows desktop', () async {
+  test('keeps direct window_manager fullscreen on non-Windows', () async {
     debugDefaultTargetPlatformOverride = TargetPlatform.linux;
     final windowManagerCalls = <MethodCall>[];
 
@@ -63,33 +145,21 @@ void main() {
       'setFullScreen',
       'setFullScreen',
     ]);
-    expect(
-      windowManagerCalls.map(
-        (call) => (call.arguments as Map<Object?, Object?>)['isFullScreen'],
-      ),
-      [true, false],
-    );
   });
 
-  test('propagates Windows native errors without plugin fallback', () async {
-    final windowManagerCalls = <MethodCall>[];
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(windowsFullscreenChannel, (call) async {
-          throw PlatformException(
-            code: 'fullscreen_error',
-            message: 'SetWindowPos failed',
-          );
-        });
+  test('propagates window_manager errors', () async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.linux;
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(windowManagerChannel, (call) async {
-          windowManagerCalls.add(call);
-          return true;
+          throw PlatformException(
+            code: 'fullscreen_error',
+            message: 'setFullScreen failed',
+          );
         });
 
     await expectLater(
       DesktopFullscreen.instance.enter(),
       throwsA(isA<PlatformException>()),
     );
-    expect(windowManagerCalls, isEmpty);
   });
 }

@@ -237,7 +237,7 @@ class _AppearanceSettingsPageState
           spacing: context.dimensions.spacingSmall,
           runSpacing: context.dimensions.spacingSmall,
           children: [
-            ..._presetColors.map((color) => _buildColorSwatch(color)),
+            ..._presetColors.map(_buildColorSwatch),
             _buildColorSwatch(null),
           ],
         ),

@@ -6,7 +6,7 @@ import 'gallery_list_provider.dart';
 
 final galleryRandomNavigationControllerProvider =
     Provider<GalleryRandomNavigationController>(
-      (ref) => GalleryRandomNavigationController(ref),
+      GalleryRandomNavigationController.new,
     );
 
 class GalleryRandomNavigationController {

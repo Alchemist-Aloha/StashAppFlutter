@@ -68,7 +68,7 @@ class AuthService {
     debugPrint(
       'AuthService: Attempting login to $loginUri for user: $trimmedUsername',
     );
-    Response response;
+    Response<dynamic> response;
     try {
       response = await _dio.postUri(
         loginUri,
@@ -110,7 +110,7 @@ class AuthService {
   Future<void> logout({required Uri graphqlEndpoint}) async {
     final logoutUri = _resolveEndpoint(graphqlEndpoint, 'logout');
     try {
-      await _dio.getUri(logoutUri);
+      await _dio.getUri<dynamic>(logoutUri);
     } catch (_) {
       // Best effort endpoint call; always clear local cookie state.
     }

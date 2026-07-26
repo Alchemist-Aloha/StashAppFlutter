@@ -101,7 +101,7 @@ void main() {
         data: const {
           'findImages': {
             'count': 0,
-            'images': [],
+            'images': <dynamic>[],
             '__typename': 'ImageQueryResult',
           },
           '__typename': 'Query',

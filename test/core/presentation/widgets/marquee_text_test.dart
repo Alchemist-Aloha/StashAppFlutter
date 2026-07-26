@@ -69,7 +69,7 @@ void main() {
       // Destroy the widget
       await tester.pumpWidget(const SizedBox());
       // Small delay to allow mounted check to return false after Future.delayed finishes
-      await Future.delayed(const Duration(milliseconds: 5));
+      await Future<void>.delayed(const Duration(milliseconds: 5));
     });
   });
 
@@ -106,12 +106,12 @@ void main() {
       expect(scrollView.physics, isA<NeverScrollableScrollPhysics>());
 
       // Wait a moment for scroll logic to kick in
-      await Future.delayed(const Duration(milliseconds: 100));
+      await Future<void>.delayed(const Duration(milliseconds: 100));
       await tester.pump();
 
       // Ensure all timers finish so test cleans up correctly
       await tester.pumpWidget(const SizedBox());
-      await Future.delayed(const Duration(milliseconds: 20));
+      await Future<void>.delayed(const Duration(milliseconds: 20));
     });
   });
 }

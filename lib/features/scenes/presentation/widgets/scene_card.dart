@@ -186,7 +186,7 @@ class _SceneCardState extends ConsumerState<SceneCard> {
 
   /// Displays a custom scene info sheet for navigation actions.
   void _showMenu(BuildContext context, WidgetRef ref) {
-    showFrostedPanelBottomSheet(
+    showFrostedPanelBottomSheet<void>(
       context: context,
       useRootNavigator: true,
       constraints: BoxConstraints(
@@ -469,7 +469,7 @@ class _SceneCardState extends ConsumerState<SceneCard> {
                               ref.watch(showPerformerAvatarsProvider) &&
                               widget.scene.performerNames.isNotEmpty) ...[
                             const SizedBox(height: 8),
-                            _PerformerAvatarRow(
+                            ScenePerformerAvatarRow(
                               performerImagePaths:
                                   widget.scene.performerImagePaths,
                               performerNames: widget.scene.performerNames,
@@ -565,7 +565,7 @@ class _SceneCardState extends ConsumerState<SceneCard> {
                               ref.watch(showPerformerAvatarsProvider) &&
                               widget.scene.performerNames.isNotEmpty) ...[
                             const SizedBox(height: 4),
-                            _PerformerAvatarRow(
+                            ScenePerformerAvatarRow(
                               performerImagePaths:
                                   widget.scene.performerImagePaths,
                               performerNames: widget.scene.performerNames,
@@ -666,11 +666,13 @@ class _ThumbnailMetadataOverlay extends StatelessWidget {
   }
 }
 
-class _PerformerAvatarRow extends ConsumerWidget {
-  const _PerformerAvatarRow({
+/// Compact performer avatars shared by scene-based cards.
+class ScenePerformerAvatarRow extends ConsumerWidget {
+  const ScenePerformerAvatarRow({
     required this.performerImagePaths,
     required this.performerNames,
     required this.performerIds,
+    super.key,
   });
 
   final List<String?> performerImagePaths;

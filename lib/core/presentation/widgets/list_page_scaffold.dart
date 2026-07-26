@@ -188,7 +188,8 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
 
   SliverGridDelegate _getResponsiveGridDelegate(BuildContext context) {
     final delegate =
-        widget.gridDelegate ?? GridUtils.createDelegate(crossAxisCount: 1);
+        widget.gridDelegate ??
+        GridUtils.createDelegate(context, crossAxisCount: 1);
     if (delegate is! SliverGridDelegateWithFixedCrossAxisCount) {
       return delegate;
     }
@@ -324,6 +325,13 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
                     onPressed: widget.onFilterPressed,
                     tooltip: context.l10n.common_filter,
                   ),
+                if (isDesktop && widget.onRefresh != null)
+                  IconButton(
+                    key: const Key('list_page_refresh'),
+                    icon: const Icon(Icons.refresh_rounded),
+                    onPressed: widget.onRefresh,
+                    tooltip: context.l10n.common_refresh,
+                  ),
                 SearchAnchor(
                   searchController: _searchController,
                   viewOnClose: () {
@@ -352,9 +360,7 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
                     );
                   },
                   viewHintText: widget.searchHint,
-                  viewOnSubmitted: (value) {
-                    _searchController.closeView(value);
-                  },
+                  viewOnSubmitted: _searchController.closeView,
                   suggestionsBuilder:
                       (BuildContext context, SearchController controller) {
                         return [

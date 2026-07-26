@@ -146,7 +146,7 @@ class _ImagesPageState extends ConsumerState<ImagesPage> {
   }
 
   void _showSortPanel() {
-    showFrostedPanelBottomSheet(
+    showFrostedPanelBottomSheet<void>(
       context: context,
       builder: (context) => ListSortBottomSheet<_ImageSortOption>(
         title: context.l10n.images_sort_title,
@@ -171,7 +171,7 @@ class _ImagesPageState extends ConsumerState<ImagesPage> {
   }
 
   void _showFilterPanel() {
-    showFrostedPanelBottomSheet(
+    showFrostedPanelBottomSheet<void>(
       context: context,
       builder: (context) => const ImageFilterPanel(),
     );
@@ -189,7 +189,7 @@ class _ImagesPageState extends ConsumerState<ImagesPage> {
       organized: organizedFilter.toBool() ?? filterState.filter.organized,
     );
 
-    showFrostedPanelBottomSheet(
+    showFrostedPanelBottomSheet<void>(
       context: context,
       builder: (context) => SavedFilterDialog<ImageSavedFilterConfig>(
         searchQuery: ref.read(imageSearchQueryProvider),
@@ -272,7 +272,8 @@ class _ImagesPageState extends ConsumerState<ImagesPage> {
     final hasActiveFilters =
         filterActive || organizedFilter != OrganizedFilter.all;
 
-    int crossAxisCount = gridColumns ?? (isTablet ? 3 : (isMobile ? 2 : 5));
+    final int crossAxisCount =
+        gridColumns ?? (isTablet ? 3 : (isMobile ? 2 : 5));
 
     final randomNavigationEnabled = ref.watch(randomNavigationEnabledProvider);
 

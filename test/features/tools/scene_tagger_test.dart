@@ -533,8 +533,79 @@ void main() {
     await tester.pump();
 
     expect(find.text('Local A'), findsNothing);
-    expect(find.text('0 scenes on this page'), findsOneWidget);
+    expect(find.text('Page 1 of 1'), findsOneWidget);
     expect(repo.savedScrapedScenes, isEmpty);
+  });
+
+  testWidgets('SceneTaggerPage navigates paged results from the top bar', (
+    tester,
+  ) async {
+    final allScenes = List.generate(
+      30,
+      (index) =>
+          toolTaggerScene(id: 'scene-$index', title: 'Local Scene $index'),
+    );
+    final repo = MockGraphQLSceneRepository()
+      ..setData(allScenes)
+      ..findScenesResponses.addAll([
+        allScenes.take(25).toList(growable: false),
+        allScenes.skip(25).toList(growable: false),
+      ]);
+
+    await _pumpSceneTagger(
+      tester,
+      prefs: prefs,
+      repo: repo,
+      stashBoxes: [
+        StashBoxEndpoint(
+          name: 'Primary Box',
+          endpoint: 'https://box.test/graphql',
+        ),
+      ],
+    );
+    await tester.pumpAndSettle();
+
+    final resultsList = find.byKey(
+      const ValueKey('scene_tagger_results_currentPage'),
+    );
+    final bottomPagination = find.byKey(
+      const ValueKey('scene_tagger_pagination_bottom'),
+    );
+    expect(find.text('Page 1 of 2'), findsOneWidget);
+    expect(bottomPagination, findsNothing);
+
+    final resultsScrollable = find.descendant(
+      of: resultsList,
+      matching: find.byType(Scrollable),
+    );
+    final scrollPosition = tester
+        .state<ScrollableState>(resultsScrollable.first)
+        .position;
+    scrollPosition.jumpTo(scrollPosition.maxScrollExtent);
+    await tester.pumpAndSettle();
+
+    expect(bottomPagination, findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('scene_tagger_pagination_top')),
+      findsNothing,
+    );
+
+    scrollPosition.jumpTo(scrollPosition.minScrollExtent);
+    await tester.pumpAndSettle();
+
+    final topPagination = find.byKey(
+      const ValueKey('scene_tagger_pagination_top'),
+    );
+    expect(topPagination, findsOneWidget);
+    expect(bottomPagination, findsNothing);
+    await tester.tap(
+      find.descendant(of: topPagination, matching: find.byTooltip('Next page')),
+    );
+    await tester.pumpAndSettle();
+
+    expect(repo.lastFindScenesPage, 2);
+    expect(find.text('Page 2 of 2'), findsWidgets);
+    expect(find.text('Local Scene 25'), findsWidgets);
   });
 
   testWidgets('SceneTaggerPage preview starts as a thumbnail-first control', (

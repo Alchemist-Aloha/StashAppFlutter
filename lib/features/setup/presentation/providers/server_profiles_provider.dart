@@ -34,8 +34,10 @@ class ServerProfiles extends _$ServerProfiles {
       return [];
     }
 
-    final List<dynamic> list = jsonDecode(profilesJson);
-    return list.map((e) => ServerProfile.fromJson(e)).toList();
+    final list = jsonDecode(profilesJson) as List<dynamic>;
+    return list
+        .map((e) => ServerProfile.fromJson(e as Map<String, dynamic>))
+        .toList();
   }
 
   AuthMode _getLegacyAuthMode() {

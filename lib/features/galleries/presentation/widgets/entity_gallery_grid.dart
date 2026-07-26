@@ -134,7 +134,7 @@ class _EntityGalleryGridState extends ConsumerState<EntityGalleryGrid> {
   }
 
   void _showSortPanel() {
-    showFrostedPanelBottomSheet(
+    showFrostedPanelBottomSheet<void>(
       context: context,
       builder: (context) => ListSortBottomSheet<EntityGallerySortOption>(
         title: context.l10n.galleries_sort_title,
@@ -160,7 +160,7 @@ class _EntityGalleryGridState extends ConsumerState<EntityGalleryGrid> {
   }
 
   void _showFilterPanel() {
-    showFrostedPanelBottomSheet(
+    showFrostedPanelBottomSheet<void>(
       context: context,
       builder: (context) => GalleryFilterPanel(
         initialFilter: ref.read(
@@ -228,7 +228,7 @@ class _EntityGalleryGridState extends ConsumerState<EntityGalleryGrid> {
       filter.copyWith(organized: organizedFilter.toBool() ?? filter.organized),
     );
 
-    showFrostedPanelBottomSheet(
+    showFrostedPanelBottomSheet<void>(
       context: context,
       builder: (context) => SavedFilterDialog<GallerySavedFilterConfig>(
         searchQuery: ref.read(
@@ -340,10 +340,15 @@ class _EntityGalleryGridState extends ConsumerState<EntityGalleryGrid> {
       loadingItemBuilder: (context, isGrid, index) =>
           GalleryCard.skeleton(isGrid: isGrid, useMasonry: isGrid),
       gridDelegate: widget.isGridView
-          ? GridUtils.createDelegate(crossAxisCount: widget.gridColumns ?? 2)
+          ? GridUtils.createDelegate(
+              context,
+              crossAxisCount: widget.gridColumns ?? 2,
+            )
           : null,
       useMasonry: widget.isGridView,
-      padding: widget.isGridView ? GridUtils.defaultPadding : EdgeInsets.zero,
+      padding: widget.isGridView
+          ? GridUtils.defaultPadding(context)
+          : EdgeInsets.zero,
       actions: [
         Stack(
           children: [

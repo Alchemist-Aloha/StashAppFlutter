@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -43,15 +44,49 @@ void main() {
     expect(source, contains('await windowManager.focus()'));
   });
 
+  testWidgets('desktop scroll behavior supports mouse drag scrolling', (
+    WidgetTester tester,
+  ) async {
+    final controller = ScrollController();
+    addTearDown(controller.dispose);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        scrollBehavior: const DesktopScrollBehavior(),
+        home: SizedBox(
+          width: 300,
+          height: 100,
+          child: ListView.builder(
+            controller: controller,
+            scrollDirection: Axis.horizontal,
+            itemExtent: 200,
+            itemCount: 10,
+            itemBuilder: (context, index) => Text('Item $index'),
+          ),
+        ),
+      ),
+    );
+
+    final gesture = await tester.startGesture(
+      tester.getCenter(find.byType(ListView)),
+      kind: PointerDeviceKind.mouse,
+    );
+    await gesture.moveBy(const Offset(-200, 0));
+    await gesture.up();
+    await tester.pumpAndSettle();
+
+    expect(controller.offset, greaterThan(0));
+  });
+
   testWidgets('MyApp builds correctly', (WidgetTester tester) async {
     final originalOnError = FlutterError.onError;
     FlutterError.onError = (FlutterErrorDetails details) {
       bool isOverflowError = false;
 
-      var exception = details.exception;
+      final exception = details.exception;
       if (exception is FlutterError) {
         isOverflowError = exception.diagnostics.any(
-          (e) => e.value.toString().contains("A RenderFlex overflowed by"),
+          (e) => e.value.toString().contains('A RenderFlex overflowed by'),
         );
       }
 

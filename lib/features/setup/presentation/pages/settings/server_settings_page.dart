@@ -78,7 +78,7 @@ class _ServerSettingsPageState extends ConsumerState<ServerSettingsPage> {
   }
 
   void _showProfileDrawer([ServerProfile? profile]) {
-    showModalBottomSheet(
+    showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       builder: (context) => ServerProfileDrawer(profile: profile),
@@ -105,7 +105,7 @@ class _ServerSettingsPageState extends ConsumerState<ServerSettingsPage> {
       title: '${l10n.settings_server} ${l10n.settings_title}',
       floatingActionButton: FloatingActionButton(
         tooltip: l10n.settings_server_profile_add,
-        onPressed: () => _showProfileDrawer(),
+        onPressed: _showProfileDrawer,
         child: const Icon(Icons.add),
       ),
       child: profiles.isEmpty
@@ -114,7 +114,7 @@ class _ServerSettingsPageState extends ConsumerState<ServerSettingsPage> {
                 icon: Icons.dns_rounded,
                 title: l10n.settings_server_profile_empty,
                 action: ElevatedButton.icon(
-                  onPressed: () => _showProfileDrawer(),
+                  onPressed: _showProfileDrawer,
                   icon: const Icon(Icons.add),
                   label: Text(l10n.settings_server_profile_add),
                 ),

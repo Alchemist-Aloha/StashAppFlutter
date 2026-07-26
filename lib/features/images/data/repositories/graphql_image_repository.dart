@@ -42,7 +42,7 @@ class GraphQLImageRepository {
       orientation: (imageFilter?.orientation != null)
           ? Input$OrientationCriterionInput(
               value: imageFilter!.orientation!.value
-                  .map((o) => fromJson$Enum$OrientationEnum(o))
+                  .map(fromJson$Enum$OrientationEnum)
                   .toList(),
             )
           : null,

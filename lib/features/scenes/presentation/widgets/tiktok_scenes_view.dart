@@ -280,7 +280,7 @@ class _TiktokScenesViewState extends ConsumerState<TiktokScenesView> {
       );
 
       if (feedStartRandom && startPosition == null) {
-        late StreamSubscription subscription;
+        late StreamSubscription<dynamic> subscription;
         subscription = player.stream.duration.listen((duration) async {
           if (duration.inSeconds > 0) {
             subscription.cancel();
@@ -611,7 +611,7 @@ class _TiktokSceneItemState extends ConsumerState<TiktokSceneItem> {
   }
 
   void _showRatingPicker() {
-    showModalBottomSheet(
+    showModalBottomSheet<void>(
       context: context,
       backgroundColor: Colors.transparent,
       builder: (context) {

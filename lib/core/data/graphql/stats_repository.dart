@@ -35,21 +35,24 @@ class StatsResult {
   });
 
   factory StatsResult.fromJson(Map<String, dynamic> json) {
+    int intValue(String key) => (json[key] as num?)?.toInt() ?? 0;
+    double doubleValue(String key) => (json[key] as num?)?.toDouble() ?? 0;
+
     return StatsResult(
-      sceneCount: json['scene_count'] ?? 0,
-      scenesSize: (json['scenes_size'] ?? 0).toDouble(),
-      scenesDuration: (json['scenes_duration'] ?? 0).toDouble(),
-      imageCount: json['image_count'] ?? 0,
-      imagesSize: (json['images_size'] ?? 0).toDouble(),
-      galleryCount: json['gallery_count'] ?? 0,
-      performerCount: json['performer_count'] ?? 0,
-      studioCount: json['studio_count'] ?? 0,
-      groupCount: json['group_count'] ?? 0,
-      tagCount: json['tag_count'] ?? 0,
-      totalOCount: json['total_o_count'] ?? 0,
-      totalPlayDuration: (json['total_play_duration'] ?? 0).toDouble(),
-      totalPlayCount: json['total_play_count'] ?? 0,
-      scenesPlayed: json['scenes_played'] ?? 0,
+      sceneCount: intValue('scene_count'),
+      scenesSize: doubleValue('scenes_size'),
+      scenesDuration: doubleValue('scenes_duration'),
+      imageCount: intValue('image_count'),
+      imagesSize: doubleValue('images_size'),
+      galleryCount: intValue('gallery_count'),
+      performerCount: intValue('performer_count'),
+      studioCount: intValue('studio_count'),
+      groupCount: intValue('group_count'),
+      tagCount: intValue('tag_count'),
+      totalOCount: intValue('total_o_count'),
+      totalPlayDuration: doubleValue('total_play_duration'),
+      totalPlayCount: intValue('total_play_count'),
+      scenesPlayed: intValue('scenes_played'),
     );
   }
 }
@@ -95,6 +98,6 @@ class StatsRepository {
       throw Exception('Failed to fetch stats: data is null');
     }
 
-    return StatsResult.fromJson(data);
+    return StatsResult.fromJson(data as Map<String, dynamic>);
   }
 }

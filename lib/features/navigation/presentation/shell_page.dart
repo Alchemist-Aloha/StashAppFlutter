@@ -127,7 +127,7 @@ class _ShellPageState extends ConsumerState<ShellPage> {
   }
 
   void _showUpdateDialog(UpdateInfo updateInfo) {
-    showDialog(
+    showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
@@ -193,7 +193,7 @@ class _ShellPageState extends ConsumerState<ShellPage> {
     final serverUrl = ref.read(serverUrlProvider);
     if (serverUrl.isEmpty && !_dialogShown && mounted) {
       _dialogShown = true;
-      showDialog(
+      showDialog<void>(
         context: context,
         barrierDismissible: false,
         builder: (context) => AlertDialog(

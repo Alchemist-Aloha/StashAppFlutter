@@ -22,7 +22,7 @@ void main() {
                 'direction': 'DESC',
               },
               'object_filter': {'filter_favorites': true},
-              'ui_options': {},
+              'ui_options': <String, dynamic>{},
             },
           ],
         },
@@ -57,7 +57,7 @@ void main() {
               'direction': 'ASC',
             },
             'object_filter': {'favorite': true},
-            'ui_options': {},
+            'ui_options': <String, dynamic>{},
           },
         },
       );

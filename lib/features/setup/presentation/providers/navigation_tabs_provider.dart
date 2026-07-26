@@ -85,9 +85,11 @@ class NavigationTabsNotifier extends Notifier<List<NavigationTab>> {
     }
 
     try {
-      final List<dynamic> decoded = jsonDecode(raw);
+      final decoded = jsonDecode(raw) as List<dynamic>;
       return _normalizeTabs(
-        decoded.map((j) => NavigationTab.fromJson(j)).toList(),
+        decoded
+            .map((j) => NavigationTab.fromJson(j as Map<String, dynamic>))
+            .toList(),
       );
     } catch (_) {
       return _defaultTabs();

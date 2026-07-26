@@ -262,34 +262,35 @@ void main() {
     );
   });
 
-  testWidgets('fullscreen controls render and trigger the random scene button', (
-    tester,
-  ) async {
-    var randomPressed = false;
+  testWidgets(
+    'fullscreen controls render and trigger the random scene button',
+    (tester) async {
+      var randomPressed = false;
 
-    await _pumpControls(
-      tester,
-      scene: _buildScene(),
-      onFullScreenToggle: () {},
-      onRandomScene: () => randomPressed = true,
-    );
+      await _pumpControls(
+        tester,
+        scene: _buildScene(),
+        onFullScreenToggle: () {},
+        onRandomScene: () => randomPressed = true,
+      );
 
-    final container = ProviderScope.containerOf(
-      tester.element(find.byType(NativeVideoControls)),
-    );
-    container.read(playerStateProvider.notifier).setFullScreen(true);
-    await tester.pump();
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(NativeVideoControls)),
+      );
+      container.read(playerStateProvider.notifier).setFullScreen(true);
+      await tester.pump();
 
-    final randomButton = find.byKey(
-      const Key('fullscreen_random_scene_button'),
-    );
-    expect(randomButton, findsOneWidget);
+      final randomButton = find.byKey(
+        const Key('fullscreen_random_scene_button'),
+      );
+      expect(randomButton, findsOneWidget);
 
-    await tester.tap(randomButton);
-    await tester.pump();
+      await tester.tap(randomButton);
+      await tester.pump();
 
-    expect(randomPressed, isTrue);
-  });
+      expect(randomPressed, isTrue);
+    },
+  );
 }
 
 Scene _buildScene({

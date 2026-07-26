@@ -121,7 +121,7 @@ class AppCastService extends Notifier<CastState> {
           onDone: () {
             logCastProcess('CastService: discovery completed');
           },
-          onError: (error) {
+          onError: (Object error) {
             logCastProcess('CastService: discovery error: $error');
           },
         );

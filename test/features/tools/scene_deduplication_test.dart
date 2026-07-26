@@ -13,6 +13,37 @@ import 'package:stash_app_flutter/l10n/app_localizations.dart';
 
 import '../../helpers/test_helpers.dart';
 
+class _PartialDeleteRepository extends MockGraphQLSceneRepository {
+  final deletedIds = <String>[];
+  int duplicateLoads = 0;
+
+  @override
+  Future<void> deleteScene(
+    String id, {
+    required bool deleteFile,
+    bool deleteGenerated = true,
+  }) async {
+    if (id == 'c') throw Exception('delete failed');
+    deletedIds.add(id);
+  }
+
+  @override
+  Future<List<SceneDuplicateGroup>> findDuplicateScenes({
+    int distance = 0,
+    double durationDiff = 1,
+  }) async {
+    duplicateLoads++;
+    return [
+      for (final group in duplicateGroups)
+        SceneDuplicateGroup(
+          scenes: group.scenes
+              .where((scene) => !deletedIds.contains(scene.id))
+              .toList(),
+        ),
+    ];
+  }
+}
+
 void main() {
   late SharedPreferences prefs;
 
@@ -217,6 +248,52 @@ void main() {
     expect(find.text('Scene b'), findsOneWidget);
   });
 
+  testWidgets('reloads results after a partially successful batch deletion', (
+    tester,
+  ) async {
+    final repo = _PartialDeleteRepository()
+      ..duplicateGroups = [
+        SceneDuplicateGroup(
+          scenes: [
+            duplicateScene(id: 'a', fileSize: 300, videoCodec: 'h264'),
+            duplicateScene(id: 'b', fileSize: 200, videoCodec: 'h264'),
+            duplicateScene(id: 'c', fileSize: 100, videoCodec: 'h264'),
+          ],
+        ),
+      ];
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          sharedPreferencesProvider.overrideWithValue(prefs),
+          sceneRepositoryProvider.overrideWithValue(repo),
+        ],
+        child: MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          theme: AppTheme.lightTheme,
+          home: const SceneDeduplicationPage(),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.ensureVisible(find.text('Select'));
+    await tester.tap(find.text('Select'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('All but largest file'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Delete selected (2)'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Delete metadata'));
+    await tester.pumpAndSettle();
+
+    expect(repo.deletedIds, ['b']);
+    expect(repo.duplicateLoads, 2);
+    expect(find.text('Scene b'), findsNothing);
+    expect(find.text('Scene c'), findsOneWidget);
+  });
+
   testWidgets(
     'SceneDeduplicationPage stacks duplicate scene actions on mobile',
     (tester) async {
@@ -260,6 +337,108 @@ void main() {
       expect(deleteTopLeft.dy, greaterThan(openTopLeft.dy));
     },
   );
+
+  testWidgets(
+    'SceneDeduplicationPage places duplicate scene actions inline on desktop',
+    (tester) async {
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(1280, 900);
+
+      final repo = MockGraphQLSceneRepository()
+        ..duplicateGroups = [
+          SceneDuplicateGroup(
+            scenes: [
+              duplicateScene(id: 'a', fileSize: 200),
+              duplicateScene(id: 'b', fileSize: 100),
+            ],
+          ),
+        ];
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            sharedPreferencesProvider.overrideWithValue(prefs),
+            sceneRepositoryProvider.overrideWithValue(repo),
+          ],
+          child: MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            theme: AppTheme.lightTheme,
+            home: const SceneDeduplicationPage(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final openScene = find.byTooltip('Open scene').first;
+      final deleteScene = find.byTooltip('Delete').first;
+      final openTopLeft = tester.getTopLeft(openScene);
+      final deleteTopLeft = tester.getTopLeft(deleteScene);
+
+      expect(deleteTopLeft.dy, openTopLeft.dy);
+      expect(deleteTopLeft.dx, greaterThan(openTopLeft.dx));
+    },
+  );
+
+  testWidgets('opens scene details from the duplicate scene action', (
+    tester,
+  ) async {
+    final repo = MockGraphQLSceneRepository()
+      ..duplicateGroups = [
+        SceneDuplicateGroup(
+          scenes: [
+            duplicateScene(id: 'a'),
+            duplicateScene(id: 'b'),
+          ],
+        ),
+      ];
+    final router = GoRouter(
+      initialLocation: '/tools/scene-deduplication',
+      routes: [
+        GoRoute(
+          path: '/tools',
+          builder: (context, state) => const SizedBox.shrink(),
+          routes: [
+            GoRoute(
+              path: 'scene-deduplication',
+              builder: (context, state) => const SceneDeduplicationPage(),
+            ),
+          ],
+        ),
+        GoRoute(
+          path: '/scene/:id',
+          builder: (context, state) =>
+              Text('Details ${state.pathParameters['id']}'),
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          sharedPreferencesProvider.overrideWithValue(prefs),
+          sceneRepositoryProvider.overrideWithValue(repo),
+        ],
+        child: MaterialApp.router(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          theme: AppTheme.lightTheme,
+          routerConfig: router,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final openSceneButton = tester.widget<IconButton>(
+      find.widgetWithIcon(IconButton, Icons.open_in_new_rounded).first,
+    );
+    openSceneButton.onPressed!();
+    await tester.pumpAndSettle();
+
+    expect(find.text('Details a'), findsOneWidget);
+  });
 }
 
 SceneDuplicateScene duplicateScene({

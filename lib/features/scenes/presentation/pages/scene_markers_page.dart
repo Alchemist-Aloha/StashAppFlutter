@@ -79,7 +79,7 @@ class _SceneMarkersPageState extends ConsumerState<SceneMarkersPage> {
   }
 
   void _showSortPanel() {
-    showFrostedPanelBottomSheet(
+    showFrostedPanelBottomSheet<void>(
       context: context,
       builder: (context) => ListSortBottomSheet<_MarkerSortField>(
         title: context.l10n.sort_markers_title,
@@ -104,7 +104,7 @@ class _SceneMarkersPageState extends ConsumerState<SceneMarkersPage> {
   }
 
   void _showFilterPanel() {
-    showFrostedPanelBottomSheet(
+    showFrostedPanelBottomSheet<void>(
       context: context,
       builder: (context) => const SceneMarkerFilterPanel(),
     );
@@ -114,7 +114,7 @@ class _SceneMarkersPageState extends ConsumerState<SceneMarkersPage> {
     final sortConfig = ref.read(sceneMarkerSortProvider);
     final filter = ref.read(sceneMarkerFilterStateProvider);
 
-    showFrostedPanelBottomSheet(
+    showFrostedPanelBottomSheet<void>(
       context: context,
       builder: (context) => SavedFilterDialog<SceneMarkerSavedFilterConfig>(
         searchQuery: ref.read(sceneMarkerSearchQueryProvider),
@@ -193,9 +193,9 @@ class _SceneMarkersPageState extends ConsumerState<SceneMarkersPage> {
           ref.read(sceneMarkerListProvider.notifier).setPerPage(pageSize),
       useMasonry: isGridLayout,
       gridDelegate: isGridLayout
-          ? GridUtils.createDelegate(crossAxisCount: gridColumns)
+          ? GridUtils.createDelegate(context, crossAxisCount: gridColumns)
           : null,
-      padding: GridUtils.defaultPadding,
+      padding: GridUtils.defaultPadding(context),
       actions: [
         Stack(
           children: [
@@ -226,7 +226,12 @@ class _SceneMarkersPageState extends ConsumerState<SceneMarkersPage> {
         ),
       ],
       itemBuilder: (context, marker, memCacheWidth, memCacheHeight) {
-        return SceneMarkerCard(marker: marker, isGrid: isGridLayout);
+        return SceneMarkerCard(
+          marker: marker,
+          isGrid: isGridLayout,
+          memCacheWidth: memCacheWidth,
+          memCacheHeight: memCacheHeight,
+        );
       },
     );
   }

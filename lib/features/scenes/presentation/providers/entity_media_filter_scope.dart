@@ -88,7 +88,9 @@ class EntityMediaFilterState extends _$EntityMediaFilterState {
     final jsonString = prefs.getString(_storageKey(kind));
     if (jsonString != null) {
       try {
-        return SceneFilter.fromJson(jsonDecode(jsonString));
+        return SceneFilter.fromJson(
+          jsonDecode(jsonString) as Map<String, dynamic>,
+        );
       } catch (_) {
         return SceneFilter.empty();
       }
