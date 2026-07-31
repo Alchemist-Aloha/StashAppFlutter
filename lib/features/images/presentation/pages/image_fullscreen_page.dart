@@ -174,7 +174,7 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
     Map<String, String> headers,
   ) {
     setState(() => _currentIndex = index);
-    _prefetchAdjacent(items, index, headers);
+    _warmAdjacentFiles(items, index, headers);
 
     if (index >= items.length - 5) {
       ref.read(imageListProvider.notifier).fetchNextPage();
@@ -675,21 +675,24 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
     }
   }
 
-  void _prefetchAdjacent(
+  void _warmAdjacentFiles(
     List<entity.Image> items,
     int index,
     Map<String, String> headers,
   ) {
-    // Prefetch next 2 and previous 1
+    if (kIsWeb) return;
+
+    // Warm raw files without decoding full-resolution images into memory.
     for (var i = 1; i <= 2; i++) {
       if (index + i < items.length) {
         final url =
             items[index + i].paths.image ?? items[index + i].paths.preview;
         if (url != null) {
-          precacheImage(
-            ExtendedNetworkImageProvider(url, headers: headers, cache: true),
-            context,
-          );
+          ExtendedNetworkImageProvider(
+            url,
+            headers: headers,
+            cache: true,
+          ).getNetworkImageData().ignore();
         }
       }
     }
@@ -697,10 +700,11 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
       final url =
           items[index - 1].paths.image ?? items[index - 1].paths.preview;
       if (url != null) {
-        precacheImage(
-          ExtendedNetworkImageProvider(url, headers: headers, cache: true),
-          context,
-        );
+        ExtendedNetworkImageProvider(
+          url,
+          headers: headers,
+          cache: true,
+        ).getNetworkImageData().ignore();
       }
     }
   }
@@ -1032,10 +1036,10 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
           _pageController = ExtendedPageController(initialPage: _currentIndex);
           _initialPageSet = true;
 
-          // Prefetch initial adjacent images
+          // Warm initial adjacent image files.
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (!mounted) return;
-            _prefetchAdjacent(items, _currentIndex, headers);
+            _warmAdjacentFiles(items, _currentIndex, headers);
           });
         }
 
