@@ -16,6 +16,7 @@ open class MainActivity : AudioServiceActivity() {
 	private val pipChannel = "stash_app_flutter/pip"
 	private val volumeChannel = "stash_app_flutter/media_volume"
 	private var channel: MethodChannel? = null
+	private var pendingMediaVolumeSteps = 0.0
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -56,14 +57,21 @@ open class MainActivity : AudioServiceActivity() {
 			}
 	}
 
-	private fun adjustMediaVolume(delta: Double): Double? = try {
+	internal fun adjustMediaVolume(delta: Double): Double? = try {
 		val audioManager = getSystemService(Context.AUDIO_SERVICE) as? AudioManager ?: return null
 		val maximum = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
 		if (maximum <= 0) return null
 
-		val target = (audioManager.getStreamVolume(AudioManager.STREAM_MUSIC) + delta * maximum)
-			.roundToInt()
-			.coerceIn(0, maximum)
+		pendingMediaVolumeSteps += delta * maximum
+		val adjustment = pendingMediaVolumeSteps.roundToInt()
+		val current = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
+		val unclampedTarget = current + adjustment
+		val target = unclampedTarget.coerceIn(0, maximum)
+		pendingMediaVolumeSteps = if (target == unclampedTarget) {
+			pendingMediaVolumeSteps - adjustment
+		} else {
+			0.0
+		}
 		audioManager.setStreamVolume(
 			AudioManager.STREAM_MUSIC,
 			target,
