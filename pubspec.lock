@@ -293,10 +293,10 @@ packages:
     dependency: "direct main"
     description:
       name: dart_cast
-      sha256: "57bd2baae125ae2874712d89985fc9f3af5976bc98914f6f1c0954d3cdee4021"
+      sha256: "5c2aecc97d14fce2c824bb781a9c67bb4b3f63a4d05f3fcde71ff478640824d3"
       url: "https://pub.dev"
     source: hosted
-    version: "0.6.0"
+    version: "0.7.3"
   dart_style:
     dependency: transitive
     description:
