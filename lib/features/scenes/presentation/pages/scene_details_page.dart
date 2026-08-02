@@ -531,8 +531,11 @@ class _SceneDetailsPageState extends ConsumerState<SceneDetailsPage> {
   Widget build(BuildContext context) {
     final sceneAsync = ref.watch(sceneDetailsProvider(widget.sceneId));
     final randomNavigationEnabled = ref.watch(randomNavigationEnabledProvider);
+    final isVideoFullScreen = ref.watch(
+      playerStateProvider.select((state) => state.isFullScreen),
+    );
 
-    return Scaffold(
+    final page = Scaffold(
       floatingActionButton: randomNavigationEnabled
           ? sceneAsync.maybeWhen(
               data: (_) => FloatingActionButton.small(
@@ -670,6 +673,20 @@ class _SceneDetailsPageState extends ConsumerState<SceneDetailsPage> {
           },
         ),
       ),
+    );
+
+    return PopScope(
+      canPop: !isVideoFullScreen,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop || !isVideoFullScreen) return;
+        final notifier = ref.read(playerStateProvider.notifier);
+        notifier.requestExitFullscreen();
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted) return;
+          notifier.syncBackgroundToActiveScene(context);
+        });
+      },
+      child: page,
     );
   }
 

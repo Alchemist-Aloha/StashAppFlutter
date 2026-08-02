@@ -899,14 +899,22 @@ class PlayerState extends _$PlayerState with WidgetsBindingObserver {
 
     final router = GoRouter.of(context);
     final currentPath = router.routeInformationProvider.value.uri.path;
+    final segments = Uri.parse(currentPath).pathSegments;
+    final isActiveSceneDetails =
+        (segments.length >= 3 &&
+            segments[0] == 'scenes' &&
+            segments[1] == 'scene' &&
+            segments[2] == activeSceneId) ||
+        (segments.length >= 2 &&
+            segments[0] == 'scene' &&
+            segments[1] == activeSceneId);
 
-    // If we are not already on the details page for this scene
-    if (!currentPath.contains('/scenes/scene/$activeSceneId')) {
+    if (!isActiveSceneDetails) {
       AppLogStore.instance.add(
         'PlayerState: syncing background to scene $activeSceneId',
         source: 'player_provider',
       );
-      router.pushReplacement('/scenes/scene/$activeSceneId');
+      router.go('/scenes/scene/$activeSceneId');
     }
   }
 

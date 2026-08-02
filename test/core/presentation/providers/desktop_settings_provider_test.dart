@@ -5,7 +5,7 @@ import 'package:stash_app_flutter/core/data/preferences/shared_preferences_provi
 import 'package:stash_app_flutter/core/presentation/providers/desktop_settings_provider.dart';
 
 void main() {
-  test('desktop settings load synchronously and persist updates', () async {
+  test('desktop settings are reset for each app session', () async {
     SharedPreferences.setMockInitialValues({
       'desktop_volume': 0.4,
       'desktop_is_muted': true,
@@ -17,15 +17,15 @@ void main() {
     addTearDown(container.dispose);
 
     final settings = container.read(desktopSettingsProvider);
-    expect(settings.volume, 0.4);
-    expect(settings.isMuted, isTrue);
+    expect(settings.volume, 1);
+    expect(settings.isMuted, isFalse);
 
     await container.read(desktopSettingsProvider.notifier).setVolume(2);
     await container.read(desktopSettingsProvider.notifier).toggleMute();
 
     expect(container.read(desktopSettingsProvider).volume, 1);
     expect(container.read(desktopSettingsProvider).isMuted, isFalse);
-    expect(prefs.getDouble('desktop_volume'), 1);
-    expect(prefs.getBool('desktop_is_muted'), isFalse);
+    expect(prefs.getDouble('desktop_volume'), 0.4);
+    expect(prefs.getBool('desktop_is_muted'), isTrue);
   });
 }

@@ -1,10 +1,14 @@
+import 'package:flutter/foundation.dart';
 import 'package:stash_app_flutter/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stash_app_flutter/core/presentation/theme/app_theme.dart';
+import 'package:stash_app_flutter/core/data/preferences/shared_preferences_provider.dart';
 import 'package:stash_app_flutter/features/groups/domain/entities/group.dart';
 import 'package:stash_app_flutter/features/groups/data/repositories/graphql_group_repository.dart';
 import 'package:stash_app_flutter/features/groups/presentation/providers/group_list_provider.dart';
@@ -18,6 +22,7 @@ import 'package:stash_app_flutter/features/scenes/domain/entities/scene_filter.d
 import 'package:stash_app_flutter/features/scenes/data/repositories/graphql_scene_repository.dart';
 import 'package:stash_app_flutter/features/scenes/domain/models/scraper.dart';
 import 'package:stash_app_flutter/features/scenes/presentation/providers/scene_list_provider.dart';
+import 'package:stash_app_flutter/features/scenes/presentation/providers/video_player_provider.dart';
 import 'package:stash_app_flutter/features/setup/presentation/providers/navigation_tabs_provider.dart';
 import 'helpers/test_helpers.dart';
 import 'package:stash_app_flutter/core/domain/entities/scraped/scraped_scene.dart';
@@ -262,6 +267,27 @@ class MockSceneGridLayoutTrue extends SceneGridLayout {
   bool build() => true;
 }
 
+class _FullscreenBackPlayerState extends PlayerState {
+  _FullscreenBackPlayerState(this._scene);
+
+  Scene _scene;
+  int exitRequests = 0;
+
+  @override
+  GlobalPlayerState build() => GlobalPlayerState(activeScene: _scene);
+
+  void setActiveScene(Scene scene) {
+    _scene = scene;
+    state = state.copyWith(activeScene: scene);
+  }
+
+  @override
+  void requestExitFullscreen() {
+    exitRequests++;
+    super.requestExitFullscreen();
+  }
+}
+
 void main() {
   late SharedPreferences prefs;
 
@@ -433,6 +459,112 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Zebra Scene'), findsOneWidget);
   });
+
+  testWidgets(
+    'Integration: Android fullscreen back returns to the active details route',
+    (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(800, 1200);
+      tester.view.devicePixelRatio = 1.0;
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        debugDefaultTargetPlatformOverride = null;
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMethodCallHandler(SystemChannels.platform, null);
+      });
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(
+            SystemChannels.platform,
+            (call) async => null,
+          );
+
+      final prefixScene = createTestScene(id: '10', title: 'Prefix Scene');
+      final playerState = _FullscreenBackPlayerState(testScenes.first);
+      final container = ProviderContainer(
+        overrides: [
+          sharedPreferencesProvider.overrideWithValue(prefs),
+          sceneRepositoryProvider.overrideWithValue(
+            LocalMockGraphQLSceneRepository([...testScenes, prefixScene]),
+          ),
+          sceneTiktokLayoutProvider.overrideWith(TestSceneTiktokLayout.new),
+          sceneGridLayoutProvider.overrideWith(TestSceneGridLayout.new),
+          playerStateProvider.overrideWith(() => playerState),
+        ],
+      );
+      addTearDown(container.dispose);
+      late GoRouter router;
+
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: Consumer(
+            builder: (context, ref, _) {
+              router = ref.watch(routerProvider);
+              return MaterialApp.router(
+                routerConfig: router,
+                theme: AppTheme.darkTheme,
+                localizationsDelegates: AppLocalizations.localizationsDelegates,
+                supportedLocales: AppLocalizations.supportedLocales,
+              );
+            },
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      Future<void> expectFullscreenBackAt({
+        required Scene backgroundScene,
+        required Scene activeScene,
+      }) async {
+        if (router.routeInformationProvider.value.uri.path !=
+            '/scenes/scene/${backgroundScene.id}') {
+          router.go('/scenes/scene/${backgroundScene.id}');
+          await tester.pump(const Duration(seconds: 1));
+        }
+        expect(
+          router.routeInformationProvider.value.uri.path,
+          '/scenes/scene/${backgroundScene.id}',
+        );
+
+        playerState.setActiveScene(activeScene);
+        final previousExitRequests = playerState.exitRequests;
+        playerState.requestEnterFullscreen();
+        await tester.pump(const Duration(milliseconds: 500));
+        expect(container.read(playerStateProvider).isFullScreen, isTrue);
+
+        await tester.binding.handlePopRoute();
+        await tester.pump(const Duration(seconds: 1));
+
+        expect(playerState.exitRequests, previousExitRequests + 1);
+        expect(
+          router.routeInformationProvider.value.uri.path,
+          '/scenes/scene/${activeScene.id}',
+        );
+        expect(container.read(playerStateProvider).isFullScreen, isFalse);
+      }
+
+      await expectFullscreenBackAt(
+        backgroundScene: testScenes.first,
+        activeScene: testScenes.first,
+      );
+
+      // Once fullscreen has exited, Back uses the ordinary details stack.
+      await tester.binding.handlePopRoute();
+      await tester.pump(const Duration(milliseconds: 500));
+      expect(router.routeInformationProvider.value.uri.path, '/scenes');
+
+      // Next/random playback can change the active video behind the overlay.
+      await expectFullscreenBackAt(
+        backgroundScene: testScenes.first,
+        activeScene: testScenes.last,
+      );
+      await expectFullscreenBackAt(
+        backgroundScene: prefixScene,
+        activeScene: testScenes.first,
+      );
+      debugDefaultTargetPlatformOverride = null;
+    },
+  );
 
   testWidgets('Integration: Adaptive Navigation (Mobile vs Tablet)', (
     WidgetTester tester,
