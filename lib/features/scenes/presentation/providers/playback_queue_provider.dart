@@ -16,6 +16,13 @@ class PlaybackQueueIds {
     return 'scene:$sceneId:more-from-studio:$studioId';
   }
 
+  static String sceneMoreFromPerformer({
+    required String sceneId,
+    required String performerId,
+  }) {
+    return 'scene:$sceneId:more-from-performer:$performerId';
+  }
+
   static String studioStrip(String studioId) => 'studio:$studioId:strip';
 
   static String performerStrip(String performerId) =>

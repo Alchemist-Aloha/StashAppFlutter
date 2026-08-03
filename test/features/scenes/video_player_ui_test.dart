@@ -13,6 +13,7 @@ import 'package:stash_app_flutter/features/scenes/domain/entities/scene.dart';
 import 'package:stash_app_flutter/features/scenes/presentation/pages/scene_details_page.dart';
 import 'package:stash_app_flutter/features/scenes/presentation/widgets/scene_video_player.dart';
 import 'package:stash_app_flutter/features/scenes/presentation/widgets/scene_card.dart';
+import 'package:stash_app_flutter/features/scenes/presentation/providers/entity_media_filter_scope.dart';
 import 'package:stash_app_flutter/features/scenes/presentation/providers/scene_list_provider.dart';
 import 'package:stash_app_flutter/features/scenes/presentation/providers/playback_queue_provider.dart';
 import 'package:stash_app_flutter/features/scenes/presentation/providers/video_player_provider.dart';
@@ -492,6 +493,47 @@ void main() {
       expect(find.text('Markers'), findsNothing);
     },
   );
+
+  testWidgets('SceneDetailsPage shows related scenes for each performer', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1200, 1600);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+
+    final currentScene = sceneWithoutStudio(
+      's1',
+      'Current Scene',
+    ).copyWith(performerIds: const ['p1'], performerNames: const ['Alex']);
+    final relatedScene = sceneWithoutStudio('s2', 'Related Scene');
+    final mockRepo = MockGraphQLSceneRepository()
+      ..withData([currentScene, relatedScene]);
+
+    await pumpTestWidget(
+      tester,
+      prefs: prefs,
+      overrides: [
+        sceneRepositoryProvider.overrideWithValue(mockRepo),
+        entityMediaPreviewProvider(
+          EntityMediaFilterKind.performer,
+          'p1',
+        ).overrideWith((ref) async => [currentScene, relatedScene]),
+      ],
+      child: SceneDetailsPage(sceneId: currentScene.id),
+    );
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+
+    expect(find.text('More From Alex'), findsOneWidget);
+    expect(find.text('Related Scene'), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byType(SceneCard),
+        matching: find.text('Current Scene'),
+      ),
+      findsNothing,
+    );
+  });
 
   testWidgets('SceneDetailsPage displays existing scene markers', (
     tester,
