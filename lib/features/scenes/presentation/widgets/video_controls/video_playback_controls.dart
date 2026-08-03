@@ -84,34 +84,53 @@ class VideoPlaybackControls extends ConsumerWidget {
     return '${s}x';
   }
 
-  ButtonStyle _controlButtonStyle(ColorScheme colorScheme) {
+  ButtonStyle _controlButtonStyle(
+    BuildContext context, {
+    bool emphasized = false,
+  }) {
     final compact = !isFullScreen;
+    final colorScheme = Theme.of(context).colorScheme;
+    final scale = context.dimensions.fontSizeFactor;
+    final size =
+        (emphasized ? (compact ? 48.0 : 56.0) : (compact ? 40.0 : 48.0)) *
+        scale;
     return IconButton.styleFrom(
-      backgroundColor: Colors.transparent,
-      foregroundColor: Colors.white,
-      disabledBackgroundColor: Colors.transparent,
+      backgroundColor: emphasized
+          ? colorScheme.primaryContainer
+          : Colors.transparent,
+      foregroundColor: emphasized
+          ? colorScheme.onPrimaryContainer
+          : Colors.white,
+      disabledBackgroundColor: emphasized
+          ? colorScheme.surfaceContainerHighest.withValues(alpha: 0.7)
+          : Colors.transparent,
       disabledForegroundColor: Colors.white54,
-      padding: const EdgeInsets.all(4),
-      minimumSize: Size(compact ? 40 : 48, compact ? 40 : 48),
+      padding: EdgeInsets.all(context.dimensions.spacingSmall / 2),
+      minimumSize: Size.square(size),
       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
     );
   }
 
   BoxDecoration _controlGroupDecoration() {
     return BoxDecoration(
-      color: Colors.black.withAlpha(130),
-      borderRadius: BorderRadius.circular(999),
-      border: Border.all(color: Colors.white.withAlpha(24)),
+      color: Colors.black.withAlpha(150),
+      borderRadius: BorderRadius.circular(AppTheme.radiusExtraLarge),
+      border: Border.all(color: Colors.white.withAlpha(32)),
+      boxShadow: const [
+        BoxShadow(color: Colors.black38, blurRadius: 16, offset: Offset(0, 6)),
+      ],
     );
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final compact = !isFullScreen;
-    final controlIconSize = compact ? 18.0 : 20.0;
-    final groupHorizontalPadding = compact ? 1.0 : 2.0;
-    final buttonMinSize = compact ? 40.0 : 48.0;
-    final buttonGap = compact ? 1.0 : 2.0;
+    final scale = context.dimensions.fontSizeFactor;
+    final controlIconSize = (compact ? 20.0 : 24.0) * scale;
+    final playIconSize = (compact ? 26.0 : 30.0) * scale;
+    final groupHorizontalPadding = context.dimensions.spacingSmall / 2;
+    final buttonMinSize = (compact ? 40.0 : 48.0) * scale;
+    final buttonGap = context.dimensions.spacingSmall / 4;
     final colorScheme = Theme.of(context).colorScheme;
     final canSelectSubtitles = scene.captions.isNotEmpty;
     final castState = ref.watch(castServiceProvider);
@@ -137,7 +156,7 @@ class VideoPlaybackControls extends ConsumerWidget {
                       if (previousScene != null) ...[
                         IconButton(
                           tooltip: context.l10n.common_skip_previous,
-                          style: _controlButtonStyle(colorScheme),
+                          style: _controlButtonStyle(context),
                           iconSize: controlIconSize,
                           icon: const Icon(Icons.skip_previous_rounded),
                           onPressed: () {
@@ -148,15 +167,24 @@ class VideoPlaybackControls extends ConsumerWidget {
                         SizedBox(width: buttonGap),
                       ],
                       IconButton(
+                        key: const Key('video_play_pause_button'),
                         tooltip: isPlaying
                             ? context.l10n.common_pause
                             : context.l10n.common_play,
-                        style: _controlButtonStyle(colorScheme),
-                        iconSize: controlIconSize,
-                        icon: Icon(
-                          isPlaying
-                              ? Icons.pause_rounded
-                              : Icons.play_arrow_rounded,
+                        style: _controlButtonStyle(context, emphasized: true),
+                        iconSize: playIconSize,
+                        icon: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 200),
+                          switchInCurve: Curves.easeOutBack,
+                          switchOutCurve: Curves.easeIn,
+                          transitionBuilder: (child, animation) =>
+                              ScaleTransition(scale: animation, child: child),
+                          child: Icon(
+                            isPlaying
+                                ? Icons.pause_rounded
+                                : Icons.play_arrow_rounded,
+                            key: ValueKey(isPlaying),
+                          ),
                         ),
                         onPressed: () {
                           onPlayPause();
@@ -167,7 +195,7 @@ class VideoPlaybackControls extends ConsumerWidget {
                         SizedBox(width: buttonGap),
                         IconButton(
                           tooltip: context.l10n.common_skip_next,
-                          style: _controlButtonStyle(colorScheme),
+                          style: _controlButtonStyle(context),
                           iconSize: controlIconSize,
                           icon: const Icon(Icons.skip_next_rounded),
                           onPressed: () {
@@ -179,9 +207,7 @@ class VideoPlaybackControls extends ConsumerWidget {
                     ],
                   ),
                 ),
-                const SizedBox(
-                  width: 8,
-                ), // Padding between left and right groups
+                SizedBox(width: context.dimensions.spacingSmall),
                 Container(
                   decoration: _controlGroupDecoration(),
                   padding: EdgeInsets.symmetric(
@@ -398,7 +424,7 @@ class VideoPlaybackControls extends ConsumerWidget {
                       if (castState.isCasting)
                         IconButton(
                           tooltip: context.l10n.cast_stop_casting,
-                          style: _controlButtonStyle(colorScheme),
+                          style: _controlButtonStyle(context),
                           icon: Icon(
                             Icons.cast_connected_rounded,
                             size: controlIconSize,
@@ -412,7 +438,7 @@ class VideoPlaybackControls extends ConsumerWidget {
                       else
                         IconButton(
                           tooltip: context.l10n.cast_cast,
-                          style: _controlButtonStyle(colorScheme),
+                          style: _controlButtonStyle(context),
                           icon: Icon(Icons.cast_rounded, size: controlIconSize),
                           onPressed: () {
                             onInteract();
@@ -439,7 +465,7 @@ class VideoPlaybackControls extends ConsumerWidget {
                       if (enableNativePip && !kIsWeb && Platform.isAndroid) ...[
                         IconButton(
                           tooltip: context.l10n.common_pip,
-                          style: _controlButtonStyle(colorScheme),
+                          style: _controlButtonStyle(context),
                           icon: Icon(
                             Icons.picture_in_picture_alt_outlined,
                             size: controlIconSize,
@@ -462,7 +488,7 @@ class VideoPlaybackControls extends ConsumerWidget {
                         onTap: () {}, // Consume tap to prevent propagation
                         child: IconButton(
                           tooltip: context.l10n.common_toggle_fullscreen,
-                          style: _controlButtonStyle(colorScheme),
+                          style: _controlButtonStyle(context),
                           icon: Icon(
                             isFullScreen
                                 ? Icons.fullscreen_exit_rounded

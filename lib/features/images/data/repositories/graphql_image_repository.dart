@@ -17,6 +17,50 @@ class GraphQLImageRepository {
   Uri get _graphqlEndpoint => _client.link is HttpLink
       ? (_client.link as HttpLink).uri
       : Uri.parse('http://localhost:9999/graphql');
+
+  Image _mapImage(Map<String, dynamic> map) {
+    map['files'] = map['visual_files'];
+
+    final paths = map['paths'] as Map<String, dynamic>;
+    map['paths'] = {
+      'thumbnail': resolveGraphqlMediaUrl(
+        rawUrl: paths['thumbnail'] as String?,
+        graphqlEndpoint: _graphqlEndpoint,
+      ),
+      'preview': resolveGraphqlMediaUrl(
+        rawUrl: paths['preview'] as String?,
+        graphqlEndpoint: _graphqlEndpoint,
+      ),
+      'image': resolveGraphqlMediaUrl(
+        rawUrl: paths['image'] as String?,
+        graphqlEndpoint: _graphqlEndpoint,
+      ),
+    };
+
+    final studio = map['studio'] as Map<String, dynamic>?;
+    map['studio_id'] = studio?['id']?.toString();
+    map['studio_name'] = studio?['name']?.toString();
+    final performers = (map['performers'] as List<dynamic>? ?? const [])
+        .whereType<Map<String, dynamic>>()
+        .toList();
+    map['performer_ids'] = performers
+        .map((performer) => performer['id']?.toString() ?? '')
+        .toList();
+    map['performer_names'] = performers
+        .map((performer) => performer['name']?.toString() ?? '')
+        .toList();
+    map['performer_image_paths'] = performers
+        .map(
+          (performer) => resolveGraphqlMediaUrl(
+            rawUrl: performer['image_path']?.toString(),
+            graphqlEndpoint: _graphqlEndpoint,
+          ),
+        )
+        .toList();
+
+    return Image.fromJson(map);
+  }
+
   Future<List<Image>> findImages({
     int? page,
     int? perPage,
@@ -101,28 +145,9 @@ class GraphQLImageRepository {
 
     validateGraphQLResult(result);
 
-    return result.parsedData!.findImages.images.map((i) {
-      final map = i.toJson();
-      map['files'] = map['visual_files'];
-
-      final paths = map['paths'] as Map<String, dynamic>;
-      map['paths'] = {
-        'thumbnail': resolveGraphqlMediaUrl(
-          rawUrl: paths['thumbnail'] as String?,
-          graphqlEndpoint: _graphqlEndpoint,
-        ),
-        'preview': resolveGraphqlMediaUrl(
-          rawUrl: paths['preview'] as String?,
-          graphqlEndpoint: _graphqlEndpoint,
-        ),
-        'image': resolveGraphqlMediaUrl(
-          rawUrl: paths['image'] as String?,
-          graphqlEndpoint: _graphqlEndpoint,
-        ),
-      };
-
-      return Image.fromJson(map);
-    }).toList();
+    return result.parsedData!.findImages.images
+        .map((image) => _mapImage(image.toJson()))
+        .toList();
   }
 
   Future<Image> getImageById(String id, {bool refresh = false}) async {
@@ -137,26 +162,7 @@ class GraphQLImageRepository {
     final data = result.parsedData!.findImage;
     if (data == null) throw Exception('Image not found');
 
-    final map = data.toJson();
-    map['files'] = map['visual_files'];
-
-    final paths = map['paths'] as Map<String, dynamic>;
-    map['paths'] = {
-      'thumbnail': resolveGraphqlMediaUrl(
-        rawUrl: paths['thumbnail'] as String?,
-        graphqlEndpoint: _graphqlEndpoint,
-      ),
-      'preview': resolveGraphqlMediaUrl(
-        rawUrl: paths['preview'] as String?,
-        graphqlEndpoint: _graphqlEndpoint,
-      ),
-      'image': resolveGraphqlMediaUrl(
-        rawUrl: paths['image'] as String?,
-        graphqlEndpoint: _graphqlEndpoint,
-      ),
-    };
-
-    return Image.fromJson(map);
+    return _mapImage(data.toJson());
   }
 
   /// Sends a direct `imageUpdate` GraphQL mutation for `rating100`.

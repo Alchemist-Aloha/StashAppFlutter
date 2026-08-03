@@ -104,6 +104,19 @@ void main() {
 
     expect(find.byType(NativeVideoControls), findsOneWidget);
     expect(find.byIcon(Icons.play_arrow_rounded), findsOneWidget);
+
+    final context = tester.element(find.byType(NativeVideoControls));
+    final button = tester.widget<IconButton>(
+      find.byKey(const Key('video_play_pause_button')),
+    );
+    expect(
+      button.style?.backgroundColor?.resolve(const <WidgetState>{}),
+      Theme.of(context).colorScheme.primaryContainer,
+    );
+    expect(
+      button.style?.minimumSize?.resolve(const <WidgetState>{})?.width,
+      48,
+    );
   });
 
   testWidgets('can render without visible controls', (tester) async {

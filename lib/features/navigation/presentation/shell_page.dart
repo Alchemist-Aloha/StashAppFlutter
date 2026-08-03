@@ -181,7 +181,7 @@ class _ShellPageState extends ConsumerState<ShellPage> {
                 Navigator.pop(context);
               }
             },
-            child: Text(context.l10n.common_update_now),
+            child: Text(context.l10n.common_release_details),
           ),
         ],
       ),

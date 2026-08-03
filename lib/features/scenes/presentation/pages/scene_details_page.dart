@@ -599,7 +599,7 @@ class _SceneDetailsPageState extends ConsumerState<SceneDetailsPage> {
                           thickness: 1,
                           color: context.colors.outline.withValues(alpha: 0.1),
                         ),
-                        // Right Column: Tags, Performers, More from Studio (38.2%)
+                        // Right Column: Tags, Performers, Related Scenes (38.2%)
                         Expanded(
                           flex: 382,
                           child: SingleChildScrollView(
@@ -614,6 +614,10 @@ class _SceneDetailsPageState extends ConsumerState<SceneDetailsPage> {
                                 _buildMarkersSection(context, scene),
                                 _buildPerformersSection(context, scene),
                                 _buildMoreFromStudioSection(context, scene),
+                                _buildMoreFromPerformersSections(
+                                  context,
+                                  scene,
+                                ),
                               ],
                             ),
                           ),
@@ -655,6 +659,7 @@ class _SceneDetailsPageState extends ConsumerState<SceneDetailsPage> {
                               _buildMarkersSection(context, scene),
                               _buildPerformersSection(context, scene),
                               _buildMoreFromStudioSection(context, scene),
+                              _buildMoreFromPerformersSections(context, scene),
                             ],
                           ),
                         ),
@@ -1443,6 +1448,67 @@ class _SceneDetailsPageState extends ConsumerState<SceneDetailsPage> {
       loading: () => const SizedBox.shrink(),
       error: (err, stack) => const SizedBox.shrink(),
     );
+  }
+
+  Widget _buildMoreFromPerformersSections(BuildContext context, Scene scene) {
+    final sections = <Widget>[];
+
+    for (var index = 0; index < scene.performerIds.length; index++) {
+      if (index >= scene.performerNames.length) break;
+      final performerId = scene.performerIds[index].trim();
+      final performerName = scene.performerNames[index].trim();
+      if (performerId.isEmpty || performerName.isEmpty) continue;
+
+      final mediaAsync = ref.watch(
+        entityMediaPreviewProvider(
+          EntityMediaFilterKind.performer,
+          performerId,
+        ),
+      );
+      final section = mediaAsync.maybeWhen(
+        data: (scenes) {
+          final relatedScenes =
+              scenes
+                  .where((relatedScene) => relatedScene.id != scene.id)
+                  .toList()
+                ..shuffle(Random(Object.hash(scene.id, performerId)));
+          if (relatedScenes.isEmpty) return null;
+
+          return _buildSectionContainer(
+            context,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SectionHeader(
+                  title: context.l10n.details_more_from_performer(
+                    performerName,
+                  ),
+                  onViewAll: () =>
+                      context.push('/performers/performer/$performerId/media'),
+                  padding: EdgeInsets.zero,
+                ),
+                SizedBox(height: context.dimensions.spacingSmall),
+                SceneStrip(
+                  scenes: relatedScenes,
+                  queueId: PlaybackQueueIds.sceneMoreFromPerformer(
+                    sceneId: scene.id,
+                    performerId: performerId,
+                  ),
+                  onTap: (selectedScene) => context.push(
+                    '/scenes/scene/${selectedScene.id}',
+                    extra: true,
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+        orElse: () => null,
+      );
+      if (section != null) sections.add(section);
+    }
+
+    return Column(children: sections);
   }
 
   Widget _buildChip(

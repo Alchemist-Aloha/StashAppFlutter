@@ -11,6 +11,7 @@ import 'package:stash_app_flutter/features/images/domain/entities/image.dart'
     as entity;
 import 'package:stash_app_flutter/features/images/presentation/pages/image_fullscreen_page.dart';
 import 'package:stash_app_flutter/features/images/presentation/providers/image_list_provider.dart';
+import 'package:stash_app_flutter/features/images/presentation/widgets/image_details_bottom_sheet.dart';
 
 import '../../../../helpers/test_helpers.dart';
 import 'image_fullscreen_page_test.mocks.dart';
@@ -308,6 +309,87 @@ void main() {
       // Overlays are shown by default
       expect(find.text('Detailed Image'), findsOneWidget);
     });
+
+    testWidgets(
+      'places actions above progress and opens metadata from header',
+      (tester) async {
+        tester.view.physicalSize = const Size(320, 700);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+
+        final image = entity.Image(
+          id: 'details-image',
+          title: 'Detailed Image',
+          date: '2023-01-01',
+          rating100: 80,
+          urls: const ['https://example.com/image'],
+          studioId: 'studio-1',
+          studioName: 'Studio One',
+          performerIds: const ['performer-1'],
+          performerNames: const ['Performer One'],
+          performerImagePaths: const [null],
+          files: const [
+            entity.ImageFile(
+              width: 1920,
+              height: 1080,
+              path: '/images/detail.jpg',
+            ),
+          ],
+          paths: const entity.ImagePaths(image: 'http://test.com/detail.jpg'),
+        );
+        mockRepository.withData([image]);
+
+        await pumpTestWidget(
+          tester,
+          child: const ImageFullscreenPage(imageId: 'details-image'),
+          overrides: [
+            imageRepositoryProvider.overrideWithValue(mockRepository),
+          ],
+        );
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 100));
+
+        final rateButton = find.byKey(const Key('image_rate_button'));
+        final progressBar = find.byKey(const Key('image_progress_bar'));
+        expect(find.byKey(const Key('image_info_button')), findsOneWidget);
+        expect(rateButton, findsOneWidget);
+        expect(find.byKey(const Key('image_download_button')), findsOneWidget);
+        expect(find.byKey(const Key('image_slideshow_button')), findsOneWidget);
+        expect(progressBar, findsOneWidget);
+        expect(
+          tester.getTopLeft(progressBar).dy,
+          greaterThan(tester.getCenter(rateButton).dy),
+        );
+
+        await tester.tap(find.byKey(const Key('image_info_button')));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 500));
+
+        expect(find.byType(ImageDetailsBottomSheet), findsOneWidget);
+        expect(find.text('Image Details'), findsOneWidget);
+        expect(find.text('/images/detail.jpg'), findsOneWidget);
+        final detailsSheet = find.byType(ImageDetailsBottomSheet);
+        expect(
+          find.descendant(of: detailsSheet, matching: find.text('Studio One')),
+          findsOneWidget,
+        );
+        expect(
+          find.descendant(
+            of: detailsSheet,
+            matching: find.text('Performer One'),
+          ),
+          findsOneWidget,
+        );
+        expect(
+          find.descendant(
+            of: detailsSheet,
+            matching: find.byIcon(Icons.star_rate_rounded),
+          ),
+          findsNothing,
+        );
+      },
+    );
 
     testWidgets('falls back to file path in header if title is missing', (
       tester,

@@ -132,7 +132,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get common_later => 'Später';
 
   @override
-  String get common_update_now => 'Versionsdetails';
+  String get common_release_details => 'Versionsdetails';
 
   @override
   String get common_configure_now => 'Jetzt konfigurieren';
@@ -173,6 +173,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get details_gallery => 'Galerie-Details';
+
+  @override
+  String get details_image => 'Bilddetails';
 
   @override
   String get studios_filter_title => 'Studios filtern';
@@ -516,6 +519,11 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get details_more_from_studio => 'Mehr vom Studio';
+
+  @override
+  String details_more_from_performer(String performer) {
+    return 'Mehr von $performer';
+  }
 
   @override
   String get details_o_count_incremented => 'O-Zähler erhöht';
@@ -1050,19 +1058,19 @@ class AppLocalizationsDe extends AppLocalizations {
       '10 Sekunden rückwärts springen';
 
   @override
-  String get settings_keyboard_global_section => 'Global Navigation';
+  String get settings_keyboard_global_section => 'Globale Navigation';
 
   @override
-  String get settings_keyboard_video_section => 'Video Player';
+  String get settings_keyboard_video_section => 'Videoplayer';
 
   @override
-  String get settings_keyboard_image_section => 'Image Viewer';
+  String get settings_keyboard_image_section => 'Bildbetrachter';
 
   @override
-  String get settings_keyboard_next_tab => 'Next Tab';
+  String get settings_keyboard_next_tab => 'Nächster Tab';
 
   @override
-  String get settings_keyboard_previous_tab => 'Previous Tab';
+  String get settings_keyboard_previous_tab => 'Vorheriger Tab';
 
   @override
   String settings_keyboard_tab_number(int number) {
@@ -1070,36 +1078,36 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get settings_keyboard_first_image => 'First Image';
+  String get settings_keyboard_first_image => 'Erstes Bild';
 
   @override
-  String get settings_keyboard_last_image => 'Last Image';
+  String get settings_keyboard_last_image => 'Letztes Bild';
 
   @override
-  String get settings_keyboard_close_image => 'Close Image Viewer';
+  String get settings_keyboard_close_image => 'Bildbetrachter schließen';
 
   @override
-  String get settings_keyboard_unbind => 'Unbind shortcut';
+  String get settings_keyboard_unbind => 'Verknüpfung aufheben';
 
   @override
   String get settings_keyboard_reset_confirm_title =>
-      'Reset keyboard shortcuts?';
+      'Tastaturkürzel zurücksetzen?';
 
   @override
   String get settings_keyboard_reset_confirm_body =>
-      'All custom keyboard shortcuts will be replaced with the defaults.';
+      'Alle benutzerdefinierten Tastaturkürzel werden durch die Standardeinstellungen ersetzt.';
 
   @override
   String get settings_keyboard_reserved =>
-      'This shortcut is reserved by the browser or operating system.';
+      'Diese Verknüpfung ist vom Browser oder Betriebssystem reserviert.';
 
   @override
   String get settings_keyboard_tab_reserved =>
-      'Tab is reserved for keyboard focus navigation.';
+      'Die Tab-Taste ist für die Tastaturnavigation reserviert.';
 
   @override
   String settings_keyboard_conflict_moved(String action) {
-    return 'Shortcut moved from $action.';
+    return 'Verknüpfung verschoben von $action.';
   }
 
   @override
@@ -2286,6 +2294,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get galleries_field_updated_at => 'Aktualisiert am';
 
   @override
+  String get images_field_id => 'ID';
+
+  @override
   String get images_field_title => 'Titel';
 
   @override
@@ -3261,49 +3272,49 @@ class AppLocalizationsDe extends AppLocalizations {
   String get scenes_title => 'Szenen';
 
   @override
-  String get settings_config_backup_title => 'App configuration';
+  String get settings_config_backup_title => 'App-Konfiguration';
 
   @override
   String get settings_config_backup_subtitle =>
-      'Save or replace user-facing settings and server profiles';
+      'Benutzersichtbare Einstellungen und Serverprofile speichern oder ersetzen';
 
   @override
-  String get settings_config_export => 'Save configuration';
+  String get settings_config_export => 'Konfiguration speichern';
 
   @override
-  String get settings_config_import => 'Import configuration';
+  String get settings_config_import => 'Konfiguration importieren';
 
   @override
   String get settings_config_include_credentials =>
-      'Include credentials unencrypted';
+      'Anmeldedaten unverschlüsselt einschließen';
 
   @override
   String get settings_config_credentials_warning =>
-      'Anyone with this file can read your server credentials and app lock passcode.';
+      'Jeder, der diese Datei besitzt, kann Ihre Server-Anmeldedaten und den App-Sperrcode lesen.';
 
   @override
-  String get settings_config_exported => 'Configuration saved';
+  String get settings_config_exported => 'Konfiguration gespeichert';
 
   @override
-  String get settings_config_import_title => 'Replace app configuration?';
+  String get settings_config_import_title => 'App-Konfiguration ersetzen?';
 
   @override
   String settings_config_import_summary(int profileCount) {
-    return 'This file contains $profileCount server profiles. Importing replaces all current user-facing settings and profiles.';
+    return 'Diese Datei enthält $profileCount Serverprofile. Beim Import werden alle aktuellen benutzersichtbaren Einstellungen und Profile ersetzt.';
   }
 
   @override
-  String get settings_config_import_confirm => 'Replace configuration';
+  String get settings_config_import_confirm => 'Konfiguration ersetzen';
 
   @override
   String get settings_config_imported =>
-      'Configuration imported. Restart the app to apply every setting.';
+      'Konfiguration importiert. Starten Sie die App neu, um alle Einstellungen zu übernehmen.';
 
   @override
   String get settings_config_invalid =>
-      'The configuration file is invalid or unsupported.';
+      'Die Konfigurationsdatei ist ungültig oder wird nicht unterstützt.';
 
   @override
   String get settings_config_plaintext_label =>
-      'Credentials are stored as readable text in the exported file.';
+      'Anmeldedaten werden in der exportierten Datei als lesbarer Text gespeichert.';
 }

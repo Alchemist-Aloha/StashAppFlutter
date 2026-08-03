@@ -134,7 +134,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get common_later => 'Позже';
 
   @override
-  String get common_update_now => 'Сведения о релизе';
+  String get common_release_details => 'Сведения о релизе';
 
   @override
   String get common_configure_now => 'Настроить сейчас';
@@ -175,6 +175,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get details_gallery => 'Подробности о галерее';
+
+  @override
+  String get details_image => 'Подробности об изображении';
 
   @override
   String get studios_filter_title => 'Фильтр студий';
@@ -514,6 +517,11 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get details_more_from_studio => 'Еще от студии';
+
+  @override
+  String details_more_from_performer(String performer) {
+    return 'Больше от $performer';
+  }
 
   @override
   String get details_o_count_incremented => 'Счет O увеличен';
@@ -1041,56 +1049,56 @@ class AppLocalizationsRu extends AppLocalizations {
   String get settings_keyboard_seek_backward_10_desc => 'Назад на 10 секунд';
 
   @override
-  String get settings_keyboard_global_section => 'Global Navigation';
+  String get settings_keyboard_global_section => 'Глобальная навигация';
 
   @override
-  String get settings_keyboard_video_section => 'Video Player';
+  String get settings_keyboard_video_section => 'Видеоплеер';
 
   @override
-  String get settings_keyboard_image_section => 'Image Viewer';
+  String get settings_keyboard_image_section => 'Просмотр изображений';
 
   @override
-  String get settings_keyboard_next_tab => 'Next Tab';
+  String get settings_keyboard_next_tab => 'Следующая вкладка';
 
   @override
-  String get settings_keyboard_previous_tab => 'Previous Tab';
+  String get settings_keyboard_previous_tab => 'Предыдущая вкладка';
 
   @override
   String settings_keyboard_tab_number(int number) {
-    return 'Tab $number';
+    return 'Вкладка $number';
   }
 
   @override
-  String get settings_keyboard_first_image => 'First Image';
+  String get settings_keyboard_first_image => 'Первое изображение';
 
   @override
-  String get settings_keyboard_last_image => 'Last Image';
+  String get settings_keyboard_last_image => 'Последнее изображение';
 
   @override
-  String get settings_keyboard_close_image => 'Close Image Viewer';
+  String get settings_keyboard_close_image => 'Закрыть просмотр изображений';
 
   @override
-  String get settings_keyboard_unbind => 'Unbind shortcut';
+  String get settings_keyboard_unbind => 'Отвязать сочетание клавиш';
 
   @override
   String get settings_keyboard_reset_confirm_title =>
-      'Reset keyboard shortcuts?';
+      'Сбросить сочетания клавиш?';
 
   @override
   String get settings_keyboard_reset_confirm_body =>
-      'All custom keyboard shortcuts will be replaced with the defaults.';
+      'Все настраиваемые сочетания клавиш будут заменены значениями по умолчанию.';
 
   @override
   String get settings_keyboard_reserved =>
-      'This shortcut is reserved by the browser or operating system.';
+      'Это сочетание клавиш зарезервировано браузером или операционной системой.';
 
   @override
   String get settings_keyboard_tab_reserved =>
-      'Tab is reserved for keyboard focus navigation.';
+      'Клавиша Tab зарезервирована для навигации с помощью клавиатуры.';
 
   @override
   String settings_keyboard_conflict_moved(String action) {
-    return 'Shortcut moved from $action.';
+    return 'Сочетание клавиш перемещено из $action.';
   }
 
   @override
@@ -2280,6 +2288,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get galleries_field_updated_at => 'Обновлено';
 
   @override
+  String get images_field_id => 'ID';
+
+  @override
   String get images_field_title => 'Название';
 
   @override
@@ -3256,49 +3267,50 @@ class AppLocalizationsRu extends AppLocalizations {
   String get scenes_title => 'Сцены';
 
   @override
-  String get settings_config_backup_title => 'App configuration';
+  String get settings_config_backup_title => 'Конфигурация приложения';
 
   @override
   String get settings_config_backup_subtitle =>
-      'Save or replace user-facing settings and server profiles';
+      'Сохранить или заменить настройки приложения и профили серверов';
 
   @override
-  String get settings_config_export => 'Save configuration';
+  String get settings_config_export => 'Сохранить конфигурацию';
 
   @override
-  String get settings_config_import => 'Import configuration';
+  String get settings_config_import => 'Импортировать конфигурацию';
 
   @override
   String get settings_config_include_credentials =>
-      'Include credentials unencrypted';
+      'Включить учётные данные без шифрования';
 
   @override
   String get settings_config_credentials_warning =>
-      'Anyone with this file can read your server credentials and app lock passcode.';
+      'Любой, у кого есть этот файл, сможет прочитать ваши учётные данные сервера и код блокировки приложения.';
 
   @override
-  String get settings_config_exported => 'Configuration saved';
+  String get settings_config_exported => 'Конфигурация сохранена';
 
   @override
-  String get settings_config_import_title => 'Replace app configuration?';
+  String get settings_config_import_title =>
+      'Заменить конфигурацию приложения?';
 
   @override
   String settings_config_import_summary(int profileCount) {
-    return 'This file contains $profileCount server profiles. Importing replaces all current user-facing settings and profiles.';
+    return 'Этот файл содержит $profileCount профилей серверов. Импорт заменяет все текущие настройки и профили.';
   }
 
   @override
-  String get settings_config_import_confirm => 'Replace configuration';
+  String get settings_config_import_confirm => 'Заменить конфигурацию';
 
   @override
   String get settings_config_imported =>
-      'Configuration imported. Restart the app to apply every setting.';
+      'Конфигурация импортирована. Перезапустите приложение, чтобы применить все настройки.';
 
   @override
   String get settings_config_invalid =>
-      'The configuration file is invalid or unsupported.';
+      'Файл конфигурации недействителен или не поддерживается.';
 
   @override
   String get settings_config_plaintext_label =>
-      'Credentials are stored as readable text in the exported file.';
+      'Учётные данные сохраняются в виде читаемого текста в экспортированном файле.';
 }

@@ -5,6 +5,15 @@ fragment GalleryData on Gallery {
   rating100
   image_count
   details
+  studio {
+    id
+    name
+  }
+  performers {
+    id
+    name
+    image_path
+  }
   files {
     path
   }

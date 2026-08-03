@@ -36,6 +36,56 @@ Scene _scene(String id, String title) {
 }
 
 void main() {
+  testWidgets('SceneStrip disables SceneCard VTT scrubbing on Android', (
+    tester,
+  ) async {
+    SharedPreferences.setMockInitialValues({
+      'server_base_url': 'http://localhost:9999',
+    });
+    final prefs = await SharedPreferences.getInstance();
+    final scene = _scene('scene-1', 'Scene 1').copyWith(
+      files: const [
+        SceneFile(
+          format: null,
+          width: null,
+          height: null,
+          videoCodec: null,
+          audioCodec: null,
+          bitRate: null,
+          duration: 60,
+          frameRate: null,
+        ),
+      ],
+      paths: const ScenePaths(
+        screenshot: null,
+        preview: null,
+        stream: null,
+        vtt: 'http://test.com/sprites.vtt',
+      ),
+    );
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
+        child: MaterialApp(
+          home: Scaffold(body: SceneStrip(scenes: [scene])),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final detector = tester.widget<GestureDetector>(
+      find.descendant(
+        of: find.byType(AspectRatio),
+        matching: find.byType(GestureDetector),
+      ),
+    );
+    expect(detector.onHorizontalDragStart, isNull);
+    expect(detector.onHorizontalDragUpdate, isNull);
+    expect(detector.onHorizontalDragEnd, isNull);
+    expect(detector.onHorizontalDragCancel, isNull);
+  });
+
   testWidgets('SceneStrip scrollbar thumb supports mouse dragging', (
     tester,
   ) async {

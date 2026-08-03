@@ -276,11 +276,11 @@ abstract class AppLocalizations {
   /// **'Later'**
   String get common_later;
 
-  /// No description provided for @common_update_now.
+  /// No description provided for @common_release_details.
   ///
   /// In en, this message translates to:
   /// **'Release Details'**
-  String get common_update_now;
+  String get common_release_details;
 
   /// No description provided for @common_configure_now.
   ///
@@ -359,6 +359,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Gallery Details'**
   String get details_gallery;
+
+  /// No description provided for @details_image.
+  ///
+  /// In en, this message translates to:
+  /// **'Image Details'**
+  String get details_image;
 
   /// No description provided for @studios_filter_title.
   ///
@@ -1019,6 +1025,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'More From Studio'**
   String get details_more_from_studio;
+
+  /// No description provided for @details_more_from_performer.
+  ///
+  /// In en, this message translates to:
+  /// **'More From {performer}'**
+  String details_more_from_performer(String performer);
 
   /// No description provided for @details_o_count_incremented.
   ///
@@ -4205,6 +4217,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Updated At'**
   String get galleries_field_updated_at;
+
+  /// No description provided for @images_field_id.
+  ///
+  /// In en, this message translates to:
+  /// **'ID'**
+  String get images_field_id;
 
   /// No description provided for @images_field_title.
   ///

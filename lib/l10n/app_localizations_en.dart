@@ -132,7 +132,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get common_later => 'Later';
 
   @override
-  String get common_update_now => 'Release Details';
+  String get common_release_details => 'Release Details';
 
   @override
   String get common_configure_now => 'Configure Now';
@@ -172,6 +172,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get details_gallery => 'Gallery Details';
+
+  @override
+  String get details_image => 'Image Details';
 
   @override
   String get studios_filter_title => 'Filter Studios';
@@ -510,6 +513,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get details_more_from_studio => 'More From Studio';
+
+  @override
+  String details_more_from_performer(String performer) {
+    return 'More From $performer';
+  }
 
   @override
   String get details_o_count_incremented => 'O count incremented';
@@ -2248,6 +2256,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get galleries_field_updated_at => 'Updated At';
+
+  @override
+  String get images_field_id => 'ID';
 
   @override
   String get images_field_title => 'Title';

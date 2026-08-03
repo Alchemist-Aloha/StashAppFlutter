@@ -25,6 +25,7 @@ import '../../../galleries/presentation/providers/gallery_details_provider.dart'
 import '../../../galleries/presentation/providers/gallery_list_provider.dart';
 import '../../domain/entities/image.dart' as entity;
 import '../providers/image_list_provider.dart';
+import '../widgets/image_details_bottom_sheet.dart';
 
 enum _SlideshowDirection { forward, backward }
 
@@ -709,26 +710,10 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
     }
   }
 
-  String _getDisplayTitle(entity.Image? image) {
-    if (image == null) return '';
-    if (image.title != null && image.title!.trim().isNotEmpty) {
-      return image.title!.trim();
-    }
-    if (image.files.isNotEmpty) {
-      final path = image.files.first.path;
-      if (path.isNotEmpty) {
-        final segments = path.replaceAll('\\', '/').split('/');
-        return segments.lastWhere((s) => s.isNotEmpty, orElse: () => path);
-      }
-    }
-    return 'Untitled';
-  }
-
   Widget _buildOverlayHeader(
     BuildContext context,
     entity.Image? currentImage,
     String displayTitle,
-    int loadedItemCount,
     int totalItemCount,
     double maxOverlayWidth,
     double horizontalPadding,
@@ -841,33 +826,15 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
                           if (hasRating)
                             SizedBox(width: context.dimensions.spacingSmall),
                           IconButton.filledTonal(
-                            icon: const Icon(Icons.star_rate_rounded),
+                            key: const Key('image_info_button'),
+                            icon: const Icon(Icons.info_outline_rounded),
                             onPressed: currentImage == null
                                 ? null
-                                : () => _showRatingDialog(currentImage),
-                            tooltip: context.l10n.common_rate,
-                          ),
-                          if (!kIsWeb) ...[
-                            SizedBox(width: context.dimensions.spacingSmall),
-                            IconButton.filledTonal(
-                              icon: const Icon(Icons.download_rounded),
-                              onPressed: currentImage == null
-                                  ? null
-                                  : () => _saveImageToGallery(currentImage),
-                              tooltip: context.l10n.common_download,
-                            ),
-                          ],
-                          SizedBox(width: context.dimensions.spacingSmall),
-                          IconButton.filledTonal(
-                            icon: Icon(
-                              _isSlideshowPlaying
-                                  ? Icons.stop_rounded
-                                  : Icons.slideshow_rounded,
-                            ),
-                            onPressed: () => _toggleSlideshow(loadedItemCount),
-                            tooltip: _isSlideshowPlaying
-                                ? context.l10n.common_pause
-                                : context.l10n.images_slideshow_start_title,
+                                : () => ImageDetailsBottomSheet.show(
+                                    context,
+                                    currentImage,
+                                  ),
+                            tooltip: context.l10n.common_details,
                           ),
                         ],
                       ),
@@ -884,6 +851,7 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
 
   Widget _buildOverlayFooter(
     BuildContext context,
+    entity.Image? currentImage,
     int loadedItemCount,
     int totalItemCount,
     double maxOverlayWidth,
@@ -930,30 +898,64 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
                         ),
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      child: Row(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          IconButton.filledTonal(
-                            icon: const Icon(Icons.chevron_left_rounded),
-                            tooltip: context.l10n.common_previous,
-                            onPressed: canGoPrevious
-                                ? _goToPreviousImage
-                                : null,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              IconButton.filledTonal(
+                                icon: const Icon(Icons.chevron_left_rounded),
+                                tooltip: context.l10n.common_previous,
+                                onPressed: canGoPrevious
+                                    ? _goToPreviousImage
+                                    : null,
+                              ),
+                              IconButton.filledTonal(
+                                key: const Key('image_rate_button'),
+                                icon: const Icon(Icons.star_rate_rounded),
+                                onPressed: currentImage == null
+                                    ? null
+                                    : () => _showRatingDialog(currentImage),
+                                tooltip: context.l10n.common_rate,
+                              ),
+                              if (!kIsWeb)
+                                IconButton.filledTonal(
+                                  key: const Key('image_download_button'),
+                                  icon: const Icon(Icons.download_rounded),
+                                  onPressed: currentImage == null
+                                      ? null
+                                      : () => _saveImageToGallery(currentImage),
+                                  tooltip: context.l10n.common_download,
+                                ),
+                              IconButton.filledTonal(
+                                key: const Key('image_slideshow_button'),
+                                icon: Icon(
+                                  _isSlideshowPlaying
+                                      ? Icons.stop_rounded
+                                      : Icons.slideshow_rounded,
+                                ),
+                                onPressed: () =>
+                                    _toggleSlideshow(loadedItemCount),
+                                tooltip: _isSlideshowPlaying
+                                    ? context.l10n.common_pause
+                                    : context.l10n.images_slideshow_start_title,
+                              ),
+                              IconButton.filledTonal(
+                                icon: const Icon(Icons.chevron_right_rounded),
+                                tooltip: context.l10n.common_next,
+                                onPressed: canGoNext
+                                    ? () => _goToNextImage(loadedItemCount)
+                                    : null,
+                              ),
+                            ],
                           ),
-                          SizedBox(width: context.dimensions.spacingSmall + 2),
-                          Expanded(
-                            child: LinearProgressIndicator(
-                              value: progress,
-                              minHeight: 6,
-                              borderRadius: BorderRadius.circular(999),
-                            ),
-                          ),
-                          SizedBox(width: context.dimensions.spacingSmall + 2),
-                          IconButton.filledTonal(
-                            icon: const Icon(Icons.chevron_right_rounded),
-                            tooltip: context.l10n.common_next,
-                            onPressed: canGoNext
-                                ? () => _goToNextImage(loadedItemCount)
-                                : null,
+                          SizedBox(height: context.dimensions.spacingSmall),
+                          LinearProgressIndicator(
+                            key: const Key('image_progress_bar'),
+                            value: progress,
+                            minHeight: 6,
+                            borderRadius: BorderRadius.circular(999),
                           ),
                         ],
                       ),
@@ -1046,7 +1048,9 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
         _keyBindings = bindings;
 
         final currentImage = items.isNotEmpty ? items[_currentIndex] : null;
-        final displayTitle = _getDisplayTitle(currentImage);
+        final displayTitle = currentImage == null
+            ? ''
+            : ImageDetailsContent.displayTitle(currentImage);
         final totalItemCount =
             galleryDetailsAsync?.maybeWhen(
               data: (gallery) => gallery.imageCount ?? items.length,
@@ -1204,13 +1208,13 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
                           context,
                           currentImage,
                           displayTitle,
-                          items.length,
                           totalItemCount,
                           maxOverlayWidth,
                           horizontalPadding,
                         ),
                         _buildOverlayFooter(
                           context,
+                          currentImage,
                           items.length,
                           totalItemCount,
                           maxOverlayWidth,

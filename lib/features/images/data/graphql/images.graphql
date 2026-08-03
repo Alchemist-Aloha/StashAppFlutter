@@ -4,6 +4,15 @@ fragment ImageData on Image {
   rating100
   date
   urls
+  studio {
+    id
+    name
+  }
+  performers {
+    id
+    name
+    image_path
+  }
   visual_files {
     ... on ImageFile {
       width

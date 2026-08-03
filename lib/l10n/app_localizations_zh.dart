@@ -130,7 +130,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get common_later => '以后';
 
   @override
-  String get common_update_now => '发布详情';
+  String get common_release_details => '发布详情';
 
   @override
   String get common_configure_now => '立即配置';
@@ -170,6 +170,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get details_gallery => '图库详情';
+
+  @override
+  String get details_image => '图片详情';
 
   @override
   String get studios_filter_title => '筛选制片商';
@@ -506,6 +509,11 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get details_more_from_studio => '更多来自该制片商';
+
+  @override
+  String details_more_from_performer(String performer) {
+    return '更多来自$performer';
+  }
 
   @override
   String get details_o_count_incremented => 'O 计数已增加';
@@ -1028,56 +1036,52 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settings_keyboard_seek_backward_10_desc => '快退 10 秒';
 
   @override
-  String get settings_keyboard_global_section => 'Global Navigation';
+  String get settings_keyboard_global_section => '全局导航';
 
   @override
-  String get settings_keyboard_video_section => 'Video Player';
+  String get settings_keyboard_video_section => '视频播放器';
 
   @override
-  String get settings_keyboard_image_section => 'Image Viewer';
+  String get settings_keyboard_image_section => '图片查看器';
 
   @override
-  String get settings_keyboard_next_tab => 'Next Tab';
+  String get settings_keyboard_next_tab => '下一个标签页';
 
   @override
-  String get settings_keyboard_previous_tab => 'Previous Tab';
+  String get settings_keyboard_previous_tab => '上一个标签页';
 
   @override
   String settings_keyboard_tab_number(int number) {
-    return 'Tab $number';
+    return '标签页 $number';
   }
 
   @override
-  String get settings_keyboard_first_image => 'First Image';
+  String get settings_keyboard_first_image => '第一张图片';
 
   @override
-  String get settings_keyboard_last_image => 'Last Image';
+  String get settings_keyboard_last_image => '最后一张图片';
 
   @override
-  String get settings_keyboard_close_image => 'Close Image Viewer';
+  String get settings_keyboard_close_image => '关闭图片查看器';
 
   @override
-  String get settings_keyboard_unbind => 'Unbind shortcut';
+  String get settings_keyboard_unbind => '取消绑定快捷键';
 
   @override
-  String get settings_keyboard_reset_confirm_title =>
-      'Reset keyboard shortcuts?';
+  String get settings_keyboard_reset_confirm_title => '重置键盘快捷键？';
 
   @override
-  String get settings_keyboard_reset_confirm_body =>
-      'All custom keyboard shortcuts will be replaced with the defaults.';
+  String get settings_keyboard_reset_confirm_body => '所有自定义键盘快捷键都将替换为默认值。';
 
   @override
-  String get settings_keyboard_reserved =>
-      'This shortcut is reserved by the browser or operating system.';
+  String get settings_keyboard_reserved => '此快捷键已被浏览器或操作系统保留。';
 
   @override
-  String get settings_keyboard_tab_reserved =>
-      'Tab is reserved for keyboard focus navigation.';
+  String get settings_keyboard_tab_reserved => 'Tab 键保留用于键盘焦点导航。';
 
   @override
   String settings_keyboard_conflict_moved(String action) {
-    return 'Shortcut moved from $action.';
+    return '快捷键从 $action 移出。';
   }
 
   @override
@@ -2171,6 +2175,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get galleries_field_updated_at => '更新于';
+
+  @override
+  String get images_field_id => 'ID';
 
   @override
   String get images_field_title => '标题';
@@ -2909,7 +2916,13 @@ class AppLocalizationsZh extends AppLocalizations {
     );
     final String countString = countNumberFormat.format(count);
 
-    return '$countString 个标签';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString 个标签',
+      zero: '无标签',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -2919,7 +2932,13 @@ class AppLocalizationsZh extends AppLocalizations {
     );
     final String countString = countNumberFormat.format(count);
 
-    return '$countString 个分组';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString 个分组',
+      zero: '无分组',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -2929,7 +2948,13 @@ class AppLocalizationsZh extends AppLocalizations {
     );
     final String countString = countNumberFormat.format(count);
 
-    return '$countString 个标记';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString 个标记',
+      zero: '无标记',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -2939,7 +2964,13 @@ class AppLocalizationsZh extends AppLocalizations {
     );
     final String countString = countNumberFormat.format(count);
 
-    return '$countString 个画廊';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString 个画廊',
+      zero: '无画廊',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -3094,51 +3125,46 @@ class AppLocalizationsZh extends AppLocalizations {
   String get scenes_title => '场景';
 
   @override
-  String get settings_config_backup_title => 'App configuration';
+  String get settings_config_backup_title => '应用配置';
 
   @override
-  String get settings_config_backup_subtitle =>
-      'Save or replace user-facing settings and server profiles';
+  String get settings_config_backup_subtitle => '保存或替换用户可见的设置和服务器配置文件';
 
   @override
-  String get settings_config_export => 'Save configuration';
+  String get settings_config_export => '保存配置';
 
   @override
-  String get settings_config_import => 'Import configuration';
+  String get settings_config_import => '导入配置';
 
   @override
-  String get settings_config_include_credentials =>
-      'Include credentials unencrypted';
+  String get settings_config_include_credentials => '以明文包含凭据';
 
   @override
   String get settings_config_credentials_warning =>
-      'Anyone with this file can read your server credentials and app lock passcode.';
+      '任何拥有此文件的人都可以读取你的服务器凭据和应用锁密码。';
 
   @override
-  String get settings_config_exported => 'Configuration saved';
+  String get settings_config_exported => '配置已保存';
 
   @override
-  String get settings_config_import_title => 'Replace app configuration?';
+  String get settings_config_import_title => '替换应用配置？';
 
   @override
   String settings_config_import_summary(int profileCount) {
-    return 'This file contains $profileCount server profiles. Importing replaces all current user-facing settings and profiles.';
+    return '此文件包含 $profileCount 个服务器配置文件。导入将替换当前所有用户可见的设置和配置。';
   }
 
   @override
-  String get settings_config_import_confirm => 'Replace configuration';
+  String get settings_config_import_confirm => '替换配置';
 
   @override
-  String get settings_config_imported =>
-      'Configuration imported. Restart the app to apply every setting.';
+  String get settings_config_imported => '配置已导入。重启应用以应用所有设置。';
 
   @override
-  String get settings_config_invalid =>
-      'The configuration file is invalid or unsupported.';
+  String get settings_config_invalid => '配置文件无效或不受支持。';
 
   @override
-  String get settings_config_plaintext_label =>
-      'Credentials are stored as readable text in the exported file.';
+  String get settings_config_plaintext_label => '凭据将以可读文本形式存储在导出的文件中。';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hans`).
@@ -3267,7 +3293,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get common_later => '以后';
 
   @override
-  String get common_update_now => '发布详情';
+  String get common_release_details => '发布详情';
 
   @override
   String get common_configure_now => '立即配置';
@@ -3307,6 +3333,9 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String get details_gallery => '图库详情';
+
+  @override
+  String get details_image => '图片详情';
 
   @override
   String get studios_filter_title => '筛选制片商';
@@ -3643,6 +3672,11 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String get details_more_from_studio => '更多来自该制片商';
+
+  @override
+  String details_more_from_performer(String performer) {
+    return '更多来自$performer';
+  }
 
   @override
   String get details_o_count_incremented => 'O 计数已增加';
@@ -4163,6 +4197,55 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String get settings_keyboard_seek_backward_10_desc => '快退 10 秒';
+
+  @override
+  String get settings_keyboard_global_section => '全局导航';
+
+  @override
+  String get settings_keyboard_video_section => '视频播放器';
+
+  @override
+  String get settings_keyboard_image_section => '图片查看器';
+
+  @override
+  String get settings_keyboard_next_tab => '下一个标签页';
+
+  @override
+  String get settings_keyboard_previous_tab => '上一个标签页';
+
+  @override
+  String settings_keyboard_tab_number(int number) {
+    return '标签页 $number';
+  }
+
+  @override
+  String get settings_keyboard_first_image => '第一张图片';
+
+  @override
+  String get settings_keyboard_last_image => '最后一张图片';
+
+  @override
+  String get settings_keyboard_close_image => '关闭图片查看器';
+
+  @override
+  String get settings_keyboard_unbind => '取消绑定快捷键';
+
+  @override
+  String get settings_keyboard_reset_confirm_title => '重置键盘快捷键？';
+
+  @override
+  String get settings_keyboard_reset_confirm_body => '所有自定义键盘快捷键都将替换为默认值。';
+
+  @override
+  String get settings_keyboard_reserved => '此快捷键已被浏览器或操作系统保留。';
+
+  @override
+  String get settings_keyboard_tab_reserved => 'Tab 键保留用于键盘焦点导航。';
+
+  @override
+  String settings_keyboard_conflict_moved(String action) {
+    return '快捷键从 $action 移出。';
+  }
 
   @override
   String get settings_appearance => '外观';
@@ -5257,6 +5340,9 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get galleries_field_updated_at => '更新于';
 
   @override
+  String get images_field_id => 'ID';
+
+  @override
   String get images_field_title => '标题';
 
   @override
@@ -5993,7 +6079,13 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
     );
     final String countString = countNumberFormat.format(count);
 
-    return '$countString 个标签';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString 个标签',
+      zero: '无标签',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -6003,7 +6095,13 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
     );
     final String countString = countNumberFormat.format(count);
 
-    return '$countString 个分组';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString 个分组',
+      zero: '无分组',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -6013,7 +6111,13 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
     );
     final String countString = countNumberFormat.format(count);
 
-    return '$countString 个标记';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString 个标记',
+      zero: '无标记',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -6023,7 +6127,13 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
     );
     final String countString = countNumberFormat.format(count);
 
-    return '$countString 个画廊';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString 个画廊',
+      zero: '无画廊',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -6176,6 +6286,48 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String get scenes_title => '场景';
+
+  @override
+  String get settings_config_backup_title => '应用配置';
+
+  @override
+  String get settings_config_backup_subtitle => '保存或替换用户可见的设置和服务器配置文件';
+
+  @override
+  String get settings_config_export => '保存配置';
+
+  @override
+  String get settings_config_import => '导入配置';
+
+  @override
+  String get settings_config_include_credentials => '以明文包含凭据';
+
+  @override
+  String get settings_config_credentials_warning =>
+      '任何拥有此文件的人都可以读取你的服务器凭据和应用锁密码。';
+
+  @override
+  String get settings_config_exported => '配置已保存';
+
+  @override
+  String get settings_config_import_title => '替换应用配置？';
+
+  @override
+  String settings_config_import_summary(int profileCount) {
+    return '此文件包含 $profileCount 个服务器配置文件。导入将替换当前所有用户可见的设置和配置。';
+  }
+
+  @override
+  String get settings_config_import_confirm => '替换配置';
+
+  @override
+  String get settings_config_imported => '配置已导入。重启应用以应用所有设置。';
+
+  @override
+  String get settings_config_invalid => '配置文件无效或不受支持。';
+
+  @override
+  String get settings_config_plaintext_label => '凭据将以可读文本形式存储在导出的文件中。';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -6306,7 +6458,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get common_later => '稍後';
 
   @override
-  String get common_update_now => '發佈詳情';
+  String get common_release_details => '發佈詳情';
 
   @override
   String get common_configure_now => '立即設定';
@@ -6346,6 +6498,9 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get details_gallery => '圖庫詳情';
+
+  @override
+  String get details_image => '圖片詳情';
 
   @override
   String get studios_filter_title => '篩選製片商';
@@ -6682,6 +6837,11 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get details_more_from_studio => '來自該製片商的更多內容';
+
+  @override
+  String details_more_from_performer(String performer) {
+    return '更多來自$performer';
+  }
 
   @override
   String get details_o_count_incremented => 'O 計數已增加';
@@ -7202,6 +7362,55 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get settings_keyboard_seek_backward_10_desc => '快退 10 秒';
+
+  @override
+  String get settings_keyboard_global_section => '全域導覽';
+
+  @override
+  String get settings_keyboard_video_section => '影片播放器';
+
+  @override
+  String get settings_keyboard_image_section => '圖片檢視器';
+
+  @override
+  String get settings_keyboard_next_tab => '下一個分頁';
+
+  @override
+  String get settings_keyboard_previous_tab => '上一個分頁';
+
+  @override
+  String settings_keyboard_tab_number(int number) {
+    return '分頁 $number';
+  }
+
+  @override
+  String get settings_keyboard_first_image => '第一張圖片';
+
+  @override
+  String get settings_keyboard_last_image => '最後一張圖片';
+
+  @override
+  String get settings_keyboard_close_image => '關閉圖片檢視器';
+
+  @override
+  String get settings_keyboard_unbind => '取消綁定快速鍵';
+
+  @override
+  String get settings_keyboard_reset_confirm_title => '重設鍵盤快速鍵？';
+
+  @override
+  String get settings_keyboard_reset_confirm_body => '所有自訂鍵盤快速鍵都將替換為預設值。';
+
+  @override
+  String get settings_keyboard_reserved => '此快速鍵已由瀏覽器或作業系統保留。';
+
+  @override
+  String get settings_keyboard_tab_reserved => 'Tab 鍵保留用於鍵盤焦點導覽。';
+
+  @override
+  String settings_keyboard_conflict_moved(String action) {
+    return '快速鍵已從 $action 移出。';
+  }
 
   @override
   String get settings_appearance => '外觀';
@@ -8298,6 +8507,9 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get galleries_field_updated_at => '更新於';
 
   @override
+  String get images_field_id => 'ID';
+
+  @override
   String get images_field_title => '標題';
 
   @override
@@ -9034,7 +9246,14 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
     );
     final String countString = countNumberFormat.format(count);
 
-    return '$countString 個標籤';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString 個標籤',
+      one: '1 個標籤',
+      zero: '無標籤',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -9044,7 +9263,14 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
     );
     final String countString = countNumberFormat.format(count);
 
-    return '$countString 個分組';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString 個分組',
+      one: '1 個分組',
+      zero: '無分組',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -9054,7 +9280,14 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
     );
     final String countString = countNumberFormat.format(count);
 
-    return '$countString 個標記';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString 個標記',
+      one: '1 個標記',
+      zero: '無標記',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -9064,7 +9297,14 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
     );
     final String countString = countNumberFormat.format(count);
 
-    return '$countString 個畫廊';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString 個畫廊',
+      one: '1 個畫廊',
+      zero: '無畫廊',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -9217,4 +9457,46 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get scenes_title => '場景';
+
+  @override
+  String get settings_config_backup_title => '應用程式設定';
+
+  @override
+  String get settings_config_backup_subtitle => '儲存或取代使用者可見的設定與伺服器設定檔';
+
+  @override
+  String get settings_config_export => '儲存設定';
+
+  @override
+  String get settings_config_import => '匯入設定';
+
+  @override
+  String get settings_config_include_credentials => '以明文包含憑證';
+
+  @override
+  String get settings_config_credentials_warning =>
+      '任何擁有此檔案的人都可以讀取你的伺服器憑證和應用程式鎖定密碼。';
+
+  @override
+  String get settings_config_exported => '設定已儲存';
+
+  @override
+  String get settings_config_import_title => '取代應用程式設定？';
+
+  @override
+  String settings_config_import_summary(int profileCount) {
+    return '此檔案包含 $profileCount 個伺服器設定檔。匯入會取代目前所有使用者可見的設定與設定檔。';
+  }
+
+  @override
+  String get settings_config_import_confirm => '取代設定';
+
+  @override
+  String get settings_config_imported => '設定已匯入。重新啟動應用程式以套用所有設定。';
+
+  @override
+  String get settings_config_invalid => '設定檔無效或不受支援。';
+
+  @override
+  String get settings_config_plaintext_label => '憑證會以可讀文字形式儲存在匯出的檔案中。';
 }

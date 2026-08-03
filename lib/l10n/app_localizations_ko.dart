@@ -130,7 +130,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get common_later => '나중에';
 
   @override
-  String get common_update_now => '릴리스 세부정보';
+  String get common_release_details => '릴리스 세부정보';
 
   @override
   String get common_configure_now => '지금 설정';
@@ -170,6 +170,9 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get details_gallery => '갤러리 상세';
+
+  @override
+  String get details_image => '이미지 상세';
 
   @override
   String get studios_filter_title => '스튜디오 필터';
@@ -506,6 +509,11 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get details_more_from_studio => '스튜디오의 기타';
+
+  @override
+  String details_more_from_performer(String performer) {
+    return '$performer의 기타 콘텐츠';
+  }
 
   @override
   String get details_o_count_incremented => 'O 수가 증가했습니다';
@@ -1029,56 +1037,54 @@ class AppLocalizationsKo extends AppLocalizations {
   String get settings_keyboard_seek_backward_10_desc => '10초 뒤로 이동';
 
   @override
-  String get settings_keyboard_global_section => 'Global Navigation';
+  String get settings_keyboard_global_section => '전역 탐색';
 
   @override
-  String get settings_keyboard_video_section => 'Video Player';
+  String get settings_keyboard_video_section => '비디오 플레이어';
 
   @override
-  String get settings_keyboard_image_section => 'Image Viewer';
+  String get settings_keyboard_image_section => '이미지 뷰어';
 
   @override
-  String get settings_keyboard_next_tab => 'Next Tab';
+  String get settings_keyboard_next_tab => '다음 탭';
 
   @override
-  String get settings_keyboard_previous_tab => 'Previous Tab';
+  String get settings_keyboard_previous_tab => '이전 탭';
 
   @override
   String settings_keyboard_tab_number(int number) {
-    return 'Tab $number';
+    return '탭 $number';
   }
 
   @override
-  String get settings_keyboard_first_image => 'First Image';
+  String get settings_keyboard_first_image => '첫 번째 이미지';
 
   @override
-  String get settings_keyboard_last_image => 'Last Image';
+  String get settings_keyboard_last_image => '마지막 이미지';
 
   @override
-  String get settings_keyboard_close_image => 'Close Image Viewer';
+  String get settings_keyboard_close_image => '이미지 뷰어 닫기';
 
   @override
-  String get settings_keyboard_unbind => 'Unbind shortcut';
+  String get settings_keyboard_unbind => '단축키 해제';
 
   @override
-  String get settings_keyboard_reset_confirm_title =>
-      'Reset keyboard shortcuts?';
+  String get settings_keyboard_reset_confirm_title => '키보드 단축키를 재설정하시겠습니까?';
 
   @override
   String get settings_keyboard_reset_confirm_body =>
-      'All custom keyboard shortcuts will be replaced with the defaults.';
+      '모든 사용자 지정 키보드 단축키가 기본값으로 대체됩니다.';
 
   @override
-  String get settings_keyboard_reserved =>
-      'This shortcut is reserved by the browser or operating system.';
+  String get settings_keyboard_reserved => '이 단축키는 브라우저 또는 운영 체제에서 예약되어 있습니다.';
 
   @override
   String get settings_keyboard_tab_reserved =>
-      'Tab is reserved for keyboard focus navigation.';
+      'Tab 키는 키보드 포커스 탐색용으로 예약되어 있습니다.';
 
   @override
   String settings_keyboard_conflict_moved(String action) {
-    return 'Shortcut moved from $action.';
+    return '$action에서 이동된 단축키';
   }
 
   @override
@@ -2196,6 +2202,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get galleries_field_updated_at => '수정 일시';
 
   @override
+  String get images_field_id => 'ID';
+
+  @override
   String get images_field_title => '제목';
 
   @override
@@ -3149,49 +3158,46 @@ class AppLocalizationsKo extends AppLocalizations {
   String get scenes_title => '장면';
 
   @override
-  String get settings_config_backup_title => 'App configuration';
+  String get settings_config_backup_title => '앱 구성';
 
   @override
-  String get settings_config_backup_subtitle =>
-      'Save or replace user-facing settings and server profiles';
+  String get settings_config_backup_subtitle => '사용자용 설정 및 서버 프로필 저장 또는 교체';
 
   @override
-  String get settings_config_export => 'Save configuration';
+  String get settings_config_export => '구성 저장';
 
   @override
-  String get settings_config_import => 'Import configuration';
+  String get settings_config_import => '구성 가져오기';
 
   @override
-  String get settings_config_include_credentials =>
-      'Include credentials unencrypted';
+  String get settings_config_include_credentials => '자격 증명을 암호화하지 않고 포함';
 
   @override
   String get settings_config_credentials_warning =>
-      'Anyone with this file can read your server credentials and app lock passcode.';
+      '이 파일을 가진 사람은 누구나 서버 자격 증명과 앱 잠금 암호를 읽을 수 있습니다.';
 
   @override
-  String get settings_config_exported => 'Configuration saved';
+  String get settings_config_exported => '구성이 저장되었습니다';
 
   @override
-  String get settings_config_import_title => 'Replace app configuration?';
+  String get settings_config_import_title => '앱 구성을 교체하시겠습니까?';
 
   @override
   String settings_config_import_summary(int profileCount) {
-    return 'This file contains $profileCount server profiles. Importing replaces all current user-facing settings and profiles.';
+    return '이 파일에는 $profileCount개의 서버 프로필이 포함되어 있습니다. 가져오면 현재 사용자용 설정과 프로필이 모두 교체됩니다.';
   }
 
   @override
-  String get settings_config_import_confirm => 'Replace configuration';
+  String get settings_config_import_confirm => '구성 교체';
 
   @override
   String get settings_config_imported =>
-      'Configuration imported. Restart the app to apply every setting.';
+      '구성을 가져왔습니다. 모든 설정을 적용하려면 앱을 다시 시작하세요.';
 
   @override
-  String get settings_config_invalid =>
-      'The configuration file is invalid or unsupported.';
+  String get settings_config_invalid => '구성 파일이 유효하지 않거나 지원되지 않습니다.';
 
   @override
   String get settings_config_plaintext_label =>
-      'Credentials are stored as readable text in the exported file.';
+      '자격 증명은 내보낸 파일에 읽을 수 있는 텍스트로 저장됩니다.';
 }

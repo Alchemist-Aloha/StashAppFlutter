@@ -224,7 +224,13 @@ class _SceneCardState extends ConsumerState<SceneCard> {
         : 0.0;
 
     final vttUrl = widget.scene.paths.vtt?.trim() ?? '';
+    final ancestorAxis = Scrollable.maybeOf(context)?.axisDirection;
+    final isAndroidHorizontalScrollable =
+        defaultTargetPlatform == TargetPlatform.android &&
+        (ancestorAxis == AxisDirection.left ||
+            ancestorAxis == AxisDirection.right);
     final canAttemptScrub =
+        !isAndroidHorizontalScrollable &&
         vttUrl.isNotEmpty &&
         totalDuration > 0 &&
         _vttAvailability != _VttAvailability.unavailable;

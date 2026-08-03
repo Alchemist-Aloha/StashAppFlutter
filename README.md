@@ -1,6 +1,6 @@
-# 📱 StashFlow
+![StashFlow — Your Stash library, everywhere](asset/github_social_preview.png)
 
-## Your Stash library, everywhere
+# StashFlow
 
 A modern, multi-platform client for your [**Stash server**](https://github.com/stashapp/stash). Built for fast browsing, playback, and library management across **Android**, **Desktop** (Windows, macOS, Linux), and the [**Web**](https://alchemist-aloha.github.io/StashFlow/).
 
