@@ -1057,56 +1057,56 @@ class AppLocalizationsEs extends AppLocalizations {
       'Saltar atrás 10 segundos';
 
   @override
-  String get settings_keyboard_global_section => 'Global Navigation';
+  String get settings_keyboard_global_section => 'Navegación global';
 
   @override
-  String get settings_keyboard_video_section => 'Video Player';
+  String get settings_keyboard_video_section => 'Reproductor de vídeo';
 
   @override
-  String get settings_keyboard_image_section => 'Image Viewer';
+  String get settings_keyboard_image_section => 'Visor de imágenes';
 
   @override
-  String get settings_keyboard_next_tab => 'Next Tab';
+  String get settings_keyboard_next_tab => 'Siguiente pestaña';
 
   @override
-  String get settings_keyboard_previous_tab => 'Previous Tab';
+  String get settings_keyboard_previous_tab => 'Pestaña anterior';
 
   @override
   String settings_keyboard_tab_number(int number) {
-    return 'Tab $number';
+    return 'Pestaña $number';
   }
 
   @override
-  String get settings_keyboard_first_image => 'First Image';
+  String get settings_keyboard_first_image => 'Primera imagen';
 
   @override
-  String get settings_keyboard_last_image => 'Last Image';
+  String get settings_keyboard_last_image => 'Última imagen';
 
   @override
-  String get settings_keyboard_close_image => 'Close Image Viewer';
+  String get settings_keyboard_close_image => 'Cerrar visor de imágenes';
 
   @override
-  String get settings_keyboard_unbind => 'Unbind shortcut';
+  String get settings_keyboard_unbind => 'Desvincular acceso directo';
 
   @override
   String get settings_keyboard_reset_confirm_title =>
-      'Reset keyboard shortcuts?';
+      '¿Restablecer los accesos directos del teclado?';
 
   @override
   String get settings_keyboard_reset_confirm_body =>
-      'All custom keyboard shortcuts will be replaced with the defaults.';
+      'Todos los accesos directos personalizados se reemplazarán por los predeterminados.';
 
   @override
   String get settings_keyboard_reserved =>
-      'This shortcut is reserved by the browser or operating system.';
+      'Este acceso directo está reservado por el navegador o el sistema operativo.';
 
   @override
   String get settings_keyboard_tab_reserved =>
-      'Tab is reserved for keyboard focus navigation.';
+      'La tecla Tab está reservada para la navegación con el foco del teclado.';
 
   @override
   String settings_keyboard_conflict_moved(String action) {
-    return 'Shortcut moved from $action.';
+    return 'Acceso directo movido de $action.';
   }
 
   @override
@@ -3287,49 +3287,50 @@ class AppLocalizationsEs extends AppLocalizations {
   String get scenes_title => 'Escenas';
 
   @override
-  String get settings_config_backup_title => 'App configuration';
+  String get settings_config_backup_title => 'Configuración de la aplicación';
 
   @override
   String get settings_config_backup_subtitle =>
-      'Save or replace user-facing settings and server profiles';
+      'Guardar o reemplazar la configuración visible y los perfiles de servidor';
 
   @override
-  String get settings_config_export => 'Save configuration';
+  String get settings_config_export => 'Guardar configuración';
 
   @override
-  String get settings_config_import => 'Import configuration';
+  String get settings_config_import => 'Importar configuración';
 
   @override
   String get settings_config_include_credentials =>
-      'Include credentials unencrypted';
+      'Incluir credenciales sin cifrar';
 
   @override
   String get settings_config_credentials_warning =>
-      'Anyone with this file can read your server credentials and app lock passcode.';
+      'Cualquiera con este archivo puede leer sus credenciales de servidor y el código de acceso de la app.';
 
   @override
-  String get settings_config_exported => 'Configuration saved';
+  String get settings_config_exported => 'Configuración guardada';
 
   @override
-  String get settings_config_import_title => 'Replace app configuration?';
+  String get settings_config_import_title =>
+      '¿Reemplazar la configuración de la aplicación?';
 
   @override
   String settings_config_import_summary(int profileCount) {
-    return 'This file contains $profileCount server profiles. Importing replaces all current user-facing settings and profiles.';
+    return 'Este archivo contiene $profileCount perfiles de servidor. Al importar se reemplazan todas las configuraciones y perfiles actuales.';
   }
 
   @override
-  String get settings_config_import_confirm => 'Replace configuration';
+  String get settings_config_import_confirm => 'Reemplazar configuración';
 
   @override
   String get settings_config_imported =>
-      'Configuration imported. Restart the app to apply every setting.';
+      'Configuración importada. Reinicie la aplicación para aplicar todos los ajustes.';
 
   @override
   String get settings_config_invalid =>
-      'The configuration file is invalid or unsupported.';
+      'El archivo de configuración no es válido o no es compatible.';
 
   @override
   String get settings_config_plaintext_label =>
-      'Credentials are stored as readable text in the exported file.';
+      'Las credenciales se almacenan como texto legible en el archivo exportado.';
 }

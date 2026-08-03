@@ -1030,56 +1030,55 @@ class AppLocalizationsJa extends AppLocalizations {
   String get settings_keyboard_seek_backward_10_desc => '10秒戻る';
 
   @override
-  String get settings_keyboard_global_section => 'Global Navigation';
+  String get settings_keyboard_global_section => 'グローバルナビゲーション';
 
   @override
-  String get settings_keyboard_video_section => 'Video Player';
+  String get settings_keyboard_video_section => 'ビデオプレーヤー';
 
   @override
-  String get settings_keyboard_image_section => 'Image Viewer';
+  String get settings_keyboard_image_section => '画像ビューア';
 
   @override
-  String get settings_keyboard_next_tab => 'Next Tab';
+  String get settings_keyboard_next_tab => '次のタブ';
 
   @override
-  String get settings_keyboard_previous_tab => 'Previous Tab';
+  String get settings_keyboard_previous_tab => '前のタブ';
 
   @override
   String settings_keyboard_tab_number(int number) {
-    return 'Tab $number';
+    return 'タブ $number';
   }
 
   @override
-  String get settings_keyboard_first_image => 'First Image';
+  String get settings_keyboard_first_image => '最初の画像';
 
   @override
-  String get settings_keyboard_last_image => 'Last Image';
+  String get settings_keyboard_last_image => '最後の画像';
 
   @override
-  String get settings_keyboard_close_image => 'Close Image Viewer';
+  String get settings_keyboard_close_image => '画像ビューアを閉じる';
 
   @override
-  String get settings_keyboard_unbind => 'Unbind shortcut';
+  String get settings_keyboard_unbind => 'ショートカットを解除';
 
   @override
-  String get settings_keyboard_reset_confirm_title =>
-      'Reset keyboard shortcuts?';
+  String get settings_keyboard_reset_confirm_title => 'キーボードショートカットをリセットしますか？';
 
   @override
   String get settings_keyboard_reset_confirm_body =>
-      'All custom keyboard shortcuts will be replaced with the defaults.';
+      'すべてのカスタムキーボードショートカットがデフォルトに置き換えられます。';
 
   @override
   String get settings_keyboard_reserved =>
-      'This shortcut is reserved by the browser or operating system.';
+      'このショートカットはブラウザまたはオペレーティングシステムによって予約されています。';
 
   @override
   String get settings_keyboard_tab_reserved =>
-      'Tab is reserved for keyboard focus navigation.';
+      'Tabキーはキーボードフォーカスナビゲーション用に予約されています。';
 
   @override
   String settings_keyboard_conflict_moved(String action) {
-    return 'Shortcut moved from $action.';
+    return '$action から移動したショートカット';
   }
 
   @override
@@ -3151,49 +3150,46 @@ class AppLocalizationsJa extends AppLocalizations {
   String get scenes_title => 'シーン';
 
   @override
-  String get settings_config_backup_title => 'App configuration';
+  String get settings_config_backup_title => 'アプリ設定';
 
   @override
-  String get settings_config_backup_subtitle =>
-      'Save or replace user-facing settings and server profiles';
+  String get settings_config_backup_subtitle => 'ユーザー向け設定とサーバープロファイルを保存または置換';
 
   @override
-  String get settings_config_export => 'Save configuration';
+  String get settings_config_export => '設定を保存';
 
   @override
-  String get settings_config_import => 'Import configuration';
+  String get settings_config_import => '設定をインポート';
 
   @override
-  String get settings_config_include_credentials =>
-      'Include credentials unencrypted';
+  String get settings_config_include_credentials => '認証情報を暗号化せずに含める';
 
   @override
   String get settings_config_credentials_warning =>
-      'Anyone with this file can read your server credentials and app lock passcode.';
+      'このファイルを持っている人は誰でも、サーバーの認証情報とアプリロックのパスコードを読むことができます。';
 
   @override
-  String get settings_config_exported => 'Configuration saved';
+  String get settings_config_exported => '設定を保存しました';
 
   @override
-  String get settings_config_import_title => 'Replace app configuration?';
+  String get settings_config_import_title => 'アプリ設定を置き換えますか？';
 
   @override
   String settings_config_import_summary(int profileCount) {
-    return 'This file contains $profileCount server profiles. Importing replaces all current user-facing settings and profiles.';
+    return 'このファイルには $profileCount 個のサーバープロファイルが含まれています。インポートすると、現在のユーザー向け設定とプロファイルがすべて置き換えられます。';
   }
 
   @override
-  String get settings_config_import_confirm => 'Replace configuration';
+  String get settings_config_import_confirm => '設定を置き換え';
 
   @override
   String get settings_config_imported =>
-      'Configuration imported. Restart the app to apply every setting.';
+      '設定をインポートしました。すべての設定を適用するにはアプリを再起動してください。';
 
   @override
-  String get settings_config_invalid =>
-      'The configuration file is invalid or unsupported.';
+  String get settings_config_invalid => '設定ファイルが無効またはサポートされていません。';
 
   @override
   String get settings_config_plaintext_label =>
-      'Credentials are stored as readable text in the exported file.';
+      '認証情報はエクスポートしたファイルに読み取り可能なテキストとして保存されます。';
 }

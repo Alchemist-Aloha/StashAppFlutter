@@ -482,6 +482,21 @@
   "settings_keyboard_seek_backward_5_desc": "Torna indietro di 5 secondi",
   "settings_keyboard_seek_forward_10_desc": "Avanza di 10 secondi",
   "settings_keyboard_seek_backward_10_desc": "Torna indietro di 10 secondi",
+  "settings_keyboard_global_section": "Navigazione globale",
+  "settings_keyboard_video_section": "Lettore video",
+  "settings_keyboard_image_section": "Visualizzatore immagini",
+  "settings_keyboard_next_tab": "Scheda successiva",
+  "settings_keyboard_previous_tab": "Scheda precedente",
+  "settings_keyboard_tab_number": "Scheda {number}",
+  "settings_keyboard_first_image": "Prima immagine",
+  "settings_keyboard_last_image": "Ultima immagine",
+  "settings_keyboard_close_image": "Chiudi visualizzatore immagini",
+  "settings_keyboard_unbind": "Scollega scorciatoia",
+  "settings_keyboard_reset_confirm_title": "Ripristinare le scorciatoie da tastiera?",
+  "settings_keyboard_reset_confirm_body": "Tutte le scorciatoie da tastiera personalizzate verranno sostituite con quelle predefinite.",
+  "settings_keyboard_reserved": "Questa scorciatoia è riservata dal browser o dal sistema operativo.",
+  "settings_keyboard_tab_reserved": "Il tasto Tab è riservato alla navigazione tramite tastiera.",
+  "settings_keyboard_conflict_moved": "Scorciatoia spostata da {action}.",
   "@details_failed_update_rating": {
     "placeholders": {
       "error": {
@@ -1096,5 +1111,18 @@
   "stats_subtitle_0_unique_items": "0 oggetti unici",
   "markers_search_hint": "Cerca marcatori",
   "tags_title": "Tag",
-  "scenes_title": "Scene"
+  "scenes_title": "Scene",
+  "settings_config_backup_title": "Configurazione app",
+  "settings_config_backup_subtitle": "Salva o sostituisci le impostazioni visibili e i profili server",
+  "settings_config_export": "Salva configurazione",
+  "settings_config_import": "Importa configurazione",
+  "settings_config_include_credentials": "Includi credenziali non crittografate",
+  "settings_config_credentials_warning": "Chiunque abbia questo file può leggere le tue credenziali del server e il codice di blocco dell'app.",
+  "settings_config_exported": "Configurazione salvata",
+  "settings_config_import_title": "Sostituire la configurazione dell'app?",
+  "settings_config_import_summary": "Questo file contiene {profileCount} profili server. L'importazione sostituisce tutte le impostazioni e i profili attuali.",
+  "settings_config_import_confirm": "Sostituisci configurazione",
+  "settings_config_imported": "Configurazione importata. Riavvia l'app per applicare tutte le impostazioni.",
+  "settings_config_invalid": "Il file di configurazione non è valido o non è supportato.",
+  "settings_config_plaintext_label": "Le credenziali vengono salvate come testo leggibile nel file esportato."
 }
