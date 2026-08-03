@@ -550,6 +550,7 @@
     }
   },
   "details_more_from_studio": "更多来自该制片商",
+  "details_more_from_performer": "更多来自{performer}",
   "details_o_count_incremented": "O 计数已增加",
   "details_show_less": "显示较少",
   "details_show_more": "显示更多",

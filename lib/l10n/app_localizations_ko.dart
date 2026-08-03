@@ -508,6 +508,11 @@ class AppLocalizationsKo extends AppLocalizations {
   String get details_more_from_studio => '스튜디오의 기타';
 
   @override
+  String details_more_from_performer(String performer) {
+    return '$performer의 기타 콘텐츠';
+  }
+
+  @override
   String get details_o_count_incremented => 'O 수가 증가했습니다';
 
   @override

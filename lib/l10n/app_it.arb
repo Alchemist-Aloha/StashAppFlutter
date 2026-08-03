@@ -456,6 +456,7 @@
     }
   },
   "details_more_from_studio": "Altro dallo studio",
+  "details_more_from_performer": "Altro da {performer}",
   "details_o_count_incremented": "Conteggio O incrementato",
   "details_show_less": "Mostra meno",
   "details_show_more": "Mostra di più",

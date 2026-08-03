@@ -1020,6 +1020,12 @@ abstract class AppLocalizations {
   /// **'More From Studio'**
   String get details_more_from_studio;
 
+  /// No description provided for @details_more_from_performer.
+  ///
+  /// In en, this message translates to:
+  /// **'More From {performer}'**
+  String details_more_from_performer(String performer);
+
   /// No description provided for @details_o_count_incremented.
   ///
   /// In en, this message translates to:

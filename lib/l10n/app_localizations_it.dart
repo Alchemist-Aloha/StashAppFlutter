@@ -520,6 +520,11 @@ class AppLocalizationsIt extends AppLocalizations {
   String get details_more_from_studio => 'Altro dallo studio';
 
   @override
+  String details_more_from_performer(String performer) {
+    return 'Altro da $performer';
+  }
+
+  @override
   String get details_o_count_incremented => 'Conteggio O incrementato';
 
   @override

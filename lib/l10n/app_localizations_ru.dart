@@ -516,6 +516,11 @@ class AppLocalizationsRu extends AppLocalizations {
   String get details_more_from_studio => 'Еще от студии';
 
   @override
+  String details_more_from_performer(String performer) {
+    return 'Больше от $performer';
+  }
+
+  @override
   String get details_o_count_incremented => 'Счет O увеличен';
 
   @override

@@ -489,6 +489,7 @@
     }
   },
   "details_more_from_studio": "スタジオのその他",
+  "details_more_from_performer": "{performer}のその他",
   "details_o_count_incremented": "Oカウントが増えました",
   "details_show_less": "簡易表示",
   "details_show_more": "もっと見る",

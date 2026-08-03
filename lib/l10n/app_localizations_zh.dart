@@ -508,6 +508,11 @@ class AppLocalizationsZh extends AppLocalizations {
   String get details_more_from_studio => '更多来自该制片商';
 
   @override
+  String details_more_from_performer(String performer) {
+    return '更多来自$performer';
+  }
+
+  @override
   String get details_o_count_incremented => 'O 计数已增加';
 
   @override
@@ -3658,6 +3663,11 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String get details_more_from_studio => '更多来自该制片商';
+
+  @override
+  String details_more_from_performer(String performer) {
+    return '更多来自$performer';
+  }
 
   @override
   String get details_o_count_incremented => 'O 计数已增加';
@@ -6812,6 +6822,11 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get details_more_from_studio => '來自該製片商的更多內容';
+
+  @override
+  String details_more_from_performer(String performer) {
+    return '更多來自$performer';
+  }
 
   @override
   String get details_o_count_incremented => 'O 計數已增加';

@@ -538,6 +538,7 @@
   "common_unknown": "알 수 없음",
   "scenes_studio_id_prefix": "스튜디오 ID: {id}",
   "details_more_from_studio": "스튜디오의 기타",
+  "details_more_from_performer": "{performer}의 기타 콘텐츠",
   "details_o_count_incremented": "O 수가 증가했습니다",
   "details_show_less": "간략히 보기",
   "details_show_more": "더 보기",

@@ -518,6 +518,11 @@ class AppLocalizationsDe extends AppLocalizations {
   String get details_more_from_studio => 'Mehr vom Studio';
 
   @override
+  String details_more_from_performer(String performer) {
+    return 'Mehr von $performer';
+  }
+
+  @override
   String get details_o_count_incremented => 'O-Zähler erhöht';
 
   @override

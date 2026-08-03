@@ -545,6 +545,7 @@
     }
   },
   "details_more_from_studio": "Еще от студии",
+  "details_more_from_performer": "Больше от {performer}",
   "details_o_count_incremented": "Счет O увеличен",
   "details_show_less": "Показать меньше",
   "details_show_more": "Показать больше",

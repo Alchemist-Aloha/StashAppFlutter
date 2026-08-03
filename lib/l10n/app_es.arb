@@ -547,6 +547,7 @@
   "scenes_field_urls": "Enlaces",
   "common_no_title": "Sin título",
   "details_more_from_studio": "Más del estudio",
+  "details_more_from_performer": "Más de {performer}",
   "details_o_count_incremented": "Recuento O incrementado",
   "details_show_less": "Mostrar menos",
   "details_show_more": "Mostrar más",

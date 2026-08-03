@@ -540,6 +540,7 @@
   "common_unknown": "Unbekannt",
   "scenes_studio_id_prefix": "Studio-ID: {id}",
   "details_more_from_studio": "Mehr vom Studio",
+  "details_more_from_performer": "Mehr von {performer}",
   "details_o_count_incremented": "O-Zähler erhöht",
   "details_show_less": "Weniger anzeigen",
   "details_show_more": "Mehr anzeigen",

@@ -178,6 +178,14 @@
   "common_more": "More",
   "details_show_less": "Show less",
   "details_more_from_studio": "More From Studio",
+  "details_more_from_performer": "More From {performer}",
+  "@details_more_from_performer": {
+    "placeholders": {
+      "performer": {
+        "type": "String"
+      }
+    }
+  },
   "details_o_count_incremented": "O count incremented",
   "details_failed_update_rating": "Failed to update rating: {error}",
   "details_failed_update_performer": "Failed to update performer: {error}",
