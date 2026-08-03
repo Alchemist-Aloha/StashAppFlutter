@@ -24,7 +24,7 @@ void main() {
     await container.read(desktopSettingsProvider.notifier).toggleMute();
 
     expect(container.read(desktopSettingsProvider).volume, 1);
-    expect(container.read(desktopSettingsProvider).isMuted, isFalse);
+    expect(container.read(desktopSettingsProvider).isMuted, isTrue);
     expect(prefs.getDouble('desktop_volume'), 0.4);
     expect(prefs.getBool('desktop_is_muted'), isTrue);
   });
