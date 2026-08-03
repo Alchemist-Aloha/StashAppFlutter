@@ -121,8 +121,6 @@ final class AppConfigSettingsRegistry {
     ],
     _jsonString('navigation_tabs_config', expectList: true),
     _jsonString('desktop_keybinds'),
-    _double('desktop_volume', min: 0, max: 1),
-    _bool('desktop_is_muted'),
     _string('video_play_end_behavior', allowed: {'stop', 'next', 'loop'}),
     _bool('video_use_double_tap_seek'),
     _bool('video_background_playback'),

@@ -1,17 +1,22 @@
 package io.github.alchemistaloha.stashflow
 
 import android.app.PictureInPictureParams
+import android.content.Context
 import android.content.res.Configuration
+import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Rational
 import io.flutter.embedding.engine.FlutterEngine
 import com.ryanheise.audioservice.AudioServiceActivity
 import io.flutter.plugin.common.MethodChannel
+import kotlin.math.roundToInt
 
 open class MainActivity : AudioServiceActivity() {
 	private val pipChannel = "stash_app_flutter/pip"
+	private val volumeChannel = "stash_app_flutter/media_volume"
 	private var channel: MethodChannel? = null
+	private var pendingMediaVolumeSteps = 0.0
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -35,6 +40,46 @@ open class MainActivity : AudioServiceActivity() {
 				else -> result.notImplemented()
 			}
 		}
+
+		MethodChannel(flutterEngine.dartExecutor.binaryMessenger, volumeChannel)
+			.setMethodCallHandler { call, result ->
+				when (call.method) {
+					"adjustMediaVolume" -> {
+						val delta = call.argument<Double>("delta")
+						if (delta == null || !delta.isFinite()) {
+							result.error("invalid_volume", "Volume delta must be a finite number.", null)
+						} else {
+							result.success(adjustMediaVolume(delta))
+						}
+					}
+					else -> result.notImplemented()
+				}
+			}
+	}
+
+	internal fun adjustMediaVolume(delta: Double): Double? = try {
+		val audioManager = getSystemService(Context.AUDIO_SERVICE) as? AudioManager ?: return null
+		val maximum = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+		if (maximum <= 0) return null
+
+		pendingMediaVolumeSteps += delta * maximum
+		val adjustment = pendingMediaVolumeSteps.roundToInt()
+		val current = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
+		val unclampedTarget = current + adjustment
+		val target = unclampedTarget.coerceIn(0, maximum)
+		pendingMediaVolumeSteps = if (target == unclampedTarget) {
+			pendingMediaVolumeSteps - adjustment
+		} else {
+			0.0
+		}
+		audioManager.setStreamVolume(
+			AudioManager.STREAM_MUSIC,
+			target,
+			AudioManager.FLAG_SHOW_UI,
+		)
+		audioManager.getStreamVolume(AudioManager.STREAM_MUSIC).toDouble() / maximum
+	} catch (_: Throwable) {
+		null
 	}
 
 	private fun enterPipMode(numerator: Int, denominator: Int): Boolean {

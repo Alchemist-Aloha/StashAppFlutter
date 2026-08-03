@@ -24,6 +24,9 @@ subprojects {
     }
     plugins.withType<com.android.build.gradle.LibraryPlugin> {
         val android = project.extensions.getByName("android") as com.android.build.gradle.BaseExtension
+        if (project.name == "jni") {
+            project.pluginManager.apply("org.jetbrains.kotlin.android")
+        }
     }
 }
 

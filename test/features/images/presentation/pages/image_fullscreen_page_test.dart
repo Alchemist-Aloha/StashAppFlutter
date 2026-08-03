@@ -61,7 +61,7 @@ void main() {
   });
 
   group('ImageFullscreenPage', () {
-    test('guards initial post-frame prefetch after dispose', () {
+    test('warms adjacent files without decoding them', () {
       final source = File(
         'lib/features/images/presentation/pages/image_fullscreen_page.dart',
       ).readAsStringSync();
@@ -71,10 +71,12 @@ void main() {
         contains(
           'WidgetsBinding.instance.addPostFrameCallback((_) {\n'
           '            if (!mounted) return;\n'
-          '            _prefetchAdjacent(items, _currentIndex, headers);\n'
+          '            _warmAdjacentFiles(items, _currentIndex, headers);\n'
           '          });',
         ),
       );
+      expect(source, contains('.getNetworkImageData().ignore()'));
+      expect(source, isNot(contains('precacheImage(')));
     });
 
     test('delegates desktop fullscreen transitions to DesktopFullscreen', () {

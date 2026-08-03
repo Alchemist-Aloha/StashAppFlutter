@@ -23,6 +23,7 @@ import '../../domain/entities/scene.dart';
 import '../../domain/entities/scene_title_utils.dart';
 import '../providers/video_player_provider.dart';
 import '../providers/playback_queue_provider.dart';
+import '../../../../core/utils/system_media_volume.dart';
 import 'playlist_floating_panel.dart';
 import 'scrubbing_preview.dart';
 import '../../../../core/data/graphql/media_headers_provider.dart';
@@ -1090,7 +1091,7 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls> {
                                         _dragStartValue = val;
                                       }
                                     });
-                                  } else {
+                                  } else if (!Platform.isAndroid) {
                                     _dragStartValue = ref
                                         .read(desktopSettingsProvider)
                                         .volume;
@@ -1120,6 +1121,20 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls> {
                                   _showFeedback(
                                     Icons.brightness_6,
                                     '${(_dragStartValue * 100).round()}%',
+                                  );
+                                } else if (Platform.isAndroid) {
+                                  unawaited(
+                                    SystemMediaVolume.adjustMediaVolume(
+                                      delta,
+                                    ).then((volume) {
+                                      if (!mounted || volume == null) {
+                                        return;
+                                      }
+                                      _showFeedback(
+                                        Icons.volume_up,
+                                        '${(volume * 100).round()}%',
+                                      );
+                                    }),
                                   );
                                 } else {
                                   // Volume
