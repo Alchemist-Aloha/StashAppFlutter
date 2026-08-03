@@ -130,7 +130,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get common_later => '以后';
 
   @override
-  String get common_update_now => '发布详情';
+  String get common_release_details => '发布详情';
 
   @override
   String get common_configure_now => '立即配置';
@@ -2909,7 +2909,13 @@ class AppLocalizationsZh extends AppLocalizations {
     );
     final String countString = countNumberFormat.format(count);
 
-    return '$countString 个标签';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString 个标签',
+      zero: '无标签',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -2919,7 +2925,13 @@ class AppLocalizationsZh extends AppLocalizations {
     );
     final String countString = countNumberFormat.format(count);
 
-    return '$countString 个分组';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString 个分组',
+      zero: '无分组',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -2929,7 +2941,13 @@ class AppLocalizationsZh extends AppLocalizations {
     );
     final String countString = countNumberFormat.format(count);
 
-    return '$countString 个标记';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString 个标记',
+      zero: '无标记',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -2939,7 +2957,13 @@ class AppLocalizationsZh extends AppLocalizations {
     );
     final String countString = countNumberFormat.format(count);
 
-    return '$countString 个画廊';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString 个画廊',
+      zero: '无画廊',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -3267,7 +3291,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get common_later => '以后';
 
   @override
-  String get common_update_now => '发布详情';
+  String get common_release_details => '发布详情';
 
   @override
   String get common_configure_now => '立即配置';
@@ -5993,7 +6017,13 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
     );
     final String countString = countNumberFormat.format(count);
 
-    return '$countString 个标签';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString 个标签',
+      zero: '无标签',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -6003,7 +6033,13 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
     );
     final String countString = countNumberFormat.format(count);
 
-    return '$countString 个分组';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString 个分组',
+      zero: '无分组',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -6013,7 +6049,13 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
     );
     final String countString = countNumberFormat.format(count);
 
-    return '$countString 个标记';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString 个标记',
+      zero: '无标记',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -6023,7 +6065,13 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
     );
     final String countString = countNumberFormat.format(count);
 
-    return '$countString 个画廊';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString 个画廊',
+      zero: '无画廊',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -6306,7 +6354,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get common_later => '稍後';
 
   @override
-  String get common_update_now => '發佈詳情';
+  String get common_release_details => '發佈詳情';
 
   @override
   String get common_configure_now => '立即設定';
@@ -9034,7 +9082,14 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
     );
     final String countString = countNumberFormat.format(count);
 
-    return '$countString 個標籤';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString 個標籤',
+      one: '1 個標籤',
+      zero: '無標籤',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -9044,7 +9099,14 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
     );
     final String countString = countNumberFormat.format(count);
 
-    return '$countString 個分組';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString 個分組',
+      one: '1 個分組',
+      zero: '無分組',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -9054,7 +9116,14 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
     );
     final String countString = countNumberFormat.format(count);
 
-    return '$countString 個標記';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString 個標記',
+      one: '1 個標記',
+      zero: '無標記',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -9064,7 +9133,14 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
     );
     final String countString = countNumberFormat.format(count);
 
-    return '$countString 個畫廊';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString 個畫廊',
+      one: '1 個畫廊',
+      zero: '無畫廊',
+    );
+    return '$_temp0';
   }
 
   @override

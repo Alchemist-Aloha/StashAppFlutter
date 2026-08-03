@@ -276,11 +276,11 @@ abstract class AppLocalizations {
   /// **'Later'**
   String get common_later;
 
-  /// No description provided for @common_update_now.
+  /// No description provided for @common_release_details.
   ///
   /// In en, this message translates to:
   /// **'Release Details'**
-  String get common_update_now;
+  String get common_release_details;
 
   /// No description provided for @common_configure_now.
   ///

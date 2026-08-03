@@ -132,7 +132,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get common_later => 'Più tardi';
 
   @override
-  String get common_update_now => 'Dettagli versione';
+  String get common_release_details => 'Dettagli versione';
 
   @override
   String get common_configure_now => 'Configura Ora';
@@ -1963,7 +1963,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String scenes_scrape_failed(String error) {
-    return 'Estrazione fallita';
+    return 'Estrazione fallita: $error';
   }
 
   @override
@@ -1971,7 +1971,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String scenes_update_failed(String error) {
-    return 'Aggiornamento scene fallito';
+    return 'Aggiornamento scene fallito: $error';
   }
 
   @override

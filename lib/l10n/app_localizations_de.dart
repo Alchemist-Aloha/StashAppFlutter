@@ -132,7 +132,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get common_later => 'Später';
 
   @override
-  String get common_update_now => 'Versionsdetails';
+  String get common_release_details => 'Versionsdetails';
 
   @override
   String get common_configure_now => 'Jetzt konfigurieren';

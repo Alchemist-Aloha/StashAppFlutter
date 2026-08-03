@@ -130,7 +130,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get common_later => '나중에';
 
   @override
-  String get common_update_now => '릴리스 세부정보';
+  String get common_release_details => '릴리스 세부정보';
 
   @override
   String get common_configure_now => '지금 설정';

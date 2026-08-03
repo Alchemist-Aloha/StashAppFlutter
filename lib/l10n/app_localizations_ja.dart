@@ -132,7 +132,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get common_later => '後で';
 
   @override
-  String get common_update_now => 'リリース詳細';
+  String get common_release_details => 'リリース詳細';
 
   @override
   String get common_configure_now => '今すぐ設定';
