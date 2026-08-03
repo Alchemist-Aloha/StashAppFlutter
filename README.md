@@ -1,4 +1,6 @@
-# 📱 StashFlow
+![StashFlow — Your Stash library, everywhere](asset/github_social_preview.png)
+
+# StashFlow
 
 ## Your Stash library, everywhere
 
