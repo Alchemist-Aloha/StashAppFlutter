@@ -13,7 +13,9 @@ import 'package:go_router/go_router.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../core/data/graphql/graphql_client.dart';
 import '../../../../core/data/graphql/media_headers_provider.dart';
+import '../../../../core/data/graphql/url_resolver.dart';
 import '../../../../core/data/preferences/shared_preferences_provider.dart';
 import '../../../../core/presentation/providers/keybinds_provider.dart';
 import '../../../../core/presentation/theme/app_theme.dart';
@@ -275,6 +277,15 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
 
     try {
       if (kIsWeb) return;
+      final graphqlEndpoint = Uri.tryParse(ref.read(serverUrlProvider));
+      if (graphqlEndpoint == null ||
+          !isTrustedGraphqlMediaUrl(
+            rawUrl: imageUrl,
+            graphqlEndpoint: graphqlEndpoint,
+          )) {
+        throw Exception('Untrusted image URL');
+      }
+
       final headers = ref.read(mediaHeadersProvider);
 
       final bool isLinux = Platform.isLinux;

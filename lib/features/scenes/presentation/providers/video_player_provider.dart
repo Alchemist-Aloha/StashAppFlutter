@@ -44,20 +44,29 @@ String? resolveSceneSubtitleUrl({
   required String languageCode,
   String? captionType,
   String apiKey = '',
+  Uri? graphqlEndpoint,
 }) {
   if (languageCode == 'none') return null;
 
   final captionPath = paths.caption?.trim() ?? '';
   final vttPath = paths.vtt?.trim() ?? '';
+  String withApiKey(String url) {
+    if (graphqlEndpoint == null) return appendApiKey(url, apiKey);
+    return appendApiKeyIfTrusted(
+      url: url,
+      apiKey: apiKey,
+      graphqlEndpoint: graphqlEndpoint,
+    );
+  }
   if (captionPath.isEmpty) {
-    return vttPath.isEmpty ? null : appendApiKey(vttPath, apiKey);
+    return vttPath.isEmpty ? null : withApiKey(vttPath);
   }
 
   final uri = Uri.parse(captionPath);
   final query = Map<String, String>.from(uri.queryParameters);
   if (languageCode.isNotEmpty) query['lang'] = languageCode;
   if (captionType?.isNotEmpty ?? false) query['type'] = captionType!;
-  return appendApiKey(uri.replace(queryParameters: query).toString(), apiKey);
+  return withApiKey(uri.replace(queryParameters: query).toString());
 }
 
 class NavigationAction {
@@ -588,10 +597,28 @@ class PlayerState extends _$PlayerState with WidgetsBindingObserver {
   ) async {
     File? tempFile;
     try {
+      final graphqlEndpoint = Uri.tryParse(ref.read(serverUrlProvider));
+      if (graphqlEndpoint == null ||
+          !isTrustedGraphqlMediaUrl(
+            rawUrl: url,
+            graphqlEndpoint: graphqlEndpoint,
+          )) {
+        AppLogStore.instance.add(
+          'Skipped notification art fetch for untrusted media URL',
+          source: 'player_provider',
+        );
+        _publishNotificationMetadata(scene, duration, generation);
+        return;
+      }
+
       final headers = ref.read(mediaHeadersProvider);
       final apiKey = ref.read(serverApiKeyProvider);
 
-      final effectiveUrl = appendApiKey(url, apiKey.trim());
+      final effectiveUrl = appendApiKeyIfTrusted(
+        url: url,
+        apiKey: apiKey.trim(),
+        graphqlEndpoint: graphqlEndpoint,
+      );
 
       final dio = Dio(
         BaseOptions(
@@ -777,6 +804,7 @@ class PlayerState extends _$PlayerState with WidgetsBindingObserver {
           languageCode: languageCode,
           captionType: captionType,
           apiKey: ref.read(serverApiKeyProvider),
+          graphqlEndpoint: Uri.tryParse(ref.read(serverUrlProvider)),
         );
         if (subtitleUrl != null) {
           await player.setSubtitleTrack(SubtitleTrack.uri(subtitleUrl));
@@ -1063,6 +1091,7 @@ class PlayerState extends _$PlayerState with WidgetsBindingObserver {
             languageCode: effectiveSubtitleLanguage,
             captionType: effectiveSubtitleType,
             apiKey: ref.read(serverApiKeyProvider),
+            graphqlEndpoint: Uri.tryParse(ref.read(serverUrlProvider)),
           );
     if (subtitleUrl != null) {
       AppLogStore.instance.add(

@@ -73,6 +73,53 @@ void main() {
       expect(result, 'http://example.com/image?apikey=mykey');
     });
 
+    group('trusted media URL checks', () {
+      final endpoint = Uri.parse('https://stash.host.tld/graphql');
+
+      test('accepts relative and same-origin absolute URLs', () {
+        expect(
+          isTrustedGraphqlMediaUrl(rawUrl: '/image/1', graphqlEndpoint: endpoint),
+          isTrue,
+        );
+        expect(
+          isTrustedGraphqlMediaUrl(
+            rawUrl: 'https://stash.host.tld/image/1',
+            graphqlEndpoint: endpoint,
+          ),
+          isTrue,
+        );
+      });
+
+      test('rejects cross-origin absolute URLs', () {
+        expect(
+          isTrustedGraphqlMediaUrl(
+            rawUrl: 'https://evil.example/image/1',
+            graphqlEndpoint: endpoint,
+          ),
+          isFalse,
+        );
+      });
+
+      test('appendApiKeyIfTrusted only appends for trusted origins', () {
+        expect(
+          appendApiKeyIfTrusted(
+            url: '/image/1',
+            apiKey: 'key',
+            graphqlEndpoint: endpoint,
+          ),
+          '/image/1?apikey=key',
+        );
+        expect(
+          appendApiKeyIfTrusted(
+            url: 'https://evil.example/image/1',
+            apiKey: 'key',
+            graphqlEndpoint: endpoint,
+          ),
+          'https://evil.example/image/1',
+        );
+      });
+    });
+
     test('appends apikey to url with existing parameters', () {
       final url = 'http://example.com/image?foo=bar';
       final result = appendApiKey(url, 'mykey');

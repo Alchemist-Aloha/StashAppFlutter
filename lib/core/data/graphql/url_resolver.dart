@@ -35,6 +35,42 @@ String resolveGraphqlMediaUrl({
   return resolved.toString();
 }
 
+int _effectivePort(Uri uri) {
+  if (uri.hasPort) return uri.port;
+  return uri.scheme == 'https' ? 443 : 80;
+}
+
+/// Returns whether [rawUrl] resolves to the same origin as [graphqlEndpoint].
+bool isTrustedGraphqlMediaUrl({
+  required String rawUrl,
+  required Uri graphqlEndpoint,
+}) {
+  final resolved = resolveGraphqlMediaUrl(
+    rawUrl: rawUrl,
+    graphqlEndpoint: graphqlEndpoint,
+  );
+  if (resolved.isEmpty) return false;
+  final resolvedUri = Uri.tryParse(resolved);
+  if (resolvedUri == null || !resolvedUri.hasScheme || resolvedUri.host.isEmpty) {
+    return false;
+  }
+  return resolvedUri.scheme == graphqlEndpoint.scheme &&
+      resolvedUri.host == graphqlEndpoint.host &&
+      _effectivePort(resolvedUri) == _effectivePort(graphqlEndpoint);
+}
+
+/// Appends API key only when [url] resolves to [graphqlEndpoint]'s origin.
+String appendApiKeyIfTrusted({
+  required String url,
+  required String apiKey,
+  required Uri graphqlEndpoint,
+}) {
+  if (!isTrustedGraphqlMediaUrl(rawUrl: url, graphqlEndpoint: graphqlEndpoint)) {
+    return url;
+  }
+  return appendApiKey(url, apiKey);
+}
+
 /// Appends Basic Auth credentials to the given [url] if provided.
 String appendBasicAuth(String url, String username, String password) {
   final uri = Uri.tryParse(url);

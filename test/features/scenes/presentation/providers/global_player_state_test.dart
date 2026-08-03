@@ -75,6 +75,23 @@ void main() {
       );
       expect(resolveSceneSubtitleUrl(paths: paths, languageCode: 'en'), isNull);
     });
+
+    test('does not append api key for cross-origin subtitle URLs', () {
+      final result = resolveSceneSubtitleUrl(
+        paths: const ScenePaths(
+          screenshot: null,
+          preview: null,
+          stream: null,
+          caption: 'https://evil.example/caption.vtt',
+        ),
+        languageCode: 'en',
+        apiKey: 'secret',
+        graphqlEndpoint: Uri.parse('https://stash.test/graphql'),
+      );
+
+      expect(result, 'https://evil.example/caption.vtt?lang=en');
+      expect(result, isNot(contains('apikey=secret')));
+    });
   });
 
   group('GlobalPlayerState', () {
