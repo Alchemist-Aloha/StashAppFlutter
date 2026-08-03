@@ -599,7 +599,7 @@ class _SceneDetailsPageState extends ConsumerState<SceneDetailsPage> {
                           thickness: 1,
                           color: context.colors.outline.withValues(alpha: 0.1),
                         ),
-                        // Right Column: Tags, Performers, More from Studio (38.2%)
+                        // Right Column: Tags, Performers, Related Scenes (38.2%)
                         Expanded(
                           flex: 382,
                           child: SingleChildScrollView(
@@ -613,11 +613,11 @@ class _SceneDetailsPageState extends ConsumerState<SceneDetailsPage> {
                                 _buildTagsSection(context, scene),
                                 _buildMarkersSection(context, scene),
                                 _buildPerformersSection(context, scene),
+                                _buildMoreFromStudioSection(context, scene),
                                 _buildMoreFromPerformersSections(
                                   context,
                                   scene,
                                 ),
-                                _buildMoreFromStudioSection(context, scene),
                               ],
                             ),
                           ),
@@ -658,8 +658,8 @@ class _SceneDetailsPageState extends ConsumerState<SceneDetailsPage> {
                               _buildTagsSection(context, scene),
                               _buildMarkersSection(context, scene),
                               _buildPerformersSection(context, scene),
-                              _buildMoreFromPerformersSections(context, scene),
                               _buildMoreFromStudioSection(context, scene),
+                              _buildMoreFromPerformersSections(context, scene),
                             ],
                           ),
                         ),
