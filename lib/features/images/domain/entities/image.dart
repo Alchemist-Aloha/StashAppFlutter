@@ -11,6 +11,13 @@ abstract class Image with _$Image {
     @JsonKey(name: 'rating100') int? rating100,
     String? date,
     @Default([]) List<String> urls,
+    @JsonKey(name: 'studio_id') String? studioId,
+    @JsonKey(name: 'studio_name') String? studioName,
+    @JsonKey(name: 'performer_ids') @Default([]) List<String> performerIds,
+    @JsonKey(name: 'performer_names') @Default([]) List<String> performerNames,
+    @JsonKey(name: 'performer_image_paths')
+    @Default([])
+    List<String?> performerImagePaths,
     required List<ImageFile> files,
     required ImagePaths paths,
   }) = _Image;

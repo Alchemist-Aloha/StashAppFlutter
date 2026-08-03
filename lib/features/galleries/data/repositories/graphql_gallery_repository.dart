@@ -2,6 +2,7 @@ import 'package:graphql/client.dart';
 import 'package:stash_app_flutter/core/data/graphql/graphql_exception.dart';
 import '../../../../core/data/graphql/criterion_mapping.dart';
 import '../../../../core/data/graphql/schema.graphql.dart';
+import '../../../../core/data/graphql/url_resolver.dart';
 import 'package:stash_app_flutter/core/domain/entities/criterion.dart'
     as domain;
 import '../../domain/entities/gallery.dart';
@@ -12,6 +13,27 @@ class GraphQLGalleryRepository {
   final GraphQLClient _client;
 
   GraphQLGalleryRepository(this._client);
+
+  Uri get _graphqlEndpoint => _client.link is HttpLink
+      ? (_client.link as HttpLink).uri
+      : Uri.parse('http://localhost:9999/graphql');
+
+  Gallery _mapGallery(Map<String, dynamic> json) {
+    final performers = (json['performers'] as List<dynamic>? ?? const [])
+        .whereType<Map<String, dynamic>>()
+        .map(
+          (performer) => <String, dynamic>{
+            ...performer,
+            'image_path': resolveGraphqlMediaUrl(
+              rawUrl: performer['image_path']?.toString(),
+              graphqlEndpoint: _graphqlEndpoint,
+            ),
+          },
+        )
+        .toList();
+    return Gallery.fromJson({...json, 'performers': performers});
+  }
+
   Future<List<Gallery>> findGalleries({
     int? page,
     int? perPage,
@@ -99,7 +121,7 @@ class GraphQLGalleryRepository {
     validateGraphQLResult(result);
 
     return result.parsedData!.findGalleries.galleries
-        .map((g) => Gallery.fromJson(g.toJson()))
+        .map((g) => _mapGallery(g.toJson()))
         .toList();
   }
 
@@ -115,7 +137,7 @@ class GraphQLGalleryRepository {
     final data = result.parsedData?.findGallery;
     if (data == null) throw Exception('Gallery not found');
 
-    return Gallery.fromJson(data.toJson());
+    return _mapGallery(data.toJson());
   }
 
   Future<void> updateGalleryRating(String id, int rating100) async {

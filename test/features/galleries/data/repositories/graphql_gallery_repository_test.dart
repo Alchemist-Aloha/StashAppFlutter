@@ -39,8 +39,19 @@ void main() {
               'organized': true,
               'image_count': 10,
               'tags': <dynamic>[],
-              'performers': <dynamic>[],
-              'studios': <dynamic>[],
+              'performers': [
+                {
+                  'id': 'performer-1',
+                  'name': 'Performer One',
+                  'image_path': '/performer/1/image',
+                  '__typename': 'Performer',
+                },
+              ],
+              'studio': {
+                'id': 'studio-1',
+                'name': 'Studio One',
+                '__typename': 'Studio',
+              },
               'files': <dynamic>[],
               'paths': {
                 'cover': 'http://cover.path',
@@ -84,6 +95,11 @@ void main() {
       expect(result.first.id, '1');
       expect(result.first.title, 'Test Gallery');
       expect(result.first.imageCount, 10);
+      expect(result.first.studioName, 'Studio One');
+      expect(result.first.performerNames, ['Performer One']);
+      expect(result.first.performerImagePaths, [
+        'http://localhost:9999/performer/1/image',
+      ]);
     });
 
     test('findGalleries awaits the filtered network response', () async {
@@ -150,7 +166,7 @@ void main() {
           'image_count': 10,
           'tags': <dynamic>[],
           'performers': <dynamic>[],
-          'studios': <dynamic>[],
+          'studio': null,
           'files': <dynamic>[],
           'paths': {
             'cover': 'http://cover.path',

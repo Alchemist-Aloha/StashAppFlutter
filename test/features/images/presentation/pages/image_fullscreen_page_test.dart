@@ -324,6 +324,11 @@ void main() {
           date: '2023-01-01',
           rating100: 80,
           urls: const ['https://example.com/image'],
+          studioId: 'studio-1',
+          studioName: 'Studio One',
+          performerIds: const ['performer-1'],
+          performerNames: const ['Performer One'],
+          performerImagePaths: const [null],
           files: const [
             entity.ImageFile(
               width: 1920,
@@ -364,9 +369,21 @@ void main() {
         expect(find.byType(ImageDetailsBottomSheet), findsOneWidget);
         expect(find.text('Image Details'), findsOneWidget);
         expect(find.text('/images/detail.jpg'), findsOneWidget);
+        final detailsSheet = find.byType(ImageDetailsBottomSheet);
+        expect(
+          find.descendant(of: detailsSheet, matching: find.text('Studio One')),
+          findsOneWidget,
+        );
         expect(
           find.descendant(
-            of: find.byType(ImageDetailsBottomSheet),
+            of: detailsSheet,
+            matching: find.text('Performer One'),
+          ),
+          findsOneWidget,
+        );
+        expect(
+          find.descendant(
+            of: detailsSheet,
             matching: find.byIcon(Icons.star_rate_rounded),
           ),
           findsNothing,

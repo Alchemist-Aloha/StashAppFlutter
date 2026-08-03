@@ -9,6 +9,11 @@ class Gallery {
   final String? coverPath;
   final int? coverWidth;
   final int? coverHeight;
+  final String? studioId;
+  final String? studioName;
+  final List<String> performerIds;
+  final List<String> performerNames;
+  final List<String?> performerImagePaths;
 
   static final _separatorRegExp = RegExp(r'[_\.]+');
 
@@ -23,6 +28,11 @@ class Gallery {
     this.coverPath,
     this.coverWidth,
     this.coverHeight,
+    this.studioId,
+    this.studioName,
+    this.performerIds = const [],
+    this.performerNames = const [],
+    this.performerImagePaths = const [],
   });
 
   /// The display title of the gallery.
@@ -72,6 +82,11 @@ class Gallery {
       }
     }
 
+    final studio = json['studio'] as Map<String, dynamic>?;
+    final performers = (json['performers'] as List<dynamic>? ?? const [])
+        .whereType<Map<String, dynamic>>()
+        .toList();
+
     return Gallery(
       id: json['id']?.toString() ?? '',
       title: json['title']?.toString() ?? '',
@@ -83,6 +98,17 @@ class Gallery {
       coverPath: coverPath,
       coverWidth: coverWidth,
       coverHeight: coverHeight,
+      studioId: studio?['id']?.toString(),
+      studioName: studio?['name']?.toString(),
+      performerIds: performers
+          .map((performer) => performer['id']?.toString() ?? '')
+          .toList(),
+      performerNames: performers
+          .map((performer) => performer['name']?.toString() ?? '')
+          .toList(),
+      performerImagePaths: performers
+          .map((performer) => performer['image_path']?.toString())
+          .toList(),
     );
   }
 }

@@ -5,9 +5,12 @@ import '../../../../core/presentation/widgets/stash_image.dart';
 import '../../../../core/utils/l10n_extensions.dart';
 import '../../../../core/presentation/theme/app_theme.dart';
 import '../../../../core/presentation/widgets/rating_bottom_sheet.dart';
+import '../../../../core/presentation/widgets/studio_performer_info_sections.dart';
 import '../providers/gallery_list_provider.dart';
 import '../../domain/entities/gallery.dart';
 import '../providers/gallery_details_provider.dart';
+import '../../../scenes/presentation/widgets/scene_card.dart';
+import '../../../../core/presentation/providers/layout_settings_provider.dart';
 
 /// A card widget that displays a summary of a [Gallery].
 class GalleryCard extends ConsumerWidget {
@@ -157,24 +160,27 @@ class GalleryCard extends ConsumerWidget {
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          if ((gallery.details != null &&
-                                  gallery.details!.isNotEmpty) ||
-                              gallery.date != null) ...[
-                            const SizedBox(height: 4),
-                            Text(
-                              [
-                                if (gallery.details != null &&
-                                    gallery.details!.isNotEmpty)
-                                  gallery.details,
-                                if (gallery.date != null)
-                                  gallery.date!.split('-').first,
-                              ].join(' • '),
-                              style: context.textTheme.labelMedium?.copyWith(
-                                color: context.colors.primary,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                          const SizedBox(height: 4),
+                          Text(
+                            [
+                              gallery.studioName ?? context.l10n.common_unknown,
+                              if (gallery.date != null)
+                                gallery.date!.split('-').first,
+                            ].join(' • '),
+                            style: context.textTheme.labelMedium?.copyWith(
+                              color: context.colors.primary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          if (ref.watch(showPerformerAvatarsProvider) &&
+                              gallery.performerNames.isNotEmpty) ...[
+                            const SizedBox(height: 8),
+                            ScenePerformerAvatarRow(
+                              performerImagePaths: gallery.performerImagePaths,
+                              performerNames: gallery.performerNames,
+                              performerIds: gallery.performerIds,
                             ),
                           ],
                         ],
@@ -222,9 +228,8 @@ class GalleryCard extends ConsumerWidget {
                 useMasonry ? aspectRatio.clamp(0.5, 2.5) : 16 / 9,
               ),
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
                       child: Column(
@@ -242,28 +247,41 @@ class GalleryCard extends ConsumerWidget {
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          if (gallery.details != null &&
-                              gallery.details!.isNotEmpty) ...[
-                            const SizedBox(height: 2),
-                            Text(
-                              gallery.details!,
-                              style: context.textTheme.labelSmall?.copyWith(
-                                color: context.colors.primary,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                          const SizedBox(height: 2),
+                          Text(
+                            gallery.studioName ?? context.l10n.common_unknown,
+                            style: context.textTheme.labelSmall?.copyWith(
+                              color: context.colors.primary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          if (ref.watch(showPerformerAvatarsProvider) &&
+                              gallery.performerNames.isNotEmpty) ...[
+                            const SizedBox(height: 4),
+                            ScenePerformerAvatarRow(
+                              performerImagePaths: gallery.performerImagePaths,
+                              performerNames: gallery.performerNames,
+                              performerIds: gallery.performerIds,
                             ),
                           ],
                         ],
                       ),
                     ),
-                    IconButton(
-                      tooltip: context.l10n.common_more,
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                      onPressed: () => _showRating(context, ref),
-                      icon: const Icon(Icons.more_vert, size: 14),
+                    SizedBox.square(
+                      dimension: 32,
+                      child: IconButton(
+                        tooltip: context.l10n.common_more,
+                        padding: EdgeInsets.zero,
+                        visualDensity: VisualDensity.compact,
+                        constraints: const BoxConstraints.tightFor(
+                          width: 32,
+                          height: 32,
+                        ),
+                        onPressed: () => _showRating(context, ref),
+                        icon: const Icon(Icons.more_vert, size: 16),
+                      ),
                     ),
                   ],
                 ),
@@ -373,6 +391,19 @@ class GalleryCard extends ConsumerWidget {
 
     return Column(
       children: [
+        if (StudioPerformerInfoSections.isVisible(
+          studioName: gallery.studioName,
+          performerNames: gallery.performerNames,
+        )) ...[
+          StudioPerformerInfoSections(
+            studioId: gallery.studioId,
+            studioName: gallery.studioName,
+            performerIds: gallery.performerIds,
+            performerNames: gallery.performerNames,
+            performerImagePaths: gallery.performerImagePaths,
+          ),
+          SizedBox(height: context.dimensions.spacingMedium),
+        ],
         _SectionCard(
           title: context.l10n.common_details,
           child: Column(

@@ -42,6 +42,14 @@ void main() {
         'rating100': 85,
         'image_count': 15,
         'details': 'Some details',
+        'studio': {'id': 'studio-1', 'name': 'Studio One'},
+        'performers': [
+          {
+            'id': 'performer-1',
+            'name': 'Performer One',
+            'image_path': '/performer/1/image',
+          },
+        ],
         'files': [
           {'path': '/path/file1.zip'},
         ],
@@ -65,6 +73,11 @@ void main() {
       expect(gallery.coverPath, 'http://cover.path');
       expect(gallery.coverWidth, 800);
       expect(gallery.coverHeight, 600);
+      expect(gallery.studioId, 'studio-1');
+      expect(gallery.studioName, 'Studio One');
+      expect(gallery.performerIds, ['performer-1']);
+      expect(gallery.performerNames, ['Performer One']);
+      expect(gallery.performerImagePaths, ['/performer/1/image']);
     });
 
     test('fromJson handles missing optional fields gracefully', () {
@@ -81,6 +94,11 @@ void main() {
       expect(gallery.coverPath, isNull);
       expect(gallery.coverWidth, isNull);
       expect(gallery.coverHeight, isNull);
+      expect(gallery.studioId, isNull);
+      expect(gallery.studioName, isNull);
+      expect(gallery.performerIds, isEmpty);
+      expect(gallery.performerNames, isEmpty);
+      expect(gallery.performerImagePaths, isEmpty);
     });
   });
 }

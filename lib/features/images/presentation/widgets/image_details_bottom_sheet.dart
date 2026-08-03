@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/presentation/theme/app_theme.dart';
 import '../../../../core/presentation/widgets/bottom_sheet_panel_chrome.dart';
+import '../../../../core/presentation/widgets/studio_performer_info_sections.dart';
 import '../../../../core/utils/l10n_extensions.dart';
 import '../../domain/entities/image.dart' as entity;
 
@@ -101,6 +102,19 @@ class ImageDetailsContent extends StatelessWidget {
     final file = image.files.isNotEmpty ? image.files.first : null;
     return Column(
       children: [
+        if (StudioPerformerInfoSections.isVisible(
+          studioName: image.studioName,
+          performerNames: image.performerNames,
+        )) ...[
+          StudioPerformerInfoSections(
+            studioId: image.studioId,
+            studioName: image.studioName,
+            performerIds: image.performerIds,
+            performerNames: image.performerNames,
+            performerImagePaths: image.performerImagePaths,
+          ),
+          SizedBox(height: dims.spacingMedium),
+        ],
         _SectionCard(
           title: context.l10n.common_details,
           child: Column(

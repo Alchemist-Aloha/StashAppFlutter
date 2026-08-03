@@ -36,6 +36,19 @@ void main() {
               'rating100': 80,
               'date': '2023-01-01',
               'urls': ['http://test.com/img.jpg'],
+              'studio': {
+                'id': 'studio-1',
+                'name': 'Studio One',
+                '__typename': 'Studio',
+              },
+              'performers': [
+                {
+                  'id': 'performer-1',
+                  'name': 'Performer One',
+                  'image_path': '/performer/1/image',
+                  '__typename': 'Performer',
+                },
+              ],
               'visual_files': [
                 {
                   'width': 100,
@@ -87,6 +100,11 @@ void main() {
       expect(result.first.id, '1');
       expect(result.first.title, 'Test Image');
       expect(result.first.paths.thumbnail, 'http://localhost:9999/thumb.jpg');
+      expect(result.first.studioName, 'Studio One');
+      expect(result.first.performerNames, ['Performer One']);
+      expect(result.first.performerImagePaths, [
+        'http://localhost:9999/performer/1/image',
+      ]);
     });
 
     test('findImages sends related gallery criteria', () async {
@@ -152,6 +170,8 @@ void main() {
           'rating100': 80,
           'date': '2023-01-01',
           'urls': ['http://test.com/img.jpg'],
+          'studio': null,
+          'performers': <dynamic>[],
           'visual_files': [
             {
               'width': 100,
