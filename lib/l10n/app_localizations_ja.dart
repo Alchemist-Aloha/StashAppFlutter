@@ -174,6 +174,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get details_gallery => 'ギャラリー詳細';
 
   @override
+  String get details_image => '画像詳細';
+
+  @override
   String get studios_filter_title => 'スタジオをフィルター';
 
   @override
@@ -2198,6 +2201,9 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get galleries_field_updated_at => '更新日時';
+
+  @override
+  String get images_field_id => 'ID';
 
   @override
   String get images_field_title => 'タイトル';

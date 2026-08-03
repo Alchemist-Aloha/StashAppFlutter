@@ -80,7 +80,8 @@ class GalleryCard extends ConsumerWidget {
     await RatingBottomSheet.show(
       context,
       initialRating: gallery.rating100 ?? 0,
-      title: '${context.l10n.common_rate} ${gallery.displayName}',
+      title: context.l10n.details_gallery,
+      subtitle: gallery.displayName,
       detailsWidget: _buildGalleryDetails(context),
       onRatingSelected: (rating) async {
         try {
@@ -445,9 +446,12 @@ class _SectionCard extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHighest.withValues(
-          alpha: 0.35,
+          alpha: 0.45,
         ),
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.35),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

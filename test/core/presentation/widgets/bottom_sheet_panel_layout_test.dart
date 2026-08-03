@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:stash_app_flutter/core/presentation/theme/app_theme.dart';
 import 'package:stash_app_flutter/core/presentation/widgets/bottom_sheet_panel_chrome.dart';
 import 'package:stash_app_flutter/core/presentation/widgets/filter_bottom_sheet_scaffold.dart';
+import 'package:stash_app_flutter/core/presentation/widgets/rating_bottom_sheet.dart';
 import 'package:stash_app_flutter/core/presentation/widgets/saved_filter_dialog.dart';
 import 'package:stash_app_flutter/core/domain/entities/saved_filter_config.dart';
 
@@ -131,6 +132,32 @@ void main() {
       find.ancestor(of: savedTitle, matching: find.byType(Expanded)),
       findsOneWidget,
     );
+  });
+
+  testWidgets('rating details use the scene details panel layout', (
+    tester,
+  ) async {
+    await pumpTestWidget(
+      tester,
+      child: Scaffold(
+        body: RatingBottomSheet(
+          initialRating: 40,
+          title: 'Gallery Details',
+          subtitle: 'Gallery title',
+          detailsWidget: const Text('Metadata'),
+          onRatingSelected: (_) {},
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byType(BackdropFilter), findsOneWidget);
+    expect(find.byType(ListView), findsOneWidget);
+    expect(tester.widget<ListView>(find.byType(ListView)).shrinkWrap, isTrue);
+    expect(find.text('Gallery Details'), findsOneWidget);
+    expect(find.text('Gallery title'), findsOneWidget);
+    expect(find.text('Metadata'), findsOneWidget);
+    expect(find.byIcon(Icons.close_rounded), findsOneWidget);
   });
 }
 

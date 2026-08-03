@@ -360,6 +360,12 @@ abstract class AppLocalizations {
   /// **'Gallery Details'**
   String get details_gallery;
 
+  /// No description provided for @details_image.
+  ///
+  /// In en, this message translates to:
+  /// **'Image Details'**
+  String get details_image;
+
   /// No description provided for @studios_filter_title.
   ///
   /// In en, this message translates to:
@@ -4211,6 +4217,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Updated At'**
   String get galleries_field_updated_at;
+
+  /// No description provided for @images_field_id.
+  ///
+  /// In en, this message translates to:
+  /// **'ID'**
+  String get images_field_id;
 
   /// No description provided for @images_field_title.
   ///

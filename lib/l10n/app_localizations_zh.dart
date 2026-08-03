@@ -172,6 +172,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get details_gallery => '图库详情';
 
   @override
+  String get details_image => '图片详情';
+
+  @override
   String get studios_filter_title => '筛选制片商';
 
   @override
@@ -2174,6 +2177,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get galleries_field_updated_at => '更新于';
 
   @override
+  String get images_field_id => 'ID';
+
+  @override
   String get images_field_title => '标题';
 
   @override
@@ -3327,6 +3333,9 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String get details_gallery => '图库详情';
+
+  @override
+  String get details_image => '图片详情';
 
   @override
   String get studios_filter_title => '筛选制片商';
@@ -5331,6 +5340,9 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get galleries_field_updated_at => '更新于';
 
   @override
+  String get images_field_id => 'ID';
+
+  @override
   String get images_field_title => '标题';
 
   @override
@@ -6486,6 +6498,9 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get details_gallery => '圖庫詳情';
+
+  @override
+  String get details_image => '圖片詳情';
 
   @override
   String get studios_filter_title => '篩選製片商';
@@ -8490,6 +8505,9 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get galleries_field_updated_at => '更新於';
+
+  @override
+  String get images_field_id => 'ID';
 
   @override
   String get images_field_title => '標題';

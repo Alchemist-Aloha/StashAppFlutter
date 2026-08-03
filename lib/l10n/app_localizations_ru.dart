@@ -177,6 +177,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get details_gallery => 'Подробности о галерее';
 
   @override
+  String get details_image => 'Подробности об изображении';
+
+  @override
   String get studios_filter_title => 'Фильтр студий';
 
   @override
@@ -2283,6 +2286,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get galleries_field_updated_at => 'Обновлено';
+
+  @override
+  String get images_field_id => 'ID';
 
   @override
   String get images_field_title => 'Название';

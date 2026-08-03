@@ -175,6 +175,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get details_gallery => 'Galerie-Details';
 
   @override
+  String get details_image => 'Bilddetails';
+
+  @override
   String get studios_filter_title => 'Studios filtern';
 
   @override
@@ -2289,6 +2292,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get galleries_field_updated_at => 'Aktualisiert am';
+
+  @override
+  String get images_field_id => 'ID';
 
   @override
   String get images_field_title => 'Titel';

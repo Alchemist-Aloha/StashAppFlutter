@@ -172,6 +172,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get details_gallery => '갤러리 상세';
 
   @override
+  String get details_image => '이미지 상세';
+
+  @override
   String get studios_filter_title => '스튜디오 필터';
 
   @override
@@ -2197,6 +2200,9 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get galleries_field_updated_at => '수정 일시';
+
+  @override
+  String get images_field_id => 'ID';
 
   @override
   String get images_field_title => '제목';
