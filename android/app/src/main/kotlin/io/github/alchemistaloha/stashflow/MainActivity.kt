@@ -1,5 +1,6 @@
 package io.github.alchemistaloha.stashflow
 
+import androidx.activity.OnBackPressedCallback
 import android.app.PictureInPictureParams
 import android.content.Context
 import android.content.res.Configuration
@@ -21,6 +22,12 @@ open class MainActivity : AudioServiceActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		applyRecentsScreenshotPolicy()
+
+		onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+			override fun handleOnBackPressed() {
+				channel?.invokeMethod("handleBackPress", null)
+			}
+		})
 	}
 
 	override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
