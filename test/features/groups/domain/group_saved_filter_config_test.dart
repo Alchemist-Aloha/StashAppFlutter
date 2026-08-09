@@ -16,6 +16,8 @@ void main() {
           value: 2,
           modifier: CriterionModifier.greaterThan,
         ),
+        containingGroups: HierarchicalMultiCriterion(value: ['group-2']),
+        createdAt: DateCriterion(value: '2026-01-01'),
       ),
     );
 
@@ -25,6 +27,8 @@ void main() {
     expect(input['find_filter']['direction'], 'ASC');
     expect(input['object_filter']['is_missing'], 'director');
     expect(input['object_filter']['sub_group_count']['value'], 2);
+    expect(input['object_filter']['containing_groups']['value'], ['group-2']);
+    expect(input['object_filter']['created_at']['value'], '2026-01-01');
     expect(
       input['object_filter']['sub_group_count']['modifier'],
       'GREATER_THAN',

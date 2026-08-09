@@ -23,6 +23,7 @@ import 'package:stash_app_flutter/features/groups/domain/entities/group.dart';
 import 'package:stash_app_flutter/features/scenes/domain/entities/scene_filter.dart';
 import 'package:stash_app_flutter/features/performers/domain/entities/performer_filter.dart';
 import 'package:stash_app_flutter/features/studios/domain/entities/studio_filter.dart';
+import 'package:stash_app_flutter/features/tags/domain/entities/tag_filter.dart';
 import 'package:stash_app_flutter/features/images/domain/entities/image_filter.dart';
 import 'package:stash_app_flutter/features/groups/domain/entities/group_filter.dart';
 import 'package:stash_app_flutter/features/scenes/domain/models/scraper.dart';
@@ -468,6 +469,7 @@ class MockGraphQLTagRepository extends MockRepositoryState<Tag>
     String? sort,
     bool? descending,
     bool favoritesOnly = false,
+    TagFilter? tagFilter,
   }) async {
     if (shouldThrow) throw Exception(errorMessage);
     return data;

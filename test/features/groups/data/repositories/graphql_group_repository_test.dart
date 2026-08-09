@@ -81,6 +81,13 @@ void main() {
         sort: 'scenes_count',
         descending: true,
         groupFilter: const GroupFilter(
+          name: StringCriterion(value: 'group'),
+          studios: HierarchicalMultiCriterion(value: ['studio-1']),
+          performers: MultiCriterion(value: ['performer-1']),
+          tags: HierarchicalMultiCriterion(value: ['tag-1']),
+          date: DateCriterion(value: '2024-01-01'),
+          oCounter: IntCriterion(value: 2),
+          containingGroups: HierarchicalMultiCriterion(value: ['group-2']),
           isMissingField: 'director',
           subGroupCount: IntCriterion(
             value: 1,
@@ -103,6 +110,36 @@ void main() {
       expect(filterVariables?['sort'], 'scenes_count');
       expect(filterVariables?['direction'], 'DESC');
       expect(groupFilterVariables?['is_missing'], 'director');
+      expect(
+        (groupFilterVariables?['name'] as Map<String, dynamic>?)?['value'],
+        'group',
+      );
+      expect(
+        (groupFilterVariables?['studios'] as Map<String, dynamic>?)?['value'],
+        ['studio-1'],
+      );
+      expect(
+        (groupFilterVariables?['performers']
+            as Map<String, dynamic>?)?['value'],
+        ['performer-1'],
+      );
+      expect(
+        (groupFilterVariables?['tags'] as Map<String, dynamic>?)?['value'],
+        ['tag-1'],
+      );
+      expect(
+        (groupFilterVariables?['date'] as Map<String, dynamic>?)?['value'],
+        '2024-01-01',
+      );
+      expect(
+        (groupFilterVariables?['o_counter'] as Map<String, dynamic>?)?['value'],
+        2,
+      );
+      expect(
+        (groupFilterVariables?['containing_groups']
+            as Map<String, dynamic>?)?['value'],
+        ['group-2'],
+      );
       expect(
         (groupFilterVariables?['sub_group_count']
             as Map<String, dynamic>?)?['value'],

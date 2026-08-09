@@ -840,6 +840,48 @@ class AppLocalizationsZh extends AppLocalizations {
   String get filter_group_physical => '物理';
 
   @override
+  String get common_aliases => '别名';
+
+  @override
+  String get common_description => '描述';
+
+  @override
+  String get common_stash_id => 'Stash ID';
+
+  @override
+  String get filter_ignore_auto_tag => '忽略自动标签';
+
+  @override
+  String get tags_field_sort_name => '排序名称';
+
+  @override
+  String get tags_field_parent_tags => '父标签';
+
+  @override
+  String get tags_field_child_tags => '子标签';
+
+  @override
+  String get tags_field_parent_count => '父标签数量';
+
+  @override
+  String get tags_field_child_count => '子标签数量';
+
+  @override
+  String get groups_field_containing_groups => '所属组';
+
+  @override
+  String get groups_field_sub_groups => '子组';
+
+  @override
+  String get groups_field_containing_group_count => '所属组数量';
+
+  @override
+  String get groups_field_front_image => '正面图片';
+
+  @override
+  String get groups_field_back_image => '背面图片';
+
+  @override
   String get filter_equals => '等于';
 
   @override
@@ -4001,6 +4043,48 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String get filter_group_physical => '物理';
+
+  @override
+  String get common_aliases => '别名';
+
+  @override
+  String get common_description => '描述';
+
+  @override
+  String get common_stash_id => 'Stash ID';
+
+  @override
+  String get filter_ignore_auto_tag => '忽略自动标签';
+
+  @override
+  String get tags_field_sort_name => '排序名称';
+
+  @override
+  String get tags_field_parent_tags => '父标签';
+
+  @override
+  String get tags_field_child_tags => '子标签';
+
+  @override
+  String get tags_field_parent_count => '父标签数量';
+
+  @override
+  String get tags_field_child_count => '子标签数量';
+
+  @override
+  String get groups_field_containing_groups => '所属组';
+
+  @override
+  String get groups_field_sub_groups => '子组';
+
+  @override
+  String get groups_field_containing_group_count => '所属组数量';
+
+  @override
+  String get groups_field_front_image => '正面图片';
+
+  @override
+  String get groups_field_back_image => '背面图片';
 
   @override
   String get filter_equals => '等于';
@@ -7166,6 +7250,48 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get filter_group_physical => '實體';
+
+  @override
+  String get common_aliases => '別名';
+
+  @override
+  String get common_description => '描述';
+
+  @override
+  String get common_stash_id => 'Stash ID';
+
+  @override
+  String get filter_ignore_auto_tag => '忽略自動標籤';
+
+  @override
+  String get tags_field_sort_name => '排序名稱';
+
+  @override
+  String get tags_field_parent_tags => '父標籤';
+
+  @override
+  String get tags_field_child_tags => '子標籤';
+
+  @override
+  String get tags_field_parent_count => '父標籤數量';
+
+  @override
+  String get tags_field_child_count => '子標籤數量';
+
+  @override
+  String get groups_field_containing_groups => '所屬群組';
+
+  @override
+  String get groups_field_sub_groups => '子群組';
+
+  @override
+  String get groups_field_containing_group_count => '所屬群組數量';
+
+  @override
+  String get groups_field_front_image => '正面圖片';
+
+  @override
+  String get groups_field_back_image => '背面圖片';
 
   @override
   String get filter_equals => '等于';

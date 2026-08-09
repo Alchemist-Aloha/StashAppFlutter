@@ -5,6 +5,8 @@ import 'package:mockito/mockito.dart';
 import 'package:stash_app_flutter/core/data/graphql/schema.graphql.dart';
 import 'package:stash_app_flutter/features/tags/data/repositories/graphql_tag_repository.dart';
 import 'package:stash_app_flutter/features/tags/domain/entities/tag.dart';
+import 'package:stash_app_flutter/features/tags/domain/entities/tag_filter.dart';
+import 'package:stash_app_flutter/core/domain/entities/criterion.dart';
 import 'package:stash_app_flutter/features/tags/data/graphql/tags.graphql.dart';
 
 import 'graphql_tag_repository_test.mocks.dart';
@@ -63,13 +65,41 @@ void main() {
         mockClient.query<Query$FindTags>(any),
       ).thenAnswer((_) async => mockQueryResult);
 
-      final result = await repository.findTags(page: 1, perPage: 20);
+      final result = await repository.findTags(
+        page: 1,
+        perPage: 20,
+        tagFilter: const TagFilter(
+          name: StringCriterion(value: 'tag'),
+          favorite: true,
+          ignoreAutoTag: false,
+          sceneCount: IntCriterion(value: 3),
+          parents: HierarchicalMultiCriterion(value: ['parent-1']),
+          createdAt: DateCriterion(value: '2026-01-01'),
+        ),
+      );
 
       expect(result, isA<List<Tag>>());
       expect(result.length, 1);
       expect(result.first.id, '1');
       expect(result.first.name, 'Test Tag');
       expect(result.first.sceneCount, 10);
+
+      final captured =
+          verify(mockClient.query<Query$FindTags>(captureAny)).captured.single
+              as QueryOptions<Query$FindTags>;
+      final tagFilter =
+          captured.variables['tag_filter'] as Map<String, dynamic>;
+      expect((tagFilter['name'] as Map<String, dynamic>)['value'], 'tag');
+      expect(tagFilter['favorite'], isTrue);
+      expect(tagFilter['ignore_auto_tag'], isFalse);
+      expect((tagFilter['scene_count'] as Map<String, dynamic>)['value'], 3);
+      expect((tagFilter['parents'] as Map<String, dynamic>)['value'], [
+        'parent-1',
+      ]);
+      expect(
+        (tagFilter['created_at'] as Map<String, dynamic>)['value'],
+        '2026-01-01',
+      );
     });
 
     test('getTagById returns a tag on success', () async {

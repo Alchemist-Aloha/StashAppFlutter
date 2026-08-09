@@ -11,6 +11,8 @@ import '../../../performers/domain/entities/performer.dart';
 import '../../../tags/domain/entities/tag.dart';
 import '../../domain/entities/scene.dart';
 import '../../../galleries/domain/entities/gallery.dart';
+import '../../../groups/domain/entities/group.dart';
+import '../../../groups/presentation/providers/group_list_provider.dart';
 
 class EntityPicker<T> extends ConsumerStatefulWidget {
   final String title;
@@ -200,6 +202,10 @@ class _EntityPickerState<T> extends ConsumerState<EntityPicker<T>> {
           () =>
               ref.read(galleryRepositoryProvider).findGalleries(filter: filter),
         );
+      case 'group':
+        return _loadWithSelection(
+          () => ref.read(groupRepositoryProvider).findGroups(filter: filter),
+        );
       default:
         return Future.value([]);
     }
@@ -244,6 +250,8 @@ class _EntityPickerState<T> extends ConsumerState<EntityPicker<T>> {
       case 'gallery':
         return await ref.read(galleryRepositoryProvider).getGalleryById(id)
             as T;
+      case 'group':
+        return await ref.read(groupRepositoryProvider).getGroupById(id) as T;
       default:
         return null;
     }
@@ -255,6 +263,7 @@ class _EntityPickerState<T> extends ConsumerState<EntityPicker<T>> {
     if (item is Tag) return item.id;
     if (item is Scene) return item.id;
     if (item is Gallery) return item.id;
+    if (item is Group) return item.id;
     return '';
   }
 
@@ -264,6 +273,7 @@ class _EntityPickerState<T> extends ConsumerState<EntityPicker<T>> {
     if (item is Tag) return item.name;
     if (item is Scene) return item.title;
     if (item is Gallery) return item.displayName;
+    if (item is Group) return item.name;
     return '';
   }
 }

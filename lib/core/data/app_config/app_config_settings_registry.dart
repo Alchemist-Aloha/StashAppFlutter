@@ -86,6 +86,7 @@ final class AppConfigSettingsRegistry {
       'performer_filter_state',
       'image_filter_state',
       'studio_filter_state',
+      'tag_filter_state',
       'group_list_filter',
       'scene_marker_filter_state',
     ])

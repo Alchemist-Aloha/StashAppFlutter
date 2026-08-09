@@ -1,9 +1,11 @@
 import 'package:graphql/client.dart';
 import 'package:stash_app_flutter/core/data/graphql/graphql_exception.dart';
 import '../../../../core/data/graphql/schema.graphql.dart';
+import '../../../../core/data/graphql/criterion_mapping.dart';
 import '../../../../core/data/graphql/url_resolver.dart';
 import '../graphql/tags.graphql.dart';
 import '../../domain/entities/tag.dart';
+import '../../domain/entities/tag_filter.dart';
 
 class GraphQLTagRepository {
   final GraphQLClient _client;
@@ -19,6 +21,7 @@ class GraphQLTagRepository {
     String? sort,
     bool? descending,
     bool favoritesOnly = false,
+    TagFilter? tagFilter,
   }) async {
     QueryResult<Query$FindTags> result;
     String? effectiveSort = sort == 'scene_count' ? 'scenes_count' : sort;
@@ -30,6 +33,7 @@ class GraphQLTagRepository {
       sort: effectiveSort,
       descending: descending,
       favoritesOnly: favoritesOnly,
+      tagFilter: tagFilter,
     );
 
     // Some servers may still use scene_count; retry if scenes_count is rejected.
@@ -44,6 +48,7 @@ class GraphQLTagRepository {
         sort: effectiveSort,
         descending: descending,
         favoritesOnly: favoritesOnly,
+        tagFilter: tagFilter,
       );
     }
 
@@ -61,6 +66,7 @@ class GraphQLTagRepository {
         sort: null,
         descending: descending,
         favoritesOnly: favoritesOnly,
+        tagFilter: tagFilter,
       );
     }
 
@@ -103,6 +109,7 @@ class GraphQLTagRepository {
     String? sort,
     bool? descending,
     required bool favoritesOnly,
+    TagFilter? tagFilter,
   }) {
     return _client.query$FindTags(
       Options$Query$FindTags(
@@ -119,9 +126,28 @@ class GraphQLTagRepository {
                 ? Enum$SortDirectionEnum.DESC
                 : Enum$SortDirectionEnum.ASC,
           ),
-          tag_filter: favoritesOnly
-              ? Input$TagFilterType(favorite: true)
-              : null,
+          tag_filter: Input$TagFilterType(
+            name: mapStringCriterion(tagFilter?.name),
+            sort_name: mapStringCriterion(tagFilter?.sortName),
+            aliases: mapStringCriterion(tagFilter?.aliases),
+            favorite: favoritesOnly ? true : tagFilter?.favorite,
+            description: mapStringCriterion(tagFilter?.description),
+            is_missing: tagFilter?.isMissingField,
+            scene_count: mapIntCriterion(tagFilter?.sceneCount),
+            image_count: mapIntCriterion(tagFilter?.imageCount),
+            gallery_count: mapIntCriterion(tagFilter?.galleryCount),
+            performer_count: mapIntCriterion(tagFilter?.performerCount),
+            studio_count: mapIntCriterion(tagFilter?.studioCount),
+            group_count: mapIntCriterion(tagFilter?.groupCount),
+            marker_count: mapIntCriterion(tagFilter?.markerCount),
+            parents: mapHierarchicalMultiCriterion(tagFilter?.parents),
+            children: mapHierarchicalMultiCriterion(tagFilter?.children),
+            parent_count: mapIntCriterion(tagFilter?.parentCount),
+            child_count: mapIntCriterion(tagFilter?.childCount),
+            ignore_auto_tag: tagFilter?.ignoreAutoTag,
+            created_at: mapTimestampCriterion(tagFilter?.createdAt),
+            updated_at: mapTimestampCriterion(tagFilter?.updatedAt),
+          ),
         ),
       ),
     );

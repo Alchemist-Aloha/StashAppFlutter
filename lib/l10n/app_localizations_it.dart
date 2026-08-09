@@ -854,6 +854,48 @@ class AppLocalizationsIt extends AppLocalizations {
   String get filter_group_physical => 'Fisico';
 
   @override
+  String get common_aliases => 'Alias';
+
+  @override
+  String get common_description => 'Descrizione';
+
+  @override
+  String get common_stash_id => 'ID Stash';
+
+  @override
+  String get filter_ignore_auto_tag => 'Ignora tagging automatico';
+
+  @override
+  String get tags_field_sort_name => 'Nome ordinamento';
+
+  @override
+  String get tags_field_parent_tags => 'Tag principali';
+
+  @override
+  String get tags_field_child_tags => 'Sotto-tag';
+
+  @override
+  String get tags_field_parent_count => 'Numero tag principali';
+
+  @override
+  String get tags_field_child_count => 'Numero sotto-tag';
+
+  @override
+  String get groups_field_containing_groups => 'Gruppi contenitori';
+
+  @override
+  String get groups_field_sub_groups => 'Sottogruppi';
+
+  @override
+  String get groups_field_containing_group_count => 'Numero gruppi contenitori';
+
+  @override
+  String get groups_field_front_image => 'Immagine frontale';
+
+  @override
+  String get groups_field_back_image => 'Immagine posteriore';
+
+  @override
   String get filter_equals => 'Uguale';
 
   @override

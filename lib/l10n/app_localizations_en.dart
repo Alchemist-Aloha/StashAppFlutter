@@ -844,6 +844,48 @@ class AppLocalizationsEn extends AppLocalizations {
   String get filter_group_physical => 'Physical';
 
   @override
+  String get common_aliases => 'Aliases';
+
+  @override
+  String get common_description => 'Description';
+
+  @override
+  String get common_stash_id => 'Stash ID';
+
+  @override
+  String get filter_ignore_auto_tag => 'Ignore auto tag';
+
+  @override
+  String get tags_field_sort_name => 'Sort Name';
+
+  @override
+  String get tags_field_parent_tags => 'Parent Tags';
+
+  @override
+  String get tags_field_child_tags => 'Sub-Tags';
+
+  @override
+  String get tags_field_parent_count => 'Parent Tag Count';
+
+  @override
+  String get tags_field_child_count => 'Sub-Tag Count';
+
+  @override
+  String get groups_field_containing_groups => 'Containing Groups';
+
+  @override
+  String get groups_field_sub_groups => 'Sub-Groups';
+
+  @override
+  String get groups_field_containing_group_count => 'Containing Group Count';
+
+  @override
+  String get groups_field_front_image => 'Front Image';
+
+  @override
+  String get groups_field_back_image => 'Back Image';
+
+  @override
   String get filter_equals => 'Equals';
 
   @override

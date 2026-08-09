@@ -840,6 +840,48 @@ class AppLocalizationsKo extends AppLocalizations {
   String get filter_group_physical => '물리적';
 
   @override
+  String get common_aliases => '별칭';
+
+  @override
+  String get common_description => '설명';
+
+  @override
+  String get common_stash_id => 'Stash ID';
+
+  @override
+  String get filter_ignore_auto_tag => '자동 태그 무시';
+
+  @override
+  String get tags_field_sort_name => '정렬 이름';
+
+  @override
+  String get tags_field_parent_tags => '상위 태그';
+
+  @override
+  String get tags_field_child_tags => '하위 태그';
+
+  @override
+  String get tags_field_parent_count => '상위 태그 수';
+
+  @override
+  String get tags_field_child_count => '하위 태그 수';
+
+  @override
+  String get groups_field_containing_groups => '포함 그룹';
+
+  @override
+  String get groups_field_sub_groups => '하위 그룹';
+
+  @override
+  String get groups_field_containing_group_count => '포함 그룹 수';
+
+  @override
+  String get groups_field_front_image => '앞면 이미지';
+
+  @override
+  String get groups_field_back_image => '뒷면 이미지';
+
+  @override
   String get filter_equals => '같음';
 
   @override

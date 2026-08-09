@@ -849,6 +849,49 @@ class AppLocalizationsRu extends AppLocalizations {
   String get filter_group_physical => 'Физический';
 
   @override
+  String get common_aliases => 'Псевдонимы';
+
+  @override
+  String get common_description => 'Описание';
+
+  @override
+  String get common_stash_id => 'ID Stash';
+
+  @override
+  String get filter_ignore_auto_tag => 'Игнорировать авто-теги';
+
+  @override
+  String get tags_field_sort_name => 'Имя сортировки';
+
+  @override
+  String get tags_field_parent_tags => 'Родительские теги';
+
+  @override
+  String get tags_field_child_tags => 'Подтеги';
+
+  @override
+  String get tags_field_parent_count => 'Количество родительских тегов';
+
+  @override
+  String get tags_field_child_count => 'Количество подтегов';
+
+  @override
+  String get groups_field_containing_groups => 'Содержащие группы';
+
+  @override
+  String get groups_field_sub_groups => 'Подгруппы';
+
+  @override
+  String get groups_field_containing_group_count =>
+      'Количество содержащих групп';
+
+  @override
+  String get groups_field_front_image => 'Переднее изображение';
+
+  @override
+  String get groups_field_back_image => 'Заднее изображение';
+
+  @override
   String get filter_equals => 'Равно';
 
   @override

@@ -55,7 +55,15 @@ class GroupSavedFilterConfig extends SavedFilterConfig<GroupFilter> {
   }
 
   static const _localToServerKeys = {
+    'rating100': 'rating100',
     'isMissingField': 'is_missing',
+    'tagCount': 'tag_count',
+    'createdAt': 'created_at',
+    'updatedAt': 'updated_at',
+    'oCounter': 'o_counter',
+    'containingGroups': 'containing_groups',
+    'subGroups': 'sub_groups',
+    'containingGroupCount': 'containing_group_count',
     'subGroupCount': 'sub_group_count',
     'sceneCount': 'scene_count',
   };

@@ -7,6 +7,7 @@ import 'package:stash_app_flutter/features/performers/domain/entities/performer.
 import 'package:stash_app_flutter/features/performers/presentation/providers/performer_list_provider.dart';
 import 'package:stash_app_flutter/features/scenes/presentation/widgets/entity_picker.dart';
 import 'package:stash_app_flutter/features/tags/domain/entities/tag.dart';
+import 'package:stash_app_flutter/features/tags/domain/entities/tag_filter.dart';
 import 'package:stash_app_flutter/features/tags/presentation/providers/tag_list_provider.dart';
 import 'package:stash_app_flutter/l10n/app_localizations.dart';
 
@@ -21,6 +22,7 @@ class FilteringTagRepository extends MockGraphQLTagRepository {
     String? sort,
     bool? descending,
     bool favoritesOnly = false,
+    TagFilter? tagFilter,
   }) async {
     final tags = await super.findTags(
       page: page,
