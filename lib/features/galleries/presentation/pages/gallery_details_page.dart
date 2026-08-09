@@ -95,9 +95,7 @@ class _GalleryDetailsPageState extends ConsumerState<GalleryDetailsPage> {
     final galleryAsync = ref.watch(galleryDetailsProvider(widget.galleryId));
 
     return ImagesPage(
-      title:
-          galleryAsync.asData?.value.displayName ??
-          context.l10n.details_gallery,
+      title: context.l10n.details_gallery,
       topContent: AnimatedSize(
         duration: const Duration(milliseconds: 200),
         alignment: Alignment.topCenter,
@@ -415,11 +413,7 @@ class _CompactGalleryDetails extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(dims.spacingSmall),
       ),
-      avatar: Icon(
-        icon,
-        size: dims.performerAvatarSize,
-        color: iconColor ?? colors.onSurfaceVariant,
-      ),
+      avatar: Icon(icon, color: iconColor ?? colors.onSurfaceVariant),
       label: Text(
         label,
         style: context.textTheme.labelMedium?.copyWith(
