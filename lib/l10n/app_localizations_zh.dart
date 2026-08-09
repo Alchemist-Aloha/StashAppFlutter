@@ -374,6 +374,38 @@ class AppLocalizationsZh extends AppLocalizations {
   String get common_details => '详情';
 
   @override
+  String get gallery_chapters_title => '章节';
+
+  @override
+  String gallery_chapter_image(int index) {
+    return '图片 $index';
+  }
+
+  @override
+  String get gallery_code_title => '代码';
+
+  @override
+  String get gallery_photographer_title => '摄影师';
+
+  @override
+  String get studio_hierarchy_title => '层级';
+
+  @override
+  String get studio_parent_title => '上级工作室';
+
+  @override
+  String get studio_children_title => '下级工作室';
+
+  @override
+  String get studio_no_parent => '无上级工作室';
+
+  @override
+  String get studio_no_children => '无下级工作室';
+
+  @override
+  String get studio_content_counts_title => '内容数量（直接 / 包含下级工作室）';
+
+  @override
   String get common_title => '标题';
 
   @override
@@ -3577,6 +3609,38 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String get common_details => '详情';
+
+  @override
+  String get gallery_chapters_title => '章节';
+
+  @override
+  String gallery_chapter_image(int index) {
+    return '图片 $index';
+  }
+
+  @override
+  String get gallery_code_title => '代码';
+
+  @override
+  String get gallery_photographer_title => '摄影师';
+
+  @override
+  String get studio_hierarchy_title => '层级';
+
+  @override
+  String get studio_parent_title => '上级工作室';
+
+  @override
+  String get studio_children_title => '下级工作室';
+
+  @override
+  String get studio_no_parent => '无上级工作室';
+
+  @override
+  String get studio_no_children => '无下级工作室';
+
+  @override
+  String get studio_content_counts_title => '内容数量（直接 / 包含下级工作室）';
 
   @override
   String get common_title => '标题';
@@ -6784,6 +6848,38 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get common_details => '詳情';
+
+  @override
+  String get gallery_chapters_title => '章節';
+
+  @override
+  String gallery_chapter_image(int index) {
+    return '圖片 $index';
+  }
+
+  @override
+  String get gallery_code_title => '代碼';
+
+  @override
+  String get gallery_photographer_title => '攝影師';
+
+  @override
+  String get studio_hierarchy_title => '層級';
+
+  @override
+  String get studio_parent_title => '上級工作室';
+
+  @override
+  String get studio_children_title => '下級工作室';
+
+  @override
+  String get studio_no_parent => '無上級工作室';
+
+  @override
+  String get studio_no_children => '無下級工作室';
+
+  @override
+  String get studio_content_counts_title => '內容數量（直接 / 包含下級工作室）';
 
   @override
   String get common_title => '標題';

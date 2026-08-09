@@ -82,6 +82,7 @@ void main() {
           'id': '1',
           'name': 'Test Studio',
           'url': 'http://test.com',
+          'urls': ['http://test.com', 'http://second.test'],
           'image_path': 'http://localhost:9999/studio.jpg',
           'details': 'Studio details',
           'rating100': 80,
@@ -89,6 +90,35 @@ void main() {
           'image_count': 0,
           'gallery_count': 0,
           'performer_count': 0,
+          'scene_count_all': 9,
+          'image_count_all': 4,
+          'gallery_count_all': 2,
+          'performer_count_all': 3,
+          'group_count': 1,
+          'group_count_all': 2,
+          'o_counter': 7,
+          'parent_studio': {
+            'id': 'parent-1',
+            'name': 'Parent Studio',
+            'image_path': '/studio/parent/image',
+            '__typename': 'Studio',
+          },
+          'child_studios': [
+            {
+              'id': 'child-1',
+              'name': 'Child Studio',
+              'image_path': '/studio/child/image',
+              '__typename': 'Studio',
+            },
+          ],
+          'aliases': ['Alias One'],
+          'tags': [
+            {'id': 'tag-1', 'name': 'Tag One', '__typename': 'Tag'},
+          ],
+          'ignore_auto_tag': true,
+          'organized': true,
+          'created_at': '2023-01-02T00:00:00Z',
+          'updated_at': '2023-01-03T00:00:00Z',
           'favorite': false,
           '__typename': 'Studio',
         },
@@ -112,6 +142,10 @@ void main() {
       expect(result, isA<Studio>());
       expect(result.id, '1');
       expect(result.name, 'Test Studio');
+      expect(result.parentStudio?.name, 'Parent Studio');
+      expect(result.childStudios.single.name, 'Child Studio');
+      expect(result.sceneCountAll, 9);
+      expect(result.tags.single.name, 'Tag One');
     });
   });
 }

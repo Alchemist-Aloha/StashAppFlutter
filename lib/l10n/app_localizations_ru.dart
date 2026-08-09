@@ -382,6 +382,39 @@ class AppLocalizationsRu extends AppLocalizations {
   String get common_details => 'детали';
 
   @override
+  String get gallery_chapters_title => 'Главы';
+
+  @override
+  String gallery_chapter_image(int index) {
+    return 'Изображение $index';
+  }
+
+  @override
+  String get gallery_code_title => 'Код';
+
+  @override
+  String get gallery_photographer_title => 'Фотограф';
+
+  @override
+  String get studio_hierarchy_title => 'Иерархия';
+
+  @override
+  String get studio_parent_title => 'Родительская студия';
+
+  @override
+  String get studio_children_title => 'Дочерние студии';
+
+  @override
+  String get studio_no_parent => 'Нет родительской студии';
+
+  @override
+  String get studio_no_children => 'Нет дочерних студий';
+
+  @override
+  String get studio_content_counts_title =>
+      'Контент (напрямую / включая дочерние студии)';
+
+  @override
   String get common_title => 'название';
 
   @override

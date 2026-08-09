@@ -756,6 +756,66 @@ abstract class AppLocalizations {
   /// **'Details'**
   String get common_details;
 
+  /// No description provided for @gallery_chapters_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Chapters'**
+  String get gallery_chapters_title;
+
+  /// No description provided for @gallery_chapter_image.
+  ///
+  /// In en, this message translates to:
+  /// **'Image {index}'**
+  String gallery_chapter_image(int index);
+
+  /// No description provided for @gallery_code_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Code'**
+  String get gallery_code_title;
+
+  /// No description provided for @gallery_photographer_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Photographer'**
+  String get gallery_photographer_title;
+
+  /// No description provided for @studio_hierarchy_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Hierarchy'**
+  String get studio_hierarchy_title;
+
+  /// No description provided for @studio_parent_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Parent studio'**
+  String get studio_parent_title;
+
+  /// No description provided for @studio_children_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Sub-studios'**
+  String get studio_children_title;
+
+  /// No description provided for @studio_no_parent.
+  ///
+  /// In en, this message translates to:
+  /// **'No parent studio'**
+  String get studio_no_parent;
+
+  /// No description provided for @studio_no_children.
+  ///
+  /// In en, this message translates to:
+  /// **'No sub-studios'**
+  String get studio_no_children;
+
+  /// No description provided for @studio_content_counts_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Content counts (direct / including sub-studios)'**
+  String get studio_content_counts_title;
+
   /// No description provided for @common_title.
   ///
   /// In en, this message translates to:

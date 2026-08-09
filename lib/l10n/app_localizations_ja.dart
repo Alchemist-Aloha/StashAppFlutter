@@ -376,6 +376,38 @@ class AppLocalizationsJa extends AppLocalizations {
   String get common_details => '詳細';
 
   @override
+  String get gallery_chapters_title => 'チャプター';
+
+  @override
+  String gallery_chapter_image(int index) {
+    return '画像 $index';
+  }
+
+  @override
+  String get gallery_code_title => 'コード';
+
+  @override
+  String get gallery_photographer_title => '撮影者';
+
+  @override
+  String get studio_hierarchy_title => '階層';
+
+  @override
+  String get studio_parent_title => '親スタジオ';
+
+  @override
+  String get studio_children_title => '子スタジオ';
+
+  @override
+  String get studio_no_parent => '親スタジオなし';
+
+  @override
+  String get studio_no_children => '子スタジオなし';
+
+  @override
+  String get studio_content_counts_title => 'コンテンツ数（直接 / 子スタジオを含む）';
+
+  @override
   String get common_title => 'タイトル';
 
   @override

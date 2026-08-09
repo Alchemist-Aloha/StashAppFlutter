@@ -158,13 +158,27 @@ void main() {
         'findGallery': {
           'id': '1',
           'title': 'Test Gallery',
+          'code': 'GAL-1',
           'date': '2023-01-01',
           'urls': ['http://test.com/gallery'],
           'details': 'Gallery details',
+          'photographer': 'Photographer One',
           'rating100': 100,
           'organized': true,
+          'created_at': '2023-01-02T00:00:00Z',
+          'updated_at': '2023-01-03T00:00:00Z',
           'image_count': 10,
-          'tags': <dynamic>[],
+          'tags': [
+            {'id': 'tag-1', 'name': 'Tag One', '__typename': 'Tag'},
+          ],
+          'chapters': [
+            {
+              'id': 'chapter-1',
+              'title': 'Opening',
+              'image_index': 4,
+              '__typename': 'GalleryChapter',
+            },
+          ],
           'performers': <dynamic>[],
           'studio': null,
           'files': <dynamic>[],
@@ -197,6 +211,11 @@ void main() {
       expect(result, isA<Gallery>());
       expect(result.id, '1');
       expect(result.title, 'Test Gallery');
+      expect(result.code, 'GAL-1');
+      expect(result.photographer, 'Photographer One');
+      expect(result.tagNames, ['Tag One']);
+      expect(result.chapters.single.title, 'Opening');
+      expect(result.chapters.single.imageIndex, 4);
     });
 
     test('findGalleries throws exception on GraphQL error', () async {

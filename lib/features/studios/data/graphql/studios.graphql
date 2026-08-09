@@ -1,4 +1,4 @@
-fragment StudioData on Studio {
+fragment StudioListData on Studio {
   id
   name
   url
@@ -12,18 +12,49 @@ fragment StudioData on Studio {
   favorite
 }
 
+fragment StudioDetailData on Studio {
+  ...StudioListData
+  urls
+  parent_studio {
+    id
+    name
+    image_path
+  }
+  child_studios {
+    id
+    name
+    image_path
+  }
+  aliases
+  tags {
+    id
+    name
+  }
+  ignore_auto_tag
+  organized
+  scene_count_all: scene_count(depth: -1)
+  image_count_all: image_count(depth: -1)
+  gallery_count_all: gallery_count(depth: -1)
+  performer_count_all: performer_count(depth: -1)
+  group_count
+  group_count_all: group_count(depth: -1)
+  o_counter
+  created_at
+  updated_at
+}
+
 query FindStudios($filter: FindFilterType, $studio_filter: StudioFilterType) {
   findStudios(filter: $filter, studio_filter: $studio_filter) {
     count
     studios {
-      ...StudioData
+      ...StudioListData
     }
   }
 }
 
 query FindStudio($id: ID!) {
   findStudio(id: $id) {
-    ...StudioData
+    ...StudioDetailData
   }
 }
 

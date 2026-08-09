@@ -374,6 +374,38 @@ class AppLocalizationsKo extends AppLocalizations {
   String get common_details => '상세 정보';
 
   @override
+  String get gallery_chapters_title => '챕터';
+
+  @override
+  String gallery_chapter_image(int index) {
+    return '이미지 $index';
+  }
+
+  @override
+  String get gallery_code_title => '코드';
+
+  @override
+  String get gallery_photographer_title => '사진가';
+
+  @override
+  String get studio_hierarchy_title => '계층';
+
+  @override
+  String get studio_parent_title => '상위 스튜디오';
+
+  @override
+  String get studio_children_title => '하위 스튜디오';
+
+  @override
+  String get studio_no_parent => '상위 스튜디오 없음';
+
+  @override
+  String get studio_no_children => '하위 스튜디오 없음';
+
+  @override
+  String get studio_content_counts_title => '콘텐츠 수 (직접 / 하위 스튜디오 포함)';
+
+  @override
   String get common_title => '제목';
 
   @override

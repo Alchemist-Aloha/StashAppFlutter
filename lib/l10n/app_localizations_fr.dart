@@ -384,6 +384,39 @@ class AppLocalizationsFr extends AppLocalizations {
   String get common_details => 'détails';
 
   @override
+  String get gallery_chapters_title => 'Chapitres';
+
+  @override
+  String gallery_chapter_image(int index) {
+    return 'Image $index';
+  }
+
+  @override
+  String get gallery_code_title => 'Code';
+
+  @override
+  String get gallery_photographer_title => 'Photographe';
+
+  @override
+  String get studio_hierarchy_title => 'Hiérarchie';
+
+  @override
+  String get studio_parent_title => 'Studio parent';
+
+  @override
+  String get studio_children_title => 'Sous-studios';
+
+  @override
+  String get studio_no_parent => 'Aucun studio parent';
+
+  @override
+  String get studio_no_children => 'Aucun sous-studio';
+
+  @override
+  String get studio_content_counts_title =>
+      'Contenus (directs / avec sous-studios)';
+
+  @override
   String get common_title => 'titre';
 
   @override
