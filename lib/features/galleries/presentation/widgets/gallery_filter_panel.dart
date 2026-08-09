@@ -11,6 +11,7 @@ import '../../../scenes/presentation/widgets/entity_picker.dart';
 import '../../../studios/domain/entities/studio.dart';
 import '../../../performers/domain/entities/performer.dart';
 import '../../../tags/domain/entities/tag.dart';
+import '../../../scenes/domain/entities/scene.dart';
 import '../../../../core/domain/entities/filter_options.dart';
 
 class GalleryFilterPanel extends ConsumerStatefulWidget {
@@ -86,6 +87,8 @@ class _GalleryFilterPanelState extends ConsumerState<GalleryFilterPanel> {
           _buildGeneralSection(),
           _buildMetadataSection(),
           _buildLibrarySection(),
+          _buildPerformerSection(),
+          _buildMediaInfoSection(),
           _buildSystemSection(),
         ],
       ),
@@ -127,20 +130,6 @@ class _GalleryFilterPanelState extends ConsumerState<GalleryFilterPanel> {
               setState(() => _tempFilter = _tempFilter.copyWith(date: val)),
         ),
         IntCriterionInput(
-          label: context.l10n.galleries_field_performer_age,
-          value: _tempFilter.performerAge,
-          onChanged: (val) => setState(
-            () => _tempFilter = _tempFilter.copyWith(performerAge: val),
-          ),
-        ),
-        IntCriterionInput(
-          label: context.l10n.galleries_field_performer_count,
-          value: _tempFilter.performerCount,
-          onChanged: (val) => setState(
-            () => _tempFilter = _tempFilter.copyWith(performerCount: val),
-          ),
-        ),
-        IntCriterionInput(
           label: context.l10n.galleries_field_tag_count,
           value: _tempFilter.tagCount,
           onChanged: (val) =>
@@ -162,7 +151,7 @@ class _GalleryFilterPanelState extends ConsumerState<GalleryFilterPanel> {
       children: [
         _buildOrganizedFilter(),
         _buildEntityFilter<Studio>(
-          'Studios',
+          context.l10n.studios_title,
           'studio',
           _tempFilter.studios,
           (val) => setState(
@@ -172,8 +161,38 @@ class _GalleryFilterPanelState extends ConsumerState<GalleryFilterPanel> {
           ),
           true,
         ),
+        _buildEntityFilter<Tag>(
+          context.l10n.tags_title,
+          'tag',
+          _tempFilter.tags,
+          (val) => setState(
+            () => _tempFilter = _tempFilter.copyWith(
+              tags: val as HierarchicalMultiCriterion?,
+            ),
+          ),
+          true,
+        ),
+        _buildEntityFilter<Scene>(
+          context.l10n.scenes_title,
+          'scene',
+          _tempFilter.scenes,
+          (val) => setState(
+            () => _tempFilter = _tempFilter.copyWith(
+              scenes: val as MultiCriterion?,
+            ),
+          ),
+          false,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPerformerSection() {
+    return FilterSection(
+      title: context.l10n.filter_group_performer,
+      children: [
         _buildEntityFilter<Performer>(
-          'Performers',
+          context.l10n.performers_title,
           'performer',
           _tempFilter.performers,
           (val) => setState(
@@ -184,18 +203,7 @@ class _GalleryFilterPanelState extends ConsumerState<GalleryFilterPanel> {
           false,
         ),
         _buildEntityFilter<Tag>(
-          'Tags',
-          'tag',
-          _tempFilter.tags,
-          (val) => setState(
-            () => _tempFilter = _tempFilter.copyWith(
-              tags: val as HierarchicalMultiCriterion?,
-            ),
-          ),
-          true,
-        ),
-        _buildEntityFilter<Tag>(
-          'Performer Tags',
+          context.l10n.tags_title,
           'tag',
           _tempFilter.performerTags,
           (val) => setState(
@@ -204,6 +212,87 @@ class _GalleryFilterPanelState extends ConsumerState<GalleryFilterPanel> {
             ),
           ),
           true,
+        ),
+        IntCriterionInput(
+          label: context.l10n.galleries_field_performer_count,
+          value: _tempFilter.performerCount,
+          onChanged: (val) => setState(
+            () => _tempFilter = _tempFilter.copyWith(performerCount: val),
+          ),
+        ),
+        IntCriterionInput(
+          label: context.l10n.galleries_field_performer_age,
+          value: _tempFilter.performerAge,
+          onChanged: (val) => setState(
+            () => _tempFilter = _tempFilter.copyWith(performerAge: val),
+          ),
+        ),
+        _buildBooleanFilter(
+          context.l10n.common_favorites_only,
+          _tempFilter.performerFavorite,
+          (val) => setState(
+            () => _tempFilter = _tempFilter.copyWith(performerFavorite: val),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMediaInfoSection() {
+    const resolutions = [
+      '144p',
+      '240p',
+      '360p',
+      '480p',
+      '540p',
+      '720p',
+      '1080p',
+      '1440p',
+      '1920p',
+      '2160p',
+      '4320p',
+    ];
+
+    return FilterSection(
+      title: context.l10n.filter_group_media_info,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              context.l10n.common_resolution,
+              style: context.textTheme.labelLarge,
+            ),
+            Wrap(
+              spacing: context.dimensions.spacingSmall / 2,
+              children: resolutions.map((resolution) {
+                final isSelected =
+                    _tempFilter.averageResolution?.value.contains(resolution) ??
+                    false;
+                return FilterChip(
+                  label: Text(resolution),
+                  selected: isSelected,
+                  onSelected: (selected) {
+                    setState(() {
+                      final current = List<String>.from(
+                        _tempFilter.averageResolution?.value ?? [],
+                      );
+                      if (selected) {
+                        current.add(resolution);
+                      } else {
+                        current.remove(resolution);
+                      }
+                      _tempFilter = _tempFilter.copyWith(
+                        averageResolution: current.isEmpty
+                            ? null
+                            : MultiCriterion(value: current),
+                      );
+                    });
+                  },
+                );
+              }).toList(),
+            ),
+          ],
         ),
       ],
     );
@@ -485,6 +574,7 @@ class _GalleryFilterPanelState extends ConsumerState<GalleryFilterPanel> {
     if (entity is Studio) return entity.id;
     if (entity is Performer) return entity.id;
     if (entity is Tag) return entity.id;
+    if (entity is Scene) return entity.id;
     throw StateError(
       'Unsupported gallery filter entity: ${entity.runtimeType}',
     );

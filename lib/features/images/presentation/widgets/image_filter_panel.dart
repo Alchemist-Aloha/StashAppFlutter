@@ -48,6 +48,7 @@ class _ImageFilterPanelState extends ConsumerState<ImageFilterPanel> {
           _buildGeneralSection(),
           _buildMetadataSection(),
           _buildLibrarySection(),
+          _buildPerformerSection(),
           _buildMediaInfoSection(),
           _buildSystemSection(),
         ],
@@ -92,6 +93,12 @@ class _ImageFilterPanelState extends ConsumerState<ImageFilterPanel> {
           onChanged: (val) =>
               setState(() => _tempFilter = _tempFilter.copyWith(details: val)),
         ),
+        DateCriterionInput(
+          label: context.l10n.common_date,
+          value: _tempFilter.date,
+          onChanged: (val) =>
+              setState(() => _tempFilter = _tempFilter.copyWith(date: val)),
+        ),
       ],
     );
   }
@@ -102,7 +109,7 @@ class _ImageFilterPanelState extends ConsumerState<ImageFilterPanel> {
       children: [
         _buildOrganizedFilter(),
         _buildEntityFilter<Studio>(
-          'Studios',
+          context.l10n.studios_title,
           'studio',
           _tempFilter.studios,
           (val) => setState(
@@ -112,8 +119,44 @@ class _ImageFilterPanelState extends ConsumerState<ImageFilterPanel> {
           ),
           true,
         ),
+        _buildEntityFilter<Tag>(
+          context.l10n.tags_title,
+          'tag',
+          _tempFilter.tags,
+          (val) => setState(
+            () => _tempFilter = _tempFilter.copyWith(
+              tags: val as HierarchicalMultiCriterion?,
+            ),
+          ),
+          true,
+        ),
+        IntCriterionInput(
+          label: context.l10n.galleries_field_tag_count,
+          value: _tempFilter.tagCount,
+          onChanged: (val) =>
+              setState(() => _tempFilter = _tempFilter.copyWith(tagCount: val)),
+        ),
+        _buildEntityFilter<Gallery>(
+          context.l10n.galleries_title,
+          'gallery',
+          _tempFilter.galleries,
+          (val) => setState(
+            () => _tempFilter = _tempFilter.copyWith(
+              galleries: val as MultiCriterion?,
+            ),
+          ),
+          false,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPerformerSection() {
+    return FilterSection(
+      title: context.l10n.filter_group_performer,
+      children: [
         _buildEntityFilter<Performer>(
-          'Performers',
+          context.l10n.performers_title,
           'performer',
           _tempFilter.performers,
           (val) => setState(
@@ -124,26 +167,36 @@ class _ImageFilterPanelState extends ConsumerState<ImageFilterPanel> {
           false,
         ),
         _buildEntityFilter<Tag>(
-          'Tags',
+          context.l10n.tags_title,
           'tag',
-          _tempFilter.tags,
+          _tempFilter.performerTags,
           (val) => setState(
             () => _tempFilter = _tempFilter.copyWith(
-              tags: val as HierarchicalMultiCriterion?,
+              performerTags: val as HierarchicalMultiCriterion?,
             ),
           ),
           true,
         ),
-        _buildEntityFilter<Gallery>(
-          'Galleries',
-          'gallery',
-          _tempFilter.galleries,
-          (val) => setState(
-            () => _tempFilter = _tempFilter.copyWith(
-              galleries: val as MultiCriterion?,
-            ),
+        IntCriterionInput(
+          label: context.l10n.galleries_field_performer_count,
+          value: _tempFilter.performerCount,
+          onChanged: (val) => setState(
+            () => _tempFilter = _tempFilter.copyWith(performerCount: val),
           ),
-          false,
+        ),
+        IntCriterionInput(
+          label: context.l10n.galleries_field_performer_age,
+          value: _tempFilter.performerAge,
+          onChanged: (val) => setState(
+            () => _tempFilter = _tempFilter.copyWith(performerAge: val),
+          ),
+        ),
+        _buildBooleanFilter(
+          context.l10n.common_favorites_only,
+          _tempFilter.performerFavorite,
+          (val) => setState(
+            () => _tempFilter = _tempFilter.copyWith(performerFavorite: val),
+          ),
         ),
       ],
     );
@@ -160,6 +213,12 @@ class _ImageFilterPanelState extends ConsumerState<ImageFilterPanel> {
     return FilterSection(
       title: context.l10n.filter_group_system,
       children: [
+        StringCriterionInput(
+          label: context.l10n.galleries_field_checksum,
+          value: _tempFilter.checksum,
+          onChanged: (val) =>
+              setState(() => _tempFilter = _tempFilter.copyWith(checksum: val)),
+        ),
         StringCriterionInput(
           label: context.l10n.images_field_path,
           value: _tempFilter.path,
@@ -191,6 +250,20 @@ class _ImageFilterPanelState extends ConsumerState<ImageFilterPanel> {
           value: _tempFilter.oCounter,
           onChanged: (val) =>
               setState(() => _tempFilter = _tempFilter.copyWith(oCounter: val)),
+        ),
+        DateCriterionInput(
+          label: context.l10n.sort_created_at,
+          value: _tempFilter.createdAt,
+          onChanged: (val) => setState(
+            () => _tempFilter = _tempFilter.copyWith(createdAt: val),
+          ),
+        ),
+        DateCriterionInput(
+          label: context.l10n.sort_updated_at,
+          value: _tempFilter.updatedAt,
+          onChanged: (val) => setState(
+            () => _tempFilter = _tempFilter.copyWith(updatedAt: val),
+          ),
         ),
       ],
     );
