@@ -561,6 +561,7 @@ Future<void> pumpTestWidget(
   SharedPreferences? prefs,
   required Widget child,
   List<dynamic> overrides = const [],
+  List<RouteBase> routes = const [],
 }) async {
   if (prefs == null) {
     SharedPreferences.setMockInitialValues({});
@@ -586,7 +587,10 @@ Future<void> pumpTestWidget(
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
         routerConfig: GoRouter(
-          routes: [GoRoute(path: '/', builder: (context, state) => child)],
+          routes: [
+            GoRoute(path: '/', builder: (context, state) => child),
+            ...routes,
+          ],
         ),
       ),
     ),

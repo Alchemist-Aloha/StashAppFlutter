@@ -389,10 +389,6 @@ class _EntityGalleryGridState extends ConsumerState<EntityGalleryGrid> {
           isGrid: widget.isGridView,
           useMasonry: widget.isGridView,
           memCacheWidth: memCacheWidth,
-          onTap: () {
-            ref.read(imageFilterStateProvider.notifier).setGalleryId(item.id);
-            context.push('/galleries/images');
-          },
         );
       },
     );

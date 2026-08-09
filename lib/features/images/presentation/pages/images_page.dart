@@ -40,7 +40,25 @@ enum _ImageSortOption {
 }
 
 class ImagesPage extends ConsumerStatefulWidget {
-  const ImagesPage({super.key});
+  const ImagesPage({
+    super.key,
+    this.title,
+    this.topContent,
+    this.scrollController,
+    this.onRefresh,
+  });
+
+  /// Optional title used when the image browser is embedded in another page.
+  final String? title;
+
+  /// Optional content shown above the image grid.
+  final Widget? topContent;
+
+  /// Optional controller used by an embedding page to observe image scrolling.
+  final ScrollController? scrollController;
+
+  /// Optional refresh callback that can refresh related page data too.
+  final Future<void> Function()? onRefresh;
 
   @override
   ConsumerState<ImagesPage> createState() => _ImagesPageState();
@@ -278,7 +296,7 @@ class _ImagesPageState extends ConsumerState<ImagesPage> {
     final randomNavigationEnabled = ref.watch(randomNavigationEnabledProvider);
 
     return ListPageScaffold<entity.Image>(
-      title: context.l10n.images_title,
+      title: widget.title ?? context.l10n.images_title,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: crossAxisCount,
       ),
@@ -342,7 +360,9 @@ class _ImagesPageState extends ConsumerState<ImagesPage> {
           ImageCard(image: image, memCacheWidth: memCacheWidth),
       loadingItemBuilder: (context, isGrid, index) =>
           ImageCard.skeleton(memCacheWidth: 300),
-      onRefresh: () => ref.read(imageListProvider.notifier).refresh(),
+      onRefresh:
+          widget.onRefresh ??
+          () => ref.read(imageListProvider.notifier).refresh(),
       onFetchNextPage: () =>
           ref.read(imageListProvider.notifier).fetchNextPage(),
       onPageSizeChanged: (pageSize) =>
@@ -355,29 +375,31 @@ class _ImagesPageState extends ConsumerState<ImagesPage> {
               child: const Icon(Icons.casino_outlined),
             )
           : null,
-      sortBar: filterState.galleryId != null
-          ? Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: context.dimensions.spacingMedium,
-                vertical: context.dimensions.spacingSmall,
-              ),
-              child: Row(
-                children: [
-                  InputChip(
-                    label: Text(context.l10n.images_filtered_by_gallery),
-                    onDeleted: () {
-                      ref
-                          .read(imageFilterStateProvider.notifier)
-                          .clearGalleryId();
-                    },
+      sortBar:
+          widget.topContent ??
+          (filterState.galleryId != null
+              ? Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: context.dimensions.spacingMedium,
+                    vertical: context.dimensions.spacingSmall,
                   ),
-                ],
-              ),
-            )
-          : null,
-      scrollController: ref.watch(
-        listScrollControllerProvider(ListScrollTarget.image),
-      ),
+                  child: Row(
+                    children: [
+                      InputChip(
+                        label: Text(context.l10n.images_filtered_by_gallery),
+                        onDeleted: () {
+                          ref
+                              .read(imageFilterStateProvider.notifier)
+                              .clearGalleryId();
+                        },
+                      ),
+                    ],
+                  ),
+                )
+              : null),
+      scrollController:
+          widget.scrollController ??
+          ref.watch(listScrollControllerProvider(ListScrollTarget.image)),
       padding: EdgeInsets.all(context.dimensions.spacingSmall),
     );
   }

@@ -377,12 +377,6 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
               graphqlEndpoint: endpoint,
             ),
             memCacheWidth: memCacheWidth,
-            onTap: () {
-              ref
-                  .read(imageFilterStateProvider.notifier)
-                  .setGalleryId(gallery.id);
-              context.go('/galleries/images');
-            },
           ),
       floatingActionButton: randomNavigationEnabled
           ? galleriesAsync.maybeWhen(

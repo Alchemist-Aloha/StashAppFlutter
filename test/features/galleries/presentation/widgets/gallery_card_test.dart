@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:stash_app_flutter/features/galleries/domain/entities/gallery.dart';
 import 'package:stash_app_flutter/features/galleries/presentation/widgets/gallery_card.dart';
 import 'package:stash_app_flutter/core/presentation/widgets/studio_performer_info_sections.dart';
@@ -8,6 +9,30 @@ import 'package:stash_app_flutter/features/scenes/presentation/widgets/scene_car
 import '../../../../helpers/test_helpers.dart';
 
 void main() {
+  testWidgets('card opens gallery details by default', (tester) async {
+    const gallery = Gallery(id: 'gallery-1', title: 'Gallery title');
+
+    await pumpTestWidget(
+      tester,
+      child: const Scaffold(
+        body: GalleryCard(gallery: gallery, thumbnailUrl: ''),
+      ),
+      routes: [
+        GoRoute(
+          path: '/galleries/gallery/:id',
+          builder: (context, state) =>
+              Text('details ${state.pathParameters['id']}'),
+        ),
+      ],
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byType(GalleryCard));
+    await tester.pumpAndSettle();
+
+    expect(find.text('details gallery-1'), findsOneWidget);
+  });
+
   testWidgets('grid card matches scene metadata and overflow layout', (
     tester,
   ) async {
