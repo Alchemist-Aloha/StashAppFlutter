@@ -64,12 +64,12 @@ void main() {
         );
     container
         .read(groupSortProvider.notifier)
-        .setSort(sort: 'sub_group_count', descending: true);
+        .setSort(sort: 'scenes_count', descending: true);
 
     await container.read(groupListProvider.future);
 
     expect(repository.lastFilter, 'query');
-    expect(repository.lastSort, 'sub_group_count');
+    expect(repository.lastSort, 'scenes_count');
     expect(repository.lastDescending, isTrue);
     expect(repository.lastGroupFilter?.isMissingField, 'director');
     expect(repository.lastGroupFilter?.subGroupCount?.value, 1);

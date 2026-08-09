@@ -89,7 +89,7 @@ class _EntityGalleryGridState extends ConsumerState<EntityGalleryGrid> {
       EntityGallerySortOption.date => 'date',
       EntityGallerySortOption.rating => 'rating',
       EntityGallerySortOption.imageCount => 'images_count',
-      EntityGallerySortOption.fileCount => 'zip_file_count',
+      EntityGallerySortOption.fileCount => 'file_count',
       EntityGallerySortOption.createdAt => 'created_at',
       EntityGallerySortOption.updatedAt => 'updated_at',
       EntityGallerySortOption.random => 'random',

@@ -84,7 +84,7 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
       _GallerySortOption.performerCount => 'performer_count',
       _GallerySortOption.random => 'random',
       _GallerySortOption.imageCount => 'images_count',
-      _GallerySortOption.fileCount => 'zip_file_count',
+      _GallerySortOption.fileCount => 'file_count',
       _GallerySortOption.createdAt => 'created_at',
       _GallerySortOption.updatedAt => 'updated_at',
     };

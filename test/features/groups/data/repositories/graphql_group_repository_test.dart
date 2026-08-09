@@ -62,7 +62,7 @@ void main() {
             filter: Input$FindFilterType(
               page: 1,
               per_page: 20,
-              sort: 'sub_group_count',
+              sort: 'scenes_count',
               direction: Enum$SortDirectionEnum.DESC,
             ),
           ),
@@ -78,7 +78,7 @@ void main() {
         page: 1,
         perPage: 20,
         filter: 'query',
-        sort: 'sub_group_count',
+        sort: 'scenes_count',
         descending: true,
         groupFilter: const GroupFilter(
           isMissingField: 'director',
@@ -100,7 +100,7 @@ void main() {
           variables['group_filter'] as Map<String, dynamic>?;
 
       expect(filterVariables?['q'], 'query');
-      expect(filterVariables?['sort'], 'sub_group_count');
+      expect(filterVariables?['sort'], 'scenes_count');
       expect(filterVariables?['direction'], 'DESC');
       expect(groupFilterVariables?['is_missing'], 'director');
       expect(

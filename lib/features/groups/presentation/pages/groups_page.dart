@@ -19,7 +19,6 @@ enum _GroupSortOption {
   name,
   random,
   sceneCount,
-  subGroupCount,
   rating,
   oCounter,
   createdAt,
@@ -59,9 +58,8 @@ class _GroupsPageState extends ConsumerState<GroupsPage> {
     final sortKey = switch (option) {
       _GroupSortOption.name => 'name',
       _GroupSortOption.random => 'random',
-      _GroupSortOption.sceneCount => 'scene_count',
-      _GroupSortOption.subGroupCount => 'sub_group_count',
-      _GroupSortOption.rating => 'rating100',
+      _GroupSortOption.sceneCount => 'scenes_count',
+      _GroupSortOption.rating => 'rating',
       _GroupSortOption.oCounter => 'o_counter',
       _GroupSortOption.createdAt => 'created_at',
       _GroupSortOption.updatedAt => 'updated_at',
@@ -76,8 +74,7 @@ class _GroupsPageState extends ConsumerState<GroupsPage> {
     return switch (sort) {
       'name' => _GroupSortOption.name,
       'random' => _GroupSortOption.random,
-      'scene_count' => _GroupSortOption.sceneCount,
-      'sub_group_count' || 'groups_count' => _GroupSortOption.subGroupCount,
+      'scenes_count' || 'scene_count' => _GroupSortOption.sceneCount,
       'rating100' || 'rating' => _GroupSortOption.rating,
       'o_counter' => _GroupSortOption.oCounter,
       'created_at' => _GroupSortOption.createdAt,
@@ -94,8 +91,6 @@ class _GroupsPageState extends ConsumerState<GroupsPage> {
         return context.l10n.sort_random;
       case _GroupSortOption.sceneCount:
         return context.l10n.sort_scene_count;
-      case _GroupSortOption.subGroupCount:
-        return context.l10n.sort_groups_count;
       case _GroupSortOption.rating:
         return context.l10n.sort_rating;
       case _GroupSortOption.oCounter:
