@@ -61,5 +61,16 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byKey(const Key('gallery_details_collapsed')), findsOneWidget);
+
+    final scrollPosition = Scrollable.of(
+      tester.element(find.byType(ImageCard).first),
+    ).position;
+    final offsetBeforeExpand = scrollPosition.pixels;
+
+    await tester.tap(find.byIcon(Icons.expand_more_rounded));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('gallery_details_expanded')), findsOneWidget);
+    expect(scrollPosition.pixels, offsetBeforeExpand);
   });
 }

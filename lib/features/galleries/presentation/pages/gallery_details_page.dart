@@ -86,11 +86,8 @@ class _GalleryDetailsPageState extends ConsumerState<GalleryDetailsPage> {
   }
 
   void _expandDetails() {
-    _scrollController.animateTo(
-      0,
-      duration: const Duration(milliseconds: 250),
-      curve: Curves.easeOut,
-    );
+    if (!_detailsCollapsed) return;
+    setState(() => _detailsCollapsed = false);
   }
 
   @override
@@ -154,7 +151,7 @@ class _CollapsedGalleryDetails extends StatelessWidget {
         dims.spacingSmall,
         dims.spacingSmall,
         dims.spacingSmall,
-        0,
+        dims.spacingMedium,
       ),
       child: Material(
         color: colors.surfaceContainerHigh,
@@ -231,7 +228,7 @@ class _CompactGalleryDetails extends StatelessWidget {
         dims.spacingSmall,
         dims.spacingSmall,
         dims.spacingSmall,
-        0,
+        dims.spacingMedium,
       ),
       child: Material(
         color: colors.surfaceContainerLow,
