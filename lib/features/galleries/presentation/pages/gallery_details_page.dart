@@ -142,31 +142,73 @@ class _CollapsedGalleryDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dims = context.dimensions;
+    final colors = Theme.of(context).colorScheme;
     final subtitle = [
       if (gallery.studioName?.trim().isNotEmpty == true) gallery.studioName!,
       if (gallery.date?.trim().isNotEmpty == true) gallery.date!,
       '${gallery.imageCount ?? 0} ${context.l10n.images_title}',
     ].join(' • ');
 
-    return Card(
-      margin: EdgeInsets.fromLTRB(
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
         dims.spacingSmall,
         dims.spacingSmall,
         dims.spacingSmall,
         0,
       ),
-      child: ListTile(
-        dense: true,
-        title: Text(
-          gallery.displayName,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
+      child: Material(
+        color: colors.surfaceContainerHigh,
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(dims.spacingLarge),
+          side: BorderSide(
+            color: colors.outlineVariant.withValues(alpha: 0.55),
+          ),
         ),
-        subtitle: Text(subtitle, maxLines: 1, overflow: TextOverflow.ellipsis),
-        trailing: IconButton(
-          tooltip: context.l10n.details_show_more,
-          onPressed: onExpand,
-          icon: const Icon(Icons.expand_more_rounded),
+        child: Padding(
+          padding: EdgeInsets.all(dims.spacingSmall),
+          child: Row(
+            children: [
+              _GalleryCover(
+                gallery: gallery,
+                size: dims.buttonHeight,
+                cornerRadius: dims.spacingMedium,
+              ),
+              SizedBox(width: dims.spacingMedium),
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      gallery.displayName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: context.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: -0.2,
+                      ),
+                    ),
+                    SizedBox(height: dims.spacingSmall * 0.25),
+                    Text(
+                      subtitle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: context.textTheme.bodySmall?.copyWith(
+                        color: colors.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(width: dims.spacingSmall),
+              IconButton.filledTonal(
+                tooltip: context.l10n.details_show_more,
+                onPressed: onExpand,
+                icon: const Icon(Icons.expand_more_rounded),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -181,135 +223,274 @@ class _CompactGalleryDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dims = context.dimensions;
-    final hasCover = gallery.coverPath?.trim().isNotEmpty == true;
+    final colors = Theme.of(context).colorScheme;
+    final coverSize = dims.buttonHeight * 2;
 
-    return Card(
-      margin: EdgeInsets.fromLTRB(
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
         dims.spacingSmall,
         dims.spacingSmall,
         dims.spacingSmall,
         0,
       ),
-      elevation: 0,
-      color: Theme.of(
-        context,
-      ).colorScheme.primaryContainer.withValues(alpha: 0.12),
-      child: Padding(
-        padding: EdgeInsets.all(dims.spacingMedium),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(dims.spacingSmall),
-                  child: SizedBox.square(
-                    dimension: dims.buttonHeight * 1.75,
-                    child: hasCover
-                        ? StashImage(
-                            imageUrl: gallery.coverPath!,
-                            fit: BoxFit.cover,
-                            memCacheWidth: 240,
-                          )
-                        : ColoredBox(
-                            color: context.colors.surfaceVariant,
-                            child: Icon(
-                              Icons.photo_library_outlined,
-                              size: dims.buttonHeight,
+      child: Material(
+        color: colors.surfaceContainerLow,
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(dims.spacingLarge),
+          side: BorderSide(
+            color: colors.outlineVariant.withValues(alpha: 0.55),
+          ),
+        ),
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(
+            dims.spacingMedium,
+            dims.spacingMedium,
+            dims.spacingMedium,
+            dims.spacingLarge,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _GalleryCover(
+                    gallery: gallery,
+                    size: coverSize,
+                    cornerRadius: dims.spacingMedium,
+                  ),
+                  SizedBox(width: dims.spacingMedium),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.collections_bookmark_rounded,
+                              size: dims.performerAvatarSize,
+                              color: colors.primary,
                             ),
+                            SizedBox(width: dims.spacingSmall * 0.5),
+                            Text(
+                              context.l10n.details_gallery,
+                              style: context.textTheme.labelLarge?.copyWith(
+                                color: colors.primary,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 0.2,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: dims.spacingSmall * 0.5),
+                        Text(
+                          gallery.displayName,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: context.textTheme.headlineSmall?.copyWith(
+                            color: colors.onSurface,
+                            fontWeight: FontWeight.w800,
+                            height: 1.05,
+                            letterSpacing: -0.5,
                           ),
+                        ),
+                        SizedBox(height: dims.spacingSmall),
+                        Wrap(
+                          spacing: dims.spacingSmall,
+                          runSpacing: dims.spacingSmall * 0.5,
+                          children: [
+                            if (gallery.date?.trim().isNotEmpty == true)
+                              _metadataBadge(
+                                context,
+                                icon: Icons.calendar_today_rounded,
+                                label: gallery.date!,
+                              ),
+                            if (gallery.rating100 != null)
+                              _metadataBadge(
+                                context,
+                                icon: Icons.star_rounded,
+                                label: (gallery.rating100! / 20)
+                                    .toStringAsFixed(1),
+                                iconColor: context.colors.ratingColor,
+                              ),
+                            _metadataBadge(
+                              context,
+                              icon: Icons.image_rounded,
+                              label: '${gallery.imageCount ?? 0}',
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              if (gallery.details?.trim().isNotEmpty == true) ...[
+                SizedBox(height: dims.spacingMedium),
+                Text(
+                  gallery.details!.trim(),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: context.textTheme.bodyMedium?.copyWith(
+                    color: colors.onSurfaceVariant,
+                    height: 1.35,
                   ),
                 ),
-                SizedBox(width: dims.spacingMedium),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+              ],
+              if (gallery.studioName?.trim().isNotEmpty == true ||
+                  gallery.performerNames.isNotEmpty) ...[
+                SizedBox(height: dims.spacingMedium),
+                Divider(height: 1, color: colors.outlineVariant),
+              ],
+              if (gallery.studioName?.trim().isNotEmpty == true) ...[
+                SizedBox(height: dims.spacingMedium),
+                Text(
+                  context.l10n.studios_title,
+                  style: context.textTheme.labelLarge?.copyWith(
+                    color: colors.onSurfaceVariant,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                SizedBox(height: dims.spacingSmall),
+                ActionChip.elevated(
+                  avatar: const Icon(Icons.business_rounded),
+                  label: Text(gallery.studioName!),
+                  onPressed: gallery.studioId == null
+                      ? null
+                      : () =>
+                            context.push('/studios/studio/${gallery.studioId}'),
+                ),
+              ],
+              if (gallery.performerNames.isNotEmpty) ...[
+                SizedBox(height: dims.spacingMedium),
+                Text(
+                  context.l10n.performers_title,
+                  style: context.textTheme.labelLarge?.copyWith(
+                    color: colors.onSurfaceVariant,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                SizedBox(height: dims.spacingSmall),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
                     children: [
-                      Text(
-                        gallery.displayName,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: context.textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.w700,
+                      for (
+                        var index = 0;
+                        index < gallery.performerNames.length;
+                        index++
+                      ) ...[
+                        if (index > 0) SizedBox(width: dims.spacingSmall),
+                        ActionChip.elevated(
+                          avatar: _performerAvatar(context, index),
+                          label: Text(gallery.performerNames[index]),
+                          onPressed: index < gallery.performerIds.length
+                              ? () => context.push(
+                                  '/performers/performer/${gallery.performerIds[index]}',
+                                )
+                              : null,
                         ),
-                      ),
-                      SizedBox(height: dims.spacingSmall),
-                      Wrap(
-                        spacing: dims.spacingSmall,
-                        runSpacing: dims.spacingSmall,
-                        children: [
-                          if (gallery.date?.trim().isNotEmpty == true)
-                            Chip(label: Text(gallery.date!)),
-                          if (gallery.rating100 != null)
-                            Chip(
-                              avatar: Icon(
-                                Icons.star_rounded,
-                                size: dims.performerAvatarSize,
-                                color: context.colors.ratingColor,
-                              ),
-                              label: Text(
-                                (gallery.rating100! / 20).toStringAsFixed(1),
-                              ),
-                            ),
-                          Chip(
-                            avatar: const Icon(Icons.image_outlined),
-                            label: Text('${gallery.imageCount ?? 0}'),
-                          ),
-                        ],
-                      ),
+                      ],
                     ],
                   ),
                 ),
               ],
-            ),
-            if (gallery.details?.trim().isNotEmpty == true) ...[
-              SizedBox(height: dims.spacingSmall),
-              Text(
-                gallery.details!.trim(),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: context.textTheme.bodyMedium,
-              ),
             ],
-            if (gallery.studioName?.trim().isNotEmpty == true) ...[
-              SizedBox(height: dims.spacingSmall),
-              ActionChip(
-                avatar: const Icon(Icons.business_outlined),
-                label: Text(gallery.studioName!),
-                onPressed: gallery.studioId == null
-                    ? null
-                    : () => context.push('/studios/studio/${gallery.studioId}'),
-              ),
-            ],
-            if (gallery.performerNames.isNotEmpty) ...[
-              SizedBox(height: dims.spacingSmall),
-              Text(
-                context.l10n.performers_title,
-                style: context.textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: dims.spacingSmall),
-              Wrap(
-                spacing: dims.spacingSmall,
-                runSpacing: dims.spacingSmall,
-                children: List.generate(
-                  gallery.performerNames.length,
-                  (index) => ActionChip(
-                    avatar: const Icon(Icons.person_outline),
-                    label: Text(gallery.performerNames[index]),
-                    onPressed: index < gallery.performerIds.length
-                        ? () => context.push(
-                            '/performers/performer/${gallery.performerIds[index]}',
-                          )
-                        : null,
-                  ),
-                ),
-              ),
-            ],
-          ],
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _metadataBadge(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    Color? iconColor,
+  }) {
+    final dims = context.dimensions;
+    final colors = Theme.of(context).colorScheme;
+    return Chip(
+      visualDensity: VisualDensity.compact,
+      side: BorderSide.none,
+      backgroundColor: colors.surfaceContainerHighest,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(dims.spacingSmall),
+      ),
+      avatar: Icon(
+        icon,
+        size: dims.performerAvatarSize,
+        color: iconColor ?? colors.onSurfaceVariant,
+      ),
+      label: Text(
+        label,
+        style: context.textTheme.labelMedium?.copyWith(
+          color: colors.onSurfaceVariant,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
+  Widget _performerAvatar(BuildContext context, int index) {
+    final dims = context.dimensions;
+    final imagePath = index < gallery.performerImagePaths.length
+        ? gallery.performerImagePaths[index]
+        : null;
+    final hasImage =
+        imagePath?.trim().isNotEmpty == true &&
+        !imagePath!.contains('default=true');
+    if (!hasImage) return const Icon(Icons.person_rounded);
+
+    return ClipOval(
+      child: SizedBox.square(
+        dimension: dims.performerAvatarSize * 1.5,
+        child: StashImage(
+          imageUrl: imagePath,
+          fit: BoxFit.cover,
+          memCacheWidth: 96,
+        ),
+      ),
+    );
+  }
+}
+
+/// Cover artwork shared by the expanded and collapsed gallery headers.
+class _GalleryCover extends StatelessWidget {
+  const _GalleryCover({
+    required this.gallery,
+    required this.size,
+    required this.cornerRadius,
+  });
+
+  final Gallery gallery;
+  final double size;
+  final double cornerRadius;
+
+  @override
+  Widget build(BuildContext context) {
+    final hasCover = gallery.coverPath?.trim().isNotEmpty == true;
+    final colors = Theme.of(context).colorScheme;
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(cornerRadius),
+      child: SizedBox.square(
+        dimension: size,
+        child: hasCover
+            ? StashImage(
+                imageUrl: gallery.coverPath!,
+                fit: BoxFit.cover,
+                memCacheWidth: (size * 2).round(),
+              )
+            : ColoredBox(
+                color: colors.secondaryContainer,
+                child: Icon(
+                  Icons.photo_library_rounded,
+                  size: size * 0.45,
+                  color: colors.onSecondaryContainer,
+                ),
+              ),
       ),
     );
   }
