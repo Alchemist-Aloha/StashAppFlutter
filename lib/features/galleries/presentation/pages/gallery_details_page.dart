@@ -260,25 +260,6 @@ class _CompactGalleryDetails extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.collections_bookmark_rounded,
-                              size: dims.performerAvatarSize,
-                              color: colors.primary,
-                            ),
-                            SizedBox(width: dims.spacingSmall * 0.5),
-                            Text(
-                              context.l10n.details_gallery,
-                              style: context.textTheme.labelLarge?.copyWith(
-                                color: colors.primary,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 0.2,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: dims.spacingSmall * 0.5),
                         Text(
                           gallery.displayName,
                           maxLines: 2,

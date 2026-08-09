@@ -49,13 +49,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byKey(const Key('gallery_details_expanded')), findsOneWidget);
-    expect(
-      find.descendant(
-        of: find.byType(AppBar),
-        matching: find.text('Gallery Details'),
-      ),
-      findsOneWidget,
-    );
+    expect(find.text('Gallery Details'), findsOneWidget);
     expect(find.text('Compact gallery description'), findsOneWidget);
     expect(find.text('Studio One'), findsOneWidget);
     expect(find.text('Performer One'), findsOneWidget);
