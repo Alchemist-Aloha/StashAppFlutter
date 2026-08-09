@@ -798,24 +798,6 @@ abstract class AppLocalizations {
   /// **'Sub-studios'**
   String get studio_children_title;
 
-  /// No description provided for @studio_no_parent.
-  ///
-  /// In en, this message translates to:
-  /// **'No parent studio'**
-  String get studio_no_parent;
-
-  /// No description provided for @studio_no_children.
-  ///
-  /// In en, this message translates to:
-  /// **'No sub-studios'**
-  String get studio_no_children;
-
-  /// No description provided for @studio_content_counts_title.
-  ///
-  /// In en, this message translates to:
-  /// **'Content counts (direct / including sub-studios)'**
-  String get studio_content_counts_title;
-
   /// No description provided for @common_title.
   ///
   /// In en, this message translates to:

@@ -409,16 +409,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get studio_children_title => 'Subestudios';
 
   @override
-  String get studio_no_parent => 'Sin estudio principal';
-
-  @override
-  String get studio_no_children => 'Sin subestudios';
-
-  @override
-  String get studio_content_counts_title =>
-      'Contenido (directo / incluidos subestudios)';
-
-  @override
   String get common_title => 'título';
 
   @override

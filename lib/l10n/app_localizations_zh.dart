@@ -397,15 +397,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get studio_children_title => '下级工作室';
 
   @override
-  String get studio_no_parent => '无上级工作室';
-
-  @override
-  String get studio_no_children => '无下级工作室';
-
-  @override
-  String get studio_content_counts_title => '内容数量（直接 / 包含下级工作室）';
-
-  @override
   String get common_title => '标题';
 
   @override
@@ -3632,15 +3623,6 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String get studio_children_title => '下级工作室';
-
-  @override
-  String get studio_no_parent => '无上级工作室';
-
-  @override
-  String get studio_no_children => '无下级工作室';
-
-  @override
-  String get studio_content_counts_title => '内容数量（直接 / 包含下级工作室）';
 
   @override
   String get common_title => '标题';
@@ -6871,15 +6853,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get studio_children_title => '下級工作室';
-
-  @override
-  String get studio_no_parent => '無上級工作室';
-
-  @override
-  String get studio_no_children => '無下級工作室';
-
-  @override
-  String get studio_content_counts_title => '內容數量（直接 / 包含下級工作室）';
 
   @override
   String get common_title => '標題';

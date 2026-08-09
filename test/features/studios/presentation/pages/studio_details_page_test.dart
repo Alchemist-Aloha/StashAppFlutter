@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:stash_app_flutter/features/galleries/presentation/providers/entity_gallery_filter_scope.dart';
 import 'package:stash_app_flutter/features/scenes/presentation/providers/entity_media_filter_scope.dart';
@@ -8,7 +9,7 @@ import 'package:stash_app_flutter/features/studios/presentation/providers/studio
 import '../../../../helpers/test_helpers.dart';
 
 void main() {
-  testWidgets('studio details exposes hierarchy and richer counts', (
+  testWidgets('studio details keeps the original layout with hierarchy', (
     tester,
   ) async {
     const studio = Studio(
@@ -18,7 +19,6 @@ void main() {
       imageCount: 3,
       galleryCount: 1,
       performerCount: 4,
-      sceneCountAll: 8,
       favorite: false,
       parentStudio: StudioRelationship(id: 'parent-1', name: 'Parent Studio'),
       childStudios: [StudioRelationship(id: 'child-1', name: 'Child Studio')],
@@ -36,21 +36,13 @@ void main() {
           EntityGalleryFilterKind.studio,
           'studio-1',
         ).overrideWith((ref) => []),
-        studioImagesProvider('studio-1').overrideWith((ref) => []),
       ],
       child: const StudioDetailsPage(studioId: 'studio-1'),
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Scenes (2)'), findsOneWidget);
-    expect(find.text('Galleries (1)'), findsOneWidget);
-    expect(find.text('Images (3)'), findsOneWidget);
-    expect(find.text('Hierarchy (1)'), findsOneWidget);
-    expect(find.text('Scenes: 2 / 8'), findsOneWidget);
-
-    await tester.tap(find.text('Hierarchy (1)'));
-    await tester.pumpAndSettle();
-
+    expect(find.byType(TabBar), findsNothing);
+    expect(find.text('Hierarchy'), findsOneWidget);
     expect(find.text('Parent Studio'), findsOneWidget);
     expect(find.text('Child Studio'), findsOneWidget);
   });

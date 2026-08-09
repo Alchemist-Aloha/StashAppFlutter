@@ -405,16 +405,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get studio_children_title => 'Дочерние студии';
 
   @override
-  String get studio_no_parent => 'Нет родительской студии';
-
-  @override
-  String get studio_no_children => 'Нет дочерних студий';
-
-  @override
-  String get studio_content_counts_title =>
-      'Контент (напрямую / включая дочерние студии)';
-
-  @override
   String get common_title => 'название';
 
   @override

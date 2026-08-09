@@ -397,15 +397,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get studio_children_title => '하위 스튜디오';
 
   @override
-  String get studio_no_parent => '상위 스튜디오 없음';
-
-  @override
-  String get studio_no_children => '하위 스튜디오 없음';
-
-  @override
-  String get studio_content_counts_title => '콘텐츠 수 (직접 / 하위 스튜디오 포함)';
-
-  @override
   String get common_title => '제목';
 
   @override

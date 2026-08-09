@@ -399,15 +399,6 @@ class AppLocalizationsJa extends AppLocalizations {
   String get studio_children_title => '子スタジオ';
 
   @override
-  String get studio_no_parent => '親スタジオなし';
-
-  @override
-  String get studio_no_children => '子スタジオなし';
-
-  @override
-  String get studio_content_counts_title => 'コンテンツ数（直接 / 子スタジオを含む）';
-
-  @override
   String get common_title => 'タイトル';
 
   @override
