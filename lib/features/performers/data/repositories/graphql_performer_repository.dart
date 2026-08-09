@@ -22,8 +22,6 @@ class GraphQLPerformerRepository {
     String? sort,
     bool descending = true,
     PerformerFilter? performerFilter,
-    @Deprecated('Use performerFilter instead') bool favoritesOnly = false,
-    @Deprecated('Use performerFilter instead') List<String>? genders,
   }) async {
     QueryResult<Query$FindPerformers>? result;
     String? effectiveSort = sort == 'scene_count' ? 'scenes_count' : sort;
@@ -34,8 +32,6 @@ class GraphQLPerformerRepository {
       filter: filter,
       sort: effectiveSort,
       descending: descending,
-      favoritesOnly: favoritesOnly,
-      genders: genders,
       performerFilter: performerFilter,
     );
 
@@ -50,8 +46,7 @@ class GraphQLPerformerRepository {
         filter: filter,
         sort: effectiveSort,
         descending: descending,
-        favoritesOnly: favoritesOnly,
-        genders: genders,
+        performerFilter: performerFilter,
       );
     }
 
@@ -68,8 +63,7 @@ class GraphQLPerformerRepository {
         filter: filter,
         sort: null,
         descending: descending,
-        favoritesOnly: favoritesOnly,
-        genders: genders,
+        performerFilter: performerFilter,
       );
     }
 
@@ -135,26 +129,11 @@ class GraphQLPerformerRepository {
     String? filter,
     String? sort,
     required bool descending,
-    bool favoritesOnly = false,
-    List<String>? genders,
     PerformerFilter? performerFilter,
   }) {
-    final genderEnums = (genders ?? const <String>[])
-        .map(fromJson$Enum$GenderEnum)
-        .toList();
-
     final inputFilter = Input$PerformerFilterType(
-      filter_favorites: (favoritesOnly || performerFilter?.favorite == true)
-          ? true
-          : null,
-      gender: performerFilter?.gender != null
-          ? mapGenderCriterion(performerFilter!.gender)
-          : genderEnums.isNotEmpty
-          ? Input$GenderCriterionInput(
-              value_list: genderEnums,
-              modifier: Enum$CriterionModifier.INCLUDES,
-            )
-          : null,
+      filter_favorites: performerFilter?.favorite == true ? true : null,
+      gender: mapGenderCriterion(performerFilter?.gender),
       circumcised: mapCircumcisionCriterion(performerFilter?.circumcised),
       tags: mapHierarchicalMultiCriterion(performerFilter?.tags),
       groups: mapHierarchicalMultiCriterion(performerFilter?.groups),

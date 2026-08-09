@@ -51,7 +51,6 @@ class GraphQLStudioRepository {
     String? sort,
     bool? descending,
     StudioFilter? studioFilter,
-    @Deprecated('Use studioFilter instead') bool favoritesOnly = false,
   }) async {
     QueryResult<Query$FindStudios> result;
     String? effectiveSort = sort == 'scene_count' ? 'scenes_count' : sort;
@@ -62,7 +61,6 @@ class GraphQLStudioRepository {
       filter: filter,
       sort: effectiveSort,
       descending: descending,
-      favoritesOnly: favoritesOnly,
       studioFilter: studioFilter,
     );
 
@@ -77,7 +75,7 @@ class GraphQLStudioRepository {
         filter: filter,
         sort: effectiveSort,
         descending: descending,
-        favoritesOnly: favoritesOnly,
+        studioFilter: studioFilter,
       );
     }
 
@@ -94,7 +92,7 @@ class GraphQLStudioRepository {
         filter: filter,
         sort: null,
         descending: descending,
-        favoritesOnly: favoritesOnly,
+        studioFilter: studioFilter,
       );
     }
 
@@ -121,11 +119,10 @@ class GraphQLStudioRepository {
     String? filter,
     String? sort,
     bool? descending,
-    required bool favoritesOnly,
     StudioFilter? studioFilter,
   }) {
     final inputFilter = Input$StudioFilterType(
-      favorite: (favoritesOnly || studioFilter?.favorite == true) ? true : null,
+      favorite: studioFilter?.favorite == true ? true : null,
       name: mapStringCriterion(studioFilter?.name),
       details: mapStringCriterion(studioFilter?.details),
       parents: mapMultiCriterion(

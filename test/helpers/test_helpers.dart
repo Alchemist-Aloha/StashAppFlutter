@@ -362,8 +362,6 @@ class MockGraphQLPerformerRepository extends MockRepositoryState<Performer>
     String? sort,
     bool descending = true,
     PerformerFilter? performerFilter,
-    bool favoritesOnly = false,
-    List<String>? genders,
   }) async {
     if (shouldThrow) throw Exception(errorMessage);
     return data;
@@ -416,7 +414,6 @@ class MockGraphQLStudioRepository extends MockRepositoryState<Studio>
     String? sort,
     bool? descending,
     StudioFilter? studioFilter,
-    bool favoritesOnly = false,
   }) async {
     if (shouldThrow) throw Exception(errorMessage);
     return data;
