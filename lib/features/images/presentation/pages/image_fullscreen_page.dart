@@ -174,6 +174,9 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
     List<entity.Image> items,
     Map<String, String> headers,
   ) {
+    ref
+        .read(imageFullscreenCurrentIdProvider.notifier)
+        .setCurrent(items[index].id);
     setState(() => _currentIndex = index);
     _warmAdjacentFiles(items, index, headers);
 
@@ -1041,6 +1044,9 @@ class _ImageFullscreenPageState extends ConsumerState<ImageFullscreenPage> {
           // Warm initial adjacent image files.
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (!mounted) return;
+            ref
+                .read(imageFullscreenCurrentIdProvider.notifier)
+                .setCurrent(items[_currentIndex].id);
             _warmAdjacentFiles(items, _currentIndex, headers);
           });
         }

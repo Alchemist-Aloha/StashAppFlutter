@@ -20,6 +20,20 @@ final imageRepositoryProvider = Provider<GraphQLImageRepository>((ref) {
 
 final imageRandomSeedProvider = listRandomSeedProvider('image');
 
+/// Tracks the image currently shown by the fullscreen viewer for return focus.
+final imageFullscreenCurrentIdProvider =
+    NotifierProvider<ImageFullscreenCurrentId, String?>(
+      ImageFullscreenCurrentId.new,
+    );
+
+/// Owns the transient fullscreen image selection shared with the source grid.
+class ImageFullscreenCurrentId extends Notifier<String?> {
+  @override
+  String? build() => null;
+
+  void setCurrent(String imageId) => state = imageId;
+}
+
 @Riverpod(keepAlive: true)
 class ImageSort extends _$ImageSort {
   static const _sortKey = 'image_sort_field';

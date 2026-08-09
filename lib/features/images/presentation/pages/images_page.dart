@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import '../../../../core/utils/l10n_extensions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -67,6 +69,11 @@ class ImagesPage extends ConsumerStatefulWidget {
 class _ImagesPageState extends ConsumerState<ImagesPage> {
   _ImageSortOption _sortOption = _ImageSortOption.path;
   bool _sortDescending = false;
+  final _returnedImageFocusNode = FocusNode(
+    debugLabel: 'returned_fullscreen_image',
+  );
+  GlobalKey _focusedImageKey = GlobalKey();
+  String? _focusedImageId;
 
   /// Remembers the last random gallery ID to avoid consecutive duplicates.
   String? _lastRandomGalleryId;
@@ -82,6 +89,64 @@ class _ImagesPageState extends ConsumerState<ImagesPage> {
         _sortDescending = sortConfig.descending;
       });
     });
+  }
+
+  @override
+  void dispose() {
+    _returnedImageFocusNode.dispose();
+    super.dispose();
+  }
+
+  Future<void> _openImage(entity.Image image) async {
+    ref.read(imageFullscreenCurrentIdProvider.notifier).setCurrent(image.id);
+    await context.push<void>('/galleries/images/${image.id}');
+    if (!mounted) return;
+
+    final focusedId = ref.read(imageFullscreenCurrentIdProvider);
+    final images = ref.read(imageListProvider).value;
+    if (focusedId == null || images == null) return;
+
+    final index = images.indexWhere((item) => item.id == focusedId);
+    if (index == -1) return;
+
+    setState(() {
+      _focusedImageId = focusedId;
+      _focusedImageKey = GlobalKey();
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      unawaited(_restoreImageFocus(index, images.length));
+    });
+  }
+
+  Future<void> _restoreImageFocus(int index, int itemCount) async {
+    final ScrollController controller =
+        widget.scrollController ??
+        ref.read(listScrollControllerProvider(ListScrollTarget.image));
+
+    if (_focusedImageKey.currentContext == null && controller.hasClients) {
+      final position = controller.position;
+      final fraction = itemCount <= 1 ? 0.0 : index / (itemCount - 1);
+      final target = (position.maxScrollExtent * fraction)
+          .clamp(position.minScrollExtent, position.maxScrollExtent)
+          .toDouble();
+      controller.jumpTo(target);
+      await WidgetsBinding.instance.endOfFrame;
+      if (!mounted) return;
+    }
+
+    final targetContext = _focusedImageKey.currentContext;
+    if (targetContext != null && targetContext.mounted) {
+      await Scrollable.ensureVisible(
+        targetContext,
+        alignment: 0.5,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOutCubic,
+      );
+    }
+    if (mounted && _returnedImageFocusNode.canRequestFocus) {
+      _returnedImageFocusNode.requestFocus();
+    }
   }
 
   void _onSearchChanged(String query) {
@@ -356,8 +421,18 @@ class _ImagesPageState extends ConsumerState<ImagesPage> {
       searchHint: context.l10n.common_search_placeholder,
       onSearchChanged: _onSearchChanged,
       provider: imagesAsync,
-      itemBuilder: (context, image, memCacheWidth, memCacheHeight) =>
-          ImageCard(image: image, memCacheWidth: memCacheWidth),
+      itemBuilder: (context, image, memCacheWidth, memCacheHeight) {
+        final focused = image.id == _focusedImageId;
+        return ImageCard(
+          key: focused
+              ? _focusedImageKey
+              : ValueKey<String>('image_card_${image.id}'),
+          image: image,
+          memCacheWidth: memCacheWidth,
+          focusNode: focused ? _returnedImageFocusNode : null,
+          onTap: () => _openImage(image),
+        );
+      },
       loadingItemBuilder: (context, isGrid, index) =>
           ImageCard.skeleton(memCacheWidth: 300),
       onRefresh:
