@@ -17,6 +17,33 @@ class GraphQLStudioRepository {
   Uri get _graphqlEndpoint => _client.link is HttpLink
       ? (_client.link as HttpLink).uri
       : Uri.parse('http://localhost:9999/graphql');
+
+  Studio _mapStudio(Map<String, dynamic> json) {
+    Map<String, dynamic>? resolveRelationship(Object? value) {
+      if (value is! Map<String, dynamic>) return null;
+      return {
+        ...value,
+        'image_path': resolveGraphqlMediaUrl(
+          rawUrl: value['image_path']?.toString(),
+          graphqlEndpoint: _graphqlEndpoint,
+        ),
+      };
+    }
+
+    return Studio.fromJson({
+      ...json,
+      'image_path': resolveGraphqlMediaUrl(
+        rawUrl: json['image_path']?.toString(),
+        graphqlEndpoint: _graphqlEndpoint,
+      ),
+      'parent_studio': resolveRelationship(json['parent_studio']),
+      'child_studios': (json['child_studios'] as List<dynamic>? ?? const [])
+          .map(resolveRelationship)
+          .whereType<Map<String, dynamic>>()
+          .toList(),
+    });
+  }
+
   Future<List<Studio>> findStudios({
     int? page,
     int? perPage,
@@ -24,7 +51,6 @@ class GraphQLStudioRepository {
     String? sort,
     bool? descending,
     StudioFilter? studioFilter,
-    @Deprecated('Use studioFilter instead') bool favoritesOnly = false,
   }) async {
     QueryResult<Query$FindStudios> result;
     String? effectiveSort = sort == 'scene_count' ? 'scenes_count' : sort;
@@ -35,7 +61,6 @@ class GraphQLStudioRepository {
       filter: filter,
       sort: effectiveSort,
       descending: descending,
-      favoritesOnly: favoritesOnly,
       studioFilter: studioFilter,
     );
 
@@ -50,7 +75,7 @@ class GraphQLStudioRepository {
         filter: filter,
         sort: effectiveSort,
         descending: descending,
-        favoritesOnly: favoritesOnly,
+        studioFilter: studioFilter,
       );
     }
 
@@ -67,31 +92,14 @@ class GraphQLStudioRepository {
         filter: filter,
         sort: null,
         descending: descending,
-        favoritesOnly: favoritesOnly,
+        studioFilter: studioFilter,
       );
     }
 
     validateGraphQLResult(result);
 
     final studios = result.parsedData!.findStudios.studios
-        .map(
-          (s) => Studio(
-            id: s.id,
-            name: s.name,
-            url: s.url,
-            imagePath: resolveGraphqlMediaUrl(
-              rawUrl: s.image_path,
-              graphqlEndpoint: _graphqlEndpoint,
-            ),
-            details: s.details,
-            rating100: s.rating100,
-            sceneCount: s.scene_count,
-            imageCount: s.image_count,
-            galleryCount: s.gallery_count,
-            performerCount: s.performer_count,
-            favorite: s.favorite,
-          ),
-        )
+        .map((studio) => _mapStudio(studio.toJson()))
         .toList();
 
     if (shouldLocalSortBySceneCount) {
@@ -111,11 +119,10 @@ class GraphQLStudioRepository {
     String? filter,
     String? sort,
     bool? descending,
-    required bool favoritesOnly,
     StudioFilter? studioFilter,
   }) {
     final inputFilter = Input$StudioFilterType(
-      favorite: (favoritesOnly || studioFilter?.favorite == true) ? true : null,
+      favorite: studioFilter?.favorite == true ? true : null,
       name: mapStringCriterion(studioFilter?.name),
       details: mapStringCriterion(studioFilter?.details),
       parents: mapMultiCriterion(
@@ -182,22 +189,7 @@ class GraphQLStudioRepository {
     final s = result.parsedData!.findStudio;
     if (s == null) throw StateError('Studio not found');
 
-    return Studio(
-      id: s.id,
-      name: s.name,
-      url: s.url,
-      imagePath: resolveGraphqlMediaUrl(
-        rawUrl: s.image_path,
-        graphqlEndpoint: _graphqlEndpoint,
-      ),
-      details: s.details,
-      rating100: s.rating100,
-      sceneCount: s.scene_count,
-      imageCount: s.image_count,
-      galleryCount: s.gallery_count,
-      performerCount: s.performer_count,
-      favorite: s.favorite,
-    );
+    return _mapStudio(s.toJson());
   }
 
   Future<void> setStudioFavorite(String id, bool favorite) async {

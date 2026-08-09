@@ -376,6 +376,29 @@ class AppLocalizationsJa extends AppLocalizations {
   String get common_details => '詳細';
 
   @override
+  String get gallery_chapters_title => 'チャプター';
+
+  @override
+  String gallery_chapter_image(int index) {
+    return '画像 $index';
+  }
+
+  @override
+  String get gallery_code_title => 'コード';
+
+  @override
+  String get gallery_photographer_title => '撮影者';
+
+  @override
+  String get studio_hierarchy_title => '階層';
+
+  @override
+  String get studio_parent_title => '親スタジオ';
+
+  @override
+  String get studio_children_title => '子スタジオ';
+
+  @override
   String get common_title => 'タイトル';
 
   @override
@@ -840,6 +863,48 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get filter_group_physical => '物理';
+
+  @override
+  String get common_aliases => '別名';
+
+  @override
+  String get common_description => '説明';
+
+  @override
+  String get common_stash_id => 'Stash ID';
+
+  @override
+  String get filter_ignore_auto_tag => '自動タグ付けを無視';
+
+  @override
+  String get tags_field_sort_name => '並べ替え名';
+
+  @override
+  String get tags_field_parent_tags => '親タグ';
+
+  @override
+  String get tags_field_child_tags => 'サブタグ';
+
+  @override
+  String get tags_field_parent_count => '親タグ数';
+
+  @override
+  String get tags_field_child_count => 'サブタグ数';
+
+  @override
+  String get groups_field_containing_groups => '所属グループ';
+
+  @override
+  String get groups_field_sub_groups => 'サブグループ';
+
+  @override
+  String get groups_field_containing_group_count => '所属グループ数';
+
+  @override
+  String get groups_field_front_image => '表画像';
+
+  @override
+  String get groups_field_back_image => '裏画像';
 
   @override
   String get filter_equals => '等しい';

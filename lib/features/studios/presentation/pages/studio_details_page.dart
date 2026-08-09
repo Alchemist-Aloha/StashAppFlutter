@@ -20,6 +20,7 @@ import '../providers/studio_random_navigation_provider.dart';
 import 'package:stash_app_flutter/features/scenes/presentation/widgets/scene_strip.dart';
 import 'package:stash_app_flutter/features/scenes/presentation/providers/playback_queue_provider.dart';
 import 'package:stash_app_flutter/features/galleries/presentation/widgets/gallery_strip.dart';
+import '../../domain/entities/studio.dart';
 
 class StudioDetailsPage extends ConsumerWidget {
   final String studioId;
@@ -225,6 +226,11 @@ class StudioDetailsPage extends ConsumerWidget {
                             ),
                           ),
                         ],
+                        if (studio.parentStudio != null ||
+                            studio.childStudios.isNotEmpty) ...[
+                          const SizedBox(height: AppTheme.spacingMedium),
+                          _buildHierarchySection(context, studio),
+                        ],
                         const SizedBox(height: AppTheme.spacingMedium),
                         _buildSectionContainer(
                           context,
@@ -345,6 +351,71 @@ class StudioDetailsPage extends ConsumerWidget {
         error: (err, stack) =>
             Center(child: Text(context.l10n.common_error(err.toString()))),
       ),
+    );
+  }
+
+  Widget _buildHierarchySection(BuildContext context, Studio studio) {
+    return _buildSectionContainer(
+      context,
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SectionHeader(
+            title: context.l10n.studio_hierarchy_title,
+            padding: EdgeInsets.zero,
+          ),
+          if (studio.parentStudio case final parent?) ...[
+            SizedBox(height: context.dimensions.spacingSmall),
+            Text(
+              context.l10n.studio_parent_title,
+              style: context.textTheme.labelLarge,
+            ),
+            _StudioRelationshipTile(studio: parent),
+          ],
+          if (studio.childStudios.isNotEmpty) ...[
+            SizedBox(height: context.dimensions.spacingSmall),
+            Text(
+              context.l10n.studio_children_title,
+              style: context.textTheme.labelLarge,
+            ),
+            ...studio.childStudios.map(
+              (child) => _StudioRelationshipTile(studio: child),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _StudioRelationshipTile extends StatelessWidget {
+  const _StudioRelationshipTile({required this.studio});
+
+  final StudioRelationship studio;
+
+  @override
+  Widget build(BuildContext context) {
+    final hasImage =
+        studio.imagePath?.isNotEmpty == true &&
+        !studio.imagePath!.contains('default=true');
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      leading: CircleAvatar(
+        child: hasImage
+            ? ClipOval(
+                child: StashImage(
+                  imageUrl: studio.imagePath!,
+                  width: 40 * context.dimensions.fontSizeFactor,
+                  height: 40 * context.dimensions.fontSizeFactor,
+                  fit: BoxFit.cover,
+                  memCacheWidth: 120,
+                ),
+              )
+            : const Icon(Icons.business_outlined),
+      ),
+      title: Text(studio.name),
+      trailing: const Icon(Icons.chevron_right_rounded),
+      onTap: () => context.push('/studios/studio/${studio.id}'),
     );
   }
 }

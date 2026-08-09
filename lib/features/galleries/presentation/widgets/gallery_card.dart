@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import '../../../../core/presentation/widgets/stash_image.dart';
 import '../../../../core/utils/l10n_extensions.dart';
@@ -11,6 +12,7 @@ import '../../domain/entities/gallery.dart';
 import '../providers/gallery_details_provider.dart';
 import '../../../scenes/presentation/widgets/scene_card.dart';
 import '../../../../core/presentation/providers/layout_settings_provider.dart';
+import '../../../images/presentation/providers/image_list_provider.dart';
 
 /// A card widget that displays a summary of a [Gallery].
 class GalleryCard extends ConsumerWidget {
@@ -134,7 +136,7 @@ class GalleryCard extends ConsumerWidget {
         borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
-          onTap: onTap,
+          onTap: skeletonize ? null : onTap ?? () => _openDetails(context, ref),
           onLongPress: () => _showRating(context, ref),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -218,7 +220,7 @@ class GalleryCard extends ConsumerWidget {
         borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
-          onTap: onTap,
+          onTap: skeletonize ? null : onTap ?? () => _openDetails(context, ref),
           onLongPress: () => _showRating(context, ref),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -291,6 +293,11 @@ class GalleryCard extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  void _openDetails(BuildContext context, WidgetRef ref) {
+    ref.read(imageFilterStateProvider.notifier).setGalleryId(gallery.id);
+    context.push('/galleries/gallery/${gallery.id}');
   }
 
   Widget _buildThumbnail(BuildContext context, double? aspectRatio) {

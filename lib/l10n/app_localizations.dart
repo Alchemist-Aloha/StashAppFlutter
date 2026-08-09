@@ -756,6 +756,48 @@ abstract class AppLocalizations {
   /// **'Details'**
   String get common_details;
 
+  /// No description provided for @gallery_chapters_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Chapters'**
+  String get gallery_chapters_title;
+
+  /// No description provided for @gallery_chapter_image.
+  ///
+  /// In en, this message translates to:
+  /// **'Image {index}'**
+  String gallery_chapter_image(int index);
+
+  /// No description provided for @gallery_code_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Code'**
+  String get gallery_code_title;
+
+  /// No description provided for @gallery_photographer_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Photographer'**
+  String get gallery_photographer_title;
+
+  /// No description provided for @studio_hierarchy_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Hierarchy'**
+  String get studio_hierarchy_title;
+
+  /// No description provided for @studio_parent_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Parent studio'**
+  String get studio_parent_title;
+
+  /// No description provided for @studio_children_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Sub-studios'**
+  String get studio_children_title;
+
   /// No description provided for @common_title.
   ///
   /// In en, this message translates to:
@@ -1667,6 +1709,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Physical'**
   String get filter_group_physical;
+
+  /// No description provided for @common_aliases.
+  ///
+  /// In en, this message translates to:
+  /// **'Aliases'**
+  String get common_aliases;
+
+  /// No description provided for @common_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get common_description;
+
+  /// No description provided for @common_stash_id.
+  ///
+  /// In en, this message translates to:
+  /// **'Stash ID'**
+  String get common_stash_id;
+
+  /// No description provided for @filter_ignore_auto_tag.
+  ///
+  /// In en, this message translates to:
+  /// **'Ignore auto tag'**
+  String get filter_ignore_auto_tag;
+
+  /// No description provided for @tags_field_sort_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort Name'**
+  String get tags_field_sort_name;
+
+  /// No description provided for @tags_field_parent_tags.
+  ///
+  /// In en, this message translates to:
+  /// **'Parent Tags'**
+  String get tags_field_parent_tags;
+
+  /// No description provided for @tags_field_child_tags.
+  ///
+  /// In en, this message translates to:
+  /// **'Sub-Tags'**
+  String get tags_field_child_tags;
+
+  /// No description provided for @tags_field_parent_count.
+  ///
+  /// In en, this message translates to:
+  /// **'Parent Tag Count'**
+  String get tags_field_parent_count;
+
+  /// No description provided for @tags_field_child_count.
+  ///
+  /// In en, this message translates to:
+  /// **'Sub-Tag Count'**
+  String get tags_field_child_count;
+
+  /// No description provided for @groups_field_containing_groups.
+  ///
+  /// In en, this message translates to:
+  /// **'Containing Groups'**
+  String get groups_field_containing_groups;
+
+  /// No description provided for @groups_field_sub_groups.
+  ///
+  /// In en, this message translates to:
+  /// **'Sub-Groups'**
+  String get groups_field_sub_groups;
+
+  /// No description provided for @groups_field_containing_group_count.
+  ///
+  /// In en, this message translates to:
+  /// **'Containing Group Count'**
+  String get groups_field_containing_group_count;
+
+  /// No description provided for @groups_field_front_image.
+  ///
+  /// In en, this message translates to:
+  /// **'Front Image'**
+  String get groups_field_front_image;
+
+  /// No description provided for @groups_field_back_image.
+  ///
+  /// In en, this message translates to:
+  /// **'Back Image'**
+  String get groups_field_back_image;
 
   /// No description provided for @filter_equals.
   ///

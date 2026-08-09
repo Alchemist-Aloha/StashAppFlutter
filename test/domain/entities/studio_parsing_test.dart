@@ -15,6 +15,10 @@ void main() {
         'image_count': 40,
         'gallery_count': 7,
         'performer_count': 25,
+        'parent_studio': {'id': 'parent-1', 'name': 'Parent Studio'},
+        'child_studios': [
+          {'id': 'child-1', 'name': 'Child Studio'},
+        ],
         'favorite': true,
       };
 
@@ -24,6 +28,8 @@ void main() {
       expect(studio.name, 'Studio One');
       expect(studio.sceneCount, 100);
       expect(studio.favorite, isTrue);
+      expect(studio.parentStudio?.name, 'Parent Studio');
+      expect(studio.childStudios.single.name, 'Child Studio');
     });
   });
 }

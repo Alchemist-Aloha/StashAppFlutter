@@ -1,4 +1,4 @@
-fragment GalleryData on Gallery {
+fragment GalleryListData on Gallery {
   id
   title
   date
@@ -34,18 +34,37 @@ fragment GalleryData on Gallery {
   }
 }
 
+fragment GalleryDetailData on Gallery {
+  ...GalleryListData
+  code
+  urls
+  photographer
+  organized
+  created_at
+  updated_at
+  tags {
+    id
+    name
+  }
+  chapters {
+    id
+    title
+    image_index
+  }
+}
+
 query FindGalleries($filter: FindFilterType, $gallery_filter: GalleryFilterType) {
   findGalleries(filter: $filter, gallery_filter: $gallery_filter) {
     count
     galleries {
-      ...GalleryData
+      ...GalleryListData
     }
   }
 }
 
 query FindGallery($id: ID!) {
   findGallery(id: $id) {
-    ...GalleryData
+    ...GalleryDetailData
   }
 }
 

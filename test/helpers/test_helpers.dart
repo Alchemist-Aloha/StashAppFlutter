@@ -23,6 +23,7 @@ import 'package:stash_app_flutter/features/groups/domain/entities/group.dart';
 import 'package:stash_app_flutter/features/scenes/domain/entities/scene_filter.dart';
 import 'package:stash_app_flutter/features/performers/domain/entities/performer_filter.dart';
 import 'package:stash_app_flutter/features/studios/domain/entities/studio_filter.dart';
+import 'package:stash_app_flutter/features/tags/domain/entities/tag_filter.dart';
 import 'package:stash_app_flutter/features/images/domain/entities/image_filter.dart';
 import 'package:stash_app_flutter/features/groups/domain/entities/group_filter.dart';
 import 'package:stash_app_flutter/features/scenes/domain/models/scraper.dart';
@@ -361,8 +362,6 @@ class MockGraphQLPerformerRepository extends MockRepositoryState<Performer>
     String? sort,
     bool descending = true,
     PerformerFilter? performerFilter,
-    bool favoritesOnly = false,
-    List<String>? genders,
   }) async {
     if (shouldThrow) throw Exception(errorMessage);
     return data;
@@ -415,7 +414,6 @@ class MockGraphQLStudioRepository extends MockRepositoryState<Studio>
     String? sort,
     bool? descending,
     StudioFilter? studioFilter,
-    bool favoritesOnly = false,
   }) async {
     if (shouldThrow) throw Exception(errorMessage);
     return data;
@@ -468,6 +466,7 @@ class MockGraphQLTagRepository extends MockRepositoryState<Tag>
     String? sort,
     bool? descending,
     bool favoritesOnly = false,
+    TagFilter? tagFilter,
   }) async {
     if (shouldThrow) throw Exception(errorMessage);
     return data;
@@ -562,6 +561,7 @@ Future<void> pumpTestWidget(
   SharedPreferences? prefs,
   required Widget child,
   List<dynamic> overrides = const [],
+  List<RouteBase> routes = const [],
 }) async {
   if (prefs == null) {
     SharedPreferences.setMockInitialValues({});
@@ -587,7 +587,10 @@ Future<void> pumpTestWidget(
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
         routerConfig: GoRouter(
-          routes: [GoRoute(path: '/', builder: (context, state) => child)],
+          routes: [
+            GoRoute(path: '/', builder: (context, state) => child),
+            ...routes,
+          ],
         ),
       ),
     ),

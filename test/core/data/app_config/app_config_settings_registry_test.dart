@@ -103,6 +103,7 @@ void main() {
         'studio_filter_state',
         'tag_sort_field',
         'tag_sort_descending',
+        'tag_filter_state',
         'tag_favorites_only',
         'group_sort_field',
         'group_sort_descending',

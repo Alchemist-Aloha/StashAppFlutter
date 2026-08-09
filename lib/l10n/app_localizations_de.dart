@@ -384,6 +384,29 @@ class AppLocalizationsDe extends AppLocalizations {
   String get common_details => 'Details';
 
   @override
+  String get gallery_chapters_title => 'Kapitel';
+
+  @override
+  String gallery_chapter_image(int index) {
+    return 'Bild $index';
+  }
+
+  @override
+  String get gallery_code_title => 'Code';
+
+  @override
+  String get gallery_photographer_title => 'Fotograf';
+
+  @override
+  String get studio_hierarchy_title => 'Hierarchie';
+
+  @override
+  String get studio_parent_title => 'Übergeordnetes Studio';
+
+  @override
+  String get studio_children_title => 'Unterstudios';
+
+  @override
   String get common_title => 'Titel';
 
   @override
@@ -850,6 +873,49 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get filter_group_physical => 'Physisch';
+
+  @override
+  String get common_aliases => 'Aliase';
+
+  @override
+  String get common_description => 'Beschreibung';
+
+  @override
+  String get common_stash_id => 'Stash-ID';
+
+  @override
+  String get filter_ignore_auto_tag => 'Automatisches Tagging ignorieren';
+
+  @override
+  String get tags_field_sort_name => 'Sortiername';
+
+  @override
+  String get tags_field_parent_tags => 'Übergeordnete Tags';
+
+  @override
+  String get tags_field_child_tags => 'Untergeordnete Tags';
+
+  @override
+  String get tags_field_parent_count => 'Anzahl übergeordneter Tags';
+
+  @override
+  String get tags_field_child_count => 'Anzahl untergeordneter Tags';
+
+  @override
+  String get groups_field_containing_groups => 'Enthaltende Gruppen';
+
+  @override
+  String get groups_field_sub_groups => 'Untergruppen';
+
+  @override
+  String get groups_field_containing_group_count =>
+      'Anzahl enthaltender Gruppen';
+
+  @override
+  String get groups_field_front_image => 'Vorderes Bild';
+
+  @override
+  String get groups_field_back_image => 'Hinteres Bild';
 
   @override
   String get filter_equals => 'Gleich';

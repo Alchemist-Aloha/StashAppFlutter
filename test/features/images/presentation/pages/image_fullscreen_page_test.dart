@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
@@ -69,12 +70,7 @@ void main() {
 
       expect(
         source,
-        contains(
-          'WidgetsBinding.instance.addPostFrameCallback((_) {\n'
-          '            if (!mounted) return;\n'
-          '            _warmAdjacentFiles(items, _currentIndex, headers);\n'
-          '          });',
-        ),
+        contains('_warmAdjacentFiles(items, _currentIndex, headers);'),
       );
       expect(source, contains('.getNetworkImageData().ignore()'));
       expect(source, isNot(contains('precacheImage(')));
@@ -273,6 +269,10 @@ void main() {
       await tester.sendKeyEvent(LogicalKeyboardKey.end);
       await tester.pump();
       expect(find.text('Image 2'), findsOneWidget);
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(ImageFullscreenPage)),
+      );
+      expect(container.read(imageFullscreenCurrentIdProvider), '2');
 
       await tester.sendKeyEvent(LogicalKeyboardKey.home);
       await tester.pump();

@@ -42,6 +42,12 @@ void main() {
         'rating100': 85,
         'image_count': 15,
         'details': 'Some details',
+        'code': 'GAL-10',
+        'urls': ['https://example.test/gallery'],
+        'photographer': 'Photographer One',
+        'organized': true,
+        'created_at': '2023-10-02T00:00:00Z',
+        'updated_at': '2023-10-03T00:00:00Z',
         'studio': {'id': 'studio-1', 'name': 'Studio One'},
         'performers': [
           {
@@ -49,6 +55,12 @@ void main() {
             'name': 'Performer One',
             'image_path': '/performer/1/image',
           },
+        ],
+        'tags': [
+          {'id': 'tag-1', 'name': 'Tag One'},
+        ],
+        'chapters': [
+          {'id': 'chapter-1', 'title': 'Opening', 'image_index': 3},
         ],
         'files': [
           {'path': '/path/file1.zip'},
@@ -69,6 +81,10 @@ void main() {
       expect(gallery.rating100, 85);
       expect(gallery.imageCount, 15);
       expect(gallery.details, 'Some details');
+      expect(gallery.code, 'GAL-10');
+      expect(gallery.urls, ['https://example.test/gallery']);
+      expect(gallery.photographer, 'Photographer One');
+      expect(gallery.organized, isTrue);
       expect(gallery.path, '/path/file1.zip');
       expect(gallery.coverPath, 'http://cover.path');
       expect(gallery.coverWidth, 800);
@@ -78,6 +94,8 @@ void main() {
       expect(gallery.performerIds, ['performer-1']);
       expect(gallery.performerNames, ['Performer One']);
       expect(gallery.performerImagePaths, ['/performer/1/image']);
+      expect(gallery.tagNames, ['Tag One']);
+      expect(gallery.chapters.single.imageIndex, 3);
     });
 
     test('fromJson handles missing optional fields gracefully', () {

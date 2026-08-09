@@ -11,27 +11,35 @@ import '../providers/image_list_provider.dart';
 import 'image_details_bottom_sheet.dart';
 
 class ImageCard extends ConsumerWidget {
-  const ImageCard.skeleton({this.onTap, this.memCacheWidth, super.key})
-    : image = const entity.Image(
-        id: 'skeleton',
-        title: 'Loading',
-        rating100: null,
-        date: null,
-        urls: [],
-        files: [entity.ImageFile(width: 1, height: 1, path: '')],
-        paths: entity.ImagePaths(thumbnail: '', preview: '', image: ''),
-      );
+  const ImageCard.skeleton({
+    this.onTap,
+    this.memCacheWidth,
+    this.focusNode,
+    super.key,
+  }) : image = const entity.Image(
+         id: 'skeleton',
+         title: 'Loading',
+         rating100: null,
+         date: null,
+         urls: [],
+         files: [entity.ImageFile(width: 1, height: 1, path: '')],
+         paths: entity.ImagePaths(thumbnail: '', preview: '', image: ''),
+       );
 
   const ImageCard({
     required this.image,
     this.onTap,
     this.memCacheWidth,
+    this.focusNode,
     super.key,
   });
 
   final entity.Image image;
   final VoidCallback? onTap;
   final int? memCacheWidth;
+
+  /// Optional focus node used to restore keyboard focus after fullscreen.
+  final FocusNode? focusNode;
 
   Future<void> _showDetails(BuildContext context, WidgetRef ref) async {
     await RatingBottomSheet.show(
@@ -79,6 +87,7 @@ class ImageCard extends ConsumerWidget {
         child: Padding(
           padding: const EdgeInsets.all(4.0),
           child: InkWell(
+            focusNode: focusNode,
             onTap: onTap ?? () => context.push('/galleries/images/${image.id}'),
             onLongPress: image.id == 'skeleton'
                 ? null

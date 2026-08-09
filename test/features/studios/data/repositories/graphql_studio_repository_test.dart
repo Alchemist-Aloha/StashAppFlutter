@@ -89,6 +89,20 @@ void main() {
           'image_count': 0,
           'gallery_count': 0,
           'performer_count': 0,
+          'parent_studio': {
+            'id': 'parent-1',
+            'name': 'Parent Studio',
+            'image_path': '/studio/parent/image',
+            '__typename': 'Studio',
+          },
+          'child_studios': [
+            {
+              'id': 'child-1',
+              'name': 'Child Studio',
+              'image_path': '/studio/child/image',
+              '__typename': 'Studio',
+            },
+          ],
           'favorite': false,
           '__typename': 'Studio',
         },
@@ -112,6 +126,8 @@ void main() {
       expect(result, isA<Studio>());
       expect(result.id, '1');
       expect(result.name, 'Test Studio');
+      expect(result.parentStudio?.name, 'Parent Studio');
+      expect(result.childStudios.single.name, 'Child Studio');
     });
   });
 }

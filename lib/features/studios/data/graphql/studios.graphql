@@ -1,4 +1,4 @@
-fragment StudioData on Studio {
+fragment StudioListData on Studio {
   id
   name
   url
@@ -12,18 +12,32 @@ fragment StudioData on Studio {
   favorite
 }
 
+fragment StudioDetailData on Studio {
+  ...StudioListData
+  parent_studio {
+    id
+    name
+    image_path
+  }
+  child_studios {
+    id
+    name
+    image_path
+  }
+}
+
 query FindStudios($filter: FindFilterType, $studio_filter: StudioFilterType) {
   findStudios(filter: $filter, studio_filter: $studio_filter) {
     count
     studios {
-      ...StudioData
+      ...StudioListData
     }
   }
 }
 
 query FindStudio($id: ID!) {
   findStudio(id: $id) {
-    ...StudioData
+    ...StudioDetailData
   }
 }
 

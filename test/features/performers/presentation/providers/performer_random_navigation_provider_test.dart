@@ -33,8 +33,6 @@ class _CapturingPerformerRepository extends MockGraphQLPerformerRepository {
     String? sort,
     bool descending = true,
     PerformerFilter? performerFilter,
-    bool favoritesOnly = false,
-    List<String>? genders,
   }) async {
     findCalls.add((
       page: page,
@@ -54,8 +52,6 @@ class _CapturingPerformerRepository extends MockGraphQLPerformerRepository {
       sort: sort,
       descending: descending,
       performerFilter: performerFilter,
-      favoritesOnly: favoritesOnly,
-      genders: genders,
     );
   }
 }

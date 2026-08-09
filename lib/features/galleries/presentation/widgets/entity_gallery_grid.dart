@@ -89,7 +89,7 @@ class _EntityGalleryGridState extends ConsumerState<EntityGalleryGrid> {
       EntityGallerySortOption.date => 'date',
       EntityGallerySortOption.rating => 'rating',
       EntityGallerySortOption.imageCount => 'images_count',
-      EntityGallerySortOption.fileCount => 'zip_file_count',
+      EntityGallerySortOption.fileCount => 'file_count',
       EntityGallerySortOption.createdAt => 'created_at',
       EntityGallerySortOption.updatedAt => 'updated_at',
       EntityGallerySortOption.random => 'random',
@@ -389,10 +389,6 @@ class _EntityGalleryGridState extends ConsumerState<EntityGalleryGrid> {
           isGrid: widget.isGridView,
           useMasonry: widget.isGridView,
           memCacheWidth: memCacheWidth,
-          onTap: () {
-            ref.read(imageFilterStateProvider.notifier).setGalleryId(item.id);
-            context.push('/galleries/images');
-          },
         );
       },
     );

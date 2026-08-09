@@ -17,6 +17,7 @@ import '../../../../core/data/repositories/graphql_saved_filter_repository.dart'
 import '../../../../core/presentation/widgets/saved_filter_dialog.dart';
 import '../../domain/entities/tag.dart';
 import '../../domain/entities/tag_saved_filter_config.dart';
+import '../../../../core/domain/entities/filter_options.dart';
 
 enum _TagSortOption {
   name,
@@ -159,7 +160,7 @@ class _TagsPageState extends ConsumerState<TagsPage> {
 
   void _showSavedFilterDialog() {
     final sortConfig = ref.read(tagSortProvider);
-    final favoritesOnly = ref.read(tagFavoritesOnlyProvider);
+    final tagFilter = ref.read(tagListFilterProvider);
 
     showFrostedPanelBottomSheet<void>(
       context: context,
@@ -167,7 +168,7 @@ class _TagsPageState extends ConsumerState<TagsPage> {
         searchQuery: ref.read(tagSearchQueryProvider),
         sort: sortConfig.sort,
         descending: sortConfig.descending,
-        activeFilterCount: favoritesOnly ? 1 : 0,
+        activeFilterCount: activeFilterCount(tagFilter.toJson()),
         defaultSortLabel: 'name',
         saveSuccessMessage: context.l10n.saved_item('Tag filter'),
         loadPresets: () => ref
@@ -191,7 +192,7 @@ class _TagsPageState extends ConsumerState<TagsPage> {
                   searchQuery: ref.read(tagSearchQueryProvider),
                   sort: sortConfig.sort,
                   descending: sortConfig.descending,
-                  favorite: ref.read(tagFavoritesOnlyProvider),
+                  filter: ref.read(tagListFilterProvider),
                 ).toSaveInput(),
                 fromRaw: (raw) => TagSavedFilterConfig.fromServerPayload(
                   id: raw['id'] as String,
@@ -215,7 +216,7 @@ class _TagsPageState extends ConsumerState<TagsPage> {
     });
 
     ref.read(tagSearchQueryProvider.notifier).update(config.searchQuery);
-    ref.read(tagListProvider.notifier).setFavoritesOnly(config.favorite);
+    ref.read(tagListProvider.notifier).setFilter(config.filter);
     ref
         .read(tagSortProvider.notifier)
         .setSort(sort: config.sort ?? 'name', descending: config.descending);
@@ -242,7 +243,7 @@ class _TagsPageState extends ConsumerState<TagsPage> {
   @override
   Widget build(BuildContext context) {
     final tagsAsync = ref.watch(tagListProvider);
-    final favoritesOnly = ref.watch(tagFavoritesOnlyProvider);
+    final tagFilter = ref.watch(tagListFilterProvider);
     final randomNavigationEnabled = ref.watch(randomNavigationEnabledProvider);
     final scrollController = ref.watch(
       listScrollControllerProvider(ListScrollTarget.tag),
@@ -290,7 +291,7 @@ class _TagsPageState extends ConsumerState<TagsPage> {
               tooltip: context.l10n.tags_filter_tooltip,
               onPressed: _showFilterPanel,
             ),
-            if (favoritesOnly)
+            if (activeFilterCount(tagFilter.toJson()) > 0)
               Positioned(
                 right: 8,
                 top: 8,

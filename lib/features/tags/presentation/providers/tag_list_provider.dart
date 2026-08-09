@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../domain/entities/tag.dart';
+import '../../domain/entities/tag_filter.dart';
 import '../../data/repositories/graphql_tag_repository.dart';
 import '../../../../core/data/graphql/graphql_client.dart';
 import '../../../../core/data/preferences/shared_preferences_provider.dart';
@@ -52,19 +55,39 @@ class TagSearchQuery extends _$TagSearchQuery {
   void update(String query) => state = query;
 }
 
-@Riverpod(keepAlive: true)
-class TagFavoritesOnly extends _$TagFavoritesOnly {
-  static const _storageKey = 'tag_favorites_only';
+final tagListFilterProvider =
+    NotifierProvider<TagListFilterNotifier, TagFilter>(
+      TagListFilterNotifier.new,
+    );
+
+class TagListFilterNotifier extends Notifier<TagFilter> {
+  static const _storageKey = 'tag_filter_state';
+  static const _legacyFavoritesKey = 'tag_favorites_only';
 
   @override
-  bool build() {
+  TagFilter build() {
     final prefs = ref.watch(sharedPreferencesProvider);
-    return prefs.getBool(_storageKey) ?? false;
+    final raw = prefs.getString(_storageKey);
+    if (raw != null && raw.isNotEmpty) {
+      try {
+        return TagFilter.fromJson(jsonDecode(raw) as Map<String, dynamic>);
+      } catch (_) {
+        // Fall through to the legacy favorites-only preference.
+      }
+    }
+
+    final legacyFavorite = prefs.getBool(_legacyFavoritesKey);
+    return TagFilter(favorite: legacyFavorite == true ? true : null);
+  }
+
+  void set(TagFilter filter) {
+    state = filter;
   }
 
   Future<void> saveAsDefault() async {
     final prefs = ref.read(sharedPreferencesProvider);
-    await prefs.setBool(_storageKey, state);
+    await prefs.setString(_storageKey, jsonEncode(state.toJson()));
+    await prefs.setBool(_legacyFavoritesKey, state.favorite == true);
   }
 }
 
@@ -84,7 +107,7 @@ class TagList extends _$TagList {
     _isLoadingMore = false;
     final query = ref.watch(tagSearchQueryProvider);
     final sortConfig = ref.watch(tagSortProvider);
-    final favoritesOnly = ref.watch(tagFavoritesOnlyProvider);
+    final tagFilter = ref.watch(tagListFilterProvider);
     final repository = ref.read(tagRepositoryProvider);
 
     String? effectiveSort = sortConfig.sort;
@@ -98,7 +121,7 @@ class TagList extends _$TagList {
       filter: query.isEmpty ? null : query,
       sort: effectiveSort,
       descending: sortConfig.descending,
-      favoritesOnly: favoritesOnly,
+      tagFilter: tagFilter,
     );
   }
 
@@ -122,8 +145,8 @@ class TagList extends _$TagList {
     ref.invalidateSelf();
   }
 
-  void setFavoritesOnly(bool enabled) {
-    ref.read(tagFavoritesOnlyProvider.notifier).state = enabled;
+  void setFilter(TagFilter filter) {
+    ref.read(tagListFilterProvider.notifier).set(filter);
     _currentPage = 1;
     _hasMore = true;
     _isLoadingMore = false;
@@ -147,7 +170,7 @@ class TagList extends _$TagList {
     final repository = ref.read(tagRepositoryProvider);
     final query = ref.read(tagSearchQueryProvider);
     final sortConfig = ref.read(tagSortProvider);
-    final favoritesOnly = ref.read(tagFavoritesOnlyProvider);
+    final tagFilter = ref.read(tagListFilterProvider);
 
     String? effectiveSort = sortConfig.sort;
     if (effectiveSort == 'random') {
@@ -162,7 +185,7 @@ class TagList extends _$TagList {
         filter: query.isEmpty ? null : query,
         sort: effectiveSort,
         descending: sortConfig.descending,
-        favoritesOnly: favoritesOnly,
+        tagFilter: tagFilter,
       );
 
       if (generation != _requestGeneration) return;
@@ -187,9 +210,9 @@ class TagList extends _$TagList {
   }) async {
     final repository = ref.read(tagRepositoryProvider);
     final query = useCurrentFilter ? ref.read(tagSearchQueryProvider) : '';
-    final favoritesOnly = useCurrentFilter
-        ? ref.read(tagFavoritesOnlyProvider)
-        : false;
+    final tagFilter = useCurrentFilter
+        ? ref.read(tagListFilterProvider)
+        : TagFilter.empty();
 
     final attempts = excludeTagId == null ? 1 : 3;
     for (var i = 0; i < attempts; i++) {
@@ -199,7 +222,7 @@ class TagList extends _$TagList {
         filter: query.isEmpty ? null : query,
         sort: 'random',
         descending: true,
-        favoritesOnly: favoritesOnly,
+        tagFilter: tagFilter,
       );
       if (randomPage.isEmpty) continue;
       final candidate = randomPage.first;

@@ -382,6 +382,29 @@ class AppLocalizationsRu extends AppLocalizations {
   String get common_details => 'детали';
 
   @override
+  String get gallery_chapters_title => 'Главы';
+
+  @override
+  String gallery_chapter_image(int index) {
+    return 'Изображение $index';
+  }
+
+  @override
+  String get gallery_code_title => 'Код';
+
+  @override
+  String get gallery_photographer_title => 'Фотограф';
+
+  @override
+  String get studio_hierarchy_title => 'Иерархия';
+
+  @override
+  String get studio_parent_title => 'Родительская студия';
+
+  @override
+  String get studio_children_title => 'Дочерние студии';
+
+  @override
   String get common_title => 'название';
 
   @override
@@ -847,6 +870,49 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get filter_group_physical => 'Физический';
+
+  @override
+  String get common_aliases => 'Псевдонимы';
+
+  @override
+  String get common_description => 'Описание';
+
+  @override
+  String get common_stash_id => 'ID Stash';
+
+  @override
+  String get filter_ignore_auto_tag => 'Игнорировать авто-теги';
+
+  @override
+  String get tags_field_sort_name => 'Имя сортировки';
+
+  @override
+  String get tags_field_parent_tags => 'Родительские теги';
+
+  @override
+  String get tags_field_child_tags => 'Подтеги';
+
+  @override
+  String get tags_field_parent_count => 'Количество родительских тегов';
+
+  @override
+  String get tags_field_child_count => 'Количество подтегов';
+
+  @override
+  String get groups_field_containing_groups => 'Содержащие группы';
+
+  @override
+  String get groups_field_sub_groups => 'Подгруппы';
+
+  @override
+  String get groups_field_containing_group_count =>
+      'Количество содержащих групп';
+
+  @override
+  String get groups_field_front_image => 'Переднее изображение';
+
+  @override
+  String get groups_field_back_image => 'Заднее изображение';
 
   @override
   String get filter_equals => 'Равно';
