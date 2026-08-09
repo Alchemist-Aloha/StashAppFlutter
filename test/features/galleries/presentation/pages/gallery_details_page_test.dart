@@ -20,6 +20,14 @@ void main() {
       details: 'Compact gallery description',
       date: '2026-08-09',
       imageCount: 30,
+      code: 'GAL-001',
+      photographer: 'Photographer One',
+      filePaths: ['/gallery/gallery-one.zip'],
+      tagIds: ['tag-1'],
+      tagNames: ['Tag One'],
+      chapters: [
+        GalleryChapter(id: 'chapter-1', title: 'Opening', imageIndex: 3),
+      ],
       studioId: 'studio-1',
       studioName: 'Studio One',
       performerIds: ['performer-1'],
@@ -52,12 +60,26 @@ void main() {
     expect(find.text('Gallery Details'), findsOneWidget);
     expect(find.text('Compact gallery description'), findsOneWidget);
     expect(find.text('Studio One'), findsOneWidget);
+    expect(
+      tester.getTopLeft(find.byKey(const Key('gallery_studio_link'))).dy,
+      greaterThan(tester.getTopLeft(find.text('Gallery One')).dy),
+    );
     expect(find.text('Performer One'), findsOneWidget);
     expect(tester.widget<Icon>(find.byIcon(Icons.image_rounded)).size, isNull);
     expect(find.byIcon(Icons.sort), findsOneWidget);
     expect(find.byIcon(Icons.filter_list), findsOneWidget);
     expect(find.byIcon(Icons.bookmarks_outlined), findsOneWidget);
     expect(repository.findImageCalls.last.galleryId, 'gallery-1');
+
+    await tester.tap(find.byKey(const Key('gallery_action_info')));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('gallery_details_sheet')), findsOneWidget);
+    expect(find.text('GAL-001'), findsOneWidget);
+    expect(find.text('Photographer One'), findsOneWidget);
+
+    await tester.tap(find.byIcon(Icons.close_rounded));
+    await tester.pumpAndSettle();
 
     await tester.drag(find.byType(ImageCard).first, const Offset(0, -500));
     await tester.pumpAndSettle();

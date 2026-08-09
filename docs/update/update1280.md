@@ -6,7 +6,8 @@
 
 - Opening a gallery now shows its details and images together instead of jumping directly to the general image page.
 - The compact gallery header includes cover art, title, date, rating, image count, description, studio, and performers.
-- Studio and performer chips link directly to their detail pages.
+- The studio link and performer chips open their corresponding detail pages.
+- Added an information button for full gallery metadata, tags, files, and chapters.
 - Gallery images retain the standard image browser's sorting, filtering, saved presets, pagination, and display controls.
 
 ### Studio Hierarchy

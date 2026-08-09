@@ -11,6 +11,7 @@ import '../../../images/presentation/providers/image_list_provider.dart';
 import '../../domain/entities/gallery.dart';
 import '../providers/gallery_details_provider.dart';
 import '../providers/gallery_list_provider.dart';
+import '../widgets/gallery_details_bottom_sheet.dart';
 
 /// Browses a gallery's images with compact, scroll-collapsing gallery details.
 class GalleryDetailsPage extends ConsumerStatefulWidget {
@@ -271,6 +272,34 @@ class _CompactGalleryDetails extends StatelessWidget {
                             letterSpacing: -0.5,
                           ),
                         ),
+                        if (gallery.studioName?.trim().isNotEmpty == true) ...[
+                          SizedBox(height: dims.spacingSmall * 0.5),
+                          TextButton(
+                            key: const Key('gallery_studio_link'),
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              minimumSize: Size.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              alignment: Alignment.centerLeft,
+                            ),
+                            onPressed: gallery.studioId == null
+                                ? null
+                                : () => context.push(
+                                    '/studios/studio/${gallery.studioId}',
+                                  ),
+                            child: Text(
+                              gallery.studioName!,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: context.textTheme.titleMedium?.copyWith(
+                                color: gallery.studioId == null
+                                    ? colors.onSurfaceVariant
+                                    : colors.primary,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
                         SizedBox(height: dims.spacingSmall),
                         Wrap(
                           spacing: dims.spacingSmall,
@@ -300,6 +329,14 @@ class _CompactGalleryDetails extends StatelessWidget {
                       ],
                     ),
                   ),
+                  SizedBox(width: dims.spacingSmall),
+                  IconButton.filledTonal(
+                    key: const Key('gallery_action_info'),
+                    tooltip: context.l10n.common_more,
+                    onPressed: () =>
+                        GalleryDetailsBottomSheet.show(context, gallery),
+                    icon: const Icon(Icons.info_outline_rounded),
+                  ),
                 ],
               ),
               if (gallery.details?.trim().isNotEmpty == true) ...[
@@ -314,29 +351,9 @@ class _CompactGalleryDetails extends StatelessWidget {
                   ),
                 ),
               ],
-              if (gallery.studioName?.trim().isNotEmpty == true ||
-                  gallery.performerNames.isNotEmpty) ...[
+              if (gallery.performerNames.isNotEmpty) ...[
                 SizedBox(height: dims.spacingMedium),
                 Divider(height: 1, color: colors.outlineVariant),
-              ],
-              if (gallery.studioName?.trim().isNotEmpty == true) ...[
-                SizedBox(height: dims.spacingMedium),
-                Text(
-                  context.l10n.studios_title,
-                  style: context.textTheme.labelLarge?.copyWith(
-                    color: colors.onSurfaceVariant,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                SizedBox(height: dims.spacingSmall),
-                ActionChip.elevated(
-                  avatar: const Icon(Icons.business_rounded),
-                  label: Text(gallery.studioName!),
-                  onPressed: gallery.studioId == null
-                      ? null
-                      : () =>
-                            context.push('/studios/studio/${gallery.studioId}'),
-                ),
               ],
               if (gallery.performerNames.isNotEmpty) ...[
                 SizedBox(height: dims.spacingMedium),
