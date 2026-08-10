@@ -171,7 +171,7 @@ jobs:
           sudo chmod +x /usr/local/bin/appimagetool
           export APPIMAGE_EXTRACT_AND_RUN=1
           dart pub global activate fastforge 0.6.12
-          fastforge package --platform linux --targets deb,appimage
+          fastforge package --platform linux --targets deb,appimage,pacman
         shell: bash
 
       - name: Package Windows dists
@@ -191,6 +191,7 @@ jobs:
           path: |
             dist/**/*.deb
             dist/**/*.AppImage
+            dist/**/*.pacman
             dist/**/*.exe
             dist/**/*.msix
 
