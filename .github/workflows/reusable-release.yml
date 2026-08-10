@@ -163,6 +163,37 @@ jobs:
           zip -r ../../../../../StashFlow-macos${{ inputs.archive_suffix }}.zip *.app
         shell: bash
 
+      - name: Package Linux dists
+        if: matrix.target == 'linux'
+        run: |
+          export PATH="$PATH:$HOME/.pub-cache/bin"
+          sudo wget -qO /usr/local/bin/appimagetool https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
+          sudo chmod +x /usr/local/bin/appimagetool
+          export APPIMAGE_EXTRACT_AND_RUN=1
+          dart pub global activate flutter_distributor 0.6.10
+          flutter_distributor package --platform linux --targets deb,appimage
+        shell: bash
+
+      - name: Package Windows dists
+        if: matrix.target == 'windows'
+        run: |
+          choco install innosetup -y --no-progress
+          export PATH="$PATH:$HOME/AppData/Local/Pub/Cache/bin"
+          dart pub global activate flutter_distributor 0.6.10
+          flutter_distributor package --platform windows --targets exe,msix
+        shell: bash
+
+      - name: Upload dist packages
+        if: matrix.target == 'linux' || matrix.target == 'windows'
+        uses: actions/upload-artifact@v7
+        with:
+          name: StashFlow${{ inputs.archive_suffix }}-${{ matrix.artifact_name }}-dist
+          path: |
+            dist/**/*.deb
+            dist/**/*.AppImage
+            dist/**/*.exe
+            dist/**/*.msix
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v7
         with:
