@@ -1,0 +1,18 @@
+output: dist/
+releases:
+  - name: linux
+    jobs:
+      - name: deb
+        package:
+          platform: linux
+          target: deb
+          build_args:
+            release: true
+      # rpm: flutter_distributor's rpm maker is broken on rpm >= 6 (no upstream
+      # fix). Build it with scripts/build_linux_rpm.sh instead.
+      - name: appimage
+        package:
+          platform: linux
+          target: appimage
+          build_args:
+            release: true
