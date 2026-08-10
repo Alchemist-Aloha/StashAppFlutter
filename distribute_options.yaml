@@ -16,3 +16,17 @@ releases:
           target: appimage
           build_args:
             release: true
+  - name: windows
+    jobs:
+      - name: exe
+        package:
+          platform: windows
+          target: exe
+          build_args:
+            release: true
+      - name: msix
+        package:
+          platform: windows
+          target: msix
+          build_args:
+            release: true

@@ -39,3 +39,30 @@ jobs:
           files: |
             dist/**/*.deb
             dist/**/*.AppImage
+
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install Inno Setup
+        run: choco install innosetup -y --no-progress
+
+      - name: Package exe + msix
+        shell: bash
+        run: |
+          export PATH="$PATH:$HOME/AppData/Local/Pub/Cache/bin"
+          dart pub global activate flutter_distributor 0.6.10
+          flutter_distributor package --platform windows --targets exe,msix
+
+      - name: Upload to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/**/*.exe
+            dist/**/*.msix
