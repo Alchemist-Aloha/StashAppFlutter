@@ -55,9 +55,9 @@ jobs:
         run: choco install innosetup -y --no-progress
 
       - name: Package exe + msix
-        shell: bash
+        shell: pwsh
         run: |
-          export PATH="$PATH:$HOME/AppData/Local/Pub/Cache/bin"
+          $env:PATH += ";$env:LOCALAPPDATA\Pub\Cache\bin"
           dart pub global activate fastforge 0.6.12
           fastforge package --platform windows --targets exe,msix
 

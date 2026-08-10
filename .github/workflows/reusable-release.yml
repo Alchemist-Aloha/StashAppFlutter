@@ -176,12 +176,12 @@ jobs:
 
       - name: Package Windows dists
         if: matrix.target == 'windows'
+        shell: pwsh
         run: |
           choco install innosetup -y --no-progress
-          export PATH="$PATH:$HOME/AppData/Local/Pub/Cache/bin"
+          $env:PATH += ";$env:LOCALAPPDATA\Pub\Cache\bin"
           dart pub global activate fastforge 0.6.12
           fastforge package --platform windows --targets exe,msix
-        shell: bash
 
       - name: Upload dist packages
         if: matrix.target == 'linux' || matrix.target == 'windows'
