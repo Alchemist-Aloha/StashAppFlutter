@@ -104,7 +104,9 @@ jobs:
             libavcodec-dev \
             libavformat-dev \
             libavutil-dev \
-            libswresample-dev
+            libswresample-dev \
+            libarchive-tools \
+            fakeroot
 
       - name: Generate macOS Flutter ephemeral files
         if: matrix.target == 'macos'
