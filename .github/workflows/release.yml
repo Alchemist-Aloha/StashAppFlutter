@@ -30,8 +30,8 @@ jobs:
         run: |
           export PATH="$PATH:$HOME/.pub-cache/bin"
           export APPIMAGE_EXTRACT_AND_RUN=1
-          dart pub global activate flutter_distributor 0.6.10
-          flutter_distributor package --platform linux --targets deb,appimage
+          dart pub global activate fastforge 0.6.12
+          fastforge package --platform linux --targets deb,appimage
 
       - name: Upload to release
         uses: softprops/action-gh-release@v2
@@ -57,8 +57,8 @@ jobs:
         shell: bash
         run: |
           export PATH="$PATH:$HOME/AppData/Local/Pub/Cache/bin"
-          dart pub global activate flutter_distributor 0.6.10
-          flutter_distributor package --platform windows --targets exe,msix
+          dart pub global activate fastforge 0.6.12
+          fastforge package --platform windows --targets exe,msix
 
       - name: Upload to release
         uses: softprops/action-gh-release@v2

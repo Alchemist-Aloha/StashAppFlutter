@@ -170,8 +170,8 @@ jobs:
           sudo wget -qO /usr/local/bin/appimagetool https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
           sudo chmod +x /usr/local/bin/appimagetool
           export APPIMAGE_EXTRACT_AND_RUN=1
-          dart pub global activate flutter_distributor 0.6.10
-          flutter_distributor package --platform linux --targets deb,appimage
+          dart pub global activate fastforge 0.6.12
+          fastforge package --platform linux --targets deb,appimage
         shell: bash
 
       - name: Package Windows dists
@@ -179,8 +179,8 @@ jobs:
         run: |
           choco install innosetup -y --no-progress
           export PATH="$PATH:$HOME/AppData/Local/Pub/Cache/bin"
-          dart pub global activate flutter_distributor 0.6.10
-          flutter_distributor package --platform windows --targets exe,msix
+          dart pub global activate fastforge 0.6.12
+          fastforge package --platform windows --targets exe,msix
         shell: bash
 
       - name: Upload dist packages

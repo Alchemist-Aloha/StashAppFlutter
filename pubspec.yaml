@@ -56,7 +56,7 @@ dependencies:
   file_selector: ^1.1.0
   share_plus: ^13.0.0
   msix: ^3.18.0
-  flutter_distributor: ^0.6.10
+  fastforge: ^0.6.12
 
 dev_dependencies:
   flutter_test:
