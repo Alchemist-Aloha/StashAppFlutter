@@ -91,6 +91,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 EOF
 
 rpmbuild --define "_topdir $TOPDIR" -bb "$TOPDIR/SPECS/$NAME.spec"
-cp "$TOPDIR"/RPMS/"$ARCH"/*.rpm "$OUT/stash_app_flutter-$VERSION-linux.rpm"
+cp "$TOPDIR"/RPMS/"$ARCH"/*.rpm "$OUT/StashFlow-$VERSION-linux.rpm"
 rm -rf "$TOPDIR"
-echo "Built $OUT/stash_app_flutter-$VERSION-linux.rpm"
+echo "Built $OUT/StashFlow-$VERSION-linux.rpm"
