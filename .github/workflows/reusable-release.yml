@@ -183,7 +183,7 @@ jobs:
           choco install innosetup -y --no-progress
           $env:PATH += ";$env:LOCALAPPDATA\Pub\Cache\bin"
           dart pub global activate fastforge 0.6.12
-          fastforge package --platform windows --targets exe,msix --artifact-name 'StashFlow-{{build_name}}{{#has_build_number}}+{{build_number}}{{/has_build_number}}-{{platform}}{{#is_installer}}-setup{{/is_installer}}.{{ext}}'
+          fastforge package --platform windows --targets exe --artifact-name 'StashFlow-{{build_name}}{{#has_build_number}}+{{build_number}}{{/has_build_number}}-{{platform}}{{#is_installer}}-setup{{/is_installer}}.{{ext}}'
 
       - name: Upload dist packages
         if: matrix.target == 'linux' || matrix.target == 'windows'
@@ -195,7 +195,6 @@ jobs:
             dist/**/*.AppImage
             dist/**/*.pacman
             dist/**/*.exe
-            dist/**/*.msix
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v7

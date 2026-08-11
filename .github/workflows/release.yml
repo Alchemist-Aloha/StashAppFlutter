@@ -54,16 +54,15 @@ jobs:
       - name: Install Inno Setup
         run: choco install innosetup -y --no-progress
 
-      - name: Package exe + msix
+      - name: Package exe
         shell: pwsh
         run: |
           $env:PATH += ";$env:LOCALAPPDATA\Pub\Cache\bin"
           dart pub global activate fastforge 0.6.12
-          fastforge package --platform windows --targets exe,msix --artifact-name 'StashFlow-{{build_name}}{{#has_build_number}}+{{build_number}}{{/has_build_number}}-{{platform}}{{#is_installer}}-setup{{/is_installer}}.{{ext}}'
+          fastforge package --platform windows --targets exe --artifact-name 'StashFlow-{{build_name}}{{#has_build_number}}+{{build_number}}{{/has_build_number}}-{{platform}}{{#is_installer}}-setup{{/is_installer}}.{{ext}}'
 
       - name: Upload to release
         uses: softprops/action-gh-release@v2
         with:
           files: |
             dist/**/*.exe
-            dist/**/*.msix
