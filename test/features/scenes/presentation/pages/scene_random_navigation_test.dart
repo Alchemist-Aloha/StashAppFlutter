@@ -58,6 +58,29 @@ class _FakeSceneRandomNavigationController
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
+  test('random navigation marks playlist return focus', () async {
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
+    final randomScene = _scene('random');
+    final repo = MockGraphQLSceneRepository()..withData([randomScene]);
+    final container = ProviderContainer(
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
+        sceneRepositoryProvider.overrideWithValue(repo),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    expect(container.read(sceneListRandomReturnProvider), isFalse);
+    expect(
+      await container
+          .read(sceneRandomNavigationControllerProvider)
+          .getRandomScene(),
+      randomScene,
+    );
+    expect(container.read(sceneListRandomReturnProvider), isTrue);
+  });
+
   testWidgets(
     'ScenesPage random button uses shared controller and preserves the main queue',
     (tester) async {

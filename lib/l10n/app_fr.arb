@@ -284,6 +284,8 @@
   "settings_interface_navigation_subtitle": "Visibilité des raccourcis de navigation globaux",
   "settings_interface_show_random": "Afficher les boutons de navigation aléatoire",
   "settings_interface_show_random_subtitle": "Activer ou désactiver les boutons flottants de casino sur les pages de liste et de détails",
+  "settings_interface_auto_hide_app_bar": "Masquer la barre supérieure pendant le défilement",
+  "settings_interface_auto_hide_app_bar_subtitle": "Elle se masque en défilant vers le bas et réapparaît en défilant vers le haut.",
   "settings_interface_hide_scene_metadata": "Masquer les métadonnées de scène par défaut",
   "settings_interface_hide_scene_metadata_subtitle": "Afficher les métadonnées techniques de la scène après avoir appuyé sur Afficher les métadonnées.",
   "settings_interface_random_scene_filter": "Respecter les filtres actifs pour la scène aléatoire",

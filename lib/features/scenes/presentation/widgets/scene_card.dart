@@ -37,6 +37,7 @@ class SceneCard extends ConsumerStatefulWidget {
     this.memCacheWidth,
     this.memCacheHeight,
     this.useHero = true,
+    this.focusNode,
     super.key,
   }) : scene = Scene(
          id: 'skeleton',
@@ -94,6 +95,7 @@ class SceneCard extends ConsumerStatefulWidget {
     this.memCacheHeight,
     this.skeletonize = false,
     this.useHero = true,
+    this.focusNode,
     super.key,
   });
 
@@ -123,6 +125,9 @@ class SceneCard extends ConsumerStatefulWidget {
 
   /// Whether to wrap the thumbnail in a Hero widget.
   final bool useHero;
+
+  /// Optional focus target used when returning to a scene list.
+  final FocusNode? focusNode;
 
   @override
   ConsumerState<SceneCard> createState() => _SceneCardState();
@@ -432,6 +437,7 @@ class _SceneCardState extends ConsumerState<SceneCard> {
         borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
+          focusNode: widget.focusNode,
           onTap: widget.onTap,
           onLongPress: () => _showMenu(context, ref),
           child: Column(
@@ -522,6 +528,7 @@ class _SceneCardState extends ConsumerState<SceneCard> {
         borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
+          focusNode: widget.focusNode,
           onTap: widget.onTap,
           onLongPress: () => _showMenu(context, ref),
           child: Column(

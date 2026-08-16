@@ -1288,6 +1288,14 @@ class AppLocalizationsIt extends AppLocalizations {
       'Abilita o disabilita i pulsanti fluttuanti nelle pagine di elenco e dettaglio';
 
   @override
+  String get settings_interface_auto_hide_app_bar =>
+      'Nascondi la barra superiore durante lo scorrimento';
+
+  @override
+  String get settings_interface_auto_hide_app_bar_subtitle =>
+      'Si nasconde scorrendo verso il basso e riappare scorrendo verso l\'alto.';
+
+  @override
   String get settings_interface_hide_scene_metadata =>
       'Nascondi i metadati della scena per impostazione predefinita';
 

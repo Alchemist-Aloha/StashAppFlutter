@@ -1269,6 +1269,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'Enable or disable the floating casino buttons across list and details pages';
 
   @override
+  String get settings_interface_auto_hide_app_bar =>
+      'Hide top app bar while scrolling';
+
+  @override
+  String get settings_interface_auto_hide_app_bar_subtitle =>
+      'Hide when scrolling down and show again when scrolling up.';
+
+  @override
   String get settings_interface_hide_scene_metadata =>
       'Hide scene metadata by default';
 

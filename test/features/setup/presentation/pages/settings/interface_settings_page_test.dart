@@ -183,6 +183,35 @@ void main() {
     expect(prefs.getBool('scene_random_respect_active_filter'), isFalse);
   });
 
+  testWidgets('InterfaceSettingsPage saves top app bar auto-hide', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1200, 1800);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+
+    await pumpTestWidget(
+      tester,
+      prefs: prefs,
+      child: const InterfaceSettingsPage(),
+    );
+    await tester.pumpAndSettle();
+
+    final toggle = find.descendant(
+      of: find.widgetWithText(
+        SwitchListTile,
+        'Hide top app bar while scrolling',
+      ),
+      matching: find.byType(Switch),
+    );
+
+    expect(tester.widget<Switch>(toggle).value, isFalse);
+    await tester.tap(toggle);
+    await tester.pumpAndSettle();
+
+    expect(prefs.getBool('auto_hide_top_app_bar'), isTrue);
+  });
+
   testWidgets('InterfaceSettingsPage saves scene metadata visibility', (
     tester,
   ) async {

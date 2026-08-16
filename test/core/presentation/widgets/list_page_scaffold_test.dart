@@ -5,9 +5,11 @@ import 'package:flutter/rendering.dart' show ScrollCacheExtent;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stash_app_flutter/core/presentation/widgets/list_page_scaffold.dart';
 import 'package:stash_app_flutter/core/presentation/widgets/error_state_view.dart';
 import 'package:stash_app_flutter/core/presentation/providers/desktop_capabilities_provider.dart';
+import 'package:stash_app_flutter/core/data/preferences/shared_preferences_provider.dart';
 import 'package:stash_app_flutter/features/scenes/presentation/widgets/scene_card.dart';
 import 'package:stash_app_flutter/l10n/app_localizations.dart';
 import '../../../helpers/test_helpers.dart';
@@ -73,6 +75,38 @@ void main() {
 
       expect(find.text('Test Title'), findsOneWidget);
       expect(find.byType(SceneCard), findsWidgets);
+    });
+
+    testWidgets('auto-hides on scroll down and shows on scroll up', (
+      tester,
+    ) async {
+      SharedPreferences.setMockInitialValues({'auto_hide_top_app_bar': true});
+      final prefs = await SharedPreferences.getInstance();
+
+      await pumpTestWidget(
+        tester,
+        prefs: prefs,
+        child: ListPageScaffold<int>(
+          title: 'Test Title',
+          searchHint: 'Search...',
+          onSearchChanged: (_) {},
+          provider: AsyncValue.data(List.generate(50, (index) => index)),
+          itemBuilder: (context, item, mw, mh) =>
+              SizedBox(height: 80, child: Text('Item $item')),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final slide = find.byKey(const Key('top-app-bar-slide'));
+      expect(tester.widget<AnimatedSlide>(slide).offset, Offset.zero);
+
+      await tester.drag(find.byType(ListView).first, const Offset(0, -300));
+      await tester.pumpAndSettle();
+      expect(tester.widget<AnimatedSlide>(slide).offset, const Offset(0, -1));
+
+      await tester.drag(find.byType(ListView).first, const Offset(0, 100));
+      await tester.pumpAndSettle();
+      expect(tester.widget<AnimatedSlide>(slide).offset, Offset.zero);
     });
 
     testWidgets('shows empty state correctly', (WidgetTester tester) async {
@@ -421,8 +455,11 @@ void main() {
     testWidgets('shows long-press tooltip affordance on the title', (
       WidgetTester tester,
     ) async {
+      SharedPreferences.setMockInitialValues({});
+      final prefs = await SharedPreferences.getInstance();
       await tester.pumpWidget(
         ProviderScope(
+          overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
           child: MaterialApp(
             locale: const Locale.fromSubtags(
               languageCode: 'zh',

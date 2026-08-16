@@ -1253,6 +1253,13 @@ class AppLocalizationsKo extends AppLocalizations {
       '목록 및 상세 페이지에서 부동 카지노 버튼 활성화 또는 비활성화';
 
   @override
+  String get settings_interface_auto_hide_app_bar => '스크롤할 때 상단 앱 바 숨기기';
+
+  @override
+  String get settings_interface_auto_hide_app_bar_subtitle =>
+      '아래로 스크롤하면 숨기고 위로 스크롤하면 다시 표시합니다.';
+
+  @override
   String get settings_interface_hide_scene_metadata => '장면 메타데이터를 기본으로 숨기기';
 
   @override

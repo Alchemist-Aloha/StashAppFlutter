@@ -1255,6 +1255,13 @@ class AppLocalizationsJa extends AppLocalizations {
       'リストおよび詳細ページでフローティングカジノボタンを有効または無効にします';
 
   @override
+  String get settings_interface_auto_hide_app_bar => 'スクロール中に上部アプリバーを隠す';
+
+  @override
+  String get settings_interface_auto_hide_app_bar_subtitle =>
+      '下にスクロールすると隠れ、上にスクロールすると再表示されます。';
+
+  @override
   String get settings_interface_hide_scene_metadata => 'シーンのメタデータをデフォルトで非表示';
 
   @override

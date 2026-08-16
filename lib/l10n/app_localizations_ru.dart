@@ -1277,6 +1277,14 @@ class AppLocalizationsRu extends AppLocalizations {
       'Включить или отключить плавающие кнопки казино на страницах списков и деталей';
 
   @override
+  String get settings_interface_auto_hide_app_bar =>
+      'Скрывать верхнюю панель при прокрутке';
+
+  @override
+  String get settings_interface_auto_hide_app_bar_subtitle =>
+      'Скрывать при прокрутке вниз и снова показывать при прокрутке вверх.';
+
+  @override
   String get settings_interface_hide_scene_metadata =>
       'Скрывать метаданные сцены по умолчанию';
 
