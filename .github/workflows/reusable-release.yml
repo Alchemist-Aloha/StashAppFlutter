@@ -56,6 +56,11 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v6
 
+      - name: Read version
+        shell: bash
+        run: |
+          echo "STASHFLOW_VERSION=$(sed -n 's/^version: \([^+]*\).*/\1/p' pubspec.yaml)" >> "$GITHUB_ENV"
+
       - name: Setup Java
         if: matrix.target == 'android'
         uses: actions/setup-java@v5
@@ -131,21 +136,21 @@ jobs:
         if: matrix.target == 'windows'
         run: |
           cd build/windows/x64/runner/Release
-          7z a ../../../../../StashFlow-windows${{ inputs.archive_suffix }}.zip *
+          7z a ../../../../../StashFlow-${STASHFLOW_VERSION}-windows-x64.zip *
         shell: bash
 
       - name: Package Linux
         if: matrix.target == 'linux'
         run: |
           cd build/linux/x64/release/bundle
-          zip -r ../../../../../StashFlow-linux${{ inputs.archive_suffix }}.zip .
+          zip -r ../../../../../StashFlow-${STASHFLOW_VERSION}-linux-x64.zip .
         shell: bash
 
       - name: Package Web
         if: matrix.target == 'web'
         run: |
           cd build/web
-          zip -r ../../StashFlow-web${{ inputs.archive_suffix }}.zip .
+          zip -r ../../StashFlow-${STASHFLOW_VERSION}-web.zip .
         shell: bash
 
       - name: Deploy to GitHub Pages
@@ -162,7 +167,17 @@ jobs:
         if: matrix.target == 'macos'
         run: |
           cd build/macos/Build/Products/Release
-          zip -r ../../../../../StashFlow-macos${{ inputs.archive_suffix }}.zip *.app
+          zip -r ../../../../../StashFlow-${STASHFLOW_VERSION}-macos-$(uname -m).zip *.app
+        shell: bash
+
+      - name: Name Android binaries
+        if: matrix.target == 'android'
+        run: |
+          for apk in build/app/outputs/flutter-apk/app-*-release.apk; do
+            abi="${apk#*app-}"
+            abi="${abi%-release.apk}"
+            mv "$apk" "build/app/outputs/flutter-apk/StashFlow-${STASHFLOW_VERSION}-android-${abi}.apk"
+          done
         shell: bash
 
       - name: Package Linux dists
@@ -174,6 +189,13 @@ jobs:
           export APPIMAGE_EXTRACT_AND_RUN=1
           dart pub global activate fastforge 0.6.12
           fastforge package --platform linux --targets deb,appimage,pacman --artifact-name 'StashFlow-{{build_name}}{{#has_build_number}}+{{build_number}}{{/has_build_number}}-{{platform}}{{#is_installer}}-setup{{/is_installer}}.{{ext}}'
+          find dist -type f \( -name '*.deb' -o -name '*.AppImage' -o -name '*.pacman' -o -name '*.pkg.tar.zst' \) -print0 | while IFS= read -r -d '' file; do
+            case "$file" in
+              *.pkg.tar.zst) extension=pkg.tar.zst ;;
+              *) extension="${file##*.}" ;;
+            esac
+            mv "$file" "$(dirname "$file")/StashFlow-${STASHFLOW_VERSION}-linux-x64.${extension}"
+          done
         shell: bash
 
       - name: Package Windows dists
@@ -184,25 +206,22 @@ jobs:
           $env:PATH += ";$env:LOCALAPPDATA\Pub\Cache\bin"
           dart pub global activate fastforge 0.6.12
           fastforge package --platform windows --targets exe --artifact-name 'StashFlow-{{build_name}}{{#has_build_number}}+{{build_number}}{{/has_build_number}}-{{platform}}{{#is_installer}}-setup{{/is_installer}}.{{ext}}'
+          Get-ChildItem dist -Recurse -Filter *.exe | Rename-Item -NewName "StashFlow-$env:STASHFLOW_VERSION-windows-x64.exe"
 
       - name: Upload dist packages
         if: matrix.target == 'linux' || matrix.target == 'windows'
         uses: actions/upload-artifact@v7
         with:
           name: StashFlow${{ inputs.archive_suffix }}-${{ matrix.artifact_name }}-dist
-          path: |
-            dist/**/*.deb
-            dist/**/*.AppImage
-            dist/**/*.pacman
-            dist/**/*.exe
+          path: dist/**/StashFlow-*
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v7
         with:
           name: StashFlow${{ inputs.archive_suffix }}-${{ matrix.artifact_name }}
           path: |
-            build/app/outputs/flutter-apk/app-*-release.apk
-            StashFlow-*${{ inputs.archive_suffix }}.zip
+            build/app/outputs/flutter-apk/StashFlow-*.apk
+            StashFlow-*.zip
 
   release:
     needs: build
