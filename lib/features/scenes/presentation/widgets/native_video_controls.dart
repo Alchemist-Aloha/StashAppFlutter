@@ -497,6 +497,8 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls> {
   }
 
   Widget _buildSeekFeedbackOverlay(ColorScheme colorScheme) {
+    final dimensions = context.dimensions;
+    final scale = dimensions.fontSizeFactor;
     final seconds = _seekFeedbackSeconds;
     final isVisible = seconds != null;
     final effectiveSeconds = seconds ?? 0;
@@ -520,41 +522,38 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls> {
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeOutCubic,
         child: AnimatedScale(
-          scale: isVisible ? 1.0 : 0.8,
-          duration: const Duration(milliseconds: 250),
-          curve: Curves.elasticOut,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            child: Column(
+          scale: isVisible ? 1.0 : 0.96,
+          duration: const Duration(milliseconds: 180),
+          curve: Curves.easeOutCubic,
+          child: Container(
+            key: const Key('video_seek_feedback'),
+            constraints: BoxConstraints(minHeight: dimensions.buttonHeight),
+            padding: EdgeInsets.symmetric(
+              horizontal: dimensions.spacingMedium,
+              vertical: dimensions.spacingSmall,
+            ),
+            decoration: BoxDecoration(
+              color: Colors.black.withAlpha(184),
+              borderRadius: BorderRadius.circular(dimensions.spacingMedium),
+              border: Border.all(color: Colors.white.withAlpha(36)),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black38,
+                  blurRadius: 16,
+                  offset: Offset(0, 6),
+                ),
+              ],
+            ),
+            child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  icon,
-                  color: Colors.white,
-                  size: 32,
-                  shadows: const [
-                    Shadow(
-                      blurRadius: 8,
-                      color: Colors.black26,
-                      offset: Offset(0, 3),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
+                Icon(icon, color: colorScheme.primary, size: 20 * scale),
+                SizedBox(width: dimensions.spacingSmall),
                 Text(
                   label,
-                  style: const TextStyle(
+                  style: context.textTheme.labelLarge?.copyWith(
                     color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 0.5,
-                    shadows: [
-                      Shadow(
-                        blurRadius: 6,
-                        color: Colors.black26,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ],
@@ -1174,24 +1173,29 @@ class _NativeVideoControlsState extends ConsumerState<NativeVideoControls> {
                   ),
 
                   Positioned.fill(
-                    child: Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          if (_dragSeekTarget != null &&
-                              (widget.scene.paths.vtt?.isNotEmpty ??
-                                  false)) ...[
-                            ScrubbingPreview(
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        if (_dragSeekTarget != null &&
+                            (widget.scene.paths.vtt?.isNotEmpty ?? false))
+                          Transform.translate(
+                            offset: Offset(
+                              0,
+                              -(45 * context.dimensions.fontSizeFactor +
+                                  context.dimensions.buttonHeight / 2 +
+                                  context.dimensions.spacingMedium),
+                            ),
+                            child: ScrubbingPreview(
                               vttUrl: widget.scene.paths.vtt!,
                               timeInSeconds:
                                   _dragSeekTarget!.inMilliseconds / 1000,
                               headers: ref.read(mediaPlaybackHeadersProvider),
+                              width: 160 * context.dimensions.fontSizeFactor,
+                              height: 90 * context.dimensions.fontSizeFactor,
                             ),
-                            const SizedBox(height: 16),
-                          ],
-                          _buildSeekFeedbackOverlay(colorScheme),
-                        ],
-                      ),
+                          ),
+                        _buildSeekFeedbackOverlay(colorScheme),
+                      ],
                     ),
                   ),
 

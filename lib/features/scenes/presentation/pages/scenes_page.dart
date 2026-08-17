@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import '../../../../core/utils/l10n_extensions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -85,6 +87,15 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
 
   /// Remembers the last random scene ID to avoid consecutive duplicates in "Casino mode".
   String? _lastRandomSceneId;
+  final _returnedSceneFocusNode = FocusNode(debugLabel: 'returned_scene');
+  GlobalKey _focusedSceneKey = GlobalKey();
+  String? _focusedSceneId;
+
+  @override
+  void dispose() {
+    _returnedSceneFocusNode.dispose();
+    super.dispose();
+  }
 
   void _handleLayoutModeTransition({
     required bool? previousIsTiktok,
@@ -256,7 +267,90 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
     if (!mounted || randomScene == null) return;
 
     _lastRandomSceneId = randomScene.id;
-    context.push('/scenes/scene/${randomScene.id}', extra: true);
+    await context.push<void>('/scenes/scene/${randomScene.id}', extra: true);
+    if (mounted) _restoreSceneFocus();
+  }
+
+  Future<void> _openScene(Scene scene, int index, int itemCount) async {
+    ref.read(sceneListRandomReturnProvider.notifier).reset();
+    AppLogStore.instance.add(
+      'ScenesPage: Scene card tapped: ${scene.id}, index=$index, total=$itemCount',
+      source: 'scenes_page',
+    );
+    if (index != -1) {
+      ref
+          .read(playbackQueueProvider.notifier)
+          .setIndex(index, queueId: PlaybackQueueIds.main);
+    }
+    await context.push<void>('/scenes/scene/${scene.id}', extra: true);
+    if (mounted) _restoreSceneFocus();
+  }
+
+  void _restoreSceneFocus() {
+    final scenes = ref.read(sceneListProvider).value;
+    if (scenes == null) return;
+
+    final queue = ref.read(playbackQueueProvider);
+    final mainQueue = queue.queues[PlaybackQueueIds.main];
+    final playlistScene =
+        mainQueue != null &&
+            mainQueue.currentIndex >= 0 &&
+            mainQueue.currentIndex < mainQueue.sequence.length
+        ? mainQueue.sequence[mainQueue.currentIndex]
+        : null;
+    final usePlaylist = ref.read(sceneListRandomReturnProvider);
+    ref.read(sceneListRandomReturnProvider.notifier).reset();
+
+    final preferredId = usePlaylist
+        ? playlistScene?.id
+        : ref.read(playerStateProvider).activeScene?.id;
+    final fallbackId = usePlaylist
+        ? ref.read(playerStateProvider).activeScene?.id
+        : playlistScene?.id;
+    var index = scenes.indexWhere((scene) => scene.id == preferredId);
+    if (index == -1) {
+      index = scenes.indexWhere((scene) => scene.id == fallbackId);
+    }
+    if (index == -1) return;
+
+    setState(() {
+      _focusedSceneId = scenes[index].id;
+      _focusedSceneKey = GlobalKey();
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      unawaited(_focusSceneCard(index, scenes.length));
+    });
+  }
+
+  Future<void> _focusSceneCard(int index, int itemCount) async {
+    final controller = ref.read(
+      listScrollControllerProvider(ListScrollTarget.scene),
+    );
+    if (_focusedSceneKey.currentContext == null && controller.hasClients) {
+      final position = controller.position;
+      final fraction = itemCount <= 1 ? 0.0 : index / (itemCount - 1);
+      controller.jumpTo(
+        (position.maxScrollExtent * fraction)
+            .clamp(position.minScrollExtent, position.maxScrollExtent)
+            .toDouble(),
+      );
+      await WidgetsBinding.instance.endOfFrame;
+      if (!mounted) return;
+    }
+
+    final targetContext = _focusedSceneKey.currentContext;
+    if (targetContext != null && targetContext.mounted) {
+      await Scrollable.ensureVisible(
+        targetContext,
+        alignment: 0.5,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOutCubic,
+      );
+    }
+    if (mounted && _returnedSceneFocusNode.canRequestFocus) {
+      _returnedSceneFocusNode.requestFocus();
+    }
   }
 
   /// Formats a [_SceneSortField] enum value for display in the UI.
@@ -513,34 +607,20 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
       padding: isGridView ? GridUtils.defaultPadding(context) : EdgeInsets.zero,
       itemBuilder: (context, scene, memCacheWidth, memCacheHeight) {
         final index = sceneIndexMap[scene.id] ?? -1;
+        final focused = scene.id == _focusedSceneId;
 
         return SceneCard(
+          key: focused
+              ? _focusedSceneKey
+              : ValueKey<String>('scene_card_${scene.id}'),
           scene: scene,
           isGrid: isGridView,
           useMasonry: isGridView,
           memCacheWidth: memCacheWidth,
           memCacheHeight: memCacheHeight,
           useHero: isAtRoot,
-          onTap: () {
-            AppLogStore.instance.add(
-              'ScenesPage: Scene card tapped: ${scene.id}, index=$index, total=${scenes.length}',
-              source: 'scenes_page',
-            );
-            if (index != -1) {
-              ref
-                  .read(playbackQueueProvider.notifier)
-                  .setIndex(index, queueId: PlaybackQueueIds.main);
-              AppLogStore.instance.add(
-                'ScenesPage: Queue index set to $index for scene ${scene.id}',
-                source: 'scenes_page',
-              );
-            }
-            context.push('/scenes/scene/${scene.id}', extra: true);
-            AppLogStore.instance.add(
-              'ScenesPage: Navigated to scene detail page for ${scene.id} with autoPlayOnMount=true',
-              source: 'scenes_page',
-            );
-          },
+          focusNode: focused ? _returnedSceneFocusNode : null,
+          onTap: () => _openScene(scene, index, scenes.length),
         );
       },
       floatingActionButton: (randomNavigationEnabled && !isTiktokLayout)

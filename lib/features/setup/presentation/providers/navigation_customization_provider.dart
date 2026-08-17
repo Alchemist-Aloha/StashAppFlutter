@@ -43,3 +43,24 @@ class SceneRandomRespectActiveFilter extends Notifier<bool> {
     prefs.setBool(_storageKey, value);
   }
 }
+
+final autoHideTopAppBarProvider = NotifierProvider<AutoHideTopAppBar, bool>(
+  AutoHideTopAppBar.new,
+);
+
+/// Controls whether list-page app bars hide while scrolling down.
+class AutoHideTopAppBar extends Notifier<bool> {
+  static const storageKey = 'auto_hide_top_app_bar';
+
+  @override
+  bool build() {
+    final prefs = ref.watch(sharedPreferencesProvider);
+    return prefs.getBool(storageKey) ?? false;
+  }
+
+  Future<void> set(bool value) async {
+    if (state == value) return;
+    state = value;
+    await ref.read(sharedPreferencesProvider).setBool(storageKey, value);
+  }
+}

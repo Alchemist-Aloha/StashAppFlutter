@@ -267,6 +267,8 @@
   "settings_interface_navigation_subtitle": "Sichtbarkeit globaler Navigationskürzel",
   "settings_interface_show_random": "Zufalls-Navigationsschaltflächen anzeigen",
   "settings_interface_show_random_subtitle": "Aktivieren oder deaktivieren Sie die schwebenden Casino-Schaltflächen auf Listen- und Detailseiten",
+  "settings_interface_auto_hide_app_bar": "Obere App-Leiste beim Scrollen ausblenden",
+  "settings_interface_auto_hide_app_bar_subtitle": "Beim Scrollen nach unten ausblenden und beim Scrollen nach oben wieder anzeigen.",
   "settings_interface_hide_scene_metadata": "Szenenmetadaten standardmäßig ausblenden",
   "settings_interface_hide_scene_metadata_subtitle": "Technische Szenenmetadaten erst nach Auswahl von „Metadaten anzeigen“ einblenden.",
   "settings_interface_random_scene_filter": "Aktive Filter für zufällige Szenen berücksichtigen",

@@ -200,6 +200,7 @@ class SceneList extends _$SceneList {
     // We use index -1 to allow the queue to recover its index if the
     // user is already playing something and just refreshed the list.
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!ref.mounted) return;
       AppLogStore.instance.add(
         'SceneList build: initializing playback queue with ${scenes.length} scenes',
         source: 'scene_list',

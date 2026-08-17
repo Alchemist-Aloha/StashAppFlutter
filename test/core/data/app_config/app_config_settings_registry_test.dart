@@ -10,6 +10,7 @@ void main() {
     SharedPreferences.setMockInitialValues({
       'app_theme_mode': 'dark',
       'show_random_navigation': true,
+      'auto_hide_top_app_bar': true,
       'max_image_cache_size_mb': 500,
       'app_global_scale_factor': 1.2,
       'scene_sort_field': 'rating',
@@ -24,6 +25,7 @@ void main() {
     expect(await registry.read(prefs), {
       'app_theme_mode': 'dark',
       'show_random_navigation': true,
+      'auto_hide_top_app_bar': true,
       'max_image_cache_size_mb': 500,
       'app_global_scale_factor': 1.2,
       'scene_sort_field': 'rating',
@@ -78,6 +80,7 @@ void main() {
         'app_theme_seed_color',
         'use_true_black',
         'app_global_scale_factor',
+        'auto_hide_top_app_bar',
         'navigation_tabs_config',
         'desktop_keybinds',
         'video_play_end_behavior',

@@ -43,12 +43,15 @@ class PlaylistFloatingPanel extends ConsumerStatefulWidget {
 
 class _PlaylistFloatingPanelState extends ConsumerState<PlaylistFloatingPanel> {
   late final ScrollController _scrollController;
+  final _activeItemKey = GlobalKey();
+  final _activeItemFocusNode = FocusNode(debugLabel: 'active_playlist_item');
   bool _isPaging = false;
 
   @override
   void initState() {
     super.initState();
     _scrollController = ScrollController()..addListener(_maybeLoadMore);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _focusActiveItem());
   }
 
   @override
@@ -56,7 +59,42 @@ class _PlaylistFloatingPanelState extends ConsumerState<PlaylistFloatingPanel> {
     _scrollController
       ..removeListener(_maybeLoadMore)
       ..dispose();
+    _activeItemFocusNode.dispose();
     super.dispose();
+  }
+
+  Future<void> _focusActiveItem() async {
+    if (!mounted) return;
+    final queue = ref.read(playbackQueueProvider);
+    final index = queue.currentIndex;
+    if (index < 0 || index >= queue.sequence.length) return;
+
+    if (_activeItemKey.currentContext == null && _scrollController.hasClients) {
+      final position = _scrollController.position;
+      final fraction = queue.sequence.length <= 1
+          ? 0.0
+          : index / (queue.sequence.length - 1);
+      _scrollController.jumpTo(
+        (position.maxScrollExtent * fraction)
+            .clamp(position.minScrollExtent, position.maxScrollExtent)
+            .toDouble(),
+      );
+      await WidgetsBinding.instance.endOfFrame;
+      if (!mounted) return;
+    }
+
+    final targetContext = _activeItemKey.currentContext;
+    if (targetContext != null && targetContext.mounted) {
+      await Scrollable.ensureVisible(
+        targetContext,
+        alignment: 0.5,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOutCubic,
+      );
+    }
+    if (mounted && _activeItemFocusNode.canRequestFocus) {
+      _activeItemFocusNode.requestFocus();
+    }
   }
 
   Future<void> _maybeLoadMore() async {
@@ -154,9 +192,13 @@ class _PlaylistFloatingPanelState extends ConsumerState<PlaylistFloatingPanel> {
                           final scene = scenes[index];
                           final isActive = index == currentIndex;
                           return _PlaylistItem(
+                            key: isActive
+                                ? _activeItemKey
+                                : ValueKey<String>('playlist_item_${scene.id}'),
                             scene: scene,
                             index: index,
                             isActive: isActive,
+                            focusNode: isActive ? _activeItemFocusNode : null,
                             onTap: () => _openScene(queueId, index, scene.id),
                           );
                         },
@@ -251,15 +293,18 @@ class _PlaylistHeader extends StatelessWidget {
 
 class _PlaylistItem extends ConsumerWidget {
   const _PlaylistItem({
+    super.key,
     required this.scene,
     required this.index,
     required this.isActive,
+    required this.focusNode,
     required this.onTap,
   });
 
   final Scene scene;
   final int index;
   final bool isActive;
+  final FocusNode? focusNode;
   final VoidCallback onTap;
 
   @override
@@ -275,6 +320,7 @@ class _PlaylistItem extends ConsumerWidget {
             : colorScheme.surfaceContainerHighest.withValues(alpha: 0.35),
         borderRadius: BorderRadius.circular(AppTheme.radiusLarge),
         child: InkWell(
+          focusNode: focusNode,
           borderRadius: BorderRadius.circular(AppTheme.radiusLarge),
           onTap: onTap,
           child: Padding(

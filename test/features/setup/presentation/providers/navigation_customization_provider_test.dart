@@ -5,6 +5,22 @@ import 'package:stash_app_flutter/core/data/preferences/shared_preferences_provi
 import 'package:stash_app_flutter/features/setup/presentation/providers/navigation_customization_provider.dart';
 
 void main() {
+  test('top app bar auto-hide defaults off and persists updates', () async {
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
+    final container = ProviderContainer(
+      overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
+    );
+    addTearDown(container.dispose);
+
+    expect(container.read(autoHideTopAppBarProvider), isFalse);
+
+    await container.read(autoHideTopAppBarProvider.notifier).set(true);
+
+    expect(container.read(autoHideTopAppBarProvider), isTrue);
+    expect(prefs.getBool(AutoHideTopAppBar.storageKey), isTrue);
+  });
+
   test(
     'scene random respect filter defaults to enabled and persists updates',
     () async {

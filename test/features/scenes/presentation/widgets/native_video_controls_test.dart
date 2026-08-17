@@ -3,12 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stash_app_flutter/core/data/preferences/shared_preferences_provider.dart';
+import 'package:stash_app_flutter/core/utils/vtt_service.dart';
 import 'package:mockito/mockito.dart';
 import 'package:media_kit/media_kit.dart' as mk;
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:stash_app_flutter/features/scenes/domain/entities/scene.dart';
+import 'package:stash_app_flutter/features/scenes/domain/entities/sprite_info.dart';
 import 'package:stash_app_flutter/features/scenes/presentation/providers/video_player_provider.dart';
 import 'package:stash_app_flutter/features/scenes/presentation/widgets/native_video_controls.dart';
+import 'package:stash_app_flutter/features/scenes/presentation/widgets/scrubbing_preview.dart';
 import 'package:stash_app_flutter/features/scenes/presentation/widgets/video_controls/video_progress_bar.dart';
 import 'package:stash_app_flutter/core/presentation/theme/app_theme.dart';
 
@@ -21,7 +24,46 @@ class FakePlayer extends Mock implements mk.Player {
   mk.PlayerStream get stream => MockPlayerStream();
 
   @override
-  mk.PlayerState get state => mk.PlayerState(playing: isPlaying);
+  mk.PlayerState get state => mk.PlayerState(
+    playing: isPlaying,
+    position: const Duration(seconds: 20),
+    duration: const Duration(seconds: 100),
+    width: 1920,
+    height: 1080,
+  );
+
+  @override
+  Future<void> seek(Duration position) async {}
+}
+
+class MockVttService implements VttService {
+  @override
+  String? get apiKey => null;
+
+  @override
+  Future<List<SpriteInfo>?> fetchSpriteInfo(
+    String vttUrl,
+    Map<String, String>? headers,
+  ) async => const [
+    SpriteInfo(
+      url: 'https://example.com/sprite.jpg',
+      start: 0,
+      end: 100,
+      x: 0,
+      y: 0,
+      w: 160,
+      h: 90,
+    ),
+  ];
+}
+
+class ActivePlayerState extends PlayerState {
+  ActivePlayerState(this.scene);
+
+  final Scene scene;
+
+  @override
+  GlobalPlayerState build() => GlobalPlayerState(activeScene: scene);
 }
 
 class MockPlayerStream extends Fake implements mk.PlayerStream {
@@ -126,6 +168,28 @@ void main() {
     expect(find.byType(NativeVideoControls), findsOneWidget);
     expect(find.byIcon(Icons.play_arrow_rounded), findsNothing);
     expect(find.byType(VideoProgressBar), findsNothing);
+  });
+
+  testWidgets('drag seek feedback stays centered when preview appears', (
+    tester,
+  ) async {
+    final scene = _buildScene(vttPath: '/api/vtt');
+    await _pumpControls(tester, scene: scene, useDoubleTapSeek: false);
+
+    final feedback = find.byKey(const Key('video_seek_feedback'));
+    final initialCenter = tester.getCenter(feedback);
+    final gesture = await tester.startGesture(
+      tester.getCenter(find.byType(NativeVideoControls)),
+    );
+
+    await gesture.moveBy(const Offset(80, 0));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 50));
+
+    expect(find.byType(ScrubbingPreview), findsOneWidget);
+    expect(tester.getCenter(feedback), initialCenter);
+
+    await gesture.up();
   });
 
   testWidgets(
@@ -349,6 +413,7 @@ Future<void> _pumpControls(
   required Scene scene,
   bool showControls = true,
   bool isPlaying = false,
+  bool useDoubleTapSeek = true,
   VoidCallback? onInlineBack,
   VoidCallback? onFullScreenToggle,
   VoidCallback? onRandomScene,
@@ -359,14 +424,18 @@ Future<void> _pumpControls(
 
   await tester.pumpWidget(
     ProviderScope(
-      overrides: [sharedPreferencesProvider.overrideWithValue(mockPrefs)],
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(mockPrefs),
+        vttServiceProvider.overrideWithValue(MockVttService()),
+        playerStateProvider.overrideWith(() => ActivePlayerState(scene)),
+      ],
       child: MaterialApp(
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
         home: Scaffold(
           body: NativeVideoControls(
             controller: mockController,
-            useDoubleTapSeek: true,
+            useDoubleTapSeek: useDoubleTapSeek,
             enableNativePip: false,
             onInlineBack: onInlineBack,
             onFullScreenToggle: onFullScreenToggle,

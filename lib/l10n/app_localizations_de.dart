@@ -1283,6 +1283,14 @@ class AppLocalizationsDe extends AppLocalizations {
       'Aktivieren oder deaktivieren Sie die schwebenden Casino-Schaltflächen auf Listen- und Detailseiten';
 
   @override
+  String get settings_interface_auto_hide_app_bar =>
+      'Obere App-Leiste beim Scrollen ausblenden';
+
+  @override
+  String get settings_interface_auto_hide_app_bar_subtitle =>
+      'Beim Scrollen nach unten ausblenden und beim Scrollen nach oben wieder anzeigen.';
+
+  @override
   String get settings_interface_hide_scene_metadata =>
       'Szenenmetadaten standardmäßig ausblenden';
 

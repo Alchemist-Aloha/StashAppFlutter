@@ -320,6 +320,8 @@
   "settings_interface_navigation_subtitle": "全局导航快捷方式的可见性",
   "settings_interface_show_random": "显示随机导航按钮",
   "settings_interface_show_random_subtitle": "在列表和详情页启用或禁用悬浮随机按钮",
+  "settings_interface_auto_hide_app_bar": "滚动时隐藏顶部应用栏",
+  "settings_interface_auto_hide_app_bar_subtitle": "向下滚动时隐藏，向上滚动时重新显示。",
   "settings_interface_hide_scene_metadata": "默认隐藏场景元数据",
   "settings_interface_hide_scene_metadata_subtitle": "点击“显示元数据”后才显示场景技术元数据。",
   "settings_interface_random_scene_filter": "随机场景遵循当前筛选条件",

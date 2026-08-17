@@ -313,6 +313,8 @@
   "settings_interface_navigation_subtitle": "全域導航捷徑的可見度",
   "settings_interface_show_random": "顯示隨機導航按鈕",
   "settings_interface_show_random_subtitle": "在列表和詳情頁面啟用或停用浮動隨機按鈕",
+  "settings_interface_auto_hide_app_bar": "捲動時隱藏頂端應用程式列",
+  "settings_interface_auto_hide_app_bar_subtitle": "向下捲動時隱藏，向上捲動時重新顯示。",
   "settings_interface_hide_scene_metadata": "預設隱藏場景中繼資料",
   "settings_interface_hide_scene_metadata_subtitle": "點選「顯示中繼資料」後才顯示場景技術中繼資料。",
   "settings_interface_random_scene_filter": "隨機場景遵循目前篩選條件",

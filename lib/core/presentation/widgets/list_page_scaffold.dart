@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart' show ScrollCacheExtent;
+import 'package:flutter/rendering.dart' show ScrollCacheExtent, ScrollDirection;
 import 'package:flutter/services.dart';
 import '../../../../core/utils/l10n_extensions.dart';
 import 'package:flutter/gestures.dart';
@@ -13,6 +13,7 @@ import 'error_state_view.dart';
 import '../../utils/pagination.dart';
 import '../../data/preferences/search_history_provider.dart';
 import '../../../features/scenes/presentation/widgets/scene_card.dart';
+import '../../../features/setup/presentation/providers/navigation_customization_provider.dart';
 import 'grid_utils.dart';
 import 'stats_floating_panel.dart';
 
@@ -160,6 +161,7 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
   final _searchController = SearchController();
   String? _currentQuery;
   String? _lastSubmittedText;
+  bool _isTopAppBarVisible = true;
 
   bool _pageSizeReportScheduled = false;
   int? _lastReportedPageSize;
@@ -264,6 +266,7 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
   @override
   Widget build(BuildContext context) {
     final isDesktop = ref.watch(desktopCapabilitiesProvider);
+    final autoHideTopAppBar = ref.watch(autoHideTopAppBarProvider);
 
     // Hoist layout values out of the build sub-trees.
     // Why: Previously, MediaQuery.sizeOf and _getResponsiveGridDelegate were queried repeatedly
@@ -280,180 +283,185 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
         ? responsiveDelegate
         : null;
 
-    return Scaffold(
-      appBar: widget.hideAppBar
-          ? null
-          : AppBar(
-              scrolledUnderElevation: 4.0,
-              title: Tooltip(
-                message: context.l10n.stats_library_stats_tooltip,
-                child: Material(
-                  color: Colors.transparent,
-                  clipBehavior: Clip.antiAlias,
-                  borderRadius: BorderRadius.circular(AppTheme.radiusSmall),
-                  child: InkWell(
-                    onLongPress: () {
-                      HapticFeedback.lightImpact();
-                      StatsFloatingPanel.show(context);
-                    },
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: context.dimensions.spacingSmall,
-                        vertical: context.dimensions.spacingSmall / 2,
-                      ),
-                      child: Text(
-                        widget.title,
-                        style: context.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: -0.5,
-                        ),
-                      ),
-                    ),
-                  ),
+    final appBar = AppBar(
+      scrolledUnderElevation: 4.0,
+      title: Tooltip(
+        message: context.l10n.stats_library_stats_tooltip,
+        child: Material(
+          color: Colors.transparent,
+          clipBehavior: Clip.antiAlias,
+          borderRadius: BorderRadius.circular(AppTheme.radiusSmall),
+          child: InkWell(
+            onLongPress: () {
+              HapticFeedback.lightImpact();
+              StatsFloatingPanel.show(context);
+            },
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: context.dimensions.spacingSmall,
+                vertical: context.dimensions.spacingSmall / 2,
+              ),
+              child: Text(
+                widget.title,
+                style: context.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: -0.5,
                 ),
               ),
-              actions: [
-                if (widget.onSortPressed != null)
-                  IconButton(
-                    icon: const Icon(Icons.sort),
-                    onPressed: widget.onSortPressed,
-                    tooltip: context.l10n.common_sort,
-                  ),
-                if (widget.onFilterPressed != null)
-                  IconButton(
-                    icon: const Icon(Icons.filter_list),
-                    onPressed: widget.onFilterPressed,
-                    tooltip: context.l10n.common_filter,
-                  ),
-                if (isDesktop && widget.onRefresh != null)
-                  IconButton(
-                    key: const Key('list_page_refresh'),
-                    icon: const Icon(Icons.refresh_rounded),
-                    onPressed: widget.onRefresh,
-                    tooltip: context.l10n.common_refresh,
-                  ),
-                SearchAnchor(
-                  searchController: _searchController,
-                  viewOnClose: () {
-                    final text = _searchController.text;
-                    if (text != _lastSubmittedText) {
-                      _lastSubmittedText = text;
-                      setState(() {
-                        _currentQuery = text.isEmpty ? null : text;
-                      });
-                      widget.onSearchChanged(text);
-                      if (text.isNotEmpty) {
-                        ref
-                            .read(searchHistoryProvider(_historyKey).notifier)
-                            .addQuery(text);
-                      }
-                    }
-                  },
-                  builder: (BuildContext context, SearchController controller) {
-                    return IconButton(
-                      icon: const Icon(Icons.search),
-                      onPressed: () {
-                        _lastSubmittedText = _searchController.text;
-                        controller.openView();
-                      },
-                      tooltip: context.l10n.common_search,
-                    );
-                  },
-                  viewHintText: widget.searchHint,
-                  viewOnSubmitted: _searchController.closeView,
-                  suggestionsBuilder:
-                      (BuildContext context, SearchController controller) {
-                        return [
-                          Consumer(
-                            builder: (context, ref, _) {
-                              final history = ref.watch(
-                                searchHistoryProvider(_historyKey),
-                              );
-                              return Column(
-                                children: [
-                                  if (history.isNotEmpty)
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal:
-                                            context.dimensions.spacingMedium,
-                                        vertical:
-                                            context.dimensions.spacingSmall,
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            context.l10n.recent_searches,
-                                            style: context.textTheme.titleSmall
-                                                ?.copyWith(
-                                                  color: context
-                                                      .colors
-                                                      .onSurface
-                                                      .withValues(alpha: 0.7),
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                          ),
-                                          TextButton(
-                                            onPressed: () {
-                                              ref
-                                                  .read(
-                                                    searchHistoryProvider(
-                                                      _historyKey,
-                                                    ).notifier,
-                                                  )
-                                                  .clearAll();
-                                            },
-                                            child: Text(
-                                              context.l10n.common_clear_history,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ...history.map((item) {
-                                    return ListTile(
-                                      leading: const Icon(Icons.history),
-                                      title: Text(item),
-                                      trailing: IconButton(
-                                        tooltip: context.l10n.common_close,
-                                        icon: const Icon(Icons.close),
-                                        onPressed: () {
-                                          ref
-                                              .read(
-                                                searchHistoryProvider(
-                                                  _historyKey,
-                                                ).notifier,
-                                              )
-                                              .removeQuery(item);
-                                        },
-                                      ),
-                                      onTap: () {
-                                        controller.closeView(item);
-                                      },
-                                    );
-                                  }),
-                                ],
-                              );
-                            },
-                          ),
-                        ];
-                      },
-                ),
-                IconButton(
-                  icon: const Icon(Icons.construction),
-                  onPressed: () => context.push('/tools'),
-                  tooltip: context.l10n.tools,
-                ),
-                IconButton(
-                  icon: const Icon(Icons.settings),
-                  onPressed: () => context.push('/settings'),
-                  tooltip: context.l10n.common_settings,
-                ),
-                if (widget.actionsInTopPanel) ...widget.actions,
-              ],
             ),
-      body: Listener(
+          ),
+        ),
+      ),
+      actions: [
+        if (widget.onSortPressed != null)
+          IconButton(
+            icon: const Icon(Icons.sort),
+            onPressed: widget.onSortPressed,
+            tooltip: context.l10n.common_sort,
+          ),
+        if (widget.onFilterPressed != null)
+          IconButton(
+            icon: const Icon(Icons.filter_list),
+            onPressed: widget.onFilterPressed,
+            tooltip: context.l10n.common_filter,
+          ),
+        if (isDesktop && widget.onRefresh != null)
+          IconButton(
+            key: const Key('list_page_refresh'),
+            icon: const Icon(Icons.refresh_rounded),
+            onPressed: widget.onRefresh,
+            tooltip: context.l10n.common_refresh,
+          ),
+        SearchAnchor(
+          searchController: _searchController,
+          viewOnClose: () {
+            final text = _searchController.text;
+            if (text != _lastSubmittedText) {
+              _lastSubmittedText = text;
+              setState(() {
+                _currentQuery = text.isEmpty ? null : text;
+              });
+              widget.onSearchChanged(text);
+              if (text.isNotEmpty) {
+                ref
+                    .read(searchHistoryProvider(_historyKey).notifier)
+                    .addQuery(text);
+              }
+            }
+          },
+          builder: (BuildContext context, SearchController controller) {
+            return IconButton(
+              icon: const Icon(Icons.search),
+              onPressed: () {
+                _lastSubmittedText = _searchController.text;
+                controller.openView();
+              },
+              tooltip: context.l10n.common_search,
+            );
+          },
+          viewHintText: widget.searchHint,
+          viewOnSubmitted: _searchController.closeView,
+          suggestionsBuilder:
+              (BuildContext context, SearchController controller) {
+                return [
+                  Consumer(
+                    builder: (context, ref, _) {
+                      final history = ref.watch(
+                        searchHistoryProvider(_historyKey),
+                      );
+                      return Column(
+                        children: [
+                          if (history.isNotEmpty)
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: context.dimensions.spacingMedium,
+                                vertical: context.dimensions.spacingSmall,
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    context.l10n.recent_searches,
+                                    style: context.textTheme.titleSmall
+                                        ?.copyWith(
+                                          color: context.colors.onSurface
+                                              .withValues(alpha: 0.7),
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      ref
+                                          .read(
+                                            searchHistoryProvider(
+                                              _historyKey,
+                                            ).notifier,
+                                          )
+                                          .clearAll();
+                                    },
+                                    child: Text(
+                                      context.l10n.common_clear_history,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ...history.map((item) {
+                            return ListTile(
+                              leading: const Icon(Icons.history),
+                              title: Text(item),
+                              trailing: IconButton(
+                                tooltip: context.l10n.common_close,
+                                icon: const Icon(Icons.close),
+                                onPressed: () {
+                                  ref
+                                      .read(
+                                        searchHistoryProvider(
+                                          _historyKey,
+                                        ).notifier,
+                                      )
+                                      .removeQuery(item);
+                                },
+                              ),
+                              onTap: () {
+                                controller.closeView(item);
+                              },
+                            );
+                          }),
+                        ],
+                      );
+                    },
+                  ),
+                ];
+              },
+        ),
+        IconButton(
+          icon: const Icon(Icons.construction),
+          onPressed: () => context.push('/tools'),
+          tooltip: context.l10n.tools,
+        ),
+        IconButton(
+          icon: const Icon(Icons.settings),
+          onPressed: () => context.push('/settings'),
+          tooltip: context.l10n.common_settings,
+        ),
+        if (widget.actionsInTopPanel) ...widget.actions,
+      ],
+    );
+    final body = NotificationListener<UserScrollNotification>(
+      onNotification: (notification) {
+        if (!autoHideTopAppBar || notification.metrics.axis != Axis.vertical) {
+          return false;
+        }
+        if (notification.direction == ScrollDirection.idle) return false;
+        final visible = notification.direction == ScrollDirection.forward;
+        if (visible != _isTopAppBarVisible) {
+          setState(() => _isTopAppBarVisible = visible);
+        }
+        return false;
+      },
+      child: Listener(
         onPointerSignal: (pointerSignal) {
           if (pointerSignal is PointerScrollEvent) {
             // Horizontal swipe for navigation (Back)
@@ -854,6 +862,44 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
               ),
           ],
         ),
+      ),
+    );
+
+    if (!autoHideTopAppBar || widget.hideAppBar) {
+      return Scaffold(
+        appBar: widget.hideAppBar ? null : appBar,
+        body: body,
+        floatingActionButton: widget.floatingActionButton,
+      );
+    }
+
+    final statusBarHeight = MediaQuery.paddingOf(context).top;
+    return Scaffold(
+      body: Stack(
+        children: [
+          AnimatedPadding(
+            duration: kThemeAnimationDuration,
+            curve: Curves.easeOutCubic,
+            padding: EdgeInsets.only(
+              top:
+                  statusBarHeight +
+                  (_isTopAppBarVisible ? appBar.preferredSize.height : 0),
+            ),
+            child: body,
+          ),
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: AnimatedSlide(
+              key: const Key('top-app-bar-slide'),
+              duration: kThemeAnimationDuration,
+              curve: Curves.easeOutCubic,
+              offset: _isTopAppBarVisible ? Offset.zero : const Offset(0, -1),
+              child: appBar,
+            ),
+          ),
+        ],
       ),
       floatingActionButton: widget.floatingActionButton,
     );

@@ -1287,6 +1287,14 @@ class AppLocalizationsFr extends AppLocalizations {
       'Activer ou désactiver les boutons flottants de casino sur les pages de liste et de détails';
 
   @override
+  String get settings_interface_auto_hide_app_bar =>
+      'Masquer la barre supérieure pendant le défilement';
+
+  @override
+  String get settings_interface_auto_hide_app_bar_subtitle =>
+      'Elle se masque en défilant vers le bas et réapparaît en défilant vers le haut.';
+
+  @override
   String get settings_interface_hide_scene_metadata =>
       'Masquer les métadonnées de scène par défaut';
 

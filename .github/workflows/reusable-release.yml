@@ -104,7 +104,9 @@ jobs:
             libavcodec-dev \
             libavformat-dev \
             libavutil-dev \
-            libswresample-dev
+            libswresample-dev \
+            libarchive-tools \
+            fakeroot
 
       - name: Generate macOS Flutter ephemeral files
         if: matrix.target == 'macos'
@@ -162,6 +164,37 @@ jobs:
           cd build/macos/Build/Products/Release
           zip -r ../../../../../StashFlow-macos${{ inputs.archive_suffix }}.zip *.app
         shell: bash
+
+      - name: Package Linux dists
+        if: matrix.target == 'linux'
+        run: |
+          export PATH="$PATH:$HOME/.pub-cache/bin"
+          sudo wget -qO /usr/local/bin/appimagetool https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
+          sudo chmod +x /usr/local/bin/appimagetool
+          export APPIMAGE_EXTRACT_AND_RUN=1
+          dart pub global activate fastforge 0.6.12
+          fastforge package --platform linux --targets deb,appimage,pacman --artifact-name 'StashFlow-{{build_name}}{{#has_build_number}}+{{build_number}}{{/has_build_number}}-{{platform}}{{#is_installer}}-setup{{/is_installer}}.{{ext}}'
+        shell: bash
+
+      - name: Package Windows dists
+        if: matrix.target == 'windows'
+        shell: pwsh
+        run: |
+          choco install innosetup -y --no-progress
+          $env:PATH += ";$env:LOCALAPPDATA\Pub\Cache\bin"
+          dart pub global activate fastforge 0.6.12
+          fastforge package --platform windows --targets exe --artifact-name 'StashFlow-{{build_name}}{{#has_build_number}}+{{build_number}}{{/has_build_number}}-{{platform}}{{#is_installer}}-setup{{/is_installer}}.{{ext}}'
+
+      - name: Upload dist packages
+        if: matrix.target == 'linux' || matrix.target == 'windows'
+        uses: actions/upload-artifact@v7
+        with:
+          name: StashFlow${{ inputs.archive_suffix }}-${{ matrix.artifact_name }}-dist
+          path: |
+            dist/**/*.deb
+            dist/**/*.AppImage
+            dist/**/*.pacman
+            dist/**/*.exe
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v7

@@ -1294,6 +1294,14 @@ class AppLocalizationsEs extends AppLocalizations {
       'Habilitar o deshabilitar los botones flotantes de casino en las páginas de lista y detalles';
 
   @override
+  String get settings_interface_auto_hide_app_bar =>
+      'Ocultar la barra superior al desplazarse';
+
+  @override
+  String get settings_interface_auto_hide_app_bar_subtitle =>
+      'Se oculta al desplazarse hacia abajo y vuelve a aparecer al desplazarse hacia arriba.';
+
+  @override
   String get settings_interface_hide_scene_metadata =>
       'Ocultar los metadatos de la escena de forma predeterminada';
 

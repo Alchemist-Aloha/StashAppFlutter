@@ -3,7 +3,7 @@ import 'package:stash_app_flutter/core/data/auth/auth_mode.dart';
 import 'package:stash_app_flutter/core/data/graphql/url_resolver.dart';
 
 void main() {
-  final endpoint = Uri.parse('http://192.168.88.225:29999');
+  final endpoint = Uri.parse('http://192.0.2.10:29999');
 
   test('keeps absolute urls unchanged', () {
     expect(
@@ -21,17 +21,17 @@ void main() {
         rawUrl: '/image/abc.jpg',
         graphqlEndpoint: endpoint,
       ),
-      'http://192.168.88.225:29999/image/abc.jpg',
+      'http://192.0.2.10:29999/image/abc.jpg',
     );
   });
 
   test('resolves scheme-less host urls using endpoint scheme', () {
     expect(
       resolveGraphqlMediaUrl(
-        rawUrl: '//192.168.88.225:29999/image/abc.jpg',
+        rawUrl: '//192.0.2.10:29999/image/abc.jpg',
         graphqlEndpoint: endpoint,
       ),
-      'http://192.168.88.225:29999/image/abc.jpg',
+      'http://192.0.2.10:29999/image/abc.jpg',
     );
   });
 

@@ -28,6 +28,7 @@ class _InterfaceSettingsPageState extends ConsumerState<InterfaceSettingsPage> {
       'image_fullscreen_vertical_swipe';
 
   bool _showRandomNavigation = true;
+  bool _autoHideTopAppBar = false;
   bool _sceneRandomRespectActiveFilter = true;
   bool _sceneGridLayout = false;
   bool _sceneTiktokLayout = false;
@@ -76,6 +77,7 @@ class _InterfaceSettingsPageState extends ConsumerState<InterfaceSettingsPage> {
     final prefs = ref.read(sharedPreferencesProvider);
 
     _showRandomNavigation = ref.read(randomNavigationEnabledProvider);
+    _autoHideTopAppBar = ref.read(autoHideTopAppBarProvider);
     _sceneRandomRespectActiveFilter = ref.read(
       sceneRandomRespectActiveFilterProvider,
     );
@@ -158,6 +160,7 @@ class _InterfaceSettingsPageState extends ConsumerState<InterfaceSettingsPage> {
     ref
         .read(randomNavigationEnabledProvider.notifier)
         .set(_showRandomNavigation);
+    await ref.read(autoHideTopAppBarProvider.notifier).set(_autoHideTopAppBar);
     ref
         .read(sceneRandomRespectActiveFilterProvider.notifier)
         .set(_sceneRandomRespectActiveFilter);
@@ -298,6 +301,23 @@ class _InterfaceSettingsPageState extends ConsumerState<InterfaceSettingsPage> {
                           value: _showRandomNavigation,
                           onChanged: (value) async {
                             setState(() => _showRandomNavigation = value);
+                            await _saveSettings();
+                          },
+                        ),
+                        Divider(height: context.dimensions.spacingLarge),
+                        SwitchListTile.adaptive(
+                          contentPadding: EdgeInsets.zero,
+                          title: Text(
+                            context.l10n.settings_interface_auto_hide_app_bar,
+                          ),
+                          subtitle: Text(
+                            context
+                                .l10n
+                                .settings_interface_auto_hide_app_bar_subtitle,
+                          ),
+                          value: _autoHideTopAppBar,
+                          onChanged: (value) async {
+                            setState(() => _autoHideTopAppBar = value);
                             await _saveSettings();
                           },
                         ),
