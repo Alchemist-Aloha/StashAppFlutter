@@ -1,68 +1,17 @@
-name: Release Linux packages
+name: Release Build
 
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
+  workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  linux:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          cache: true
-
-      - name: Install build deps
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libarchive-tools fakeroot
-          sudo wget -qO /usr/local/bin/appimagetool https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
-          sudo chmod +x /usr/local/bin/appimagetool
-
-      - name: Package deb + AppImage
-        run: |
-          export PATH="$PATH:$HOME/.pub-cache/bin"
-          export APPIMAGE_EXTRACT_AND_RUN=1
-          dart pub global activate fastforge 0.6.12
-          fastforge package --platform linux --targets deb,appimage,pacman --artifact-name 'StashFlow-{{build_name}}{{#has_build_number}}+{{build_number}}{{/has_build_number}}-{{platform}}{{#is_installer}}-setup{{/is_installer}}.{{ext}}'
-
-      - name: Upload to release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: |
-            dist/**/*.deb
-            dist/**/*.AppImage
-            dist/**/*.pacman
-
-  windows:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          cache: true
-
-      - name: Install Inno Setup
-        run: choco install innosetup -y --no-progress
-
-      - name: Package exe
-        shell: pwsh
-        run: |
-          $env:PATH += ";$env:LOCALAPPDATA\Pub\Cache\bin"
-          dart pub global activate fastforge 0.6.12
-          fastforge package --platform windows --targets exe --artifact-name 'StashFlow-{{build_name}}{{#has_build_number}}+{{build_number}}{{/has_build_number}}-{{platform}}{{#is_installer}}-setup{{/is_installer}}.{{ext}}'
-
-      - name: Upload to release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: |
-            dist/**/*.exe
+  release:
+    uses: ./.github/workflows/reusable-release.yml
+    with:
+      pages_commit_message: "Deploy to GitHub Pages: ${{ github.sha }}"
+    secrets: inherit
