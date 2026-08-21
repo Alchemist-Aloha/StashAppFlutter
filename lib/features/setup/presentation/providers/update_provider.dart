@@ -11,6 +11,32 @@ import '../../domain/entities/update_info.dart';
 
 part 'update_provider.g.dart';
 
+/// Finds the Android APK matching [primaryAbi], regardless of release label.
+@visibleForTesting
+String? resolveAndroidApkUrlForAbi(List<dynamic> assets, String primaryAbi) {
+  final normalizedAbi = primaryAbi.toLowerCase();
+  final abiToken = switch (normalizedAbi) {
+    final abi when abi.contains('arm64') => 'arm64-v8a',
+    final abi when abi.contains('armeabi') || abi.contains('armv7') =>
+      'armeabi-v7a',
+    final abi when abi.contains('x86_64') => 'x86_64',
+    _ => null,
+  };
+  if (abiToken == null) return null;
+
+  for (final asset in assets) {
+    if (asset is! Map<String, dynamic>) continue;
+    final name = (asset['name'] as String?)?.toLowerCase() ?? '';
+    final downloadUrl = asset['browser_download_url'] as String?;
+    if (name.endsWith('.apk') &&
+        name.contains(abiToken) &&
+        downloadUrl != null) {
+      return downloadUrl;
+    }
+  }
+  return null;
+}
+
 /// Returns the current application version.
 @riverpod
 Future<String> appVersion(Ref ref) async {
@@ -92,28 +118,9 @@ class AppUpdate extends _$AppUpdate {
       final assets = releaseData['assets'];
       if (assets is! List) return null;
 
-      final abiToken = _abiToken(primaryAbi);
-      if (abiToken == null) return null;
-
-      for (final asset in assets) {
-        if (asset is! Map<String, dynamic>) continue;
-        final name = (asset['name'] as String?)?.toLowerCase() ?? '';
-        final downloadUrl = asset['browser_download_url'] as String?;
-        if (!name.endsWith('.apk') || downloadUrl == null) continue;
-        if (name.contains(abiToken)) return downloadUrl;
-      }
+      return resolveAndroidApkUrlForAbi(assets, primaryAbi);
     } catch (_) {}
 
-    return null;
-  }
-
-  String? _abiToken(String abi) {
-    final normalized = abi.toLowerCase();
-    if (normalized.contains('arm64')) return 'arm64-v8a';
-    if (normalized.contains('armeabi') || normalized.contains('armv7')) {
-      return 'armeabi-v7a';
-    }
-    if (normalized.contains('x86_64')) return 'x86_64';
     return null;
   }
 }

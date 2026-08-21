@@ -17,10 +17,6 @@ targets:
         options:
           clients:
             - graphql
-          schema_mapping:
-            - schema: graphql/schema.graphql
-              queries_glob: lib/features/**/*.graphql
-              output_directory: lib/core/data/graphql/__generated__
           scalars:
             Any:
               type: Object
