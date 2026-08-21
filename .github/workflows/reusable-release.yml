@@ -60,6 +60,8 @@ jobs:
         shell: bash
         run: |
           echo "STASHFLOW_VERSION=$(sed -n 's/^version: \([^+]*\).*/\1/p' pubspec.yaml)" >> "$GITHUB_ENV"
+          suffix="${{ inputs.archive_suffix }}"
+          echo "STASHFLOW_DIST_VERSION=${suffix#-}" >> "$GITHUB_ENV"
 
       - name: Setup Java
         if: matrix.target == 'android'
@@ -194,7 +196,7 @@ jobs:
               *.pkg.tar.zst) extension=pkg.tar.zst ;;
               *) extension="${file##*.}" ;;
             esac
-            mv "$file" "$(dirname "$file")/StashFlow-${STASHFLOW_VERSION}-linux-x64.${extension}"
+            mv "$file" "$(dirname "$file")/StashFlow-${STASHFLOW_DIST_VERSION:-$STASHFLOW_VERSION}-linux-x64.${extension}"
           done
         shell: bash
 
@@ -206,7 +208,8 @@ jobs:
           $env:PATH += ";$env:LOCALAPPDATA\Pub\Cache\bin"
           dart pub global activate fastforge 0.6.12
           fastforge package --platform windows --targets exe --artifact-name 'StashFlow-{{build_name}}{{#has_build_number}}+{{build_number}}{{/has_build_number}}-{{platform}}{{#is_installer}}-setup{{/is_installer}}.{{ext}}'
-          Get-ChildItem dist -Recurse -Filter *.exe | Rename-Item -NewName "StashFlow-$env:STASHFLOW_VERSION-windows-x64.exe"
+          $distVersion = if ($env:STASHFLOW_DIST_VERSION) { $env:STASHFLOW_DIST_VERSION } else { $env:STASHFLOW_VERSION }
+          Get-ChildItem dist -Recurse -Filter *.exe | Rename-Item -NewName "StashFlow-$distVersion-windows-x64.exe"
 
       - name: Upload dist packages
         if: matrix.target == 'linux' || matrix.target == 'windows'
