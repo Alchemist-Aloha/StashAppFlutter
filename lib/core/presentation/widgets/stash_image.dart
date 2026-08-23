@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:collection';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -187,9 +190,30 @@ class StashImage extends ConsumerWidget {
   }
 
   static final Set<String> _prefetching = <String>{};
-  static const int defaultPrefetchDistance = 40;
-  static const int _maxConcurrentPrefetch = 10;
+  static final Queue<Completer<void>> _prefetchWaiters =
+      Queue<Completer<void>>();
+  static const int defaultPrefetchDistance = 20;
+  static const int _maxConcurrentPrefetch = 6;
   static int _ongoingPrefetches = 0;
+
+  static Future<void> _acquirePrefetchSlot() async {
+    if (_ongoingPrefetches < _maxConcurrentPrefetch) {
+      _ongoingPrefetches++;
+      return;
+    }
+
+    final waiter = Completer<void>();
+    _prefetchWaiters.addLast(waiter);
+    await waiter.future;
+  }
+
+  static void _releasePrefetchSlot() {
+    if (_prefetchWaiters.isNotEmpty) {
+      _prefetchWaiters.removeFirst().complete();
+    } else {
+      _ongoingPrefetches--;
+    }
+  }
 
   static Future<void> prefetch(
     BuildContext context, {
@@ -209,13 +233,9 @@ class StashImage extends ConsumerWidget {
 
     var acquiredSlot = false;
     try {
-      // Throttle concurrent prefetches to avoid saturating network / IO.
-      while (_ongoingPrefetches >= _maxConcurrentPrefetch) {
-        await Future<void>.delayed(const Duration(milliseconds: 50));
-      }
-      if (!context.mounted) return;
-      _ongoingPrefetches++;
+      await _acquirePrefetchSlot();
       acquiredSlot = true;
+      if (!context.mounted) return;
 
       final baseProvider = CachedNetworkImageProvider(
         imageUrl,
@@ -238,7 +258,7 @@ class StashImage extends ConsumerWidget {
     } catch (_) {
       // A visible image load can retry through the normal widget path.
     } finally {
-      if (acquiredSlot) _ongoingPrefetches--;
+      if (acquiredSlot) _releasePrefetchSlot();
       _prefetching.remove(dedupeKey);
     }
   }

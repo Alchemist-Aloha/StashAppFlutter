@@ -226,8 +226,6 @@ class _GroupsPageState extends ConsumerState<GroupsPage> {
       onRefresh: () => ref.read(groupListProvider.notifier).refresh(),
       onFetchNextPage: () =>
           ref.read(groupListProvider.notifier).fetchNextPage(),
-      onPageSizeChanged: (pageSize) =>
-          ref.read(groupListProvider.notifier).setPerPage(pageSize),
       actions: [
         Stack(
           children: [

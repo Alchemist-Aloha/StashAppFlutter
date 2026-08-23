@@ -358,8 +358,6 @@ class _GalleriesPageState extends ConsumerState<GalleriesPage> {
       onRefresh: () => ref.read(galleryListProvider.notifier).refresh(),
       onFetchNextPage: () =>
           ref.read(galleryListProvider.notifier).fetchNextPage(),
-      onPageSizeChanged: (pageSize) =>
-          ref.read(galleryListProvider.notifier).setPerPage(pageSize),
       loadingItemBuilder: (context, isGrid, index) =>
           GalleryCard.skeleton(isGrid: isGrid, useMasonry: isGrid),
       gridDelegate: isGridView

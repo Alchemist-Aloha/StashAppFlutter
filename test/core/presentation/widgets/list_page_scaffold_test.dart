@@ -16,48 +16,14 @@ import '../../../helpers/test_helpers.dart';
 
 void main() {
   group('ListPageScaffold', () {
-    test('guards post-frame measurement callbacks after dispose', () {
+    test('does not resize backend pages from post-frame layout', () {
       final source = File(
         'lib/core/presentation/widgets/list_page_scaffold.dart',
       ).readAsStringSync();
 
-      expect(
-        source,
-        isNot(
-          contains(
-            'addPostFrameCallback((_) {\n'
-            '      _pageSizeReportScheduled = false;\n'
-            '      if (!mounted) return;',
-          ),
-        ),
-      );
-      expect(
-        source,
-        isNot(
-          contains(
-            'addPostFrameCallback((_) {\n'
-            '                                                  if (_measuredItemExtent',
-          ),
-        ),
-      );
-      expect(
-        source,
-        isNot(
-          contains(
-            'addPostFrameCallback((_) {\n'
-            '                                                if (_measuredItemExtent',
-          ),
-        ),
-      );
-      expect(
-        source,
-        isNot(
-          contains(
-            'addPostFrameCallback((_) {\n'
-            '                                            if (_measuredItemExtent',
-          ),
-        ),
-      );
+      expect(source, isNot(contains('onPageSizeChanged')));
+      expect(source, isNot(contains('_reportPageSize')));
+      expect(source, isNot(contains('_measuredItemExtent')));
     });
 
     testWidgets('shows loading state correctly', (WidgetTester tester) async {

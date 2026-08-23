@@ -17,6 +17,18 @@ void main() {
     expect(source, isNot(contains('_prefetched')));
   });
 
+  test('prefetch uses a bounded FIFO queue', () {
+    final source = File(
+      'lib/core/presentation/widgets/stash_image.dart',
+    ).readAsStringSync();
+
+    expect(source, contains('Queue<Completer<void>>'));
+    expect(source, contains('_prefetchWaiters.removeFirst().complete();'));
+    expect(source, contains('defaultPrefetchDistance = 20'));
+    expect(source, contains('_maxConcurrentPrefetch = 6'));
+    expect(source, isNot(contains('Duration(milliseconds: 50)')));
+  });
+
   test('image retries reset for new input and do not overlap', () {
     final source = File(
       'lib/core/presentation/widgets/stash_image.dart',
