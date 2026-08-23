@@ -1009,7 +1009,6 @@ class _TiktokSceneItemState extends ConsumerState<TiktokSceneItem> {
                                     if (context.mounted) {
                                       context.push(
                                         '/scenes/scene/${widget.scene.id}',
-                                        extra: true,
                                       );
                                     }
                                   },

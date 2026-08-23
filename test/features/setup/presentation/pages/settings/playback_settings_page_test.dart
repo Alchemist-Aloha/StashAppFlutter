@@ -97,6 +97,38 @@ void main() {
   );
 
   testWidgets(
+    'PlaybackSettingsPage defaults preferred fullscreen off and persists it',
+    (tester) async {
+      tester.view.physicalSize = const Size(1200, 1600);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+
+      await pumpTestWidget(
+        tester,
+        prefs: prefs,
+        child: const PlaybackSettingsPage(),
+      );
+      await tester.pumpAndSettle();
+
+      final title = find.text('Open scenes in fullscreen');
+      expect(title, findsOneWidget);
+      await tester.ensureVisible(title);
+      final fullscreenSwitch = find.descendant(
+        of: find.ancestor(of: title, matching: find.byType(SwitchListTile)),
+        matching: find.byType(Switch),
+      );
+
+      expect(tester.widget<Switch>(fullscreenSwitch).value, isFalse);
+
+      await tester.tap(fullscreenSwitch);
+      await tester.pumpAndSettle();
+
+      expect(tester.widget<Switch>(fullscreenSwitch).value, isTrue);
+      expect(prefs.getBool('video_enter_fullscreen_on_navigation'), isTrue);
+    },
+  );
+
+  testWidgets(
     'PlaybackSettingsPage renders feed random start position toggle and updates prefs',
     (tester) async {
       tester.view.physicalSize = const Size(1200, 1600);

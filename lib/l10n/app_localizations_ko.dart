@@ -1661,6 +1661,13 @@ class AppLocalizationsKo extends AppLocalizations {
       '다른 재생 중인 장면에서 이동할 때 새 장면을 즉시 재생합니다';
 
   @override
+  String get settings_playback_open_fullscreen => '장면을 전체 화면으로 열기';
+
+  @override
+  String get settings_playback_open_fullscreen_subtitle =>
+      '선택한 장면과 무작위 장면을 전체 화면으로 엽니다. 이전/다음은 현재 보기를 유지합니다.';
+
+  @override
   String get settings_playback_gravity_orientation_subtitle =>
       '기기 센서를 사용하여 일치하는 방향으로 회전하도록 허용합니다(예: 좌/우 가로 방향 전환).';
 

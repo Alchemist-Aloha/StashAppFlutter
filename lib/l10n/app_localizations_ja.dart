@@ -1663,6 +1663,13 @@ class AppLocalizationsJa extends AppLocalizations {
       '他の再生中シーンから移動した際、新しいシーンを直接再生します';
 
   @override
+  String get settings_playback_open_fullscreen => 'シーンを全画面で開く';
+
+  @override
+  String get settings_playback_open_fullscreen_subtitle =>
+      '選択したシーンやランダムシーンを全画面で開きます。前へ／次へでは現在の表示を維持します。';
+
+  @override
   String get settings_playback_gravity_orientation_subtitle =>
       'デバイスのセンサーを使って一致する向きに回転できるようにします（例：左右の横向きに反転）。';
 

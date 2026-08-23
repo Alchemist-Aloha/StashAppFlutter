@@ -1737,6 +1737,14 @@ class AppLocalizationsFr extends AppLocalizations {
       'Lors de la navigation depuis une autre scène en cours de lecture, lire directement la nouvelle scène';
 
   @override
+  String get settings_playback_open_fullscreen =>
+      'Ouvrir les scènes en plein écran';
+
+  @override
+  String get settings_playback_open_fullscreen_subtitle =>
+      'Ouvrir les scènes sélectionnées et aléatoires en plein écran. Précédent et suivant conservent la vue actuelle.';
+
+  @override
   String get settings_playback_gravity_orientation_subtitle =>
       'Permettre la rotation entre orientations correspondantes à l\'aide du capteur de l\'appareil (par ex. basculer paysage gauche/droite).';
 

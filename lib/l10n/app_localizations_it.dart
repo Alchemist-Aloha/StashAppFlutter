@@ -1740,6 +1740,14 @@ class AppLocalizationsIt extends AppLocalizations {
       'Quando si naviga da un\'altra scena in riproduzione, riproduce direttamente la nuova scena';
 
   @override
+  String get settings_playback_open_fullscreen =>
+      'Apri le scene a schermo intero';
+
+  @override
+  String get settings_playback_open_fullscreen_subtitle =>
+      'Apri le scene selezionate e casuali a schermo intero. Precedente e successiva mantengono la vista corrente.';
+
+  @override
   String get settings_playback_gravity_orientation_subtitle =>
       'Consenti la rotazione tra orientamenti corrispondenti usando il sensore del dispositivo (es. capovolgere il paesaggio a sinistra/destra).';
 

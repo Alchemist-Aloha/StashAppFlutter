@@ -1724,6 +1724,14 @@ class AppLocalizationsRu extends AppLocalizations {
       'При переходе из другой воспроизводящейся сцены, сразу включать новую сцену';
 
   @override
+  String get settings_playback_open_fullscreen =>
+      'Открывать сцены в полноэкранном режиме';
+
+  @override
+  String get settings_playback_open_fullscreen_subtitle =>
+      'Открывать выбранные и случайные сцены в полноэкранном режиме. Переходы назад и вперёд сохраняют текущий вид.';
+
+  @override
   String get settings_playback_gravity_orientation_subtitle =>
       'Разрешить поворот между совпадающими ориентациями с помощью датчика устройства (например, переворачивать альбомную ориентацию влево/вправо).';
 

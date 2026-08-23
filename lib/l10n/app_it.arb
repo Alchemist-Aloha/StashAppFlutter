@@ -826,6 +826,8 @@
   "common_percent": "{value}%",
   "settings_playback_direct_play": "Riproduzione diretta alla navigazione della scena",
   "settings_playback_direct_play_subtitle": "Quando si naviga da un'altra scena in riproduzione, riproduce direttamente la nuova scena",
+  "settings_playback_open_fullscreen": "Apri le scene a schermo intero",
+  "settings_playback_open_fullscreen_subtitle": "Apri le scene selezionate e casuali a schermo intero. Precedente e successiva mantengono la vista corrente.",
   "saving_video": "Salvataggio in galleria...",
   "saved_to_album": "Salvato nell'album StashFlow",
   "gallery_error": "Errore galleria: {message}",

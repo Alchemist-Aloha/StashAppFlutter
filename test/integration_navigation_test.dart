@@ -22,6 +22,7 @@ import 'package:stash_app_flutter/features/scenes/domain/entities/scene_filter.d
 import 'package:stash_app_flutter/features/scenes/data/repositories/graphql_scene_repository.dart';
 import 'package:stash_app_flutter/features/scenes/domain/models/scraper.dart';
 import 'package:stash_app_flutter/features/scenes/presentation/providers/scene_list_provider.dart';
+import 'package:stash_app_flutter/features/scenes/presentation/providers/player_settings.dart';
 import 'package:stash_app_flutter/features/scenes/presentation/providers/video_player_provider.dart';
 import 'package:stash_app_flutter/features/setup/presentation/providers/navigation_tabs_provider.dart';
 import 'helpers/test_helpers.dart';
@@ -458,6 +459,62 @@ void main() {
 
     await tester.pumpAndSettle();
     expect(find.text('Zebra Scene'), findsOneWidget);
+  });
+
+  testWidgets('Integration: scene card preference opens fullscreen overlay', (
+    WidgetTester tester,
+  ) async {
+    tester.view.physicalSize = const Size(800, 1200);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(() => tester.view.resetPhysicalSize());
+    await prefs.setBool(
+      PlayerSettingsStore.enterFullscreenOnNavigationKey,
+      true,
+    );
+
+    final playerState = _FullscreenBackPlayerState(testScenes.first);
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          sharedPreferencesProvider.overrideWithValue(prefs),
+          sceneRepositoryProvider.overrideWithValue(
+            LocalMockGraphQLSceneRepository(testScenes),
+          ),
+          sceneTiktokLayoutProvider.overrideWith(TestSceneTiktokLayout.new),
+          sceneGridLayoutProvider.overrideWith(TestSceneGridLayout.new),
+          playerStateProvider.overrideWith(() => playerState),
+        ],
+        child: Consumer(
+          builder: (context, ref, _) {
+            final goRouter = ref.watch(routerProvider);
+            return MaterialApp.router(
+              routerConfig: goRouter,
+              theme: AppTheme.darkTheme,
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+            );
+          },
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+    await tester.tap(find.byType(SceneCard).first);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+    await tester.pump(const Duration(milliseconds: 500));
+
+    final detailsFinder = find.byType(SceneDetailsPage);
+    expect(
+      tester.widget<SceneDetailsPage>(detailsFinder).autoPlayOnMount,
+      isTrue,
+    );
+    final container = ProviderScope.containerOf(tester.element(detailsFinder));
+    expect(container.read(playerStateProvider).isFullScreen, isTrue);
+    expect(
+      find.byKey(const ValueKey('global_fullscreen_overlay_slide')),
+      findsOneWidget,
+    );
   });
 
   testWidgets(

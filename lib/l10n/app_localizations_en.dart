@@ -1708,6 +1708,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'When navigating from another playing scene, directly play the new scene';
 
   @override
+  String get settings_playback_open_fullscreen => 'Open scenes in fullscreen';
+
+  @override
+  String get settings_playback_open_fullscreen_subtitle =>
+      'Open selected and random scenes in fullscreen. Player next and previous keep the current view.';
+
+  @override
   String get settings_playback_gravity_orientation_subtitle =>
       'Allow rotating between matching orientations using the device sensor (e.g. flipping landscape left/right).';
 

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../core/utils/l10n_extensions.dart';
 import 'package:stash_app_flutter/core/data/preferences/shared_preferences_provider.dart';
 import 'package:stash_app_flutter/core/presentation/theme/app_theme.dart';
+import 'package:stash_app_flutter/features/scenes/presentation/providers/player_settings.dart';
 import 'package:stash_app_flutter/features/scenes/presentation/providers/video_player_provider.dart';
 import '../../widgets/settings_page_shell.dart';
 
@@ -40,6 +41,7 @@ class _PlaybackSettingsPageState extends ConsumerState<PlaybackSettingsPage> {
   bool _loading = true;
   static const _directPlayOnNavigationKey = 'video_direct_play_on_navigation';
   bool _directPlayOnNavigation = false;
+  bool _enterFullscreenOnNavigation = false;
   bool _feedStartRandom = false;
   bool _resumePlayPosition = true;
 
@@ -79,6 +81,9 @@ class _PlaybackSettingsPageState extends ConsumerState<PlaybackSettingsPage> {
     _subtitleTextAlignment =
         prefs.getString(_subtitleTextAlignmentKey) ?? 'center';
     _directPlayOnNavigation = prefs.getBool(_directPlayOnNavigationKey) ?? true;
+    _enterFullscreenOnNavigation =
+        prefs.getBool(PlayerSettingsStore.enterFullscreenOnNavigationKey) ??
+        false;
     _feedStartRandom = prefs.getBool(_feedStartRandomKey) ?? false;
     _resumePlayPosition = prefs.getBool(_resumePlayPositionKey) ?? true;
 
@@ -106,6 +111,10 @@ class _PlaybackSettingsPageState extends ConsumerState<PlaybackSettingsPage> {
     );
     await prefs.setString(_subtitleTextAlignmentKey, _subtitleTextAlignment);
     await prefs.setBool(_directPlayOnNavigationKey, _directPlayOnNavigation);
+    await prefs.setBool(
+      PlayerSettingsStore.enterFullscreenOnNavigationKey,
+      _enterFullscreenOnNavigation,
+    );
     await prefs.setBool(_feedStartRandomKey, _feedStartRandom);
     await prefs.setBool(_resumePlayPositionKey, _resumePlayPosition);
 
@@ -180,6 +189,25 @@ class _PlaybackSettingsPageState extends ConsumerState<PlaybackSettingsPage> {
                           value: _enableNativePip,
                           onChanged: (value) async {
                             setState(() => _enableNativePip = value);
+                            await _saveToggleSettings();
+                          },
+                        ),
+                        Divider(height: context.dimensions.spacingLarge),
+                        SwitchListTile.adaptive(
+                          contentPadding: EdgeInsets.zero,
+                          title: Text(
+                            context.l10n.settings_playback_open_fullscreen,
+                          ),
+                          subtitle: Text(
+                            context
+                                .l10n
+                                .settings_playback_open_fullscreen_subtitle,
+                          ),
+                          value: _enterFullscreenOnNavigation,
+                          onChanged: (value) async {
+                            setState(
+                              () => _enterFullscreenOnNavigation = value,
+                            );
                             await _saveToggleSettings();
                           },
                         ),

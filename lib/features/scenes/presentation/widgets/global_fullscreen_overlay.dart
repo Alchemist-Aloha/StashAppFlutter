@@ -12,6 +12,7 @@ import '../providers/scene_random_navigation_provider.dart';
 import 'player_surface.dart';
 import '../../../../core/utils/app_log_store.dart';
 import '../../../../core/utils/desktop_fullscreen.dart';
+import '../../../../core/utils/responsive.dart';
 import '../../../../core/utils/web_helpers.dart';
 import '../../../setup/presentation/providers/main_page_orientation_provider.dart';
 import '../../../../core/utils/l10n_extensions.dart';
@@ -113,6 +114,8 @@ class _GlobalFullscreenOverlayState
     final playerState = ref.read(playerStateProvider);
     final controller = playerState.videoController;
     final wasPlaying = playerState.player?.state.playing ?? false;
+    final isPhone =
+        MediaQuery.sizeOf(context).shortestSide < Responsive.mobileBreakpoint;
 
     AppLogStore.instance.add(
       'GlobalFullscreenOverlay: _enterFullScreen: controller=${controller != null} wasPlaying=$wasPlaying',
@@ -135,15 +138,30 @@ class _GlobalFullscreenOverlayState
         }
       } else {
         final playerState = ref.read(playerStateProvider);
-        final width = controller?.player.state.width;
-        final height = controller?.player.state.height;
-        final aspectRatio = (width != null && height != null && height > 0)
-            ? width / height
+        final controllerWidth = controller?.player.state.width;
+        final controllerHeight = controller?.player.state.height;
+        final sceneFile = playerState.activeScene?.files.firstOrNull;
+        final hasControllerSize =
+            controllerWidth != null &&
+            controllerHeight != null &&
+            controllerWidth > 0 &&
+            controllerHeight > 0;
+        final fileWidth = sceneFile?.width;
+        final fileHeight = sceneFile?.height;
+        final hasFileSize =
+            fileWidth != null &&
+            fileHeight != null &&
+            fileWidth > 0 &&
+            fileHeight > 0;
+        final aspectRatio = hasControllerSize
+            ? controllerWidth / controllerHeight
+            : hasFileSize
+            ? fileWidth / fileHeight
             : 16 / 9;
         final allowGravity = playerState.videoGravityOrientation;
 
         List<DeviceOrientation> orientations;
-        if (aspectRatio > 1.0) {
+        if (!isPhone || aspectRatio > 1.0) {
           orientations = allowGravity
               ? [
                   DeviceOrientation.landscapeLeft,

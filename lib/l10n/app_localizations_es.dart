@@ -1746,6 +1746,14 @@ class AppLocalizationsEs extends AppLocalizations {
       'Al navegar desde otra escena en reproducción, reproducir directamente la nueva escena';
 
   @override
+  String get settings_playback_open_fullscreen =>
+      'Abrir escenas en pantalla completa';
+
+  @override
+  String get settings_playback_open_fullscreen_subtitle =>
+      'Abrir las escenas seleccionadas y aleatorias en pantalla completa. Anterior y siguiente mantienen la vista actual.';
+
+  @override
   String get settings_playback_gravity_orientation_subtitle =>
       'Permitir rotar entre orientaciones coincidentes usando el sensor del dispositivo (p. ej., girar el paisaje izquierda/derecha).';
 

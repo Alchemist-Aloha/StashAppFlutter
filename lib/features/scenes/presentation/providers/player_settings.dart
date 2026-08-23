@@ -79,6 +79,10 @@ class PlayerSettingsStore {
   static const enableBackgroundPlaybackKey = 'video_background_playback';
   static const enableNativePipKey = 'video_native_pip';
   static const videoGravityOrientationKey = 'video_gravity_orientation';
+
+  /// Opens explicit scene playback navigation in the fullscreen player.
+  static const enterFullscreenOnNavigationKey =
+      'video_enter_fullscreen_on_navigation';
   static const useActualSceneVideoInMiniPlayerKey =
       'use_actual_scene_video_in_miniplayer';
   static const defaultSubtitleLanguageKey = 'default_subtitle_language';
