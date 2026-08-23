@@ -44,6 +44,45 @@ void main() {
     expect(source, contains('await windowManager.focus()'));
   });
 
+  test('startup parallelizes services and defers cache maintenance', () {
+    final source = File('lib/main.dart').readAsStringSync();
+
+    final waitIndex = source.indexOf('await Future.wait<void>([');
+    final runAppIndex = source.indexOf('runApp(');
+    final postFrameIndex = source.indexOf(
+      'WidgetsBinding.instance.addPostFrameCallback',
+    );
+    final cacheEnforcementIndex = source.indexOf(
+      'unawaited(_enforceStartupCacheLimits',
+    );
+    final audioServiceIndex = source.indexOf(
+      'Future<void> _initializeAudioService()',
+    );
+    final cacheLimitsIndex = source.indexOf(
+      'Future<void> _enforceStartupCacheLimits',
+    );
+    final audioServiceSource = source.substring(
+      audioServiceIndex,
+      cacheLimitsIndex,
+    );
+
+    expect(waitIndex, greaterThanOrEqualTo(0));
+    expect(source, contains('_openGraphqlCache(),'));
+    expect(source, contains('_initializeAudioService(),'));
+    expect(audioServiceSource, contains('TargetPlatform.android'));
+    expect(audioServiceSource, contains('TargetPlatform.iOS'));
+    expect(audioServiceSource, contains('TargetPlatform.macOS'));
+    expect(audioServiceSource, isNot(contains('TargetPlatform.linux')));
+    expect(audioServiceSource, isNot(contains('TargetPlatform.windows')));
+    expect(
+      audioServiceSource,
+      contains('if (isTestMode || !supportsAudioService) return;'),
+    );
+    expect(runAppIndex, greaterThan(waitIndex));
+    expect(postFrameIndex, greaterThan(runAppIndex));
+    expect(cacheEnforcementIndex, greaterThan(postFrameIndex));
+  });
+
   testWidgets('desktop scroll behavior supports mouse drag scrolling', (
     WidgetTester tester,
   ) async {
