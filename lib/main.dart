@@ -77,15 +77,38 @@ Future<void> main() async {
     } catch (_) {
       // Ignore if PaintingBinding isn't available in some test environments.
     }
-    late final SharedPreferences sharedPreferences;
-    await Future.wait<void>([
-      SharedPreferences.getInstance().then<void>((preferences) {
-        sharedPreferences = preferences;
-      }),
-      _openGraphqlCache(),
-      _initializeAudioService(),
-    ]);
+    // Initialize Hive for the GraphQL cache in a OS-managed cache directory
+    // instead of the persistent app documents directory. This prevents the
+    // GraphQL cache (which can contain large base64-encoded images from
+    // scraping operations) from consuming GB-level persistent storage.
+    // Android clears this directory automatically when storage is low.
+    if (!kIsWeb) {
+      final cacheDir = await getTemporaryDirectory();
+      final hivePath = p.join(cacheDir.path, 'stash_graphql_cache');
+      HiveStore.init(onPath: hivePath);
+    }
+    await HiveStore.open();
     PipMode.initialize();
+
+    if (!isTestMode) {
+      try {
+        mediaHandler = await AudioService.init(
+          builder: _buildMediaHandler,
+          config: const AudioServiceConfig(
+            androidNotificationChannelId:
+                'com.github.alchemistaloha.stash_app_flutter.channel.audio',
+            androidNotificationChannelName: 'StashFlow Playback',
+            androidNotificationOngoing: false,
+            androidStopForegroundOnPause: false,
+          ),
+        );
+      } catch (e) {
+        debugPrint('Failed to initialize AudioService: $e');
+        // Fallback or handle gracefully
+      }
+    }
+
+    final sharedPreferences = await SharedPreferences.getInstance();
 
     AppLogStore.instance.isEnabled =
         sharedPreferences.getBool('enable_debug_logging') ?? false;
@@ -126,6 +149,8 @@ Future<void> main() async {
       return false;
     };
 
+    unawaited(_enforceStartupCacheLimits(sharedPreferences));
+
     runApp(
       ProviderScope(
         overrides: [
@@ -141,46 +166,10 @@ Future<void> main() async {
       debugPrint(
         'Startup: first frame rendered in ${startupStopwatch.elapsedMilliseconds}ms',
       );
-      unawaited(_enforceStartupCacheLimits(sharedPreferences));
     });
   } catch (error, stackTrace) {
     AppLogStore.instance.add('$error\n$stackTrace', source: 'startup_error');
     runApp(StartupErrorApp(error: error, stackTrace: stackTrace));
-  }
-}
-
-Future<void> _openGraphqlCache() async {
-  // Keep GraphQL cache data in the OS-managed cache directory so large
-  // scraped images do not consume persistent storage.
-  if (!kIsWeb) {
-    final cacheDir = await getTemporaryDirectory();
-    final hivePath = p.join(cacheDir.path, 'stash_graphql_cache');
-    HiveStore.init(onPath: hivePath);
-  }
-  await HiveStore.open();
-}
-
-Future<void> _initializeAudioService() async {
-  final supportsAudioService =
-      kIsWeb ||
-      defaultTargetPlatform == TargetPlatform.android ||
-      defaultTargetPlatform == TargetPlatform.iOS ||
-      defaultTargetPlatform == TargetPlatform.macOS;
-  if (isTestMode || !supportsAudioService) return;
-
-  try {
-    mediaHandler = await AudioService.init(
-      builder: _buildMediaHandler,
-      config: const AudioServiceConfig(
-        androidNotificationChannelId:
-            'com.github.alchemistaloha.stash_app_flutter.channel.audio',
-        androidNotificationChannelName: 'StashFlow Playback',
-        androidNotificationOngoing: false,
-        androidStopForegroundOnPause: false,
-      ),
-    );
-  } catch (e) {
-    debugPrint('Failed to initialize AudioService: $e');
   }
 }
 
