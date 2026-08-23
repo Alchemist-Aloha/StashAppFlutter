@@ -1654,11 +1654,11 @@ class AppLocalizationsKo extends AppLocalizations {
   String get settings_playback_gravity_orientation => '중력 제어 화면 방향';
 
   @override
-  String get settings_playback_direct_play => '장면 이동 시 즉시 재생';
+  String get settings_playback_open_fullscreen => '장면을 전체 화면으로 열기';
 
   @override
-  String get settings_playback_direct_play_subtitle =>
-      '다른 재생 중인 장면에서 이동할 때 새 장면을 즉시 재생합니다';
+  String get settings_playback_open_fullscreen_subtitle =>
+      '선택한 장면과 무작위 장면을 전체 화면으로 엽니다. 이전/다음은 현재 보기를 유지합니다.';
 
   @override
   String get settings_playback_gravity_orientation_subtitle =>

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:dart_cast/dart_cast.dart' as dc;
@@ -9,6 +10,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:stash_app_flutter/features/scenes/domain/entities/scene.dart';
 import 'package:stash_app_flutter/features/scenes/presentation/widgets/scene_video_player.dart';
+import 'package:stash_app_flutter/features/scenes/presentation/widgets/global_fullscreen_overlay.dart';
+import 'package:stash_app_flutter/features/scenes/presentation/providers/player_settings.dart';
 import 'package:stash_app_flutter/features/scenes/presentation/providers/video_player_provider.dart';
 import 'package:stash_app_flutter/features/scenes/data/repositories/stream_resolver.dart';
 import 'package:stash_app_flutter/features/scenes/data/repositories/stream_prewarmer.dart';
@@ -20,6 +23,7 @@ import 'package:stash_app_flutter/core/presentation/theme/app_theme.dart';
 class MockPlayerState extends PlayerState {
   static String? lastPlayedSceneId;
   static Scene? initialActiveScene;
+  static int fullscreenEntryRequests = 0;
 
   @override
   GlobalPlayerState build() =>
@@ -41,6 +45,35 @@ class MockPlayerState extends PlayerState {
   }) async {
     lastPlayedSceneId = scene.id;
     state = state.copyWith(activeScene: scene, isPlaying: true);
+  }
+
+  @override
+  void requestEnterFullscreen() {
+    fullscreenEntryRequests++;
+    super.requestEnterFullscreen();
+  }
+}
+
+class _DelayedPlayerState extends MockPlayerState {
+  final startupGate = Completer<void>();
+
+  @override
+  Future<void> playScene(
+    Scene scene,
+    String streamUrl, {
+    String? mimeType,
+    String? streamLabel,
+    String? streamSource,
+    Map<String, String>? httpHeaders,
+    bool? prewarmAttempted,
+    bool? prewarmSucceeded,
+    int? prewarmLatencyMs,
+    Duration? initialPosition,
+    bool force = false,
+  }) async {
+    MockPlayerState.lastPlayedSceneId = scene.id;
+    state = state.copyWith(activeScene: scene, isPlaying: true);
+    await startupGate.future;
   }
 }
 
@@ -93,6 +126,7 @@ void main() {
     });
     prefs = await SharedPreferences.getInstance();
     MockPlayerState.initialActiveScene = null;
+    MockPlayerState.fullscreenEntryRequests = 0;
   });
 
   final testScene = Scene(
@@ -212,89 +246,157 @@ void main() {
     await tester.pump(const Duration(milliseconds: 10));
 
     expect(MockPlayerState.lastPlayedSceneId, autoplayScene.id);
+    expect(MockPlayerState.fullscreenEntryRequests, 0);
   });
 
-  testWidgets(
-    'top-level scene alias honors direct-play on navigation setting',
-    (tester) async {
-      MockPlayerState.lastPlayedSceneId = null;
-      MockPlayerState.initialActiveScene = testScene;
-      await prefs.setBool('video_direct_play_on_navigation', true);
-      final targetScene = testScene.copyWith(id: 's2', title: 'Target Scene');
-      final router = GoRouter(
-        initialLocation: '/scene/s2',
-        routes: [
-          GoRoute(
-            path: '/scene/:id',
-            builder: (context, state) =>
-                Scaffold(body: SceneVideoPlayer(scene: targetScene)),
-          ),
-        ],
-      );
-
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            sharedPreferencesProvider.overrideWithValue(prefs),
-            playerStateProvider.overrideWith(MockPlayerState.new),
-            streamResolverProvider.overrideWith(MockStreamResolverChoice.new),
-            streamPrewarmerProvider.overrideWith(MockStreamPrewarmer.new),
-            mediaHeadersProvider.overrideWithValue(const {}),
-          ],
-          child: MaterialApp.router(
-            theme: AppTheme.darkTheme,
-            routerConfig: router,
+  testWidgets('preferred fullscreen opens while playback is still starting', (
+    tester,
+  ) async {
+    MockPlayerState.lastPlayedSceneId = null;
+    final playerState = _DelayedPlayerState();
+    await prefs.setBool(
+      PlayerSettingsStore.enterFullscreenOnNavigationKey,
+      true,
+    );
+    final router = GoRouter(
+      initialLocation: '/scenes/scene/s1',
+      routes: [
+        GoRoute(
+          path: '/scenes/scene/:id',
+          builder: (context, state) => Scaffold(
+            body: Stack(
+              children: [
+                SceneVideoPlayer(scene: testScene, autoPlayOnMount: true),
+                const Positioned.fill(child: GlobalFullscreenOverlay()),
+              ],
+            ),
           ),
         ),
-      );
+      ],
+    );
 
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 50));
-
-      expect(MockPlayerState.lastPlayedSceneId, targetScene.id);
-    },
-  );
-
-  testWidgets(
-    'top-level scene alias keeps active scene when direct-play is disabled',
-    (tester) async {
-      MockPlayerState.lastPlayedSceneId = null;
-      MockPlayerState.initialActiveScene = testScene;
-      await prefs.setBool('video_direct_play_on_navigation', false);
-      final targetScene = testScene.copyWith(id: 's2', title: 'Target Scene');
-      final router = GoRouter(
-        initialLocation: '/scene/s2',
-        routes: [
-          GoRoute(
-            path: '/scene/:id',
-            builder: (context, state) =>
-                Scaffold(body: SceneVideoPlayer(scene: targetScene)),
-          ),
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          sharedPreferencesProvider.overrideWithValue(prefs),
+          playerStateProvider.overrideWith(() => playerState),
+          streamResolverProvider.overrideWith(MockStreamResolverChoice.new),
+          streamPrewarmerProvider.overrideWith(MockStreamPrewarmer.new),
+          mediaHeadersProvider.overrideWithValue(const {}),
         ],
-      );
-
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            sharedPreferencesProvider.overrideWithValue(prefs),
-            playerStateProvider.overrideWith(MockPlayerState.new),
-            streamResolverProvider.overrideWith(MockStreamResolverChoice.new),
-            streamPrewarmerProvider.overrideWith(MockStreamPrewarmer.new),
-            mediaHeadersProvider.overrideWithValue(const {}),
-          ],
-          child: MaterialApp.router(
-            theme: AppTheme.darkTheme,
-            routerConfig: router,
-          ),
+        child: MaterialApp.router(
+          theme: AppTheme.darkTheme,
+          routerConfig: router,
         ),
-      );
+      ),
+    );
 
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 50));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 50));
 
-      expect(MockPlayerState.lastPlayedSceneId, isNull);
-    },
-  );
+    final container = ProviderScope.containerOf(
+      tester.element(find.byType(SceneVideoPlayer)),
+    );
+    expect(MockPlayerState.lastPlayedSceneId, testScene.id);
+    expect(MockPlayerState.fullscreenEntryRequests, 1);
+    expect(container.read(playerStateProvider).isFullScreen, isTrue);
+    expect(
+      find.byKey(const ValueKey('global_fullscreen_overlay_slide')),
+      findsOneWidget,
+    );
+
+    playerState.startupGate.complete();
+    await tester.pump();
+
+    final notifier = container.read(playerStateProvider.notifier);
+    notifier.requestExitFullscreen();
+    notifier.markFullscreenExited();
+    await tester.pump();
+
+    expect(container.read(playerStateProvider).isFullScreen, isFalse);
+    expect(MockPlayerState.fullscreenEntryRequests, 1);
+  });
+
+  testWidgets('preferred fullscreen does not affect details-only navigation', (
+    tester,
+  ) async {
+    MockPlayerState.initialActiveScene = testScene;
+    await prefs.setBool(
+      PlayerSettingsStore.enterFullscreenOnNavigationKey,
+      true,
+    );
+    final router = GoRouter(
+      initialLocation: '/scenes/scene/s1',
+      routes: [
+        GoRoute(
+          path: '/scenes/scene/:id',
+          builder: (context, state) =>
+              Scaffold(body: SceneVideoPlayer(scene: testScene)),
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          sharedPreferencesProvider.overrideWithValue(prefs),
+          playerStateProvider.overrideWith(MockPlayerState.new),
+          streamResolverProvider.overrideWith(MockStreamResolverChoice.new),
+          streamPrewarmerProvider.overrideWith(MockStreamPrewarmer.new),
+          mediaHeadersProvider.overrideWithValue(const {}),
+        ],
+        child: MaterialApp.router(
+          theme: AppTheme.darkTheme,
+          routerConfig: router,
+        ),
+      ),
+    );
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 50));
+
+    expect(MockPlayerState.fullscreenEntryRequests, 0);
+  });
+
+  testWidgets('top-level scene alias always starts the navigated scene', (
+    tester,
+  ) async {
+    MockPlayerState.lastPlayedSceneId = null;
+    MockPlayerState.initialActiveScene = testScene;
+    await prefs.setBool('video_direct_play_on_navigation', false);
+    final targetScene = testScene.copyWith(id: 's2', title: 'Target Scene');
+    final router = GoRouter(
+      initialLocation: '/scene/s2',
+      routes: [
+        GoRoute(
+          path: '/scene/:id',
+          builder: (context, state) =>
+              Scaffold(body: SceneVideoPlayer(scene: targetScene)),
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          sharedPreferencesProvider.overrideWithValue(prefs),
+          playerStateProvider.overrideWith(MockPlayerState.new),
+          streamResolverProvider.overrideWith(MockStreamResolverChoice.new),
+          streamPrewarmerProvider.overrideWith(MockStreamPrewarmer.new),
+          mediaHeadersProvider.overrideWithValue(const {}),
+        ],
+        child: MaterialApp.router(
+          theme: AppTheme.darkTheme,
+          routerConfig: router,
+        ),
+      ),
+    );
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 50));
+
+    expect(MockPlayerState.lastPlayedSceneId, targetScene.id);
+  });
 
   testWidgets('forced scene switch restarts active cast on the same session', (
     tester,

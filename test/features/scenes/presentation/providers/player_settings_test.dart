@@ -63,5 +63,12 @@ void main() {
         expect(store.load().useActualSceneVideoInMiniPlayer, isTrue);
       },
     );
+
+    test('defaults seek interaction to drag', () async {
+      SharedPreferences.setMockInitialValues({});
+      final prefs = await SharedPreferences.getInstance();
+
+      expect(PlayerSettingsStore(prefs).load().useDoubleTapSeek, isFalse);
+    });
   });
 }

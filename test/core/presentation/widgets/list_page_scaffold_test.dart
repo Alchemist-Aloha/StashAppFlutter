@@ -16,48 +16,26 @@ import '../../../helpers/test_helpers.dart';
 
 void main() {
   group('ListPageScaffold', () {
-    test('guards post-frame measurement callbacks after dispose', () {
+    test('avoids layout-driven paging and duplicate repaint boundaries', () {
       final source = File(
         'lib/core/presentation/widgets/list_page_scaffold.dart',
       ).readAsStringSync();
 
-      expect(
-        source,
-        isNot(
-          contains(
-            'addPostFrameCallback((_) {\n'
-            '      _pageSizeReportScheduled = false;\n'
-            '      if (!mounted) return;',
-          ),
-        ),
-      );
-      expect(
-        source,
-        isNot(
-          contains(
-            'addPostFrameCallback((_) {\n'
-            '                                                  if (_measuredItemExtent',
-          ),
-        ),
-      );
-      expect(
-        source,
-        isNot(
-          contains(
-            'addPostFrameCallback((_) {\n'
-            '                                                if (_measuredItemExtent',
-          ),
-        ),
-      );
-      expect(
-        source,
-        isNot(
-          contains(
-            'addPostFrameCallback((_) {\n'
-            '                                            if (_measuredItemExtent',
-          ),
-        ),
-      );
+      expect(source, isNot(contains('onPageSizeChanged')));
+      expect(source, isNot(contains('_reportPageSize')));
+      expect(source, isNot(contains('_measuredItemExtent')));
+      expect(source, isNot(contains('RepaintBoundary(')));
+      for (final path in [
+        'lib/features/images/presentation/widgets/image_card.dart',
+        'lib/features/performers/presentation/widgets/performer_card.dart',
+        'lib/features/scenes/presentation/widgets/scene_card.dart',
+      ]) {
+        expect(
+          File(path).readAsStringSync(),
+          isNot(contains('RepaintBoundary(')),
+          reason: path,
+        );
+      }
     });
 
     testWidgets('shows loading state correctly', (WidgetTester tester) async {
@@ -164,6 +142,12 @@ void main() {
       for (final item in items) {
         expect(find.text(item), findsOneWidget);
       }
+      expect(
+        (tester.widget<ListView>(find.byType(ListView)).childrenDelegate
+                as SliverChildBuilderDelegate)
+            .addRepaintBoundaries,
+        isTrue,
+      );
     });
 
     testWidgets('uses always-scrollable physics when refresh is available', (
@@ -239,6 +223,12 @@ void main() {
       for (final item in items) {
         expect(find.text(item), findsOneWidget);
       }
+      expect(
+        (tester.widget<GridView>(find.byType(GridView)).childrenDelegate
+                as SliverChildBuilderDelegate)
+            .addRepaintBoundaries,
+        isTrue,
+      );
     });
 
     testWidgets(
@@ -339,6 +329,14 @@ void main() {
       expect(
         masonryViewport.scrollCacheExtent,
         const ScrollCacheExtent.pixels(600),
+      );
+      expect(
+        (tester
+                    .widget<MasonryGridView>(find.byType(MasonryGridView))
+                    .childrenDelegate
+                as SliverChildBuilderDelegate)
+            .addRepaintBoundaries,
+        isTrue,
       );
     });
 

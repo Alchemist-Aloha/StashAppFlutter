@@ -87,6 +87,19 @@ class _ExitTestPlayerState extends PlayerState {
   }
 }
 
+class _OrientationPlayerState extends PlayerState {
+  _OrientationPlayerState(this.scene);
+
+  final Scene scene;
+
+  @override
+  GlobalPlayerState build() => GlobalPlayerState(activeScene: scene);
+
+  void showScene(Scene scene) {
+    state = state.copyWith(activeScene: scene);
+  }
+}
+
 void main() {
   const windowManagerChannel = MethodChannel('window_manager');
   late SharedPreferences prefs;
@@ -181,6 +194,102 @@ void main() {
     expect(desktopSource, isNot(contains('MethodChannel')));
     expect(controllerFile.existsSync(), isFalse);
     expect(cmakeSource, isNot(contains('windows_fullscreen_controller')));
+  });
+
+  testWidgets('fullscreen follows media orientation on phones', (tester) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.android;
+    try {
+      tester.view.devicePixelRatio = 1.0;
+
+      Scene sceneWithSize(int width, int height) => testScene.copyWith(
+        files: [
+          SceneFile(
+            format: 'mp4',
+            width: width,
+            height: height,
+            videoCodec: 'h264',
+            audioCodec: 'aac',
+            bitRate: null,
+            duration: 60,
+            frameRate: 30,
+          ),
+        ],
+      );
+      final portraitScene = sceneWithSize(1080, 1920);
+      final landscapeScene = sceneWithSize(1920, 1080);
+      final squareScene = sceneWithSize(1080, 1080);
+      final orientationCalls = <List<String>>[];
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(SystemChannels.platform, (call) async {
+            if (call.method == 'SystemChrome.setPreferredOrientations') {
+              orientationCalls.add((call.arguments as List).cast<String>());
+            }
+            return null;
+          });
+
+      tester.view.physicalSize = const Size(400, 800);
+      tester.view.display.size = const Size(400, 800);
+      final playerState = _OrientationPlayerState(portraitScene);
+      await pumpTestWidget(
+        tester,
+        prefs: prefs,
+        overrides: [playerStateProvider.overrideWith(() => playerState)],
+        child: const GlobalFullscreenOverlay(),
+      );
+      playerState.requestEnterFullscreen();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+
+      expect(orientationCalls.last, contains('DeviceOrientation.portraitUp'));
+      expect(
+        orientationCalls.last,
+        isNot(contains('DeviceOrientation.landscapeLeft')),
+      );
+
+      orientationCalls.clear();
+      playerState.showScene(landscapeScene);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+      expect(
+        orientationCalls.last,
+        contains('DeviceOrientation.landscapeLeft'),
+      );
+
+      orientationCalls.clear();
+      playerState.showScene(squareScene);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+      expect(orientationCalls.last, contains('DeviceOrientation.portraitUp'));
+      expect(
+        orientationCalls.last,
+        isNot(contains('DeviceOrientation.landscapeLeft')),
+      );
+
+      playerState.requestExitFullscreen();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+
+      orientationCalls.clear();
+      tester.view.physicalSize = const Size(800, 1200);
+      tester.view.display.size = const Size(800, 1200);
+      playerState.showScene(portraitScene);
+      playerState.requestEnterFullscreen();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+      expect(
+        orientationCalls.last,
+        contains('DeviceOrientation.landscapeLeft'),
+      );
+      expect(
+        orientationCalls.last,
+        isNot(contains('DeviceOrientation.portraitUp')),
+      );
+    } finally {
+      debugDefaultTargetPlatformOverride = null;
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+      tester.view.display.resetSize();
+    }
   });
 
   testWidgets(

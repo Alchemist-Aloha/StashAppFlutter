@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('strip widgets guard post-frame prefetch after unmount', () {
+  test('strip prefetch is lifecycle-safe and not scheduled by build', () {
     const paths = [
       'lib/features/galleries/presentation/widgets/gallery_strip.dart',
       'lib/features/scenes/presentation/widgets/scene_strip.dart',
@@ -15,8 +15,14 @@ void main() {
         source,
         contains(
           'WidgetsBinding.instance.addPostFrameCallback((_) {\n'
-          '      if (!context.mounted) return;',
+          '      if (!mounted) return;',
         ),
+        reason: path,
+      );
+      expect(source, contains('int _lastVisibleIndex = -1;'), reason: path);
+      expect(
+        source.indexOf('addPostFrameCallback'),
+        lessThan(source.indexOf('Widget build(BuildContext context)')),
         reason: path,
       );
     }

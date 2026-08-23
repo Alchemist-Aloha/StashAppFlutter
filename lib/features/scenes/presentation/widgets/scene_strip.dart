@@ -26,6 +26,42 @@ class SceneStrip extends ConsumerStatefulWidget {
 
 class _SceneStripState extends ConsumerState<SceneStrip> {
   final ScrollController _scrollController = ScrollController();
+  int _lastVisibleIndex = -1;
+
+  @override
+  void initState() {
+    super.initState();
+    _scheduleInitialPrefetch();
+  }
+
+  @override
+  void didUpdateWidget(SceneStrip oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.scenes, widget.scenes) ||
+        oldWidget.itemWidth != widget.itemWidth) {
+      _lastVisibleIndex = -1;
+      _scheduleInitialPrefetch();
+    }
+  }
+
+  void _scheduleInitialPrefetch() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final scenes = widget.scenes;
+      final effectiveItemWidth =
+          widget.itemWidth * context.dimensions.fontSizeFactor;
+      final initialCount = scenes.length < StashImage.defaultPrefetchDistance
+          ? scenes.length
+          : StashImage.defaultPrefetchDistance;
+      for (var i = 0; i < initialCount; i++) {
+        StashImage.prefetch(
+          context,
+          imageUrl: scenes[i].paths.screenshot,
+          memCacheWidth: (effectiveItemWidth * 2).toInt(),
+        );
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -51,23 +87,6 @@ class _SceneStripState extends ConsumerState<SceneStrip> {
     final separatorWidth = context.dimensions.spacingSmall;
     final stride = effectiveItemWidth + separatorWidth;
 
-    // Initial prefetch
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!context.mounted) return;
-      final initialCount = scenes.length < kPrefetchDistance
-          ? scenes.length
-          : kPrefetchDistance;
-      for (var i = 0; i < initialCount; i++) {
-        StashImage.prefetch(
-          context,
-          imageUrl: scenes[i].paths.screenshot,
-          memCacheWidth: (effectiveItemWidth * 2).toInt(),
-        );
-      }
-    });
-
-    var lastVisibleIndex = -1;
-
     return SizedBox(
       height:
           effectiveItemWidth * (9 / 16) +
@@ -89,8 +108,8 @@ class _SceneStripState extends ConsumerState<SceneStrip> {
           // ⚡ Bolt: Skip redundant prefetching if the visible index hasn't changed.
           // Scroll events fire rapidly; throttling by index prevents repeated
           // loop iterations and hash lookups on every single frame.
-          if (visibleIndex == lastVisibleIndex) return false;
-          lastVisibleIndex = visibleIndex;
+          if (visibleIndex == _lastVisibleIndex) return false;
+          _lastVisibleIndex = visibleIndex;
 
           for (var i = 1; i <= kPrefetchDistance; i++) {
             final ahead = visibleIndex + i;

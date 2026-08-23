@@ -1722,12 +1722,11 @@ class AppLocalizationsDe extends AppLocalizations {
       'Schwerkraftgesteuerte Ausrichtung';
 
   @override
-  String get settings_playback_direct_play =>
-      'Direkt-Wiedergabe bei Szenen-Navigation';
+  String get settings_playback_open_fullscreen => 'Szenen im Vollbild öffnen';
 
   @override
-  String get settings_playback_direct_play_subtitle =>
-      'Bei der Navigation von einer anderen spielenden Szene wird die neue Szene direkt abgespielt';
+  String get settings_playback_open_fullscreen_subtitle =>
+      'Ausgewählte und zufällige Szenen im Vollbild öffnen. Vorherige und nächste Szene behalten die aktuelle Ansicht.';
 
   @override
   String get settings_playback_gravity_orientation_subtitle =>

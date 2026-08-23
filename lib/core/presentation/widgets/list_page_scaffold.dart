@@ -54,7 +54,6 @@ class ListPageScaffold<T> extends ConsumerStatefulWidget {
     this.onFilterPressed,
     this.memCacheWidthBuilder,
     this.itemExtent,
-    this.onPageSizeChanged,
     this.loadingItemBuilder,
   });
 
@@ -141,9 +140,6 @@ class ListPageScaffold<T> extends ConsumerStatefulWidget {
   /// For list view, this enables [ListView.itemExtent] optimization.
   final double? itemExtent;
 
-  /// Triggered when the calculated page size (fitting 2 screens) changes.
-  final ValueChanged<int>? onPageSizeChanged;
-
   /// Optional builder used for loading placeholders.
   final Widget Function(BuildContext context, bool isGrid, int index)?
   loadingItemBuilder;
@@ -162,11 +158,6 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
   String? _currentQuery;
   String? _lastSubmittedText;
   bool _isTopAppBarVisible = true;
-
-  bool _pageSizeReportScheduled = false;
-  int? _lastReportedPageSize;
-  double? _measuredItemExtent;
-  final GlobalKey _firstItemKey = GlobalKey();
 
   DateTime? _lastHorizontalSwipeTime;
   static const _horizontalSwipeThreshold = Duration(milliseconds: 500);
@@ -227,40 +218,6 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
       childAspectRatio: delegate.childAspectRatio,
       mainAxisExtent: delegate.mainAxisExtent,
     );
-  }
-
-  int _getPageSize(
-    BuildContext context,
-    SliverGridDelegate? responsiveDelegate,
-  ) {
-    final effectivePadding =
-        widget.padding ?? EdgeInsets.all(context.dimensions.spacingMedium);
-    return GridUtils.calculateItemsPerPage(
-      context: context,
-      gridDelegate: responsiveDelegate,
-      padding: effectivePadding,
-      screens: 2.0,
-      itemExtent: widget.itemExtent,
-      measuredItemExtent: _measuredItemExtent,
-    );
-  }
-
-  void _reportPageSize(SliverGridDelegate? responsiveDelegate) {
-    if (_pageSizeReportScheduled ||
-        widget.onPageSizeChanged == null ||
-        !mounted) {
-      return;
-    }
-
-    _pageSizeReportScheduled = true;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      _pageSizeReportScheduled = false;
-      final pageSize = _getPageSize(context, responsiveDelegate);
-      if (pageSize == _lastReportedPageSize) return;
-      _lastReportedPageSize = pageSize;
-      widget.onPageSizeChanged!(pageSize);
-    });
   }
 
   @override
@@ -540,8 +497,6 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
                 Expanded(
                   child: widget.provider.when(
                     data: (items) {
-                      _reportPageSize(responsiveDelegate);
-
                       if (items.isEmpty && widget.customBody == null) {
                         return RefreshIndicator(
                           onRefresh: widget.onRefresh ?? () async {},
@@ -628,46 +583,13 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
                                             fixedDelegate?.crossAxisSpacing ??
                                             0.0,
                                         itemCount: items.length,
-                                        itemBuilder: (context, index) {
-                                          if (index == 0 &&
-                                              widget.onPageSizeChanged !=
-                                                  null &&
-                                              _measuredItemExtent == null) {
-                                            WidgetsBinding.instance
-                                                .addPostFrameCallback((_) {
-                                                  if (!mounted) return;
-                                                  if (_measuredItemExtent ==
-                                                          null &&
-                                                      _firstItemKey
-                                                              .currentContext !=
-                                                          null) {
-                                                    final size = _firstItemKey
-                                                        .currentContext!
-                                                        .size;
-                                                    if (size != null) {
-                                                      setState(() {
-                                                        _measuredItemExtent =
-                                                            size.height;
-                                                      });
-                                                    }
-                                                  }
-                                                });
-                                          }
-
-                                          return RepaintBoundary(
-                                            child: KeyedSubtree(
-                                              key: index == 0
-                                                  ? _firstItemKey
-                                                  : null,
-                                              child: widget.itemBuilder!(
-                                                context,
-                                                items[index],
-                                                memCacheWidth,
-                                                null,
-                                              ),
+                                        itemBuilder: (context, index) =>
+                                            widget.itemBuilder!(
+                                              context,
+                                              items[index],
+                                              memCacheWidth,
+                                              null,
                                             ),
-                                          );
-                                        },
                                       );
                                     }
 
@@ -680,45 +602,13 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
                                           const ScrollCacheExtent.viewport(2.0),
                                       gridDelegate: responsiveDelegate!,
                                       itemCount: items.length,
-                                      itemBuilder: (context, index) {
-                                        if (index == 0 &&
-                                            widget.onPageSizeChanged != null &&
-                                            _measuredItemExtent == null) {
-                                          WidgetsBinding.instance
-                                              .addPostFrameCallback((_) {
-                                                if (!mounted) return;
-                                                if (_measuredItemExtent ==
-                                                        null &&
-                                                    _firstItemKey
-                                                            .currentContext !=
-                                                        null) {
-                                                  final size = _firstItemKey
-                                                      .currentContext!
-                                                      .size;
-                                                  if (size != null) {
-                                                    setState(() {
-                                                      _measuredItemExtent =
-                                                          size.height;
-                                                    });
-                                                  }
-                                                }
-                                              });
-                                        }
-
-                                        return RepaintBoundary(
-                                          child: KeyedSubtree(
-                                            key: index == 0
-                                                ? _firstItemKey
-                                                : null,
-                                            child: widget.itemBuilder!(
-                                              context,
-                                              items[index],
-                                              memCacheWidth,
-                                              null,
-                                            ),
+                                      itemBuilder: (context, index) =>
+                                          widget.itemBuilder!(
+                                            context,
+                                            items[index],
+                                            memCacheWidth,
+                                            null,
                                           ),
-                                        );
-                                      },
                                     );
                                   },
                                 )
@@ -731,42 +621,13 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
                                       const ScrollCacheExtent.viewport(2.0),
                                   itemCount: items.length,
                                   itemExtent: widget.itemExtent,
-                                  itemBuilder: (context, index) {
-                                    if (index == 0 &&
-                                        widget.onPageSizeChanged != null &&
-                                        widget.itemExtent == null &&
-                                        _measuredItemExtent == null) {
-                                      WidgetsBinding.instance
-                                          .addPostFrameCallback((_) {
-                                            if (!mounted) return;
-                                            if (_measuredItemExtent == null &&
-                                                _firstItemKey.currentContext !=
-                                                    null) {
-                                              final size = _firstItemKey
-                                                  .currentContext!
-                                                  .size;
-                                              if (size != null) {
-                                                setState(() {
-                                                  _measuredItemExtent =
-                                                      size.height;
-                                                });
-                                              }
-                                            }
-                                          });
-                                    }
-
-                                    return RepaintBoundary(
-                                      child: KeyedSubtree(
-                                        key: index == 0 ? _firstItemKey : null,
-                                        child: widget.itemBuilder!(
-                                          context,
-                                          items[index],
-                                          memCacheWidth,
-                                          null,
-                                        ),
+                                  itemBuilder: (context, index) =>
+                                      widget.itemBuilder!(
+                                        context,
+                                        items[index],
+                                        memCacheWidth,
+                                        null,
                                       ),
-                                    );
-                                  },
                                 ));
 
                       if (widget.onRefresh != null) {

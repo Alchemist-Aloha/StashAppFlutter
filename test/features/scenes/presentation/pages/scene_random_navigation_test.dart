@@ -91,14 +91,17 @@ void main() {
       final queuedA = _scene('queue-a');
       final queuedB = _scene('queue-b');
       final repo = MockGraphQLSceneRepository()..withData([listedScene]);
+      Object? randomRouteExtra;
 
       final router = GoRouter(
         routes: [
           GoRoute(path: '/', builder: (_, _) => const ScenesPage()),
           GoRoute(
             path: '/scenes/scene/:id',
-            builder: (context, state) =>
-                Text('route:${state.pathParameters['id']}'),
+            builder: (context, state) {
+              randomRouteExtra = state.extra;
+              return Text('route:${state.pathParameters['id']}');
+            },
           ),
         ],
       );
@@ -137,6 +140,7 @@ void main() {
 
       final after = container.read(playbackQueueProvider);
       expect(find.text('route:backend-random'), findsOneWidget);
+      expect(randomRouteExtra, isTrue);
       expect(after.sequence.map((scene) => scene.id).toList(), [
         'queue-a',
         'queue-b',
@@ -153,6 +157,7 @@ void main() {
     final currentScene = _scene('current');
     final randomScene = _scene('backend-next');
     final repo = MockGraphQLSceneRepository()..withData([currentScene]);
+    Object? randomRouteExtra;
 
     final router = GoRouter(
       routes: [
@@ -162,8 +167,10 @@ void main() {
         ),
         GoRoute(
           path: '/scenes/scene/:id',
-          builder: (context, state) =>
-              Text('route:${state.pathParameters['id']}'),
+          builder: (context, state) {
+            randomRouteExtra = state.extra;
+            return Text('route:${state.pathParameters['id']}');
+          },
         ),
       ],
     );
@@ -192,5 +199,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('route:backend-next'), findsOneWidget);
+    expect(randomRouteExtra, isTrue);
   });
 }

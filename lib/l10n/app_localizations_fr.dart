@@ -1729,12 +1729,12 @@ class AppLocalizationsFr extends AppLocalizations {
       'Orientation contrôlée par la gravité';
 
   @override
-  String get settings_playback_direct_play =>
-      'Lecture directe lors de la navigation entre scènes';
+  String get settings_playback_open_fullscreen =>
+      'Ouvrir les scènes en plein écran';
 
   @override
-  String get settings_playback_direct_play_subtitle =>
-      'Lors de la navigation depuis une autre scène en cours de lecture, lire directement la nouvelle scène';
+  String get settings_playback_open_fullscreen_subtitle =>
+      'Ouvrir les scènes sélectionnées et aléatoires en plein écran. Précédent et suivant conservent la vue actuelle.';
 
   @override
   String get settings_playback_gravity_orientation_subtitle =>

@@ -407,7 +407,6 @@ class _ShellPageState extends ConsumerState<ShellPage> {
         ),
         if (!hideMiniPlayer && activeSceneId != null)
           const Positioned(left: 0, right: 0, bottom: 0, child: MiniPlayer()),
-        const Positioned.fill(child: GlobalFullscreenOverlay()),
       ],
     );
 
@@ -430,6 +429,13 @@ class _ShellPageState extends ConsumerState<ShellPage> {
         ],
       );
     }
+
+    bodyContent = Stack(
+      children: [
+        Positioned.fill(child: bodyContent),
+        const Positioned.fill(child: GlobalFullscreenOverlay()),
+      ],
+    );
 
     if (ref.watch(desktopCapabilitiesProvider)) {
       final Map<ShortcutActivator, VoidCallback> bindings = {};

@@ -538,8 +538,6 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
       onRefresh: () => ref.read(sceneListProvider.notifier).refresh(),
       onFetchNextPage: () =>
           ref.read(sceneListProvider.notifier).fetchNextPage(),
-      onPageSizeChanged: (pageSize) =>
-          ref.read(sceneListProvider.notifier).setPerPage(pageSize),
       loadingItemBuilder: (context, isGrid, index) =>
           SceneCard.skeleton(isGrid: isGrid, useMasonry: isGrid),
       actions: [

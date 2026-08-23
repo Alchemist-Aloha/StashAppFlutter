@@ -404,18 +404,9 @@ class _SceneCardState extends ConsumerState<SceneCard> {
     }
 
     if (widget.isGrid) {
-      return RepaintBoundary(
-        child: _buildGridCard(
-          context,
-          ref,
-          duration,
-          fileAspectRatio ?? 16 / 9,
-        ),
-      );
+      return _buildGridCard(context, ref, duration, fileAspectRatio ?? 16 / 9);
     }
-    return RepaintBoundary(
-      child: _buildListCard(context, ref, duration, fileAspectRatio ?? 16 / 9),
-    );
+    return _buildListCard(context, ref, duration, fileAspectRatio ?? 16 / 9);
   }
 
   /// Builds the full-width list variant of the card.

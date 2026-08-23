@@ -11,6 +11,7 @@ void main() {
       'app_theme_mode': 'dark',
       'show_random_navigation': true,
       'auto_hide_top_app_bar': true,
+      'video_enter_fullscreen_on_navigation': true,
       'max_image_cache_size_mb': 500,
       'app_global_scale_factor': 1.2,
       'scene_sort_field': 'rating',
@@ -26,6 +27,7 @@ void main() {
       'app_theme_mode': 'dark',
       'show_random_navigation': true,
       'auto_hide_top_app_bar': true,
+      'video_enter_fullscreen_on_navigation': true,
       'max_image_cache_size_mb': 500,
       'app_global_scale_factor': 1.2,
       'scene_sort_field': 'rating',
@@ -84,6 +86,7 @@ void main() {
         'navigation_tabs_config',
         'desktop_keybinds',
         'video_play_end_behavior',
+        'video_enter_fullscreen_on_navigation',
         'app_lock_enabled',
         'scene_grid_columns_v2',
         'scene_sort_field',
@@ -131,5 +134,9 @@ void main() {
     );
     expect(registry.managedKeys, isNot(contains('server_profiles')));
     expect(registry.managedKeys, isNot(contains('search_history_scenes')));
+    expect(
+      registry.managedKeys,
+      isNot(contains('video_direct_play_on_navigation')),
+    );
   });
 }

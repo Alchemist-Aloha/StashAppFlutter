@@ -189,8 +189,6 @@ class _SceneMarkersPageState extends ConsumerState<SceneMarkersPage> {
       onRefresh: () => ref.read(sceneMarkerListProvider.notifier).refresh(),
       onFetchNextPage: () =>
           ref.read(sceneMarkerListProvider.notifier).fetchNextPage(),
-      onPageSizeChanged: (pageSize) =>
-          ref.read(sceneMarkerListProvider.notifier).setPerPage(pageSize),
       useMasonry: isGridLayout,
       gridDelegate: isGridLayout
           ? GridUtils.createDelegate(context, crossAxisCount: gridColumns)

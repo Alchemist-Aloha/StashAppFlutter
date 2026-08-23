@@ -96,7 +96,7 @@ void main() {
       expect(state.prewarmLatencyMs, isNull);
       expect(state.playEndBehavior, VideoEndBehavior.stop);
       expect(state.showVideoDebugInfo, isFalse);
-      expect(state.useDoubleTapSeek, isTrue);
+      expect(state.useDoubleTapSeek, isFalse);
       expect(state.enableBackgroundPlayback, isFalse);
       expect(state.enableNativePip, isFalse);
       expect(state.videoGravityOrientation, isTrue);

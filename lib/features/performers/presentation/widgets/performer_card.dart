@@ -60,60 +60,58 @@ class PerformerCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final imageBorderRadius = BorderRadius.circular(AppTheme.radiusMedium);
 
-    return RepaintBoundary(
-      child: Skeletonizer(
-        enabled: skeletonize,
-        effect: const ShimmerEffect(duration: Duration(seconds: 2)),
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
-          child: Padding(
-            padding: EdgeInsets.all(context.dimensions.spacingSmall / 2),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Expanded(
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      const portraitAspectRatio = 2 / 3;
-                      final widthFromHeight =
-                          constraints.maxHeight * portraitAspectRatio;
-                      final width = widthFromHeight < constraints.maxWidth
-                          ? widthFromHeight
-                          : constraints.maxWidth;
-                      final height = width / portraitAspectRatio;
-                      return Center(
-                        child: SizedBox(
-                          width: width,
-                          height: height,
-                          child: ClipRRect(
-                            borderRadius: imageBorderRadius,
-                            child: StashImage(
-                              imageUrl: performer.imagePath ?? '',
-                              fit: BoxFit.cover,
-                              memCacheWidth: memCacheWidth ?? 300,
-                            ),
+    return Skeletonizer(
+      enabled: skeletonize,
+      effect: const ShimmerEffect(duration: Duration(seconds: 2)),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
+        child: Padding(
+          padding: EdgeInsets.all(context.dimensions.spacingSmall / 2),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Expanded(
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    const portraitAspectRatio = 2 / 3;
+                    final widthFromHeight =
+                        constraints.maxHeight * portraitAspectRatio;
+                    final width = widthFromHeight < constraints.maxWidth
+                        ? widthFromHeight
+                        : constraints.maxWidth;
+                    final height = width / portraitAspectRatio;
+                    return Center(
+                      child: SizedBox(
+                        width: width,
+                        height: height,
+                        child: ClipRRect(
+                          borderRadius: imageBorderRadius,
+                          child: StashImage(
+                            imageUrl: performer.imagePath ?? '',
+                            fit: BoxFit.cover,
+                            memCacheWidth: memCacheWidth ?? 300,
                           ),
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                    );
+                  },
                 ),
-                SizedBox(height: context.dimensions.spacingSmall),
-                Text(
-                  performer.name,
-                  style: context.textTheme.bodySmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    fontSize:
-                        context.dimensions.cardTitleFontSize *
-                        context.dimensions.fontSizeFactor,
-                  ),
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+              ),
+              SizedBox(height: context.dimensions.spacingSmall),
+              Text(
+                performer.name,
+                style: context.textTheme.bodySmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  fontSize:
+                      context.dimensions.cardTitleFontSize *
+                      context.dimensions.fontSizeFactor,
                 ),
-              ],
-            ),
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
           ),
         ),
       ),

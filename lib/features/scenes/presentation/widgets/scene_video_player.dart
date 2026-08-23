@@ -10,6 +10,7 @@ import '../../domain/entities/scene.dart';
 import '../../domain/entities/scene_title_utils.dart';
 import '../providers/scene_random_navigation_provider.dart';
 import '../providers/player_view_mode.dart';
+import '../providers/player_settings.dart';
 import '../providers/video_player_provider.dart';
 import '../../../../core/data/preferences/shared_preferences_provider.dart';
 import '../../../../core/data/services/cast_service.dart';
@@ -28,6 +29,11 @@ bool _isSceneFullscreenPath(String path, {String? sceneId}) {
   if (segments[0] != 'scenes' || segments[1] != 'fullscreen') return false;
   if (sceneId != null && segments[2] != sceneId) return false;
   return true;
+}
+
+String _currentRoutePath(BuildContext context) {
+  if (GoRouter.maybeOf(context) == null) return '';
+  return GoRouterState.of(context).uri.path;
 }
 
 bool _isSceneDetailsPath(String path, {String? sceneId}) {
@@ -89,6 +95,7 @@ class SceneVideoPlayer extends ConsumerStatefulWidget {
 class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
   /// Local state to track initial player startup for UI feedback.
   bool _isStarting = false;
+  bool _preferredFullscreenHandled = false;
 
   @override
   void initState() {
@@ -106,6 +113,7 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
 
     if (oldWidget.scene.id != widget.scene.id) {
       _isStarting = false;
+      _preferredFullscreenHandled = false;
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
@@ -128,8 +136,7 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
     if (!mounted) return;
 
     final playerState = ref.read(playerStateProvider);
-    final router = GoRouter.maybeOf(context);
-    final currentPath = router?.routeInformationProvider.value.uri.path ?? '';
+    final currentPath = _currentRoutePath(context);
     final isInFullscreenRoute = _isSceneFullscreenPath(currentPath);
     final isOwningSceneRoute =
         _isSceneDetailsPath(currentPath, sceneId: widget.scene.id) ||
@@ -149,6 +156,7 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
       if (playerState.player != null && !playerState.player!.state.playing) {
         playerState.player!.play();
       }
+      _enterPreferredFullscreenIfNeeded();
       return;
     }
 
@@ -170,20 +178,6 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
     if (!force && (playerState.isFullScreen || isInFullscreenRoute)) {
       AppLogStore.instance.add(
         'SceneVideoPlayer: Skipping playback - fullscreen=${playerState.isFullScreen}, isInFullscreenRoute=$isInFullscreenRoute',
-        source: 'scene_video_player',
-      );
-      return;
-    }
-
-    // Only auto-play if we are forcing it or if no other video is playing.
-    // Users can opt into "direct-play on navigation" which allows a scene
-    // details page to start playback even when another scene is already active.
-    final prefs = ref.read(sharedPreferencesProvider);
-    final directPlayOnNavigation =
-        prefs.getBool('video_direct_play_on_navigation') ?? true;
-    if (!force && playerState.activeScene != null && !directPlayOnNavigation) {
-      AppLogStore.instance.add(
-        'SceneVideoPlayer: Skipping playback - another scene active=${playerState.activeScene?.id}, directPlayOnNavigation=$directPlayOnNavigation',
         source: 'scene_video_player',
       );
       return;
@@ -246,10 +240,36 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
             startPosition: resumePosition ?? Duration.zero,
           );
         }
+        _enterPreferredFullscreenIfNeeded();
       }
     } finally {
       if (mounted) setState(() => _isStarting = false);
     }
+  }
+
+  void _enterPreferredFullscreenIfNeeded() {
+    if (_preferredFullscreenHandled || !widget.autoPlayOnMount || !mounted) {
+      return;
+    }
+
+    final playerState = ref.read(playerStateProvider);
+    if (playerState.activeScene?.id != widget.scene.id) return;
+
+    final currentPath = _currentRoutePath(context);
+    if (!_isSceneDetailsPath(currentPath, sceneId: widget.scene.id)) return;
+
+    final prefs = ref.read(sharedPreferencesProvider);
+    final enterFullscreen =
+        prefs.getBool(PlayerSettingsStore.enterFullscreenOnNavigationKey) ??
+        false;
+    if (!enterFullscreen) return;
+
+    _preferredFullscreenHandled = true;
+    if (playerState.isFullScreen) return;
+
+    final notifier = ref.read(playerStateProvider.notifier);
+    notifier.setViewMode(PlayerViewMode.fullscreen);
+    notifier.requestEnterFullscreen();
   }
 
   Future<void> _restartCastForCurrentScene({
@@ -345,11 +365,9 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
     if (!mounted) return;
 
     var playerState = ref.read(playerStateProvider);
-    final router = GoRouter.maybeOf(context);
-
     // We check both state and path for maximum robustness.
     // If we are in fullscreen state OR on the fullscreen path, we want to exit.
-    final currentPath = router?.routeInformationProvider.value.uri.path ?? '';
+    final currentPath = _currentRoutePath(context);
     final isInFullscreenPath = _isSceneFullscreenPath(currentPath);
 
     AppLogStore.instance.add(
@@ -413,6 +431,13 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<String?>(
+      playerStateProvider.select((state) => state.activeScene?.id),
+      (previous, next) {
+        if (next == widget.scene.id) _enterPreferredFullscreenIfNeeded();
+      },
+    );
+
     final playerState = ref.watch(playerStateProvider);
     final controller = playerState.videoController;
 

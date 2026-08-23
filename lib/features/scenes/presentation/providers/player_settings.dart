@@ -18,7 +18,7 @@ class PlayerSettings {
   const PlayerSettings({
     this.playEndBehaviorName = 'stop',
     this.showVideoDebugInfo = false,
-    this.useDoubleTapSeek = true,
+    this.useDoubleTapSeek = false,
     this.enableBackgroundPlayback = false,
     this.enableNativePip = false,
     this.videoGravityOrientation = true,
@@ -79,6 +79,10 @@ class PlayerSettingsStore {
   static const enableBackgroundPlaybackKey = 'video_background_playback';
   static const enableNativePipKey = 'video_native_pip';
   static const videoGravityOrientationKey = 'video_gravity_orientation';
+
+  /// Opens explicit scene playback navigation in the fullscreen player.
+  static const enterFullscreenOnNavigationKey =
+      'video_enter_fullscreen_on_navigation';
   static const useActualSceneVideoInMiniPlayerKey =
       'use_actual_scene_video_in_miniplayer';
   static const defaultSubtitleLanguageKey = 'default_subtitle_language';
@@ -106,7 +110,7 @@ class PlayerSettingsStore {
     return PlayerSettings(
       playEndBehaviorName: playEndBehaviorName,
       showVideoDebugInfo: prefs.getBool(showVideoDebugInfoKey) ?? false,
-      useDoubleTapSeek: prefs.getBool(useDoubleTapSeekKey) ?? true,
+      useDoubleTapSeek: prefs.getBool(useDoubleTapSeekKey) ?? false,
       enableBackgroundPlayback:
           prefs.getBool(enableBackgroundPlaybackKey) ?? false,
       enableNativePip: prefs.getBool(enableNativePipKey) ?? false,

@@ -198,7 +198,7 @@ class GlobalPlayerState {
     this.prewarmLatencyMs,
     this.playEndBehavior = VideoEndBehavior.stop,
     this.showVideoDebugInfo = false,
-    this.useDoubleTapSeek = true,
+    this.useDoubleTapSeek = false,
     this.enableBackgroundPlayback = false,
     this.enableNativePip = false,
     this.videoGravityOrientation = true,
@@ -1169,6 +1169,8 @@ class PlayerState extends _$PlayerState with WidgetsBindingObserver {
         subtitleFontSize: state.subtitleFontSize,
         subtitlePositionBottomRatio: state.subtitlePositionBottomRatio,
         subtitleTextAlignment: state.subtitleTextAlignment,
+        feedStartRandom: state.feedStartRandom,
+        resumePlayPosition: state.resumePlayPosition,
         fullscreenPhase: state.fullscreenPhase,
       );
 
@@ -1641,6 +1643,8 @@ class PlayerState extends _$PlayerState with WidgetsBindingObserver {
       subtitleFontSize: state.subtitleFontSize,
       subtitlePositionBottomRatio: state.subtitlePositionBottomRatio,
       subtitleTextAlignment: state.subtitleTextAlignment,
+      feedStartRandom: state.feedStartRandom,
+      resumePlayPosition: state.resumePlayPosition,
     );
     if (dismissNotification) mediaHandler?.dismiss();
   }

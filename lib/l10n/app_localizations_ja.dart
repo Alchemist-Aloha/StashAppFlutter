@@ -1656,11 +1656,11 @@ class AppLocalizationsJa extends AppLocalizations {
   String get settings_playback_gravity_orientation => '重力制御の画面向き';
 
   @override
-  String get settings_playback_direct_play => 'シーン移動時に直接再生';
+  String get settings_playback_open_fullscreen => 'シーンを全画面で開く';
 
   @override
-  String get settings_playback_direct_play_subtitle =>
-      '他の再生中シーンから移動した際、新しいシーンを直接再生します';
+  String get settings_playback_open_fullscreen_subtitle =>
+      '選択したシーンやランダムシーンを全画面で開きます。前へ／次へでは現在の表示を維持します。';
 
   @override
   String get settings_playback_gravity_orientation_subtitle =>

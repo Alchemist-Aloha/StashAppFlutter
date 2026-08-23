@@ -259,8 +259,6 @@ class _TagsPageState extends ConsumerState<TagsPage> {
       scrollController: scrollController,
       onRefresh: () => ref.read(tagListProvider.notifier).refresh(),
       onFetchNextPage: () => ref.read(tagListProvider.notifier).fetchNextPage(),
-      onPageSizeChanged: (pageSize) =>
-          ref.read(tagListProvider.notifier).setPerPage(pageSize),
       actions: [
         Stack(
           children: [
