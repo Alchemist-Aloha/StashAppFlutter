@@ -584,13 +584,11 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
                                             0.0,
                                         itemCount: items.length,
                                         itemBuilder: (context, index) =>
-                                            RepaintBoundary(
-                                              child: widget.itemBuilder!(
-                                                context,
-                                                items[index],
-                                                memCacheWidth,
-                                                null,
-                                              ),
+                                            widget.itemBuilder!(
+                                              context,
+                                              items[index],
+                                              memCacheWidth,
+                                              null,
                                             ),
                                       );
                                     }
@@ -605,13 +603,11 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
                                       gridDelegate: responsiveDelegate!,
                                       itemCount: items.length,
                                       itemBuilder: (context, index) =>
-                                          RepaintBoundary(
-                                            child: widget.itemBuilder!(
-                                              context,
-                                              items[index],
-                                              memCacheWidth,
-                                              null,
-                                            ),
+                                          widget.itemBuilder!(
+                                            context,
+                                            items[index],
+                                            memCacheWidth,
+                                            null,
                                           ),
                                     );
                                   },
@@ -626,13 +622,11 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
                                   itemCount: items.length,
                                   itemExtent: widget.itemExtent,
                                   itemBuilder: (context, index) =>
-                                      RepaintBoundary(
-                                        child: widget.itemBuilder!(
-                                          context,
-                                          items[index],
-                                          memCacheWidth,
-                                          null,
-                                        ),
+                                      widget.itemBuilder!(
+                                        context,
+                                        items[index],
+                                        memCacheWidth,
+                                        null,
                                       ),
                                 ));
 
