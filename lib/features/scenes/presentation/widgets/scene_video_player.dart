@@ -183,20 +183,6 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
       return;
     }
 
-    // Only auto-play if we are forcing it or if no other video is playing.
-    // Users can opt into "direct-play on navigation" which allows a scene
-    // details page to start playback even when another scene is already active.
-    final prefs = ref.read(sharedPreferencesProvider);
-    final directPlayOnNavigation =
-        prefs.getBool('video_direct_play_on_navigation') ?? true;
-    if (!force && playerState.activeScene != null && !directPlayOnNavigation) {
-      AppLogStore.instance.add(
-        'SceneVideoPlayer: Skipping playback - another scene active=${playerState.activeScene?.id}, directPlayOnNavigation=$directPlayOnNavigation',
-        source: 'scene_video_player',
-      );
-      return;
-    }
-
     AppLogStore.instance.add(
       'SceneVideoPlayer: Starting playback for scene ${widget.scene.id}',
       source: 'scene_video_player',

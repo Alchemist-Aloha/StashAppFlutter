@@ -824,8 +824,6 @@
   "common_px": "{value} 像素",
   "common_pt": "{value} 点",
   "common_percent": "{value}%",
-  "settings_playback_direct_play": "切换场景时直接播放",
-  "settings_playback_direct_play_subtitle": "从另一个正在播放的场景切换过来时，直接播放新场景",
   "settings_playback_open_fullscreen": "以全屏模式打开场景",
   "settings_playback_open_fullscreen_subtitle": "以全屏模式打开选中和随机场景。上一个和下一个场景会保持当前视图。",
   "saving_video": "正在保存到相册...",

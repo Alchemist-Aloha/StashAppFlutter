@@ -358,87 +358,45 @@ void main() {
     expect(MockPlayerState.fullscreenEntryRequests, 0);
   });
 
-  testWidgets(
-    'top-level scene alias honors direct-play on navigation setting',
-    (tester) async {
-      MockPlayerState.lastPlayedSceneId = null;
-      MockPlayerState.initialActiveScene = testScene;
-      await prefs.setBool('video_direct_play_on_navigation', true);
-      final targetScene = testScene.copyWith(id: 's2', title: 'Target Scene');
-      final router = GoRouter(
-        initialLocation: '/scene/s2',
-        routes: [
-          GoRoute(
-            path: '/scene/:id',
-            builder: (context, state) =>
-                Scaffold(body: SceneVideoPlayer(scene: targetScene)),
-          ),
-        ],
-      );
-
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            sharedPreferencesProvider.overrideWithValue(prefs),
-            playerStateProvider.overrideWith(MockPlayerState.new),
-            streamResolverProvider.overrideWith(MockStreamResolverChoice.new),
-            streamPrewarmerProvider.overrideWith(MockStreamPrewarmer.new),
-            mediaHeadersProvider.overrideWithValue(const {}),
-          ],
-          child: MaterialApp.router(
-            theme: AppTheme.darkTheme,
-            routerConfig: router,
-          ),
+  testWidgets('top-level scene alias always starts the navigated scene', (
+    tester,
+  ) async {
+    MockPlayerState.lastPlayedSceneId = null;
+    MockPlayerState.initialActiveScene = testScene;
+    await prefs.setBool('video_direct_play_on_navigation', false);
+    final targetScene = testScene.copyWith(id: 's2', title: 'Target Scene');
+    final router = GoRouter(
+      initialLocation: '/scene/s2',
+      routes: [
+        GoRoute(
+          path: '/scene/:id',
+          builder: (context, state) =>
+              Scaffold(body: SceneVideoPlayer(scene: targetScene)),
         ),
-      );
+      ],
+    );
 
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 50));
-
-      expect(MockPlayerState.lastPlayedSceneId, targetScene.id);
-    },
-  );
-
-  testWidgets(
-    'top-level scene alias keeps active scene when direct-play is disabled',
-    (tester) async {
-      MockPlayerState.lastPlayedSceneId = null;
-      MockPlayerState.initialActiveScene = testScene;
-      await prefs.setBool('video_direct_play_on_navigation', false);
-      final targetScene = testScene.copyWith(id: 's2', title: 'Target Scene');
-      final router = GoRouter(
-        initialLocation: '/scene/s2',
-        routes: [
-          GoRoute(
-            path: '/scene/:id',
-            builder: (context, state) =>
-                Scaffold(body: SceneVideoPlayer(scene: targetScene)),
-          ),
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          sharedPreferencesProvider.overrideWithValue(prefs),
+          playerStateProvider.overrideWith(MockPlayerState.new),
+          streamResolverProvider.overrideWith(MockStreamResolverChoice.new),
+          streamPrewarmerProvider.overrideWith(MockStreamPrewarmer.new),
+          mediaHeadersProvider.overrideWithValue(const {}),
         ],
-      );
-
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            sharedPreferencesProvider.overrideWithValue(prefs),
-            playerStateProvider.overrideWith(MockPlayerState.new),
-            streamResolverProvider.overrideWith(MockStreamResolverChoice.new),
-            streamPrewarmerProvider.overrideWith(MockStreamPrewarmer.new),
-            mediaHeadersProvider.overrideWithValue(const {}),
-          ],
-          child: MaterialApp.router(
-            theme: AppTheme.darkTheme,
-            routerConfig: router,
-          ),
+        child: MaterialApp.router(
+          theme: AppTheme.darkTheme,
+          routerConfig: router,
         ),
-      );
+      ),
+    );
 
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 50));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 50));
 
-      expect(MockPlayerState.lastPlayedSceneId, isNull);
-    },
-  );
+    expect(MockPlayerState.lastPlayedSceneId, targetScene.id);
+  });
 
   testWidgets('forced scene switch restarts active cast on the same session', (
     tester,

@@ -3198,18 +3198,6 @@ abstract class AppLocalizations {
   /// **'Gravity-controlled orientation'**
   String get settings_playback_gravity_orientation;
 
-  /// No description provided for @settings_playback_direct_play.
-  ///
-  /// In en, this message translates to:
-  /// **'Direct-play on scene navigation'**
-  String get settings_playback_direct_play;
-
-  /// No description provided for @settings_playback_direct_play_subtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'When navigating from another playing scene, directly play the new scene'**
-  String get settings_playback_direct_play_subtitle;
-
   /// No description provided for @settings_playback_open_fullscreen.
   ///
   /// In en, this message translates to:

@@ -94,6 +94,10 @@ class _OrientationPlayerState extends PlayerState {
 
   @override
   GlobalPlayerState build() => GlobalPlayerState(activeScene: scene);
+
+  void showScene(Scene scene) {
+    state = state.copyWith(activeScene: scene);
+  }
 }
 
 void main() {
@@ -192,19 +196,17 @@ void main() {
     expect(cmakeSource, isNot(contains('windows_fullscreen_controller')));
   });
 
-  testWidgets('portrait media stays vertical on phones but not tablets', (
-    tester,
-  ) async {
+  testWidgets('fullscreen follows media orientation on phones', (tester) async {
     debugDefaultTargetPlatformOverride = TargetPlatform.android;
     try {
       tester.view.devicePixelRatio = 1.0;
 
-      final portraitScene = testScene.copyWith(
-        files: const [
+      Scene sceneWithSize(int width, int height) => testScene.copyWith(
+        files: [
           SceneFile(
             format: 'mp4',
-            width: 1080,
-            height: 1920,
+            width: width,
+            height: height,
             videoCodec: 'h264',
             audioCodec: 'aac',
             bitRate: null,
@@ -213,6 +215,9 @@ void main() {
           ),
         ],
       );
+      final portraitScene = sceneWithSize(1080, 1920);
+      final landscapeScene = sceneWithSize(1920, 1080);
+      final squareScene = sceneWithSize(1080, 1080);
       final orientationCalls = <List<String>>[];
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(SystemChannels.platform, (call) async {
@@ -222,45 +227,68 @@ void main() {
             return null;
           });
 
-      Future<List<String>> enterFullscreenAt(Size size) async {
-        tester.view.physicalSize = size;
-        orientationCalls.clear();
-        await pumpTestWidget(
-          tester,
-          prefs: prefs,
-          overrides: [
-            playerStateProvider.overrideWith(
-              () => _OrientationPlayerState(portraitScene),
-            ),
-          ],
-          child: const GlobalFullscreenOverlay(),
-        );
-        final container = ProviderScope.containerOf(
-          tester.element(find.byType(GlobalFullscreenOverlay)),
-        );
-        container.read(playerStateProvider.notifier).requestEnterFullscreen();
-        await tester.pump();
-        await tester.pump(const Duration(milliseconds: 500));
-        return orientationCalls.last;
-      }
+      tester.view.physicalSize = const Size(400, 800);
+      tester.view.display.size = const Size(400, 800);
+      final playerState = _OrientationPlayerState(portraitScene);
+      await pumpTestWidget(
+        tester,
+        prefs: prefs,
+        overrides: [playerStateProvider.overrideWith(() => playerState)],
+        child: const GlobalFullscreenOverlay(),
+      );
+      playerState.requestEnterFullscreen();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
 
-      final phoneOrientations = await enterFullscreenAt(const Size(400, 800));
-      expect(phoneOrientations, contains('DeviceOrientation.portraitUp'));
+      expect(orientationCalls.last, contains('DeviceOrientation.portraitUp'));
       expect(
-        phoneOrientations,
+        orientationCalls.last,
         isNot(contains('DeviceOrientation.landscapeLeft')),
       );
 
-      final tabletOrientations = await enterFullscreenAt(const Size(800, 1200));
-      expect(tabletOrientations, contains('DeviceOrientation.landscapeLeft'));
+      orientationCalls.clear();
+      playerState.showScene(landscapeScene);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
       expect(
-        tabletOrientations,
+        orientationCalls.last,
+        contains('DeviceOrientation.landscapeLeft'),
+      );
+
+      orientationCalls.clear();
+      playerState.showScene(squareScene);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+      expect(orientationCalls.last, contains('DeviceOrientation.portraitUp'));
+      expect(
+        orientationCalls.last,
+        isNot(contains('DeviceOrientation.landscapeLeft')),
+      );
+
+      playerState.requestExitFullscreen();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+
+      orientationCalls.clear();
+      tester.view.physicalSize = const Size(800, 1200);
+      tester.view.display.size = const Size(800, 1200);
+      playerState.showScene(portraitScene);
+      playerState.requestEnterFullscreen();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+      expect(
+        orientationCalls.last,
+        contains('DeviceOrientation.landscapeLeft'),
+      );
+      expect(
+        orientationCalls.last,
         isNot(contains('DeviceOrientation.portraitUp')),
       );
     } finally {
       debugDefaultTargetPlatformOverride = null;
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();
+      tester.view.display.resetSize();
     }
   });
 

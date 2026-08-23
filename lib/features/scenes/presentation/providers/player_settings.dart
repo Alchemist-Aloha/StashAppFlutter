@@ -18,7 +18,7 @@ class PlayerSettings {
   const PlayerSettings({
     this.playEndBehaviorName = 'stop',
     this.showVideoDebugInfo = false,
-    this.useDoubleTapSeek = true,
+    this.useDoubleTapSeek = false,
     this.enableBackgroundPlayback = false,
     this.enableNativePip = false,
     this.videoGravityOrientation = true,
@@ -110,7 +110,7 @@ class PlayerSettingsStore {
     return PlayerSettings(
       playEndBehaviorName: playEndBehaviorName,
       showVideoDebugInfo: prefs.getBool(showVideoDebugInfoKey) ?? false,
-      useDoubleTapSeek: prefs.getBool(useDoubleTapSeekKey) ?? true,
+      useDoubleTapSeek: prefs.getBool(useDoubleTapSeekKey) ?? false,
       enableBackgroundPlayback:
           prefs.getBool(enableBackgroundPlaybackKey) ?? false,
       enableNativePip: prefs.getBool(enableNativePipKey) ?? false,

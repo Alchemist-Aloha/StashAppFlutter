@@ -1701,13 +1701,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Gravity-controlled orientation';
 
   @override
-  String get settings_playback_direct_play => 'Direct-play on scene navigation';
-
-  @override
-  String get settings_playback_direct_play_subtitle =>
-      'When navigating from another playing scene, directly play the new scene';
-
-  @override
   String get settings_playback_open_fullscreen => 'Open scenes in fullscreen';
 
   @override

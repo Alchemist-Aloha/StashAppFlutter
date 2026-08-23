@@ -173,6 +173,8 @@ void main() {
     queue.setSequence([scene1, scene2], 0);
     await notifier.attachController(scene1, mockPlayer, mockVideoController);
     notifier.setFullScreen(true);
+    notifier.setFeedStartRandom(true);
+    notifier.setResumePlayPosition(false);
     notifier.setPlayEndBehavior(VideoEndBehavior.next);
 
     completedStream.add(true);
@@ -181,6 +183,8 @@ void main() {
     expect(container.read(playbackQueueProvider).currentIndex, 1);
     expect(container.read(playerStateProvider).activeScene?.id, '2');
     expect(container.read(playerStateProvider).isFullScreen, isTrue);
+    expect(container.read(playerStateProvider).feedStartRandom, isTrue);
+    expect(container.read(playerStateProvider).resumePlayPosition, isFalse);
   });
 
   test('next stops when the next stream cannot be resolved', () async {

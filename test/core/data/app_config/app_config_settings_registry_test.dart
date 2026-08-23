@@ -134,5 +134,9 @@ void main() {
     );
     expect(registry.managedKeys, isNot(contains('server_profiles')));
     expect(registry.managedKeys, isNot(contains('search_history_scenes')));
+    expect(
+      registry.managedKeys,
+      isNot(contains('video_direct_play_on_navigation')),
+    );
   });
 }

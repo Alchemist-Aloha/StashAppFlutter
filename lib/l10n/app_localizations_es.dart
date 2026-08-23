@@ -1738,14 +1738,6 @@ class AppLocalizationsEs extends AppLocalizations {
       'Orientación controlada por la gravedad';
 
   @override
-  String get settings_playback_direct_play =>
-      'Reproducción directa al navegar por escenas';
-
-  @override
-  String get settings_playback_direct_play_subtitle =>
-      'Al navegar desde otra escena en reproducción, reproducir directamente la nueva escena';
-
-  @override
   String get settings_playback_open_fullscreen =>
       'Abrir escenas en pantalla completa';
 

@@ -32,7 +32,7 @@ void main() {
     expect(container.read(castServiceProvider).isCasting, isFalse);
   });
 
-  test('stopping the player preserves miniplayer video preference', () async {
+  test('stopping the player preserves playback preferences', () async {
     SharedPreferences.setMockInitialValues({});
     final sharedPrefs = await SharedPreferences.getInstance();
     final container = ProviderContainer(
@@ -42,6 +42,8 @@ void main() {
 
     final notifier = container.read(playerStateProvider.notifier);
     notifier.setUseActualSceneVideoInMiniPlayer(true);
+    notifier.setFeedStartRandom(true);
+    notifier.setResumePlayPosition(false);
 
     notifier.stop();
     await Future<void>.delayed(Duration.zero);
@@ -50,6 +52,8 @@ void main() {
       container.read(playerStateProvider).useActualSceneVideoInMiniPlayer,
       isTrue,
     );
+    expect(container.read(playerStateProvider).feedStartRandom, isTrue);
+    expect(container.read(playerStateProvider).resumePlayPosition, isFalse);
   });
 }
 

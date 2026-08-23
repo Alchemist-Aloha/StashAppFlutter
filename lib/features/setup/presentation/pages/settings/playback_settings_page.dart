@@ -39,8 +39,6 @@ class _PlaybackSettingsPageState extends ConsumerState<PlaybackSettingsPage> {
   double _subtitlePositionBottomRatio = 0.15;
   String _subtitleTextAlignment = 'center';
   bool _loading = true;
-  static const _directPlayOnNavigationKey = 'video_direct_play_on_navigation';
-  bool _directPlayOnNavigation = false;
   bool _enterFullscreenOnNavigation = false;
   bool _feedStartRandom = false;
   bool _resumePlayPosition = true;
@@ -80,7 +78,6 @@ class _PlaybackSettingsPageState extends ConsumerState<PlaybackSettingsPage> {
         prefs.getDouble(_subtitlePositionBottomRatioKey) ?? 0.15;
     _subtitleTextAlignment =
         prefs.getString(_subtitleTextAlignmentKey) ?? 'center';
-    _directPlayOnNavigation = prefs.getBool(_directPlayOnNavigationKey) ?? true;
     _enterFullscreenOnNavigation =
         prefs.getBool(PlayerSettingsStore.enterFullscreenOnNavigationKey) ??
         false;
@@ -110,7 +107,6 @@ class _PlaybackSettingsPageState extends ConsumerState<PlaybackSettingsPage> {
       _subtitlePositionBottomRatio,
     );
     await prefs.setString(_subtitleTextAlignmentKey, _subtitleTextAlignment);
-    await prefs.setBool(_directPlayOnNavigationKey, _directPlayOnNavigation);
     await prefs.setBool(
       PlayerSettingsStore.enterFullscreenOnNavigationKey,
       _enterFullscreenOnNavigation,
@@ -131,6 +127,7 @@ class _PlaybackSettingsPageState extends ConsumerState<PlaybackSettingsPage> {
     );
     playerStateNotifier.setSubtitleTextAlignment(_subtitleTextAlignment);
     playerStateNotifier.setFeedStartRandom(_feedStartRandom);
+    playerStateNotifier.setResumePlayPosition(_resumePlayPosition);
   }
 
   @override
@@ -208,21 +205,6 @@ class _PlaybackSettingsPageState extends ConsumerState<PlaybackSettingsPage> {
                             setState(
                               () => _enterFullscreenOnNavigation = value,
                             );
-                            await _saveToggleSettings();
-                          },
-                        ),
-                        Divider(height: context.dimensions.spacingLarge),
-                        SwitchListTile.adaptive(
-                          contentPadding: EdgeInsets.zero,
-                          title: Text(
-                            context.l10n.settings_playback_direct_play,
-                          ),
-                          subtitle: Text(
-                            context.l10n.settings_playback_direct_play_subtitle,
-                          ),
-                          value: _directPlayOnNavigation,
-                          onChanged: (value) async {
-                            setState(() => _directPlayOnNavigation = value);
                             await _saveToggleSettings();
                           },
                         ),

@@ -1716,14 +1716,6 @@ class AppLocalizationsRu extends AppLocalizations {
       'Ориентация, управляемая гравитацией';
 
   @override
-  String get settings_playback_direct_play =>
-      'Прямое воспроизведение при навигации по сценам';
-
-  @override
-  String get settings_playback_direct_play_subtitle =>
-      'При переходе из другой воспроизводящейся сцены, сразу включать новую сцену';
-
-  @override
   String get settings_playback_open_fullscreen =>
       'Открывать сцены в полноэкранном режиме';
 

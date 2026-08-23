@@ -133,7 +133,6 @@ final class AppConfigSettingsRegistry {
     _double('subtitle_font_size', min: 8, max: 96),
     _double('subtitle_position_bottom_ratio', min: 0, max: 1),
     _string('subtitle_text_alignment', allowed: {'left', 'center', 'right'}),
-    _bool('video_direct_play_on_navigation'),
     _bool('video_enter_fullscreen_on_navigation'),
     _bool('feed_start_random'),
     _bool('video_resume_play_position'),

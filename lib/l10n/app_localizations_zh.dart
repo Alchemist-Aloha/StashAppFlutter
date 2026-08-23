@@ -1636,13 +1636,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settings_playback_gravity_orientation => '重力控制的方向';
 
   @override
-  String get settings_playback_direct_play => '切换场景时直接播放';
-
-  @override
-  String get settings_playback_direct_play_subtitle =>
-      '从另一个正在播放的场景切换过来时，直接播放新场景';
-
-  @override
   String get settings_playback_open_fullscreen => '以全屏模式打开场景';
 
   @override
@@ -4876,13 +4869,6 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String get settings_playback_gravity_orientation => '重力控制的方向';
-
-  @override
-  String get settings_playback_direct_play => '切换场景时直接播放';
-
-  @override
-  String get settings_playback_direct_play_subtitle =>
-      '从另一个正在播放的场景切换过来时，直接播放新场景';
 
   @override
   String get settings_playback_open_fullscreen => '以全屏模式打开场景';
@@ -8121,13 +8107,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get settings_playback_gravity_orientation => '重力控制的方向';
-
-  @override
-  String get settings_playback_direct_play => '切換場景時直接播放';
-
-  @override
-  String get settings_playback_direct_play_subtitle =>
-      '從另一個正在播放的場景切換過來時，直接播放新場景';
 
   @override
   String get settings_playback_open_fullscreen => '以全螢幕模式開啟場景';
