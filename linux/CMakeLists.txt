@@ -102,6 +102,14 @@ set(INSTALL_BUNDLE_LIB_DIR "${CMAKE_INSTALL_PREFIX}/lib")
 install(TARGETS ${BINARY_NAME} RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}"
   COMPONENT Runtime)
 
+# Fastforge derives Linux launcher names from pubspec.yaml rather than
+# BINARY_NAME. Keep the branded executable and provide the name its generated
+# AppRun and desktop files expect.
+install(PROGRAMS "${CMAKE_BINARY_DIR}/intermediates_do_not_run/${BINARY_NAME}"
+  DESTINATION "${CMAKE_INSTALL_PREFIX}"
+  RENAME "stash_app_flutter"
+  COMPONENT Runtime)
+
 install(FILES "${FLUTTER_ICU_DATA_FILE}" DESTINATION "${INSTALL_BUNDLE_DATA_DIR}"
   COMPONENT Runtime)
 

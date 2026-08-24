@@ -10,6 +10,9 @@ fi
 artifact_version=$1
 output_directory=$2
 project_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+if [[ "$output_directory" != /* ]]; then
+  output_directory="$project_root/$output_directory"
+fi
 bundle_directory="$project_root/build/linux/x64/release/bundle"
 package_root=$(mktemp -d)
 trap 'rm -rf -- "$package_root"' EXIT
