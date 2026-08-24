@@ -237,10 +237,10 @@ packages:
     dependency: transitive
     description:
       name: code_assets
-      sha256: bf394f466ba9205f1812a0433b392d6af280f155f56651eda7c18cc32ed493b8
+      sha256: cfd4f5f575a49c5f10ca856e9846073f1e6c3ee94912377eea5f6cefc5272941
       url: "https://pub.dev"
     source: hosted
-    version: "1.2.1"
+    version: "2.0.0"
   code_builder:
     dependency: transitive
     description:
@@ -349,10 +349,10 @@ packages:
     dependency: transitive
     description:
       name: dbus
-      sha256: "0ce9b0a839e6dee59a37a623d2fc26a35bbbe6404213e419b0d6411023d62645"
+      sha256: a48d5da28e89bd02196e80d81ed8d7954923d00a0f4a68cc20b575038f023383
       url: "https://pub.dev"
     source: hosted
-    version: "0.7.14"
+    version: "0.7.15"
   dio:
     dependency: "direct main"
     description:
@@ -1185,10 +1185,10 @@ packages:
     dependency: transitive
     description:
       name: objective_c
-      sha256: b7fb95a6d9a4f009edd63dc5ac69f07420b23a16161c6dd8660290b59c602e8e
+      sha256: ad56fd53a78ff6b1472fa59ff2a4e8b8ccabafc586fc263a1dfad0b99b5553e3
       url: "https://pub.dev"
     source: hosted
-    version: "9.5.0"
+    version: "9.6.0"
   octo_image:
     dependency: transitive
     description:
@@ -1694,10 +1694,10 @@ packages:
     dependency: transitive
     description:
       name: source_maps
-      sha256: "190222579a448b03896e0ca6eca5998fa810fda630c1d65e2f78b3f638f54812"
+      sha256: "14c2945847669b44089bb1222f66873d7ff7103c58911917f2a63c5a62327898"
       url: "https://pub.dev"
     source: hosted
-    version: "0.10.13"
+    version: "0.10.14"
   source_span:
     dependency: transitive
     description:
