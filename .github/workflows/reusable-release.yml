@@ -114,7 +114,8 @@ jobs:
             libavutil-dev \
             libswresample-dev \
             libarchive-tools \
-            fakeroot
+            fakeroot \
+            zstd
 
       - name: Generate macOS Flutter ephemeral files
         if: matrix.target == 'macos'
@@ -191,14 +192,36 @@ jobs:
           sudo chmod +x /usr/local/bin/appimagetool
           export APPIMAGE_EXTRACT_AND_RUN=1
           dart pub global activate fastforge 0.6.12
-          fastforge package --platform linux --targets deb,appimage,pacman --artifact-name 'StashFlow-{{build_name}}{{#has_build_number}}+{{build_number}}{{/has_build_number}}-{{platform}}{{#is_installer}}-setup{{/is_installer}}.{{ext}}'
-          find dist -type f \( -name '*.deb' -o -name '*.AppImage' -o -name '*.pacman' -o -name '*.pkg.tar.zst' \) -print0 | while IFS= read -r -d '' file; do
-            case "$file" in
-              *.pkg.tar.zst) extension=pkg.tar.zst ;;
-              *) extension="${file##*.}" ;;
-            esac
+          ln -s StashFlow build/linux/x64/release/bundle/stash_app_flutter
+          fastforge package --platform linux --targets deb,appimage --artifact-name 'StashFlow-{{build_name}}{{#has_build_number}}+{{build_number}}{{/has_build_number}}-{{platform}}{{#is_installer}}-setup{{/is_installer}}.{{ext}}'
+          find dist -type f \( -name '*.deb' -o -name '*.AppImage' \) -print0 | while IFS= read -r -d '' file; do
+            extension="${file##*.}"
             mv "$file" "$(dirname "$file")/StashFlow-${STASHFLOW_ARTIFACT_VERSION}-linux-x64.${extension}"
           done
+          scripts/build_linux_pacman.sh "$STASHFLOW_ARTIFACT_VERSION" "$PWD/dist"
+        shell: bash
+
+      - name: Validate Linux dists
+        if: matrix.target == 'linux'
+        run: |
+          appimage=$(find dist -type f -name '*.AppImage' -print -quit)
+          package=$(find dist -type f -name '*.pkg.tar.zst' -print -quit)
+          test -n "$appimage"
+          test -n "$package"
+
+          chmod +x "$appimage"
+          appimage_extract_directory=$(mktemp -d)
+          (
+            cd "$appimage_extract_directory"
+            "$GITHUB_WORKSPACE/$appimage" --appimage-extract >/dev/null
+            test -x squashfs-root/StashFlow
+            test -x squashfs-root/stash_app_flutter
+          )
+
+          bsdtar -xOf "$package" .PKGINFO | grep -Fx 'pkgname = stashflow'
+          bsdtar -xOf "$package" .PKGINFO | grep -Fx 'depend = gtk3'
+          bsdtar -xOf "$package" .PKGINFO | grep -Fx 'depend = libsecret'
+          test "$(bsdtar --numeric-owner -tvf "$package" | awk '$NF == "opt/StashFlow/StashFlow" { print $3 ":" $4 }')" = '0:0'
         shell: bash
 
       - name: Package Windows dists
