@@ -192,7 +192,7 @@ jobs:
           sudo chmod +x /usr/local/bin/appimagetool
           export APPIMAGE_EXTRACT_AND_RUN=1
           dart pub global activate fastforge 0.6.12
-          ln -s StashFlow build/linux/x64/release/bundle/stash_app_flutter
+          cp -a build/linux/x64/release/bundle/StashFlow build/linux/x64/release/bundle/stash_app_flutter
           fastforge package --platform linux --targets deb,appimage --artifact-name 'StashFlow-{{build_name}}{{#has_build_number}}+{{build_number}}{{/has_build_number}}-{{platform}}{{#is_installer}}-setup{{/is_installer}}.{{ext}}'
           find dist -type f \( -name '*.deb' -o -name '*.AppImage' \) -print0 | while IFS= read -r -d '' file; do
             extension="${file##*.}"
@@ -206,16 +206,18 @@ jobs:
         run: |
           appimage=$(find dist -type f -name '*.AppImage' -print -quit)
           package=$(find dist -type f -name '*.pkg.tar.zst' -print -quit)
-          test -n "$appimage"
-          test -n "$package"
+          test -n "$appimage" || { echo 'AppImage artifact not found' >&2; exit 1; }
+          test -n "$package" || { echo 'Pacman artifact not found' >&2; exit 1; }
+          echo "Validating $appimage"
+          echo "Validating $package"
 
           chmod +x "$appimage"
           appimage_extract_directory=$(mktemp -d)
           (
             cd "$appimage_extract_directory"
             "$GITHUB_WORKSPACE/$appimage" --appimage-extract >/dev/null
-            test -x squashfs-root/StashFlow
-            test -x squashfs-root/stash_app_flutter
+            test -x squashfs-root/StashFlow || { echo 'AppImage is missing the StashFlow executable' >&2; exit 1; }
+            test -x squashfs-root/stash_app_flutter || { echo 'AppImage is missing the Fastforge launcher executable' >&2; exit 1; }
           )
 
           bsdtar -xOf "$package" .PKGINFO | grep -Fx 'pkgname = stashflow'
