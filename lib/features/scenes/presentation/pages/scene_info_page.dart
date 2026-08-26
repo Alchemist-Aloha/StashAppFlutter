@@ -9,6 +9,7 @@ import '../../domain/entities/scene.dart';
 import '../../../../core/utils/l10n_extensions.dart';
 import '../providers/scene_details_provider.dart';
 import '../widgets/scene_info_media_section.dart';
+import '../widgets/scene_performer_title.dart';
 
 class SceneInfoPage extends ConsumerStatefulWidget {
   const SceneInfoPage({required this.scene, super.key});
@@ -184,6 +185,10 @@ class _SceneInfoPageState extends ConsumerState<SceneInfoPage> {
                           index < scene.performerImagePaths.length
                           ? scene.performerImagePaths[index]
                           : null;
+                      final performerBirthdate =
+                          index < scene.performerBirthdates.length
+                          ? scene.performerBirthdates[index]
+                          : null;
                       final hasImage =
                           performerImagePath != null &&
                           performerImagePath.trim().isNotEmpty &&
@@ -208,10 +213,12 @@ class _SceneInfoPageState extends ConsumerState<SceneInfoPage> {
                                 radius: 14,
                                 child: Icon(Icons.person, size: 14),
                               ),
-                        title: Text(
-                          performerName.isNotEmpty
+                        title: ScenePerformerTitle(
+                          performerName: performerName.isNotEmpty
                               ? performerName
                               : context.l10n.common_unknown,
+                          sceneDate: scene.date,
+                          birthdate: performerBirthdate,
                         ),
                         trailing: const Icon(Icons.chevron_right_rounded),
                         onTap:
