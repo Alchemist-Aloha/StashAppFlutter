@@ -5,12 +5,16 @@ import 'package:stash_app_flutter/features/scenes/presentation/widgets/scene_per
 
 void main() {
   group('ageAtSceneYear', () {
-    test('subtracts birth year without adjusting for birthday', () {
+    test('uses the exact birthday when available', () {
       expect(
         ageAtSceneYear(
           sceneDate: DateTime(2020, 1, 1),
           birthdate: '2000-12-31',
         ),
+        19,
+      );
+      expect(
+        ageAtSceneYear(sceneDate: DateTime(2020, 6, 1), birthdate: '2000'),
         20,
       );
     });
@@ -25,6 +29,10 @@ void main() {
       );
       expect(
         ageAtSceneYear(sceneDate: sceneDate, birthdate: '2021-01-01'),
+        isNull,
+      );
+      expect(
+        ageAtSceneYear(sceneDate: sceneDate, birthdate: '2000-02-30'),
         isNull,
       );
     });
@@ -44,12 +52,12 @@ void main() {
       ),
     );
 
-    expect(find.text('Alice (20)', findRichText: true), findsOneWidget);
+    expect(find.text('Alice (19)', findRichText: true), findsOneWidget);
     final text = tester.widget<Text>(find.byType(Text));
     final rootSpan = text.textSpan! as TextSpan;
     final ageSpan = rootSpan.children![1] as TextSpan;
     final context = tester.element(find.byType(ScenePerformerTitle));
-    expect(ageSpan.text, ' (20)');
+    expect(ageSpan.text, ' (19)');
     expect(
       ageSpan.style?.color,
       Theme.of(context).colorScheme.onSurfaceVariant,

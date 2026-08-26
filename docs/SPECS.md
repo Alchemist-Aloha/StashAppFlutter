@@ -253,9 +253,9 @@ Cover images open the dedicated fullscreen cover viewer with zoom/pan and a
 predictable exit gesture/action.
 
 Performer rows may display age derived from the performer's birthdate and the
-scene date. Age is calculated at the scene date, not the current date; invalid,
-missing, or pre-birth dates omit the suffix without triggering extra performer
-requests.
+scene date. Full birthdates account for whether the birthday had occurred;
+year-only birthdates use calendar-year subtraction. Invalid, missing, or
+pre-birth dates omit the suffix without triggering extra performer requests.
 
 ### Scene rating and metadata mutation
 
