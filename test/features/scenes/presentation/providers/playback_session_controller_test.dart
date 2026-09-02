@@ -151,7 +151,7 @@ void main() {
       expect(ticks, 1);
     });
 
-    test('disposeSession skips dispose for borrowed controller', () async {
+    test('disposeSession pauses borrowed controller', () async {
       final sessionController = PlaybackSessionController(
         createPlayer: () => player1,
         createVideoController: (_) => controller1,
@@ -160,6 +160,7 @@ void main() {
 
       await sessionController.disposeSession(isTestMode: false, log: (_) {});
 
+      verify(player1.pause()).called(1);
       verifyNever(player1.dispose());
     });
 
