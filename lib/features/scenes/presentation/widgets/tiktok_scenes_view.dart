@@ -47,7 +47,10 @@ final fullScreenModeProvider = NotifierProvider<FullScreenMode, bool>(
 /// - Synchronizing with system media controls (MediaSession).
 /// - Providing unique interactions like long-press to speed up.
 class TiktokScenesView extends ConsumerStatefulWidget {
-  const TiktokScenesView({super.key});
+  const TiktokScenesView({this.actions = const [], super.key});
+
+  /// Scene-list actions shown beside the active feed item.
+  final List<Widget> actions;
 
   @override
   ConsumerState<TiktokScenesView> createState() => _TiktokScenesViewState();
@@ -429,6 +432,7 @@ class _TiktokScenesViewState extends ConsumerState<TiktokScenesView> {
               return TiktokSceneItem(
                 scene: scene,
                 controller: controller,
+                actions: widget.actions,
                 useHero: isAtRoot && !playerState.isFullScreen,
               );
             },
@@ -445,11 +449,13 @@ class _TiktokScenesViewState extends ConsumerState<TiktokScenesView> {
 class TiktokSceneItem extends ConsumerStatefulWidget {
   final Scene scene;
   final VideoController? controller;
+  final List<Widget> actions;
   final bool useHero;
 
   const TiktokSceneItem({
     required this.scene,
     this.controller,
+    this.actions = const [],
     this.useHero = true,
     super.key,
   });
@@ -971,6 +977,10 @@ class _TiktokSceneItemState extends ConsumerState<TiktokSceneItem> {
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
+                                FeedActionMenu(actions: widget.actions),
+                                SizedBox(
+                                  height: context.dimensions.spacingSmall,
+                                ),
                                 Column(
                                   children: [
                                     _OverlayButton(
@@ -1107,12 +1117,59 @@ class _TiktokSceneItemState extends ConsumerState<TiktokSceneItem> {
   }
 }
 
+/// Collapses secondary feed actions behind a chevron above the rating button.
+class FeedActionMenu extends StatefulWidget {
+  const FeedActionMenu({required this.actions, super.key});
+
+  final List<Widget> actions;
+
+  @override
+  State<FeedActionMenu> createState() => _FeedActionMenuState();
+}
+
+class _FeedActionMenuState extends State<FeedActionMenu> {
+  bool _expanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (_expanded)
+          IconTheme.merge(
+            key: const Key('feed_actions'),
+            data: const IconThemeData(color: Colors.white),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: widget.actions,
+            ),
+          ),
+        _OverlayButton(
+          key: const Key('feed_actions_toggle'),
+          icon: _expanded
+              ? Icons.keyboard_arrow_down_rounded
+              : Icons.keyboard_arrow_up_rounded,
+          tooltip: _expanded
+              ? context.l10n.common_hide
+              : context.l10n.common_show,
+          onTap: () => setState(() => _expanded = !_expanded),
+        ),
+      ],
+    );
+  }
+}
+
 class _OverlayButton extends StatelessWidget {
   final IconData icon;
   final String? tooltip;
   final VoidCallback onTap;
 
-  const _OverlayButton({required this.icon, this.tooltip, required this.onTap});
+  const _OverlayButton({
+    required this.icon,
+    this.tooltip,
+    required this.onTap,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

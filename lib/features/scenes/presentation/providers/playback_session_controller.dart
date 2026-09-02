@@ -93,7 +93,8 @@ class PlaybackSessionController {
 
     if (prevPlayer != null) {
       if (_isUsingBorrowedController) {
-        log('provider skipping dispose of borrowed controller');
+        await prevPlayer.pause();
+        log('provider paused borrowed controller instead of disposing it');
         _isUsingBorrowedController = false;
       } else {
         await prevPlayer.dispose();

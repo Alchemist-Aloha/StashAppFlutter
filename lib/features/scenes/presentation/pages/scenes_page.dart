@@ -512,13 +512,68 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
     final router = GoRouter.of(context);
     final currentPath = router.routeInformationProvider.value.uri.path;
     final isAtRoot = currentPath == '/scenes';
+    final sceneActions = <Widget>[
+      Stack(
+        children: [
+          IconButton(
+            icon: const Icon(Icons.sort),
+            tooltip: context.l10n.scenes_sort_tooltip,
+            onPressed: _showSortPanel,
+          ),
+          if (_sortField != _SceneSortField.date || !_sortDescending)
+            Positioned(
+              right: 8,
+              top: 8,
+              child: Container(
+                padding: const EdgeInsets.all(2),
+                decoration: BoxDecoration(
+                  color: context.colors.secondary,
+                  shape: BoxShape.circle,
+                ),
+                constraints: const BoxConstraints(minWidth: 8, minHeight: 8),
+              ),
+            ),
+        ],
+      ),
+      Stack(
+        children: [
+          IconButton(
+            tooltip: context.l10n.common_filter,
+            icon: const Icon(Icons.filter_list),
+            onPressed: _showFilterPanel,
+          ),
+          if (hasActiveFilters)
+            Positioned(
+              right: 8,
+              top: 8,
+              child: Container(
+                padding: const EdgeInsets.all(2),
+                decoration: BoxDecoration(
+                  color: context.colors.secondary,
+                  shape: BoxShape.circle,
+                ),
+                constraints: const BoxConstraints(minWidth: 8, minHeight: 8),
+              ),
+            ),
+        ],
+      ),
+      IconButton(
+        tooltip: context.l10n.common_saved_filters,
+        icon: const Icon(Icons.bookmarks_outlined),
+        onPressed: _showSavedFilterDialog,
+      ),
+      IconButton(
+        tooltip: context.l10n.scenes_page_markers_tooltip,
+        icon: const Icon(Icons.sell_outlined),
+        onPressed: () => context.push('/scenes/markers'),
+      ),
+    ];
 
     return ListPageScaffold<Scene>(
       title: context.l10n.appTitle,
       searchHint: context.l10n.scenes_search_hint,
       onSearchChanged: _onSearchChanged,
       provider: scenesAsync,
-      actionsInTopPanel: isTiktokLayout,
       memCacheWidthBuilder: (context, isGrid) {
         if (!isGrid) return 640;
         final padding = AppTheme.spacingSmall * 2;
@@ -531,7 +586,9 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
             crossAxisCount;
         return (itemWidth * 2).toInt();
       },
-      customBody: isTiktokLayout ? const TiktokScenesView() : null,
+      customBody: isTiktokLayout
+          ? TiktokScenesView(actions: sceneActions)
+          : null,
       scrollController: scrollController,
       useMasonry: isGridView,
       hideAppBar: isTiktokLayout && isFullScreen,
@@ -540,62 +597,7 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
           ref.read(sceneListProvider.notifier).fetchNextPage(),
       loadingItemBuilder: (context, isGrid, index) =>
           SceneCard.skeleton(isGrid: isGrid, useMasonry: isGrid),
-      actions: [
-        Stack(
-          children: [
-            IconButton(
-              icon: const Icon(Icons.sort),
-              tooltip: context.l10n.scenes_sort_tooltip,
-              onPressed: _showSortPanel,
-            ),
-            if (_sortField != _SceneSortField.date || !_sortDescending)
-              Positioned(
-                right: 8,
-                top: 8,
-                child: Container(
-                  padding: const EdgeInsets.all(2),
-                  decoration: BoxDecoration(
-                    color: context.colors.secondary,
-                    shape: BoxShape.circle,
-                  ),
-                  constraints: const BoxConstraints(minWidth: 8, minHeight: 8),
-                ),
-              ),
-          ],
-        ),
-        Stack(
-          children: [
-            IconButton(
-              tooltip: context.l10n.common_filter,
-              icon: const Icon(Icons.filter_list),
-              onPressed: _showFilterPanel,
-            ),
-            if (hasActiveFilters)
-              Positioned(
-                right: 8,
-                top: 8,
-                child: Container(
-                  padding: const EdgeInsets.all(2),
-                  decoration: BoxDecoration(
-                    color: context.colors.secondary,
-                    shape: BoxShape.circle,
-                  ),
-                  constraints: const BoxConstraints(minWidth: 8, minHeight: 8),
-                ),
-              ),
-          ],
-        ),
-        IconButton(
-          tooltip: context.l10n.common_saved_filters,
-          icon: const Icon(Icons.bookmarks_outlined),
-          onPressed: _showSavedFilterDialog,
-        ),
-        IconButton(
-          tooltip: context.l10n.scenes_page_markers_tooltip,
-          icon: const Icon(Icons.sell_outlined),
-          onPressed: () => context.push('/scenes/markers'),
-        ),
-      ],
+      actions: isTiktokLayout ? const [] : sceneActions,
       gridDelegate: isGridView
           ? GridUtils.createDelegate(
               context,
