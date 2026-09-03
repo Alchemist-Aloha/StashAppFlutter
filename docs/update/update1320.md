@@ -8,3 +8,8 @@
 ## ▶️ Playback
 
 - Paused borrowed video controllers when switching playback sessions, preventing the previous scene from continuing to play in the background.
+
+## ⚡ Performance
+
+- Reduced startup delays by opening the persistent GraphQL cache after the first frame while preserving cache changes made during launch.
+- Smoothed masonry-grid scrolling by preparing more content ahead of the visible area, reducing stalls during faster browsing.
