@@ -230,7 +230,7 @@ class _ListPageScaffoldState<T> extends ConsumerState<ListPageScaffold<T>> {
     // during layout and scroll operations.
     // Impact: Avoids multiple O(1) inherited widget lookups and redundant layout mathematics per frame.
     final screenWidth = MediaQuery.sizeOf(context).width;
-    final masonryCacheExtent = MediaQuery.sizeOf(context).height * 2;
+    final masonryCacheExtent = MediaQuery.sizeOf(context).height * 3;
     final isGrid = widget.gridDelegate != null;
     final responsiveDelegate = isGrid
         ? _getResponsiveGridDelegate(context)

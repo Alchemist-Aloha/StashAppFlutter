@@ -332,7 +332,7 @@ baseline using the same five-launch workload from §8.1.
 The higher repeated baseline confirms that comparisons should use measurements
 from the same session instead of the older 4,040 cpu-ms median alone.
 
-### 9.2 Accepted approach — two masonry cache viewports
+### 9.2 Accepted intermediate approach — two masonry cache viewports
 
 The earlier half-viewport experiment made active scrolling worse. The inverse
 change increases the masonry cache from one viewport to two, matching the
@@ -348,6 +348,29 @@ active scroll burst.
 Result: **accepted**. The CPU improvement is clear in both median and mean,
 while median RSS is effectively unchanged. The cache-extent contract test was
 updated from 600 to 1,200 pixels for the 600-pixel test viewport.
+
+Verification before commit:
+
+- Focused `ListPageScaffold` and `SceneCard` tests: **23 passed**.
+- Full Flutter suite: **606 tests passed**.
+- Linux profile build succeeded.
+- Android split-ABI release APKs built for armeabi-v7a, arm64-v8a, and x86_64.
+
+### 9.3 Accepted approach — three masonry cache viewports
+
+Increasing the cache from two to three viewports produced another large CPU
+reduction during the same scroll workload, at a measurable memory cost.
+
+| metric | runs | median | mean | stdev | vs two viewports | vs repeated baseline |
+|---|---|---:|---:|---:|---:|---:|
+| burst cpu-ms | 3,790, 3,240, 3,090, 3,460, 3,180 | **3,240** | 3,352 | 251 | **−19.2% median** | **−26.5% median** |
+| burst CPU % | 81.5, 69.5, 66.2, 74.4, 68.7 | **69.5** | 72.1 | 5.4 | **−20.3% median** | **−27.4% median** |
+| RSS after (MB) | 555.4, 579.1, 553.2, 572.8, 526.7 | **555.4** | 557.4 | 18.3 | +28.1 MB median | +29.5 MB median |
+
+Result: **accepted**. CPU improved clearly in both median and mean. Median RSS
+rose by about 5.3% versus two viewports, which is the expected cost of keeping
+another viewport of rich cards ready ahead of the scroll position. The
+cache-extent contract test now expects 1,800 pixels for a 600-pixel viewport.
 
 Verification before commit:
 
