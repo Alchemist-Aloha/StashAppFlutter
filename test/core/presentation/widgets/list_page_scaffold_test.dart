@@ -328,7 +328,7 @@ void main() {
       );
       expect(
         masonryViewport.scrollCacheExtent,
-        const ScrollCacheExtent.pixels(600),
+        const ScrollCacheExtent.pixels(1200),
       );
       expect(
         (tester

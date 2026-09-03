@@ -312,3 +312,46 @@ e.g.:
 The recommended next concrete step remains profiling frame build/raster with
 DevTools on a GPU-backed machine, where genuine hotspots (and fixes) will be
 far easier to see than under software rendering.
+
+---
+
+## 9. Follow-up optimization pass
+
+Follow-up experiment (2026-09-02): rerun the unchanged baseline to account for
+machine/session drift, then evaluate additional changes against that new
+baseline using the same five-launch workload from §8.1.
+
+### 9.1 Repeated baseline
+
+| metric | runs | median | mean | stdev | min | max |
+|---|---|---:|---:|---:|---:|---:|
+| burst cpu-ms | 4,670, 4,640, 4,020, 4,380, 4,410 | **4,410** | 4,424 | 233 | 4,020 | 4,670 |
+| burst CPU % | 99.9, 100.6, 86.4, 95.3, 95.7 | **95.7** | 95.6 | 5.1 | 86.4 | 100.6 |
+| RSS after (MB) | 525.9, 566.4, 498.8, 534.4, 511.7 | **525.9** | 527.4 | 23.0 | 498.8 | 566.4 |
+
+The higher repeated baseline confirms that comparisons should use measurements
+from the same session instead of the older 4,040 cpu-ms median alone.
+
+### 9.2 Accepted approach — two masonry cache viewports
+
+The earlier half-viewport experiment made active scrolling worse. The inverse
+change increases the masonry cache from one viewport to two, matching the
+existing fixed-grid/list policy and moving more card construction ahead of the
+active scroll burst.
+
+| metric | runs | median | mean | stdev | vs repeated baseline |
+|---|---|---:|---:|---:|---:|
+| burst cpu-ms | 4,010, 3,830, 4,170, 3,980, 4,100 | **4,010** | 4,018 | 115 | **−9.1% median / −9.2% mean** |
+| burst CPU % | 87.2, 82.0, 89.9, 85.2, 88.5 | **87.2** | 86.6 | 2.8 | **−8.9% median** |
+| RSS after (MB) | 503.5, 527.3, 559.7, 548.2, 518.4 | **527.3** | 531.4 | 20.2 | +1.4 MB median |
+
+Result: **accepted**. The CPU improvement is clear in both median and mean,
+while median RSS is effectively unchanged. The cache-extent contract test was
+updated from 600 to 1,200 pixels for the 600-pixel test viewport.
+
+Verification before commit:
+
+- Focused `ListPageScaffold` and `SceneCard` tests: **23 passed**.
+- Full Flutter suite: **606 tests passed**.
+- Linux profile build succeeded.
+- Android split-ABI release APKs built for armeabi-v7a, arm64-v8a, and x86_64.
