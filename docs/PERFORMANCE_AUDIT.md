@@ -394,3 +394,70 @@ avoid work as cards pass beneath a stationary cursor during scrolling.
 Result: **discarded**. The small median improvement was not supported by the
 mean, run-to-run variance increased sharply, and memory rose. The original
 hover behavior was restored.
+
+---
+
+## 10. Startup optimization pass
+
+Follow-up experiment (2026-09-02): benchmark the current startup path, profile
+its awaited stages, and retain only changes that improve five-run first-frame
+statistics while preserving application behavior.
+
+### 10.1 Method
+
+- Target: Linux **profile** build, launched as a fresh process five times per
+  variant under XWayland.
+- Primary metric: elapsed time from Dart `main()` entry to Flutter's first
+  rendered frame, using the existing startup stopwatch in `main.dart`.
+- End-to-end cross-check: wall time from process spawn until that first-frame
+  signal. Native window appearance was sampled separately to distinguish
+  engine/process loading from application initialization.
+- Each run used an isolated copy of SharedPreferences with diagnostic logging
+  enabled only so the existing first-frame signal could be captured. The live
+  profile and cache were not modified by the harness.
+
+### 10.2 Baseline
+
+| metric | runs (ms) | median | mean | stdev | min | max |
+|---|---|---:|---:|---:|---:|---:|
+| `main()` → first frame | 260, 224, 235, 240, 261 | **240.0** | 244.0 | 14.4 | 224.0 | 261.0 |
+| process spawn → first frame | 660.7, 548.8, 582.3, 591.3, 584.2 | **584.2** | 593.5 | 36.7 | 548.8 | 660.7 |
+| process spawn → native window | 260.1, 188.2, 201.7, 210.3, 183.4 | **201.7** | 208.7 | 27.4 | 183.4 | 260.1 |
+
+Temporary stage timing attributed about **193 ms** of a representative 260 ms
+startup to opening the 15 MB persistent GraphQL Hive cache. Desktop window
+configuration took about 8 ms inside `main()`, while AudioService and
+SharedPreferences together added about 1 ms in that run.
+
+### 10.3 Attempts
+
+| # | Change | `main()` median / mean | spawn median / mean | Result |
+|---|---|---:|---:|---|
+| 1 | Remove the pre-maximize 800×600 resize | 239.0 / 242.4 ms | 609.1 / 602.3 ms | **discarded** — app time was unchanged and end-to-end median regressed |
+| 2 | Use only an in-memory GraphQL cache | 58.0 / 60.0 ms | 419.1 / 425.3 ms | diagnostic upper bound; replaced with the persistence-preserving approach below |
+| 3 | Start with an in-memory GraphQL store, then attach and merge the existing Hive store after the first frame | **58.0 / 60.4 ms** | **434.0 / 432.4 ms** | **accepted** |
+| 4 | Also defer cache-limit filesystem maintenance until after the frame | 61.0 / 63.2 ms | 430.6 / 427.2 ms | **discarded** — primary median and mean regressed; end-to-end change was mixed |
+| 5 | Initialize MediaKit only on the first playback request | 60.0 / 61.0 ms | 438.4 / 433.0 ms | **discarded** — no improvement over accepted approach 3 |
+
+The accepted implementation improves `main()` → first frame by **75.8% median
+and 75.2% mean**. End-to-end process startup improves by **25.7% median and
+27.2% mean**. `DeferredGraphqlStore` records early writes, deletes, and resets;
+when Hive finishes opening, startup mutations are replayed over the persistent
+cache so disk persistence remains available for the rest of the session.
+
+### 10.4 Final retained-code confirmation
+
+After restoring all rejected experiments and completing the deferred-store
+tests, the exact retained code was rebuilt and measured for five more launches.
+Each process remained alive for one second after its first frame so deferred
+Hive attachment failures could be captured.
+
+| metric | runs (ms) | median | mean | stdev | vs baseline median |
+|---|---|---:|---:|---:|---:|
+| `main()` → first frame | 63, 61, 57, 61, 58 | **61.0** | 60.0 | 2.2 | **−74.6%** |
+| process spawn → first frame | 483.1, 385.7, 389.6, 376.9, 402.4 | **389.6** | 407.5 | 38.7 | **−33.3%** |
+
+No persistent-cache initialization errors were observed in any confirmation
+run. Full verification completed with **609 tests passing**; static analysis
+introduced no new findings (one unrelated pre-existing warning remains in
+`auth_provider.dart`).

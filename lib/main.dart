@@ -27,6 +27,8 @@ import 'core/presentation/theme/theme_color_provider.dart';
 import 'core/presentation/theme/true_black_provider.dart';
 import 'core/presentation/providers/layout_settings_provider.dart';
 import 'core/presentation/widgets/app_lock_gate.dart';
+import 'core/data/graphql/deferred_graphql_store.dart';
+import 'core/data/graphql/graphql_client.dart';
 
 import 'core/utils/environment.dart' as env;
 
@@ -77,17 +79,6 @@ Future<void> main() async {
     } catch (_) {
       // Ignore if PaintingBinding isn't available in some test environments.
     }
-    // Initialize Hive for the GraphQL cache in a OS-managed cache directory
-    // instead of the persistent app documents directory. This prevents the
-    // GraphQL cache (which can contain large base64-encoded images from
-    // scraping operations) from consuming GB-level persistent storage.
-    // Android clears this directory automatically when storage is low.
-    if (!kIsWeb) {
-      final cacheDir = await getTemporaryDirectory();
-      final hivePath = p.join(cacheDir.path, 'stash_graphql_cache');
-      HiveStore.init(onPath: hivePath);
-    }
-    await HiveStore.open();
     PipMode.initialize();
 
     if (!isTestMode) {
@@ -116,6 +107,7 @@ Future<void> main() async {
     final secureStorage = AppSecureStorage(
       sharedPreferences: sharedPreferences,
     );
+    final graphqlStore = DeferredGraphqlStore();
 
     // Migrate API key from SharedPreferences to Secure Storage if needed.
     if (sharedPreferences.containsKey('server_api_key')) {
@@ -156,6 +148,7 @@ Future<void> main() async {
         overrides: [
           sharedPreferencesProvider.overrideWithValue(sharedPreferences),
           secureStorageProvider.overrideWithValue(secureStorage),
+          graphqlCacheStoreProvider.overrideWithValue(graphqlStore),
         ],
         child: const MyApp(),
       ),
@@ -166,10 +159,31 @@ Future<void> main() async {
       debugPrint(
         'Startup: first frame rendered in ${startupStopwatch.elapsedMilliseconds}ms',
       );
+      unawaited(_attachPersistentGraphqlStore(graphqlStore));
     });
   } catch (error, stackTrace) {
     AppLogStore.instance.add('$error\n$stackTrace', source: 'startup_error');
     runApp(StartupErrorApp(error: error, stackTrace: stackTrace));
+  }
+}
+
+Future<void> _attachPersistentGraphqlStore(
+  DeferredGraphqlStore deferredStore,
+) async {
+  try {
+    if (!kIsWeb) {
+      final cacheDir = await getTemporaryDirectory();
+      final hivePath = p.join(cacheDir.path, 'stash_graphql_cache');
+      HiveStore.init(onPath: hivePath);
+    }
+    final persistentStore = await HiveStore.open();
+    deferredStore.attach(persistentStore);
+  } catch (error, stackTrace) {
+    debugPrint('Startup: GraphQL cache initialization failed: $error');
+    AppLogStore.instance.add(
+      '$error\n$stackTrace',
+      source: 'graphql_cache_initialization',
+    );
   }
 }
 
