@@ -378,3 +378,19 @@ Verification before commit:
 - Full Flutter suite: **606 tests passed**.
 - Linux profile build succeeded.
 - Android split-ABI release APKs built for armeabi-v7a, arm64-v8a, and x86_64.
+
+### 9.4 Rejected approach — defer desktop VTT probing
+
+This variant stopped `MouseRegion.onEnter` from probing VTT sprite metadata and
+left probing to actual pointer movement or touch dragging. It was intended to
+avoid work as cards pass beneath a stationary cursor during scrolling.
+
+| metric | runs | median | mean | stdev | vs three viewports |
+|---|---|---:|---:|---:|---:|
+| burst cpu-ms | 3,070, 2,990, 3,560, 3,090, 4,110 | **3,090** | 3,364 | 423 | −4.6% median / **+0.4% mean** |
+| burst CPU % | 66.2, 63.8, 77.0, 65.6, 88.6 | **66.2** | 72.2 | 9.4 | −4.7% median / +0.2% mean |
+| RSS after (MB) | 590.2, 581.4, 570.1, 541.9, 603.2 | **581.4** | 577.4 | 20.8 | +26.0 MB median |
+
+Result: **discarded**. The small median improvement was not supported by the
+mean, run-to-run variance increased sharply, and memory rose. The original
+hover behavior was restored.
