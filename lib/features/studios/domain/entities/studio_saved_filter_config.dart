@@ -24,7 +24,7 @@ class StudioSavedFilterConfig extends SavedFilterConfig<StudioFilter> {
       emptyFilter: StudioFilter.empty(),
       fromJson: StudioFilter.fromJson,
       serverToLocalKeys: _serverToLocalKeys,
-      normalizeValue: _normalizeServerValue,
+      criterionTypes: _criterionTypes,
     );
 
     return StudioSavedFilterConfig(
@@ -51,17 +51,9 @@ class StudioSavedFilterConfig extends SavedFilterConfig<StudioFilter> {
       objectFilter: savedFilterToServerObjectFilter(
         localJson: filter.toJson(),
         localToServerKeys: _localToServerKeys,
+        criterionTypes: _criterionTypes,
       ),
     );
-  }
-
-  static Object? _normalizeServerValue(String localKey, Object? value) {
-    if (_booleanFields.contains(localKey)) {
-      return savedFilterReadBooleanCriterionValue(value) ??
-          savedFilterSkipValue;
-    }
-    if (localKey == 'isMissing') return savedFilterSkipValue;
-    return value;
   }
 
   static const _localToServerKeys = {
@@ -76,16 +68,22 @@ class StudioSavedFilterConfig extends SavedFilterConfig<StudioFilter> {
     'childCount': 'child_count',
     'createdAt': 'created_at',
     'updatedAt': 'updated_at',
+    'stashIdEndpoint': 'stash_id_endpoint',
+    'customFields': 'custom_fields',
   };
 
   static final _serverToLocalKeys = {
     for (final entry in _localToServerKeys.entries) entry.value: entry.key,
   };
 
-  static const _booleanFields = {
-    'favorite',
-    'ignoreAutoTag',
-    'organized',
-    'isMissing',
+  static const _criterionTypes = {
+    'favorite': SavedFilterCriterionType.boolean,
+    'ignoreAutoTag': SavedFilterCriterionType.boolean,
+    'organized': SavedFilterCriterionType.boolean,
+    'isMissing': SavedFilterCriterionType.stringValue,
+    'parentStudios': SavedFilterCriterionType.labeled,
+    'tags': SavedFilterCriterionType.hierarchical,
+    'stashIdEndpoint': SavedFilterCriterionType.stashId,
+    'customFields': SavedFilterCriterionType.customFields,
   };
 }

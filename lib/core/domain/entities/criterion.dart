@@ -91,6 +91,7 @@ Map<String, dynamic> _flattenSavedRangeCriterion(
 abstract class MultiCriterion with _$MultiCriterion {
   const factory MultiCriterion({
     required List<String> value,
+    @Default(<String>[]) List<String> excludes,
     @Default(CriterionModifier.includes) CriterionModifier modifier,
   }) = _MultiCriterion;
 
@@ -102,9 +103,63 @@ abstract class MultiCriterion with _$MultiCriterion {
 abstract class HierarchicalMultiCriterion with _$HierarchicalMultiCriterion {
   const factory HierarchicalMultiCriterion({
     required List<String> value,
+    @Default(<String>[]) List<String> excludes,
+    @Default(0) int depth,
     @Default(CriterionModifier.includes) CriterionModifier modifier,
   }) = _HierarchicalMultiCriterion;
 
   factory HierarchicalMultiCriterion.fromJson(Map<String, dynamic> json) =>
       _$HierarchicalMultiCriterionFromJson(json);
+}
+
+@freezed
+abstract class PhashCriterion with _$PhashCriterion {
+  const factory PhashCriterion({
+    required String value,
+    int? distance,
+    @Default(CriterionModifier.equals) CriterionModifier modifier,
+  }) = _PhashCriterion;
+
+  factory PhashCriterion.fromJson(Map<String, dynamic> json) =>
+      _$PhashCriterionFromJson(_flattenSavedPhashCriterion(json));
+}
+
+@freezed
+abstract class StashIdCriterion with _$StashIdCriterion {
+  const factory StashIdCriterion({
+    @Default('') String endpoint,
+    @Default('') String stashId,
+    @Default(CriterionModifier.equals) CriterionModifier modifier,
+  }) = _StashIdCriterion;
+
+  factory StashIdCriterion.fromJson(Map<String, dynamic> json) =>
+      _$StashIdCriterionFromJson(_flattenSavedStashIdCriterion(json));
+}
+
+Map<String, dynamic> _flattenSavedStashIdCriterion(Map<String, dynamic> json) {
+  final value = json['value'];
+  if (value is! Map) return json;
+  return {
+    ...json,
+    'endpoint': value['endpoint'] ?? '',
+    'stashId': value['stashID'] ?? value['stash_id'] ?? '',
+  };
+}
+
+@freezed
+abstract class CustomFieldCriterion with _$CustomFieldCriterion {
+  const factory CustomFieldCriterion({
+    required String field,
+    @Default(<Object>[]) List<Object> value,
+    @Default(CriterionModifier.equals) CriterionModifier modifier,
+  }) = _CustomFieldCriterion;
+
+  factory CustomFieldCriterion.fromJson(Map<String, dynamic> json) =>
+      _$CustomFieldCriterionFromJson(json);
+}
+
+Map<String, dynamic> _flattenSavedPhashCriterion(Map<String, dynamic> json) {
+  final value = json['value'];
+  if (value is! Map) return json;
+  return {...json, 'value': value['value'], 'distance': value['distance']};
 }

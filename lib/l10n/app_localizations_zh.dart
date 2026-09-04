@@ -3237,6 +3237,60 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get settings_config_plaintext_label => '凭据将以可读文本形式存储在导出的文件中。';
+
+  @override
+  String get scenes_field_production_date => '制作日期';
+
+  @override
+  String get sort_o_count_all => '高潮次数（含下属工作室）';
+
+  @override
+  String get sort_performers_count_all => '演员数量（含下属工作室）';
+
+  @override
+  String get sort_scene_marker_count => '场景标记数量';
+
+  @override
+  String get sort_sub_group_description => '子集合说明';
+
+  @override
+  String get sort_sub_group_order => '子集合排序';
+
+  @override
+  String get sort_scene_id => '场景 ID';
+
+  @override
+  String get sort_scenes_updated_at => '场景更新时间';
+
+  @override
+  String get filter_ids => 'ID（以逗号分隔）';
+
+  @override
+  String get filter_excluded_ids => '排除的 ID（以逗号分隔）';
+
+  @override
+  String get filter_depth => '层级深度';
+
+  @override
+  String get filter_distance => '距离';
+
+  @override
+  String get filter_endpoint => '端点';
+
+  @override
+  String get filter_custom_fields => '自定义字段';
+
+  @override
+  String get filter_field => '字段';
+
+  @override
+  String get filter_values => '值（以逗号分隔）';
+
+  @override
+  String get filter_folder => '文件夹';
+
+  @override
+  String get filter_photographer => '摄影师';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hans`).
@@ -6472,6 +6526,60 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String get settings_config_plaintext_label => '凭据将以可读文本形式存储在导出的文件中。';
+
+  @override
+  String get scenes_field_production_date => '制作日期';
+
+  @override
+  String get sort_o_count_all => '高潮次数（含下属工作室）';
+
+  @override
+  String get sort_performers_count_all => '演员数量（含下属工作室）';
+
+  @override
+  String get sort_scene_marker_count => '场景标记数量';
+
+  @override
+  String get sort_sub_group_description => '子集合说明';
+
+  @override
+  String get sort_sub_group_order => '子集合排序';
+
+  @override
+  String get sort_scene_id => '场景 ID';
+
+  @override
+  String get sort_scenes_updated_at => '场景更新时间';
+
+  @override
+  String get filter_ids => 'ID（以逗号分隔）';
+
+  @override
+  String get filter_excluded_ids => '排除的 ID（以逗号分隔）';
+
+  @override
+  String get filter_depth => '层级深度';
+
+  @override
+  String get filter_distance => '距离';
+
+  @override
+  String get filter_endpoint => '端点';
+
+  @override
+  String get filter_custom_fields => '自定义字段';
+
+  @override
+  String get filter_field => '字段';
+
+  @override
+  String get filter_values => '值（以逗号分隔）';
+
+  @override
+  String get filter_folder => '文件夹';
+
+  @override
+  String get filter_photographer => '摄影师';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -9715,4 +9823,58 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get settings_config_plaintext_label => '憑證會以可讀文字形式儲存在匯出的檔案中。';
+
+  @override
+  String get scenes_field_production_date => '製作日期';
+
+  @override
+  String get sort_o_count_all => '高潮次數（含下屬工作室）';
+
+  @override
+  String get sort_performers_count_all => '演員數量（含下屬工作室）';
+
+  @override
+  String get sort_scene_marker_count => '場景標記數量';
+
+  @override
+  String get sort_sub_group_description => '子集合說明';
+
+  @override
+  String get sort_sub_group_order => '子集合排序';
+
+  @override
+  String get sort_scene_id => '場景 ID';
+
+  @override
+  String get sort_scenes_updated_at => '場景更新時間';
+
+  @override
+  String get filter_ids => 'ID（以逗號分隔）';
+
+  @override
+  String get filter_excluded_ids => '排除的 ID（以逗號分隔）';
+
+  @override
+  String get filter_depth => '階層深度';
+
+  @override
+  String get filter_distance => '距離';
+
+  @override
+  String get filter_endpoint => '端點';
+
+  @override
+  String get filter_custom_fields => '自訂欄位';
+
+  @override
+  String get filter_field => '欄位';
+
+  @override
+  String get filter_values => '值（以逗號分隔）';
+
+  @override
+  String get filter_folder => '資料夾';
+
+  @override
+  String get filter_photographer => '攝影師';
 }

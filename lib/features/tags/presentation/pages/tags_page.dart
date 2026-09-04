@@ -31,6 +31,8 @@ enum _TagSortOption {
   groupCount,
   markerCount,
   studioCount,
+  createdAt,
+  updatedAt,
 }
 
 class TagsPage extends ConsumerStatefulWidget {
@@ -76,6 +78,8 @@ class _TagsPageState extends ConsumerState<TagsPage> {
       _TagSortOption.groupCount => 'groups_count',
       _TagSortOption.markerCount => 'scene_markers_count',
       _TagSortOption.studioCount => 'studios_count',
+      _TagSortOption.createdAt => 'created_at',
+      _TagSortOption.updatedAt => 'updated_at',
     };
 
     ref
@@ -96,6 +100,8 @@ class _TagsPageState extends ConsumerState<TagsPage> {
       'group_count' || 'groups_count' => _TagSortOption.groupCount,
       'marker_count' || 'scene_markers_count' => _TagSortOption.markerCount,
       'studio_count' || 'studios_count' => _TagSortOption.studioCount,
+      'created_at' => _TagSortOption.createdAt,
+      'updated_at' => _TagSortOption.updatedAt,
       _ => _TagSortOption.name,
     };
   }
@@ -124,6 +130,10 @@ class _TagsPageState extends ConsumerState<TagsPage> {
         return context.l10n.sort_marker_count;
       case _TagSortOption.studioCount:
         return context.l10n.sort_studios_count;
+      case _TagSortOption.createdAt:
+        return context.l10n.sort_created_at;
+      case _TagSortOption.updatedAt:
+        return context.l10n.sort_updated_at;
     }
   }
 

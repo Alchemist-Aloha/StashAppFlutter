@@ -145,8 +145,12 @@ class GraphQLTagRepository {
             parent_count: mapIntCriterion(tagFilter?.parentCount),
             child_count: mapIntCriterion(tagFilter?.childCount),
             ignore_auto_tag: tagFilter?.ignoreAutoTag,
+            stash_id_endpoint: mapStashIdCriterion(tagFilter?.stashIdEndpoint),
             created_at: mapTimestampCriterion(tagFilter?.createdAt),
             updated_at: mapTimestampCriterion(tagFilter?.updatedAt),
+            custom_fields: mapCustomFieldCriteria(
+              tagFilter?.customFields ?? const [],
+            ),
           ),
         ),
       ),

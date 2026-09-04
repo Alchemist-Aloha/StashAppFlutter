@@ -81,6 +81,7 @@ Input$MultiCriterionInput? mapMultiCriterion(MultiCriterion? criterion) {
   return Input$MultiCriterionInput(
     value: criterion.value,
     modifier: mapModifier(criterion.modifier),
+    excludes: criterion.excludes.isEmpty ? null : criterion.excludes,
   );
 }
 
@@ -91,7 +92,46 @@ Input$HierarchicalMultiCriterionInput? mapHierarchicalMultiCriterion(
   return Input$HierarchicalMultiCriterionInput(
     value: criterion.value,
     modifier: mapModifier(criterion.modifier),
+    depth: criterion.depth == 0 ? null : criterion.depth,
+    excludes: criterion.excludes.isEmpty ? null : criterion.excludes,
   );
+}
+
+Input$PhashDistanceCriterionInput? mapPhashCriterion(
+  PhashCriterion? criterion,
+) {
+  if (criterion == null) return null;
+  return Input$PhashDistanceCriterionInput(
+    value: criterion.value,
+    distance: criterion.distance,
+    modifier: mapModifier(criterion.modifier),
+  );
+}
+
+Input$StashIDCriterionInput? mapStashIdCriterion(StashIdCriterion? criterion) {
+  if (criterion == null) return null;
+  return Input$StashIDCriterionInput(
+    endpoint: criterion.endpoint.isEmpty ? null : criterion.endpoint,
+    stash_id: criterion.stashId.isEmpty ? null : criterion.stashId,
+    modifier: mapModifier(criterion.modifier),
+  );
+}
+
+List<Input$CustomFieldCriterionInput>? mapCustomFieldCriteria(
+  List<CustomFieldCriterion> criteria,
+) {
+  final valid = criteria.where(
+    (criterion) => criterion.field.trim().isNotEmpty,
+  );
+  if (valid.isEmpty) return null;
+  return [
+    for (final criterion in valid)
+      Input$CustomFieldCriterionInput(
+        field: criterion.field,
+        value: criterion.value,
+        modifier: mapModifier(criterion.modifier),
+      ),
+  ];
 }
 
 Input$GenderCriterionInput? mapGenderCriterion(MultiCriterion? criterion) {

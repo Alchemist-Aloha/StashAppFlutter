@@ -125,6 +125,8 @@ class GraphQLStudioRepository {
       favorite: studioFilter?.favorite == true ? true : null,
       name: mapStringCriterion(studioFilter?.name),
       details: mapStringCriterion(studioFilter?.details),
+      is_missing: studioFilter?.isMissing,
+      stash_id_endpoint: mapStashIdCriterion(studioFilter?.stashIdEndpoint),
       parents: mapMultiCriterion(
         studioFilter?.parentStudios != null
             ? domain.MultiCriterion(
@@ -146,6 +148,9 @@ class GraphQLStudioRepository {
       child_count: mapIntCriterion(studioFilter?.childCount),
       created_at: mapTimestampCriterion(studioFilter?.createdAt),
       updated_at: mapTimestampCriterion(studioFilter?.updatedAt),
+      custom_fields: mapCustomFieldCriteria(
+        studioFilter?.customFields ?? const [],
+      ),
     );
 
     return _client.query$FindStudios(

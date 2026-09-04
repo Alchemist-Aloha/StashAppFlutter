@@ -259,6 +259,12 @@ class _GroupFilterPanelState extends ConsumerState<GroupFilterPanel> {
     return FilterSection(
       title: context.l10n.filter_group_system,
       children: [
+        CustomFieldsCriterionInput(
+          value: _tempFilter.customFields,
+          onChanged: (value) => setState(
+            () => _tempFilter = _tempFilter.copyWith(customFields: value),
+          ),
+        ),
         DateCriterionInput(
           label: context.l10n.sort_created_at,
           value: _tempFilter.createdAt,

@@ -12,13 +12,31 @@ void main() {
         sort: 'rating',
         descending: true,
         filter: const SceneFilter(
+          title: StringCriterion(value: 'Example'),
           rating100: IntCriterion(
             value: 80,
             modifier: CriterionModifier.greaterThan,
           ),
-          tags: HierarchicalMultiCriterion(value: ['7', '9']),
+          tags: HierarchicalMultiCriterion(
+            value: ['7', '9'],
+            excludes: ['11'],
+            depth: 2,
+          ),
           organized: true,
           oCounter: IntCriterion(value: 2),
+          phashDistance: PhashCriterion(value: 'abc123', distance: 4),
+          duplicated: MultiCriterion(value: ['phash', 'title']),
+          productionDate: DateCriterion(value: '2026-09-01'),
+          folder: HierarchicalMultiCriterion(value: ['folder-1'], depth: 1),
+          performerFavorite: true,
+          isMissing: 'studio',
+          stashIdEndpoint: StashIdCriterion(
+            endpoint: 'https://stashdb.org/graphql',
+            stashId: 'stash-1',
+          ),
+          customFields: [
+            CustomFieldCriterion(field: 'source', value: ['archive']),
+          ],
         ),
         perPage: 60,
       );
@@ -35,13 +53,59 @@ void main() {
         'value': {'value': 80},
         'modifier': 'GREATER_THAN',
       });
-      expect(input['object_filter'], contains('tags'));
-      expect(input['object_filter']['organized'], true);
+      expect(input['object_filter']['tags'], {
+        'modifier': 'INCLUDES',
+        'value': {
+          'items': [
+            {'id': '7', 'label': '7'},
+            {'id': '9', 'label': '9'},
+          ],
+          'excluded': [
+            {'id': '11', 'label': '11'},
+          ],
+          'depth': 2,
+        },
+      });
+      expect(input['object_filter']['organized'], {
+        'value': 'true',
+        'modifier': 'EQUALS',
+      });
       expect(input['object_filter']['o_counter'], {
         'value': {'value': 2},
         'modifier': 'EQUALS',
       });
       expect(input['object_filter'], isNot(contains('oCounter')));
+      expect(input['object_filter']['phash_distance'], {
+        'modifier': 'EQUALS',
+        'value': {'value': 'abc123', 'distance': 4},
+      });
+      expect(input['object_filter']['duplicated'], {
+        'modifier': 'EQUALS',
+        'value': {'phash': true, 'title': true},
+      });
+      expect(
+        input['object_filter']['production_date']['value']['value'],
+        '2026-09-01',
+      );
+      expect(input['object_filter']['folder']['value']['items'], [
+        {'id': 'folder-1', 'label': 'folder-1'},
+      ]);
+      expect(input['object_filter']['performer_favorite']['value'], 'true');
+      expect(input['object_filter']['is_missing']['value'], 'studio');
+      expect(input['object_filter']['stash_id_endpoint'], {
+        'modifier': 'EQUALS',
+        'value': {
+          'endpoint': 'https://stashdb.org/graphql',
+          'stashID': 'stash-1',
+        },
+      });
+      expect(input['object_filter']['custom_fields'], [
+        {
+          'field': 'source',
+          'value': ['archive'],
+          'modifier': 'EQUALS',
+        },
+      ]);
       expect(input['ui_options'], isA<Map<String, dynamic>>());
     });
 
@@ -70,6 +134,60 @@ void main() {
             'value': ['3'],
             'modifier': 'INCLUDES',
           },
+          'tags': {
+            'value': {
+              'items': [
+                {'id': '7', 'label': 'Tag'},
+              ],
+              'excluded': [
+                {'id': '9', 'label': 'Excluded tag'},
+              ],
+              'depth': 3,
+            },
+            'modifier': 'INCLUDES',
+          },
+          'galleries': {
+            'value': [
+              {'id': '5', 'label': 'Gallery'},
+            ],
+            'modifier': 'INCLUDES',
+          },
+          'phash_distance': {
+            'value': {'value': 'abc123', 'distance': 4},
+            'modifier': 'EQUALS',
+          },
+          'duplicated': {
+            'value': {'phash': true, 'title': true, 'url': false},
+            'modifier': 'EQUALS',
+          },
+          'production_date': {
+            'value': {'value': '2026-09-01'},
+            'modifier': 'EQUALS',
+          },
+          'folder': {
+            'value': {
+              'items': [
+                {'id': 'folder-1', 'label': 'Folder'},
+              ],
+              'excluded': <dynamic>[],
+              'depth': 1,
+            },
+            'modifier': 'INCLUDES',
+          },
+          'stash_id_endpoint': {
+            'value': {
+              'endpoint': 'https://stashdb.org/graphql',
+              'stashID': 'stash-1',
+            },
+            'modifier': 'EQUALS',
+          },
+          'custom_fields': [
+            {
+              'field': 'source',
+              'value': ['archive'],
+              'modifier': 'EQUALS',
+            },
+          ],
         },
       );
 
@@ -84,6 +202,17 @@ void main() {
       expect(config.filter.oCounter?.value, 4);
       expect(config.filter.lastPlayedAt?.value, '2025-01-01');
       expect(config.filter.performers?.value, ['3']);
+      expect(config.filter.tags?.value, ['7']);
+      expect(config.filter.tags?.excludes, ['9']);
+      expect(config.filter.tags?.depth, 3);
+      expect(config.filter.galleries?.value, ['5']);
+      expect(config.filter.phashDistance?.value, 'abc123');
+      expect(config.filter.phashDistance?.distance, 4);
+      expect(config.filter.duplicated?.value, ['phash', 'title']);
+      expect(config.filter.productionDate?.value, '2026-09-01');
+      expect(config.filter.folder?.value, ['folder-1']);
+      expect(config.filter.stashIdEndpoint?.stashId, 'stash-1');
+      expect(config.filter.customFields.single.field, 'source');
     });
 
     test('loads official Stash numeric ranges and null criteria', () {
@@ -128,7 +257,7 @@ void main() {
       expect(config.filter.organized, true);
       expect(config.filter.interactive, false);
       expect(config.filter.hasMarkers, true);
-      expect(config.filter.isMissing, isNull);
+      expect(config.filter.isMissing, 'title');
     });
 
     test('normalizes single-value multi criteria from server payload', () {

@@ -82,8 +82,15 @@ void main() {
         descending: true,
         groupFilter: const GroupFilter(
           name: StringCriterion(value: 'group'),
-          studios: HierarchicalMultiCriterion(value: ['studio-1']),
-          performers: MultiCriterion(value: ['performer-1']),
+          studios: HierarchicalMultiCriterion(
+            value: ['studio-1'],
+            excludes: ['studio-2'],
+            depth: 2,
+          ),
+          performers: MultiCriterion(
+            value: ['performer-1'],
+            excludes: ['performer-2'],
+          ),
           tags: HierarchicalMultiCriterion(value: ['tag-1']),
           date: DateCriterion(value: '2024-01-01'),
           oCounter: IntCriterion(value: 2),
@@ -97,6 +104,9 @@ void main() {
             value: 5,
             modifier: CriterionModifier.greaterThan,
           ),
+          customFields: [
+            CustomFieldCriterion(field: 'source', value: ['archive']),
+          ],
         ),
       );
 
@@ -111,6 +121,10 @@ void main() {
       expect(filterVariables?['direction'], 'DESC');
       expect(groupFilterVariables?['is_missing'], 'director');
       expect(
+        (groupFilterVariables?['custom_fields'] as List).single['field'],
+        'source',
+      );
+      expect(
         (groupFilterVariables?['name'] as Map<String, dynamic>?)?['value'],
         'group',
       );
@@ -119,9 +133,23 @@ void main() {
         ['studio-1'],
       );
       expect(
+        (groupFilterVariables?['studios']
+            as Map<String, dynamic>?)?['excludes'],
+        ['studio-2'],
+      );
+      expect(
+        (groupFilterVariables?['studios'] as Map<String, dynamic>?)?['depth'],
+        2,
+      );
+      expect(
         (groupFilterVariables?['performers']
             as Map<String, dynamic>?)?['value'],
         ['performer-1'],
+      );
+      expect(
+        (groupFilterVariables?['performers']
+            as Map<String, dynamic>?)?['excludes'],
+        ['performer-2'],
       );
       expect(
         (groupFilterVariables?['tags'] as Map<String, dynamic>?)?['value'],

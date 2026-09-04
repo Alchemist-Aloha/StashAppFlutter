@@ -222,6 +222,18 @@ class _TagFilterPanelState extends ConsumerState<TagFilterPanel> {
     return FilterSection(
       title: context.l10n.filter_group_system,
       children: [
+        StashIdCriterionInput(
+          value: _tempFilter.stashIdEndpoint,
+          onChanged: (value) => setState(
+            () => _tempFilter = _tempFilter.copyWith(stashIdEndpoint: value),
+          ),
+        ),
+        CustomFieldsCriterionInput(
+          value: _tempFilter.customFields,
+          onChanged: (value) => setState(
+            () => _tempFilter = _tempFilter.copyWith(customFields: value),
+          ),
+        ),
         DateCriterionInput(
           label: context.l10n.sort_created_at,
           value: _tempFilter.createdAt,

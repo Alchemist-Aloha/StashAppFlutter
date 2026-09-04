@@ -56,6 +56,9 @@ class GraphQLGroupRepository {
             ),
             sub_group_count: mapIntCriterion(groupFilter?.subGroupCount),
             scene_count: mapIntCriterion(groupFilter?.sceneCount),
+            custom_fields: mapCustomFieldCriteria(
+              groupFilter?.customFields ?? const [],
+            ),
           ),
         ),
       ),

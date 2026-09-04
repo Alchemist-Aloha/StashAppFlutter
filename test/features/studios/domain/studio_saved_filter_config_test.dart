@@ -9,8 +9,27 @@ void main() {
       name: 'Organized studios',
       findFilter: {'q': 'studio', 'sort': 'name', 'direction': 'ASC'},
       objectFilter: {
-        'organized': true,
-        'child_count': {'value': 2, 'modifier': 'GREATER_THAN'},
+        'organized': {'value': 'true', 'modifier': 'EQUALS'},
+        'child_count': {
+          'value': {'value': 2},
+          'modifier': 'GREATER_THAN',
+        },
+        'parents': {
+          'value': [
+            {'id': 'studio-1', 'label': 'Parent studio'},
+          ],
+          'modifier': 'INCLUDES',
+        },
+        'tags': {
+          'value': {
+            'items': [
+              {'id': 'tag-1', 'label': 'Tag'},
+            ],
+            'excluded': <Object?>[],
+            'depth': 2,
+          },
+          'modifier': 'INCLUDES',
+        },
       },
     );
 
@@ -19,9 +38,18 @@ void main() {
     expect(config.sort, 'name');
     expect(config.descending, false);
     expect(config.filter.organized, true);
+    expect(config.filter.parentStudios?.value, ['studio-1']);
+    expect(config.filter.tags?.value, ['tag-1']);
+    expect(config.filter.tags?.depth, 2);
     expect(
       config.filter.childCount,
       const IntCriterion(value: 2, modifier: CriterionModifier.greaterThan),
     );
+
+    final saved = config.toSaveInput()['object_filter'];
+    expect(saved['organized']['value'], 'true');
+    expect(saved['parents']['value'], [
+      {'id': 'studio-1', 'label': 'studio-1'},
+    ]);
   });
 }

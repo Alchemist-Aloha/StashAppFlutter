@@ -169,9 +169,13 @@ class GraphQLPerformerRepository {
       death_date: mapDateCriterion(performerFilter?.deathDate),
       career_start: mapDateCriterion(performerFilter?.careerStart),
       career_end: mapDateCriterion(performerFilter?.careerEnd),
-      is_missing: performerFilter?.isMissing?.toString(),
+      is_missing: performerFilter?.isMissing,
+      stash_id_endpoint: mapStashIdCriterion(performerFilter?.stashIdEndpoint),
       created_at: mapTimestampCriterion(performerFilter?.createdAt),
       updated_at: mapTimestampCriterion(performerFilter?.updatedAt),
+      custom_fields: mapCustomFieldCriteria(
+        performerFilter?.customFields ?? const [],
+      ),
     );
 
     return _client.query$FindPerformers(

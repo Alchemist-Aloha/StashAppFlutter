@@ -24,6 +24,7 @@ class GroupSavedFilterConfig extends SavedFilterConfig<GroupFilter> {
       emptyFilter: GroupFilter.empty(),
       fromJson: GroupFilter.fromJson,
       serverToLocalKeys: _serverToLocalKeys,
+      criterionTypes: _criterionTypes,
     );
 
     return GroupSavedFilterConfig(
@@ -50,6 +51,7 @@ class GroupSavedFilterConfig extends SavedFilterConfig<GroupFilter> {
       objectFilter: savedFilterToServerObjectFilter(
         localJson: filter.toJson(),
         localToServerKeys: _localToServerKeys,
+        criterionTypes: _criterionTypes,
       ),
     );
   }
@@ -66,9 +68,20 @@ class GroupSavedFilterConfig extends SavedFilterConfig<GroupFilter> {
     'containingGroupCount': 'containing_group_count',
     'subGroupCount': 'sub_group_count',
     'sceneCount': 'scene_count',
+    'customFields': 'custom_fields',
   };
 
   static final _serverToLocalKeys = {
     for (final entry in _localToServerKeys.entries) entry.value: entry.key,
+  };
+
+  static const _criterionTypes = {
+    'isMissingField': SavedFilterCriterionType.stringValue,
+    'studios': SavedFilterCriterionType.hierarchical,
+    'performers': SavedFilterCriterionType.labeledWithExclusions,
+    'tags': SavedFilterCriterionType.hierarchical,
+    'containingGroups': SavedFilterCriterionType.hierarchical,
+    'subGroups': SavedFilterCriterionType.hierarchical,
+    'customFields': SavedFilterCriterionType.customFields,
   };
 }

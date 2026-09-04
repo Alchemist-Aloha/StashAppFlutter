@@ -24,7 +24,7 @@ class SceneSavedFilterConfig extends SavedFilterConfig<SceneFilter> {
       emptyFilter: SceneFilter.empty(),
       fromJson: SceneFilter.fromJson,
       serverToLocalKeys: _serverToLocalKeys,
-      normalizeValue: _normalizeServerValue,
+      criterionTypes: _criterionTypes,
     );
 
     return SceneSavedFilterConfig(
@@ -60,54 +60,15 @@ class SceneSavedFilterConfig extends SavedFilterConfig<SceneFilter> {
       objectFilter: savedFilterToServerObjectFilter(
         localJson: filter.toJson(),
         localToServerKeys: _localToServerKeys,
+        criterionTypes: _criterionTypes,
       ),
     );
-  }
-
-  static Object? _normalizeServerValue(String localKey, Object? value) {
-    if (_booleanFields.contains(localKey)) {
-      return savedFilterReadBooleanCriterionValue(value) ??
-          savedFilterSkipValue;
-    }
-
-    if (_multiValueFields.contains(localKey)) {
-      return _normalizeMultiCriterionValue(value);
-    }
-
-    // Stash's is_missing value is a field name. StashFlow currently models it
-    // as bool, so loading it would crash or lose meaning.
-    if (localKey == 'isMissing') return savedFilterSkipValue;
-
-    return value;
-  }
-
-  static Object? _normalizeMultiCriterionValue(Object? value) {
-    Object? rawValue;
-    if (value is Map) {
-      rawValue = value['value'];
-    } else {
-      rawValue = value;
-    }
-
-    final normalizedValue = switch (rawValue) {
-      null => <String>[],
-      List() => rawValue.map((item) => item.toString()).toList(),
-      _ => <String>[rawValue.toString()],
-    };
-
-    if (value is Map) {
-      return {
-        for (final entry in value.entries) entry.key.toString(): entry.value,
-        'value': normalizedValue,
-      };
-    }
-
-    return {'value': normalizedValue};
   }
 
   static const _localToServerKeys = {
     'oCounter': 'o_counter',
     'lastPlayedAt': 'last_played_at',
+    'productionDate': 'production_date',
     'interactiveSpeed': 'interactive_speed',
     'performerAge': 'performer_age',
     'videoCodec': 'video_codec',
@@ -124,7 +85,10 @@ class SceneSavedFilterConfig extends SavedFilterConfig<SceneFilter> {
     'tagCount': 'tag_count',
     'performerCount': 'performer_count',
     'stashIdCount': 'stash_id_count',
+    'stashIdEndpoint': 'stash_id_endpoint',
     'performerTags': 'performer_tags',
+    'performerFavorite': 'performer_favorite',
+    'customFields': 'custom_fields',
     'resolutions': 'resolution',
     'orientations': 'orientation',
   };
@@ -133,22 +97,22 @@ class SceneSavedFilterConfig extends SavedFilterConfig<SceneFilter> {
     for (final entry in _localToServerKeys.entries) entry.value: entry.key,
   };
 
-  static const _booleanFields = {
-    'organized',
-    'interactive',
-    'hasMarkers',
-    'isMissing',
-  };
-
-  static const _multiValueFields = {
-    'studios',
-    'performers',
-    'tags',
-    'resolutions',
-    'orientations',
-    'groups',
-    'galleries',
-    'performerTags',
-    'duplicated',
+  static const _criterionTypes = {
+    'organized': SavedFilterCriterionType.boolean,
+    'interactive': SavedFilterCriterionType.boolean,
+    'hasMarkers': SavedFilterCriterionType.boolean,
+    'performerFavorite': SavedFilterCriterionType.boolean,
+    'isMissing': SavedFilterCriterionType.stringValue,
+    'folder': SavedFilterCriterionType.hierarchical,
+    'studios': SavedFilterCriterionType.hierarchical,
+    'performers': SavedFilterCriterionType.labeledWithExclusions,
+    'tags': SavedFilterCriterionType.hierarchical,
+    'groups': SavedFilterCriterionType.hierarchical,
+    'galleries': SavedFilterCriterionType.labeled,
+    'performerTags': SavedFilterCriterionType.hierarchical,
+    'phashDistance': SavedFilterCriterionType.phash,
+    'duplicated': SavedFilterCriterionType.duplication,
+    'stashIdEndpoint': SavedFilterCriterionType.stashId,
+    'customFields': SavedFilterCriterionType.customFields,
   };
 }

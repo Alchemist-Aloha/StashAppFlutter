@@ -10,10 +10,14 @@ abstract class ImageFilter with _$ImageFilter {
   const factory ImageFilter({
     String? searchQuery,
     StringCriterion? title,
+    StringCriterion? code,
     StringCriterion? details,
+    StringCriterion? photographer,
     IntCriterion? id,
     StringCriterion? checksum,
     StringCriterion? path,
+    HierarchicalMultiCriterion? folder,
+    PhashCriterion? phashDistance,
     IntCriterion? fileCount,
     IntCriterion? rating100,
     DateCriterion? date,
@@ -22,7 +26,7 @@ abstract class ImageFilter with _$ImageFilter {
     IntCriterion? oCounter,
     MultiCriterion? resolution,
     MultiCriterion? orientation,
-    bool? isMissing,
+    String? isMissing,
     HierarchicalMultiCriterion? studios,
     HierarchicalMultiCriterion? tags,
     IntCriterion? tagCount,
@@ -35,6 +39,7 @@ abstract class ImageFilter with _$ImageFilter {
     GalleryFilter? galleriesFilter,
     DateCriterion? createdAt,
     DateCriterion? updatedAt,
+    @Default(<CustomFieldCriterion>[]) List<CustomFieldCriterion> customFields,
   }) = _ImageFilter;
 
   factory ImageFilter.empty() => const ImageFilter();

@@ -17,7 +17,16 @@ import '../providers/scene_marker_list_provider.dart';
 import '../widgets/scene_marker_card.dart';
 import '../widgets/scene_marker_filter_panel.dart';
 
-enum _MarkerSortField { createdAt, updatedAt, title, seconds, random }
+enum _MarkerSortField {
+  createdAt,
+  updatedAt,
+  title,
+  seconds,
+  random,
+  duration,
+  sceneId,
+  scenesUpdatedAt,
+}
 
 class SceneMarkersPage extends ConsumerStatefulWidget {
   const SceneMarkersPage({super.key});
@@ -45,6 +54,9 @@ class _SceneMarkersPageState extends ConsumerState<SceneMarkersPage> {
       _MarkerSortField.title => 'title',
       _MarkerSortField.seconds => 'seconds',
       _MarkerSortField.random => 'random',
+      _MarkerSortField.duration => 'duration',
+      _MarkerSortField.sceneId => 'scene_id',
+      _MarkerSortField.scenesUpdatedAt => 'scenes_updated_at',
     };
   }
 
@@ -54,6 +66,9 @@ class _SceneMarkersPageState extends ConsumerState<SceneMarkersPage> {
       'title' => _MarkerSortField.title,
       'seconds' => _MarkerSortField.seconds,
       'random' => _MarkerSortField.random,
+      'duration' => _MarkerSortField.duration,
+      'scene_id' => _MarkerSortField.sceneId,
+      'scenes_updated_at' => _MarkerSortField.scenesUpdatedAt,
       _ => _MarkerSortField.createdAt,
     };
   }
@@ -65,6 +80,9 @@ class _SceneMarkersPageState extends ConsumerState<SceneMarkersPage> {
       _MarkerSortField.title => context.l10n.common_title,
       _MarkerSortField.seconds => 'Marker time',
       _MarkerSortField.random => context.l10n.sort_random,
+      _MarkerSortField.duration => context.l10n.scenes_sort_duration,
+      _MarkerSortField.sceneId => context.l10n.sort_scene_id,
+      _MarkerSortField.scenesUpdatedAt => context.l10n.sort_scenes_updated_at,
     };
   }
 

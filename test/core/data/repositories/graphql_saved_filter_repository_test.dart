@@ -40,6 +40,28 @@ void main() {
       expect(result.single['mode'], 'PERFORMERS');
     });
 
+    test('findAll keeps valid presets when one payload is invalid', () async {
+      final client = _FakeGraphQLClient(
+        queryData: {
+          'findSavedFilters': [
+            {'id': 'bad', 'name': 'Bad'},
+            {'id': 'good', 'name': 'Good'},
+          ],
+        },
+      );
+      final repository = GraphQLSavedFilterRepository(client);
+
+      final result = await repository.findAll<String>(
+        mode: 'SCENES',
+        fromRaw: (raw) {
+          if (raw['id'] == 'bad') throw const FormatException('bad preset');
+          return raw['name'] as String;
+        },
+      );
+
+      expect(result, ['Good']);
+    });
+
     test('save forwards the full saved filter input payload', () async {
       final client = _FakeGraphQLClient(
         mutationData: {

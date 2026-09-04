@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import '../../../../core/data/repositories/graphql_saved_filter_repository.dart';
+import '../../../../core/domain/entities/filter_options.dart';
 import '../../../../core/presentation/theme/app_theme.dart';
 import '../../../../core/presentation/providers/list_scroll_controller_provider.dart';
 import '../../../../core/presentation/widgets/list_page_scaffold.dart';
@@ -23,6 +24,11 @@ enum _GroupSortOption {
   oCounter,
   createdAt,
   updatedAt,
+  date,
+  duration,
+  tagCount,
+  subGroupDescription,
+  subGroupOrder,
 }
 
 class GroupsPage extends ConsumerStatefulWidget {
@@ -63,6 +69,11 @@ class _GroupsPageState extends ConsumerState<GroupsPage> {
       _GroupSortOption.oCounter => 'o_counter',
       _GroupSortOption.createdAt => 'created_at',
       _GroupSortOption.updatedAt => 'updated_at',
+      _GroupSortOption.date => 'date',
+      _GroupSortOption.duration => 'duration',
+      _GroupSortOption.tagCount => 'tag_count',
+      _GroupSortOption.subGroupDescription => 'sub_group_description',
+      _GroupSortOption.subGroupOrder => 'sub_group_order',
     };
 
     ref
@@ -79,6 +90,11 @@ class _GroupsPageState extends ConsumerState<GroupsPage> {
       'o_counter' => _GroupSortOption.oCounter,
       'created_at' => _GroupSortOption.createdAt,
       'updated_at' => _GroupSortOption.updatedAt,
+      'date' => _GroupSortOption.date,
+      'duration' => _GroupSortOption.duration,
+      'tag_count' => _GroupSortOption.tagCount,
+      'sub_group_description' => _GroupSortOption.subGroupDescription,
+      'sub_group_order' => _GroupSortOption.subGroupOrder,
       _ => _GroupSortOption.name,
     };
   }
@@ -99,6 +115,16 @@ class _GroupsPageState extends ConsumerState<GroupsPage> {
         return context.l10n.sort_created_at;
       case _GroupSortOption.updatedAt:
         return context.l10n.sort_updated_at;
+      case _GroupSortOption.date:
+        return context.l10n.common_date;
+      case _GroupSortOption.duration:
+        return context.l10n.scenes_sort_duration;
+      case _GroupSortOption.tagCount:
+        return context.l10n.sort_tag_count;
+      case _GroupSortOption.subGroupDescription:
+        return context.l10n.sort_sub_group_description;
+      case _GroupSortOption.subGroupOrder:
+        return context.l10n.sort_sub_group_order;
     }
   }
 
@@ -199,12 +225,7 @@ class _GroupsPageState extends ConsumerState<GroupsPage> {
   }
 
   int _activeFilterCount() {
-    final filter = ref.read(groupListFilterProvider);
-    var count = 0;
-    if (filter.isMissingField != null) count++;
-    if (filter.subGroupCount != null) count++;
-    if (filter.sceneCount != null) count++;
-    return count;
+    return activeFilterCount(ref.read(groupListFilterProvider).toJson());
   }
 
   @override

@@ -72,10 +72,18 @@ class GraphQLImageRepository {
   }) async {
     final inputFilter = Input$ImageFilterType(
       title: mapStringCriterion(imageFilter?.title),
+      code: mapStringCriterion(imageFilter?.code),
       details: mapStringCriterion(imageFilter?.details),
+      photographer: mapStringCriterion(imageFilter?.photographer),
       id: mapIntCriterion(imageFilter?.id),
       checksum: mapStringCriterion(imageFilter?.checksum),
       path: mapStringCriterion(imageFilter?.path),
+      phash_distance: mapPhashCriterion(imageFilter?.phashDistance),
+      files_filter: imageFilter?.folder == null
+          ? null
+          : Input$FileFilterType(
+              parent_folder: mapHierarchicalMultiCriterion(imageFilter?.folder),
+            ),
       file_count: mapIntCriterion(imageFilter?.fileCount),
       rating100: mapIntCriterion(imageFilter?.rating100),
       date: mapDateCriterion(imageFilter?.date),
@@ -90,7 +98,7 @@ class GraphQLImageRepository {
                   .toList(),
             )
           : null,
-      is_missing: imageFilter?.isMissing?.toString(),
+      is_missing: imageFilter?.isMissing,
       studios: mapHierarchicalMultiCriterion(imageFilter?.studios),
       tags: mapHierarchicalMultiCriterion(imageFilter?.tags),
       tag_count: mapIntCriterion(imageFilter?.tagCount),
@@ -121,6 +129,9 @@ class GraphQLImageRepository {
             ),
       created_at: mapTimestampCriterion(imageFilter?.createdAt),
       updated_at: mapTimestampCriterion(imageFilter?.updatedAt),
+      custom_fields: mapCustomFieldCriteria(
+        imageFilter?.customFields ?? const [],
+      ),
     );
 
     final result = await _client.query$FindImages(

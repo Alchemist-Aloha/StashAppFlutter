@@ -16,4 +16,6 @@
 
 ## 🔖 Saved Presets
 
-- Saved and loaded presets using the official Stash numeric and date range format, including between and empty-value criteria.
+- Saved and loaded official Stash preset formats for ranges, booleans, relationships, hierarchy depth and exclusions, pHash distance, and duplicate criteria.
+- Kept valid presets available when another server preset contains an invalid payload.
+- Matched current Stash filtering and sorting, including production dates, folders, custom fields, Stash IDs, missing-field selectors, recursive studio counts, and newer group and marker sorts.

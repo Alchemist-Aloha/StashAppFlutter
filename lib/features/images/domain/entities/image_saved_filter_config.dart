@@ -24,7 +24,7 @@ class ImageSavedFilterConfig extends SavedFilterConfig<ImageFilter> {
       emptyFilter: ImageFilter.empty(),
       fromJson: ImageFilter.fromJson,
       serverToLocalKeys: _serverToLocalKeys,
-      normalizeValue: _normalizeServerValue,
+      criterionTypes: _criterionTypes,
     );
 
     return ImageSavedFilterConfig(
@@ -51,17 +51,9 @@ class ImageSavedFilterConfig extends SavedFilterConfig<ImageFilter> {
       objectFilter: savedFilterToServerObjectFilter(
         localJson: filter.toJson(),
         localToServerKeys: _localToServerKeys,
+        criterionTypes: _criterionTypes,
       ),
     );
-  }
-
-  static Object? _normalizeServerValue(String localKey, Object? value) {
-    if (_booleanFields.contains(localKey)) {
-      return savedFilterReadBooleanCriterionValue(value) ??
-          savedFilterSkipValue;
-    }
-    if (localKey == 'isMissing') return savedFilterSkipValue;
-    return value;
   }
 
   static const _localToServerKeys = {
@@ -75,11 +67,25 @@ class ImageSavedFilterConfig extends SavedFilterConfig<ImageFilter> {
     'performerAge': 'performer_age',
     'createdAt': 'created_at',
     'updatedAt': 'updated_at',
+    'phashDistance': 'phash_distance',
+    'customFields': 'custom_fields',
   };
 
   static final _serverToLocalKeys = {
     for (final entry in _localToServerKeys.entries) entry.value: entry.key,
   };
 
-  static const _booleanFields = {'organized', 'isMissing', 'performerFavorite'};
+  static const _criterionTypes = {
+    'organized': SavedFilterCriterionType.boolean,
+    'performerFavorite': SavedFilterCriterionType.boolean,
+    'isMissing': SavedFilterCriterionType.stringValue,
+    'folder': SavedFilterCriterionType.hierarchical,
+    'studios': SavedFilterCriterionType.hierarchical,
+    'tags': SavedFilterCriterionType.hierarchical,
+    'performerTags': SavedFilterCriterionType.hierarchical,
+    'performers': SavedFilterCriterionType.labeledWithExclusions,
+    'galleries': SavedFilterCriterionType.labeled,
+    'phashDistance': SavedFilterCriterionType.phash,
+    'customFields': SavedFilterCriterionType.customFields,
+  };
 }

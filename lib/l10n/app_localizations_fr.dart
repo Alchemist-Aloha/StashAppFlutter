@@ -3410,4 +3410,59 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get settings_config_plaintext_label =>
       'Les identifiants sont stockés sous forme de texte lisible dans le fichier exporté.';
+
+  @override
+  String get scenes_field_production_date => 'Date de production';
+
+  @override
+  String get sort_o_count_all => 'Compteur O (filiales incluses)';
+
+  @override
+  String get sort_performers_count_all =>
+      'Nombre d’artistes (filiales incluses)';
+
+  @override
+  String get sort_scene_marker_count => 'Nombre de marqueurs de scène';
+
+  @override
+  String get sort_sub_group_description => 'Description du sous-groupe';
+
+  @override
+  String get sort_sub_group_order => 'Ordre du sous-groupe';
+
+  @override
+  String get sort_scene_id => 'ID de scène';
+
+  @override
+  String get sort_scenes_updated_at => 'Scène actualisée le';
+
+  @override
+  String get filter_ids => 'ID (séparés par des virgules)';
+
+  @override
+  String get filter_excluded_ids => 'ID exclus (séparés par des virgules)';
+
+  @override
+  String get filter_depth => 'Profondeur de hiérarchie';
+
+  @override
+  String get filter_distance => 'Distance';
+
+  @override
+  String get filter_endpoint => 'Point de terminaison';
+
+  @override
+  String get filter_custom_fields => 'Champs personnalisés';
+
+  @override
+  String get filter_field => 'Champ';
+
+  @override
+  String get filter_values => 'Valeurs (séparées par des virgules)';
+
+  @override
+  String get filter_folder => 'Répertoire';
+
+  @override
+  String get filter_photographer => 'Photographe';
 }

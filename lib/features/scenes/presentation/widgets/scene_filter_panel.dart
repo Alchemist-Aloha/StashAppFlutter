@@ -105,7 +105,16 @@ class _SceneFilterPanelState extends ConsumerState<SceneFilterPanel> {
     return FilterSection(
       title: context.l10n.filter_group_general,
       initiallyExpanded: true,
-      children: [_buildRatingFilter(), _buildOrganizedFilter()],
+      children: [
+        StringCriterionInput(
+          label: context.l10n.common_title,
+          value: _tempFilter.title,
+          onChanged: (value) =>
+              setState(() => _tempFilter = _tempFilter.copyWith(title: value)),
+        ),
+        _buildRatingFilter(),
+        _buildOrganizedFilter(),
+      ],
     );
   }
 
@@ -140,6 +149,13 @@ class _SceneFilterPanelState extends ConsumerState<SceneFilterPanel> {
           value: _tempFilter.performerAge,
           onChanged: (val) => setState(
             () => _tempFilter = _tempFilter.copyWith(performerAge: val),
+          ),
+        ),
+        _buildBooleanFilter(
+          context.l10n.common_favorite,
+          _tempFilter.performerFavorite,
+          (value) => setState(
+            () => _tempFilter = _tempFilter.copyWith(performerFavorite: value),
           ),
         ),
         IntCriterionInput(
@@ -207,6 +223,12 @@ class _SceneFilterPanelState extends ConsumerState<SceneFilterPanel> {
           onChanged: (val) =>
               setState(() => _tempFilter = _tempFilter.copyWith(tagCount: val)),
         ),
+        HierarchicalIdCriterionInput(
+          label: context.l10n.filter_folder,
+          value: _tempFilter.folder,
+          onChanged: (value) =>
+              setState(() => _tempFilter = _tempFilter.copyWith(folder: value)),
+        ),
       ],
     );
   }
@@ -244,6 +266,13 @@ class _SceneFilterPanelState extends ConsumerState<SceneFilterPanel> {
           value: _tempFilter.date,
           onChanged: (val) =>
               setState(() => _tempFilter = _tempFilter.copyWith(date: val)),
+        ),
+        DateCriterionInput(
+          label: context.l10n.scenes_field_production_date,
+          value: _tempFilter.productionDate,
+          onChanged: (value) => setState(
+            () => _tempFilter = _tempFilter.copyWith(productionDate: value),
+          ),
         ),
         StringCriterionInput(
           label: context.l10n.scenes_field_path,
@@ -284,6 +313,13 @@ class _SceneFilterPanelState extends ConsumerState<SceneFilterPanel> {
           value: _tempFilter.videoCodec,
           onChanged: (val) => setState(
             () => _tempFilter = _tempFilter.copyWith(videoCodec: val),
+          ),
+        ),
+        PhashCriterionInput(
+          label: context.l10n.scenes_field_phash,
+          value: _tempFilter.phashDistance,
+          onChanged: (value) => setState(
+            () => _tempFilter = _tempFilter.copyWith(phashDistance: value),
           ),
         ),
         StringCriterionInput(
@@ -384,6 +420,18 @@ class _SceneFilterPanelState extends ConsumerState<SceneFilterPanel> {
             () => _tempFilter = _tempFilter.copyWith(stashIdCount: val),
           ),
         ),
+        StashIdCriterionInput(
+          value: _tempFilter.stashIdEndpoint,
+          onChanged: (value) => setState(
+            () => _tempFilter = _tempFilter.copyWith(stashIdEndpoint: value),
+          ),
+        ),
+        CustomFieldsCriterionInput(
+          value: _tempFilter.customFields,
+          onChanged: (value) => setState(
+            () => _tempFilter = _tempFilter.copyWith(customFields: value),
+          ),
+        ),
         StringCriterionInput(
           label: context.l10n.scenes_field_oshash,
           value: _tempFilter.oshash,
@@ -410,11 +458,27 @@ class _SceneFilterPanelState extends ConsumerState<SceneFilterPanel> {
             () => _tempFilter = _tempFilter.copyWith(hasMarkers: val),
           ),
         ),
-        _buildBooleanFilter(
-          'Is Missing',
-          _tempFilter.isMissing,
-          (val) => setState(
-            () => _tempFilter = _tempFilter.copyWith(isMissing: val),
+        MissingFieldCriterionInput(
+          value: _tempFilter.isMissing,
+          fields: const [
+            'title',
+            'code',
+            'details',
+            'director',
+            'url',
+            'date',
+            'production_date',
+            'rating',
+            'cover',
+            'galleries',
+            'studio',
+            'group',
+            'performers',
+            'tags',
+            'stash_id',
+          ],
+          onChanged: (value) => setState(
+            () => _tempFilter = _tempFilter.copyWith(isMissing: value),
           ),
         ),
         DateCriterionInput(
@@ -436,7 +500,7 @@ class _SceneFilterPanelState extends ConsumerState<SceneFilterPanel> {
   }
 
   Widget _buildDuplicatedFilter() {
-    final options = ['phash', 'oshash'];
+    final options = ['phash', 'stash_id', 'title', 'url'];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

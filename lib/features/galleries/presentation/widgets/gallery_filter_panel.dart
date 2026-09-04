@@ -123,6 +123,19 @@ class _GalleryFilterPanelState extends ConsumerState<GalleryFilterPanel> {
           onChanged: (val) =>
               setState(() => _tempFilter = _tempFilter.copyWith(details: val)),
         ),
+        StringCriterionInput(
+          label: context.l10n.scenes_field_code,
+          value: _tempFilter.code,
+          onChanged: (value) =>
+              setState(() => _tempFilter = _tempFilter.copyWith(code: value)),
+        ),
+        StringCriterionInput(
+          label: context.l10n.filter_photographer,
+          value: _tempFilter.photographer,
+          onChanged: (value) => setState(
+            () => _tempFilter = _tempFilter.copyWith(photographer: value),
+          ),
+        ),
         DateCriterionInput(
           label: context.l10n.galleries_field_date,
           value: _tempFilter.date,
@@ -150,6 +163,13 @@ class _GalleryFilterPanelState extends ConsumerState<GalleryFilterPanel> {
       title: context.l10n.filter_group_library,
       children: [
         _buildOrganizedFilter(),
+        HierarchicalIdCriterionInput(
+          label: context.l10n.filter_folder,
+          value: _tempFilter.parentFolder,
+          onChanged: (value) => setState(
+            () => _tempFilter = _tempFilter.copyWith(parentFolder: value),
+          ),
+        ),
         _buildEntityFilter<Studio>(
           context.l10n.studios_title,
           'studio',
@@ -320,11 +340,24 @@ class _GalleryFilterPanelState extends ConsumerState<GalleryFilterPanel> {
           onChanged: (val) =>
               setState(() => _tempFilter = _tempFilter.copyWith(checksum: val)),
         ),
-        _buildBooleanFilter(
-          'Is Missing',
-          _tempFilter.isMissing,
-          (val) => setState(
-            () => _tempFilter = _tempFilter.copyWith(isMissing: val),
+        MissingFieldCriterionInput(
+          value: _tempFilter.isMissing,
+          fields: const [
+            'title',
+            'code',
+            'details',
+            'photographer',
+            'url',
+            'date',
+            'rating',
+            'cover',
+            'studio',
+            'performers',
+            'tags',
+            'scenes',
+          ],
+          onChanged: (value) => setState(
+            () => _tempFilter = _tempFilter.copyWith(isMissing: value),
           ),
         ),
         _buildBooleanFilter(
@@ -366,6 +399,12 @@ class _GalleryFilterPanelState extends ConsumerState<GalleryFilterPanel> {
           value: _tempFilter.updatedAt,
           onChanged: (val) => setState(
             () => _tempFilter = _tempFilter.copyWith(updatedAt: val),
+          ),
+        ),
+        CustomFieldsCriterionInput(
+          value: _tempFilter.customFields,
+          onChanged: (value) => setState(
+            () => _tempFilter = _tempFilter.copyWith(customFields: value),
           ),
         ),
       ],

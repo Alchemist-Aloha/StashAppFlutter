@@ -12,7 +12,7 @@ abstract class StudioFilter with _$StudioFilter {
     StringCriterion? name,
     StringCriterion? details,
     HierarchicalMultiCriterion? parentStudios,
-    bool? isMissing,
+    String? isMissing,
     HierarchicalMultiCriterion? tags,
     IntCriterion? rating100,
     bool? ignoreAutoTag,
@@ -26,6 +26,8 @@ abstract class StudioFilter with _$StudioFilter {
     IntCriterion? childCount,
     DateCriterion? createdAt,
     DateCriterion? updatedAt,
+    StashIdCriterion? stashIdEndpoint,
+    @Default(<CustomFieldCriterion>[]) List<CustomFieldCriterion> customFields,
   }) = _StudioFilter;
 
   factory StudioFilter.empty() => const StudioFilter();

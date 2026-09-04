@@ -132,6 +132,14 @@ void main() {
 
       await repository.findImages(
         imageFilter: const ImageFilter(
+          code: StringCriterion(value: 'IMG-1'),
+          photographer: StringCriterion(value: 'Alice'),
+          phashDistance: PhashCriterion(value: 'abc', distance: 3),
+          folder: HierarchicalMultiCriterion(value: ['folder-1']),
+          isMissing: 'rating',
+          customFields: [
+            CustomFieldCriterion(field: 'source', value: ['archive']),
+          ],
           galleriesFilter: GalleryFilter(
             performers: MultiCriterion(value: ['performer-1']),
             studios: HierarchicalMultiCriterion(value: ['studio-1']),
@@ -160,6 +168,13 @@ void main() {
           },
         }),
       );
+      final filter = request.variables['image_filter'] as Map<String, dynamic>;
+      expect(filter['code']['value'], 'IMG-1');
+      expect(filter['photographer']['value'], 'Alice');
+      expect(filter['phash_distance']['distance'], 3);
+      expect(filter['files_filter']['parent_folder']['value'], ['folder-1']);
+      expect(filter['is_missing'], 'rating');
+      expect(filter['custom_fields'].single['field'], 'source');
     });
 
     test('getImageById returns an image on success', () async {

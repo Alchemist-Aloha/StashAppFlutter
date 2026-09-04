@@ -20,9 +20,12 @@ void main() {
 
     await expand('Metadata');
     expect(find.text('Date'), findsOneWidget);
+    expect(find.text('Code'), findsOneWidget);
+    expect(find.text('Photographer'), findsOneWidget);
 
     await expand('Library');
     expect(find.text('Tag Count'), findsOneWidget);
+    expect(find.text('Folder'), findsOneWidget);
 
     await expand('Performer');
     expect(find.text('Performer Count'), findsOneWidget);
@@ -33,5 +36,11 @@ void main() {
     expect(find.text('Checksum'), findsOneWidget);
     expect(find.text('Created At'), findsOneWidget);
     expect(find.text('Updated At'), findsOneWidget);
+
+    await expand('Media Info');
+    expect(find.text('Phash'), findsOneWidget);
+
+    expect(find.text('Missing Field'), findsOneWidget);
+    expect(find.text('Custom Fields'), findsOneWidget);
   });
 }

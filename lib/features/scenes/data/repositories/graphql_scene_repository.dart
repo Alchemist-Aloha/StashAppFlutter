@@ -224,6 +224,7 @@ class GraphQLSceneRepository {
                 : Enum$SortDirectionEnum.ASC,
           ),
           scene_filter: Input$SceneFilterType(
+            title: mapStringCriterion(sceneFilter?.title),
             id: mapIntCriterion(sceneFilter?.id),
             code: mapStringCriterion(sceneFilter?.code),
             details: mapStringCriterion(sceneFilter?.details),
@@ -232,7 +233,15 @@ class GraphQLSceneRepository {
             url: mapStringCriterion(sceneFilter?.url),
             captions: mapStringCriterion(sceneFilter?.captions),
             organized: organized ?? sceneFilter?.organized,
-            performer_favorite: performerFavorite,
+            performer_favorite:
+                performerFavorite ?? sceneFilter?.performerFavorite,
+            files_filter: sceneFilter?.folder == null
+                ? null
+                : Input$FileFilterType(
+                    parent_folder: mapHierarchicalMultiCriterion(
+                      sceneFilter?.folder,
+                    ),
+                  ),
             galleries: mapMultiCriterion(sceneFilter?.galleries),
             performer_tags: mapHierarchicalMultiCriterion(
               sceneFilter?.performerTags,
@@ -267,6 +276,7 @@ class GraphQLSceneRepository {
                 : null,
             rating100: mapIntCriterion(sceneFilter?.rating100),
             date: mapDateCriterion(sceneFilter?.date),
+            production_date: mapDateCriterion(sceneFilter?.productionDate),
             resolution: (sceneFilter?.resolutions != null)
                 ? Input$ResolutionCriterionInput(
                     value: fromJson$Enum$ResolutionEnum(
@@ -293,6 +303,9 @@ class GraphQLSceneRepository {
             performer_count: mapIntCriterion(sceneFilter?.performerCount),
             tag_count: mapIntCriterion(sceneFilter?.tagCount),
             stash_id_count: mapIntCriterion(sceneFilter?.stashIdCount),
+            stash_id_endpoint: mapStashIdCriterion(
+              sceneFilter?.stashIdEndpoint,
+            ),
             bitrate: mapIntCriterion(sceneFilter?.bitrate),
             framerate: mapIntCriterion(sceneFilter?.framerate),
             video_codec: mapStringCriterion(sceneFilter?.videoCodec),
@@ -300,12 +313,16 @@ class GraphQLSceneRepository {
             oshash: mapStringCriterion(sceneFilter?.oshash),
             checksum: mapStringCriterion(sceneFilter?.checksum),
             phash: mapStringCriterion(sceneFilter?.phash),
+            phash_distance: mapPhashCriterion(sceneFilter?.phashDistance),
             has_markers: sceneFilter?.hasMarkers?.toString(),
-            is_missing: sceneFilter?.isMissing?.toString(),
+            is_missing: sceneFilter?.isMissing,
             file_count: mapIntCriterion(sceneFilter?.fileCount),
             play_count: mapIntCriterion(sceneFilter?.playCount),
             created_at: mapTimestampCriterion(sceneFilter?.createdAt),
             updated_at: mapTimestampCriterion(sceneFilter?.updatedAt),
+            custom_fields: mapCustomFieldCriteria(
+              sceneFilter?.customFields ?? const [],
+            ),
           ),
         ),
       ),

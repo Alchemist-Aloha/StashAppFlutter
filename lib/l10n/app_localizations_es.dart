@@ -3418,4 +3418,59 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get settings_config_plaintext_label =>
       'Las credenciales se almacenan como texto legible en el archivo exportado.';
+
+  @override
+  String get scenes_field_production_date => 'Fecha de producción';
+
+  @override
+  String get sort_o_count_all => 'Contador O (incluye subsidiarias)';
+
+  @override
+  String get sort_performers_count_all =>
+      'Número de artistas (incluye subsidiarias)';
+
+  @override
+  String get sort_scene_marker_count => 'Número de marcadores de escena';
+
+  @override
+  String get sort_sub_group_description => 'Descripción del subgrupo';
+
+  @override
+  String get sort_sub_group_order => 'Orden del subgrupo';
+
+  @override
+  String get sort_scene_id => 'ID de escena';
+
+  @override
+  String get sort_scenes_updated_at => 'Escena actualizada el';
+
+  @override
+  String get filter_ids => 'IDs (separados por comas)';
+
+  @override
+  String get filter_excluded_ids => 'IDs excluidos (separados por comas)';
+
+  @override
+  String get filter_depth => 'Profundidad de jerarquía';
+
+  @override
+  String get filter_distance => 'Distancia';
+
+  @override
+  String get filter_endpoint => 'Punto de conexión';
+
+  @override
+  String get filter_custom_fields => 'Campos personalizados';
+
+  @override
+  String get filter_field => 'Campo';
+
+  @override
+  String get filter_values => 'Valores (separados por comas)';
+
+  @override
+  String get filter_folder => 'Carpeta';
+
+  @override
+  String get filter_photographer => 'Fotógrafo';
 }

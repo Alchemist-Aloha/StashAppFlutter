@@ -93,6 +93,19 @@ class _ImageFilterPanelState extends ConsumerState<ImageFilterPanel> {
           onChanged: (val) =>
               setState(() => _tempFilter = _tempFilter.copyWith(details: val)),
         ),
+        StringCriterionInput(
+          label: context.l10n.scenes_field_code,
+          value: _tempFilter.code,
+          onChanged: (value) =>
+              setState(() => _tempFilter = _tempFilter.copyWith(code: value)),
+        ),
+        StringCriterionInput(
+          label: context.l10n.filter_photographer,
+          value: _tempFilter.photographer,
+          onChanged: (value) => setState(
+            () => _tempFilter = _tempFilter.copyWith(photographer: value),
+          ),
+        ),
         DateCriterionInput(
           label: context.l10n.common_date,
           value: _tempFilter.date,
@@ -108,6 +121,12 @@ class _ImageFilterPanelState extends ConsumerState<ImageFilterPanel> {
       title: context.l10n.filter_group_library,
       children: [
         _buildOrganizedFilter(),
+        HierarchicalIdCriterionInput(
+          label: context.l10n.filter_folder,
+          value: _tempFilter.folder,
+          onChanged: (value) =>
+              setState(() => _tempFilter = _tempFilter.copyWith(folder: value)),
+        ),
         _buildEntityFilter<Studio>(
           context.l10n.studios_title,
           'studio',
@@ -205,7 +224,17 @@ class _ImageFilterPanelState extends ConsumerState<ImageFilterPanel> {
   Widget _buildMediaInfoSection() {
     return FilterSection(
       title: context.l10n.filter_group_media_info,
-      children: [_buildResolutionFilter(), _buildOrientationFilter()],
+      children: [
+        _buildResolutionFilter(),
+        _buildOrientationFilter(),
+        PhashCriterionInput(
+          label: context.l10n.scenes_field_phash,
+          value: _tempFilter.phashDistance,
+          onChanged: (value) => setState(
+            () => _tempFilter = _tempFilter.copyWith(phashDistance: value),
+          ),
+        ),
+      ],
     );
   }
 
@@ -231,11 +260,23 @@ class _ImageFilterPanelState extends ConsumerState<ImageFilterPanel> {
           onChanged: (val) =>
               setState(() => _tempFilter = _tempFilter.copyWith(url: val)),
         ),
-        _buildBooleanFilter(
-          'Is Missing',
-          _tempFilter.isMissing,
-          (val) => setState(
-            () => _tempFilter = _tempFilter.copyWith(isMissing: val),
+        MissingFieldCriterionInput(
+          value: _tempFilter.isMissing,
+          fields: const [
+            'title',
+            'details',
+            'photographer',
+            'url',
+            'date',
+            'code',
+            'rating',
+            'galleries',
+            'studio',
+            'performers',
+            'tags',
+          ],
+          onChanged: (value) => setState(
+            () => _tempFilter = _tempFilter.copyWith(isMissing: value),
           ),
         ),
         IntCriterionInput(
@@ -263,6 +304,12 @@ class _ImageFilterPanelState extends ConsumerState<ImageFilterPanel> {
           value: _tempFilter.updatedAt,
           onChanged: (val) => setState(
             () => _tempFilter = _tempFilter.copyWith(updatedAt: val),
+          ),
+        ),
+        CustomFieldsCriterionInput(
+          value: _tempFilter.customFields,
+          onChanged: (value) => setState(
+            () => _tempFilter = _tempFilter.copyWith(customFields: value),
           ),
         ),
       ],

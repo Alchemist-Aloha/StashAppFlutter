@@ -3387,4 +3387,59 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get settings_config_plaintext_label =>
       'Учётные данные сохраняются в виде читаемого текста в экспортированном файле.';
+
+  @override
+  String get scenes_field_production_date => 'Дата производства';
+
+  @override
+  String get sort_o_count_all => 'Счётчик O (включая дочерние студии)';
+
+  @override
+  String get sort_performers_count_all =>
+      'Количество исполнителей (включая дочерние студии)';
+
+  @override
+  String get sort_scene_marker_count => 'Количество маркеров сцен';
+
+  @override
+  String get sort_sub_group_description => 'Описание подгруппы';
+
+  @override
+  String get sort_sub_group_order => 'Порядок подгруппы';
+
+  @override
+  String get sort_scene_id => 'ID сцены';
+
+  @override
+  String get sort_scenes_updated_at => 'Сцена обновлена';
+
+  @override
+  String get filter_ids => 'ID (через запятую)';
+
+  @override
+  String get filter_excluded_ids => 'Исключённые ID (через запятую)';
+
+  @override
+  String get filter_depth => 'Глубина иерархии';
+
+  @override
+  String get filter_distance => 'Дистанция';
+
+  @override
+  String get filter_endpoint => 'Конечная точка';
+
+  @override
+  String get filter_custom_fields => 'Пользовательские поля';
+
+  @override
+  String get filter_field => 'Поле';
+
+  @override
+  String get filter_values => 'Значения (через запятую)';
+
+  @override
+  String get filter_folder => 'Папка';
+
+  @override
+  String get filter_photographer => 'Фотограф';
 }
