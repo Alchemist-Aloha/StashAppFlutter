@@ -33,8 +33,8 @@ void main() {
     expect(objectFilter['tags']['value'], ['tag-1']);
     expect(objectFilter['scene_tags']['value'], ['scene-tag-1']);
     expect(objectFilter['scenes']['value'], ['scene-1']);
-    expect(objectFilter['duration']['value'], 30);
-    expect(objectFilter['scene_date']['value'], '2024-06-01');
+    expect(objectFilter['duration']['value']['value'], 30);
+    expect(objectFilter['scene_date']['value']['value'], '2024-06-01');
   });
 
   test('scene marker saved filter loads server keys into local filter', () {

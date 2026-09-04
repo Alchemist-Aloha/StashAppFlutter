@@ -57,16 +57,11 @@ class SceneSavedFilterConfig extends SavedFilterConfig<SceneFilter> {
       sort: sort,
       descending: descending,
       perPage: perPage,
-      objectFilter: _toServerObjectFilter(filter),
+      objectFilter: savedFilterToServerObjectFilter(
+        localJson: filter.toJson(),
+        localToServerKeys: _localToServerKeys,
+      ),
     );
-  }
-
-  static Map<String, dynamic> _toServerObjectFilter(SceneFilter filter) {
-    final localJson = savedFilterWithoutNulls(filter.toJson());
-    return {
-      for (final entry in localJson.entries)
-        _localToServerKeys[entry.key] ?? entry.key: entry.value,
-    };
   }
 
   static Object? _normalizeServerValue(String localKey, Object? value) {

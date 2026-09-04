@@ -20,6 +20,6 @@ void main() {
 
     expect(input['mode'], 'IMAGES');
     expect(input['object_filter']['organized'], true);
-    expect(input['object_filter']['performer_count']['value'], 2);
+    expect(input['object_filter']['performer_count']['value']['value'], 2);
   });
 }

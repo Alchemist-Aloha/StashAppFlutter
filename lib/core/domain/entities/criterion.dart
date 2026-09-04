@@ -41,7 +41,7 @@ abstract class IntCriterion with _$IntCriterion {
   }) = _IntCriterion;
 
   factory IntCriterion.fromJson(Map<String, dynamic> json) =>
-      _$IntCriterionFromJson(json);
+      _$IntCriterionFromJson(_flattenSavedRangeCriterion(json, 0));
 }
 
 @freezed
@@ -64,7 +64,27 @@ abstract class DateCriterion with _$DateCriterion {
   }) = _DateCriterion;
 
   factory DateCriterion.fromJson(Map<String, dynamic> json) =>
-      _$DateCriterionFromJson(json);
+      _$DateCriterionFromJson(_flattenSavedRangeCriterion(json, ''));
+}
+
+Map<String, dynamic> _flattenSavedRangeCriterion(
+  Map<String, dynamic> json,
+  Object nullModifierValue,
+) {
+  final range = json['value'];
+  if (range is! Map) return json;
+
+  final modifier = json['modifier'];
+  final value = range['value'];
+  return {
+    ...json,
+    'value':
+        value ??
+        (modifier == 'IS_NULL' || modifier == 'NOT_NULL'
+            ? nullModifierValue
+            : value),
+    'value2': range['value2'],
+  };
 }
 
 @freezed

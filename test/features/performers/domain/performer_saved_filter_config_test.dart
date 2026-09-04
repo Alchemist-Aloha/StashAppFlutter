@@ -25,7 +25,7 @@ void main() {
       expect(input['find_filter']['sort'], 'rating');
       expect(input['find_filter']['direction'], 'DESC');
       expect(input['object_filter']['filter_favorites'], true);
-      expect(input['object_filter']['rating100']['value'], 80);
+      expect(input['object_filter']['rating100']['value']['value'], 80);
     },
   );
 }

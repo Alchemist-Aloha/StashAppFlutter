@@ -13,3 +13,7 @@
 
 - Reduced startup delays by opening the persistent GraphQL cache after the first frame while preserving cache changes made during launch.
 - Smoothed masonry-grid scrolling by preparing more content ahead of the visible area, reducing stalls during faster browsing.
+
+## 🔖 Saved Presets
+
+- Saved and loaded presets using the official Stash numeric and date range format, including between and empty-value criteria.

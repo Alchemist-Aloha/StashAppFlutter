@@ -131,7 +131,20 @@ Map<String, dynamic> savedFilterToServerObjectFilter({
   final compact = savedFilterWithoutNulls(localJson);
   return {
     for (final entry in compact.entries)
-      localToServerKeys[entry.key] ?? entry.key: entry.value,
+      localToServerKeys[entry.key] ?? entry.key: _toSavedCriterion(entry.value),
+  };
+}
+
+Object? _toSavedCriterion(Object? value) {
+  if (value is! Map || !value.containsKey('value2')) return value;
+
+  return {
+    for (final entry in value.entries)
+      if (entry.key != 'value' && entry.key != 'value2') entry.key: entry.value,
+    'value': {
+      'value': value['value'],
+      if (value['value2'] != null) 'value2': value['value2'],
+    },
   };
 }
 

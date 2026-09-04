@@ -23,6 +23,6 @@ void main() {
     expect(input['find_filter']['direction'], 'ASC');
     expect(input['object_filter']['favorite'], true);
     expect(input['object_filter']['sort_name']['value'], 'sort');
-    expect(input['object_filter']['parent_count']['value'], 2);
+    expect(input['object_filter']['parent_count']['value']['value'], 2);
   });
 }

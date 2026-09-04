@@ -31,10 +31,16 @@ void main() {
       expect(input['find_filter']['sort'], 'rating');
       expect(input['find_filter']['direction'], 'DESC');
       expect(input['find_filter']['per_page'], 60);
-      expect(input['object_filter'], contains('rating100'));
+      expect(input['object_filter']['rating100'], {
+        'value': {'value': 80},
+        'modifier': 'GREATER_THAN',
+      });
       expect(input['object_filter'], contains('tags'));
       expect(input['object_filter']['organized'], true);
-      expect(input['object_filter'], contains('o_counter'));
+      expect(input['object_filter']['o_counter'], {
+        'value': {'value': 2},
+        'modifier': 'EQUALS',
+      });
       expect(input['object_filter'], isNot(contains('oCounter')));
       expect(input['ui_options'], isA<Map<String, dynamic>>());
     });
@@ -52,8 +58,14 @@ void main() {
         objectFilter: {
           'organized': false,
           'path': {'value': '/media', 'modifier': 'INCLUDES'},
-          'o_counter': {'value': 4, 'modifier': 'GREATER_THAN'},
-          'last_played_at': {'value': '2025-01-01', 'modifier': 'NOT_NULL'},
+          'o_counter': {
+            'value': {'value': 4},
+            'modifier': 'GREATER_THAN',
+          },
+          'last_played_at': {
+            'value': {'value': '2025-01-01'},
+            'modifier': 'NOT_NULL',
+          },
           'performers': {
             'value': ['3'],
             'modifier': 'INCLUDES',
@@ -72,6 +84,33 @@ void main() {
       expect(config.filter.oCounter?.value, 4);
       expect(config.filter.lastPlayedAt?.value, '2025-01-01');
       expect(config.filter.performers?.value, ['3']);
+    });
+
+    test('loads official Stash numeric ranges and null criteria', () {
+      final config = SceneSavedFilterConfig.fromServerPayload(
+        id: '15',
+        name: 'Numeric ranges',
+        objectFilter: {
+          'duration': {
+            'value': {'value': 60, 'value2': 120},
+            'modifier': 'BETWEEN',
+          },
+          'rating100': {'value': <String, dynamic>{}, 'modifier': 'NOT_NULL'},
+        },
+      );
+
+      expect(
+        config.filter.duration,
+        const IntCriterion(
+          value: 60,
+          value2: 120,
+          modifier: CriterionModifier.between,
+        ),
+      );
+      expect(
+        config.filter.rating100,
+        const IntCriterion(value: 0, modifier: CriterionModifier.notNull),
+      );
     });
 
     test('normalizes official boolean criterion maps without crashing', () {
