@@ -20,11 +20,20 @@ void main() {
 
     await expand('Library');
     expect(find.text('Scenes'), findsOneWidget);
+    expect(find.text('Folder'), findsOneWidget);
 
     await expand('Performer');
     expect(find.text('Favorites only'), findsOneWidget);
 
     await expand('Media Info');
     expect(find.text('Resolution'), findsOneWidget);
+
+    await expand('Metadata');
+    expect(find.text('Code'), findsOneWidget);
+    expect(find.text('Photographer'), findsOneWidget);
+
+    await expand('System');
+    expect(find.text('Missing Field'), findsOneWidget);
+    expect(find.text('Custom Fields'), findsOneWidget);
   });
 }

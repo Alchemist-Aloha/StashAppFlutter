@@ -144,11 +144,31 @@ class _StudioFilterPanelState extends ConsumerState<StudioFilterPanel> {
     return FilterSection(
       title: context.l10n.filter_group_system,
       children: [
-        _buildBooleanFilter(
-          'Is Missing',
-          _tempFilter.isMissing,
-          (val) => setState(
-            () => _tempFilter = _tempFilter.copyWith(isMissing: val),
+        MissingFieldCriterionInput(
+          value: _tempFilter.isMissing,
+          fields: const [
+            'image',
+            'stash_id',
+            'details',
+            'url',
+            'aliases',
+            'tags',
+            'rating',
+          ],
+          onChanged: (value) => setState(
+            () => _tempFilter = _tempFilter.copyWith(isMissing: value),
+          ),
+        ),
+        StashIdCriterionInput(
+          value: _tempFilter.stashIdEndpoint,
+          onChanged: (value) => setState(
+            () => _tempFilter = _tempFilter.copyWith(stashIdEndpoint: value),
+          ),
+        ),
+        CustomFieldsCriterionInput(
+          value: _tempFilter.customFields,
+          onChanged: (value) => setState(
+            () => _tempFilter = _tempFilter.copyWith(customFields: value),
           ),
         ),
         _buildBooleanFilter(

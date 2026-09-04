@@ -27,6 +27,7 @@ abstract class GroupFilter with _$GroupFilter {
     IntCriterion? containingGroupCount,
     IntCriterion? subGroupCount,
     IntCriterion? sceneCount,
+    @Default(<CustomFieldCriterion>[]) List<CustomFieldCriterion> customFields,
   }) = _GroupFilter;
 
   factory GroupFilter.empty() => const GroupFilter();

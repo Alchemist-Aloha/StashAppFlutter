@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:graphql/client.dart';
 
@@ -75,10 +77,20 @@ class GraphQLSavedFilterRepository {
     validateGraphQLResult(result);
 
     final filters = result.data?['findSavedFilters'] as List<dynamic>? ?? [];
-    return filters
-        .whereType<Map<String, dynamic>>()
-        .map(fromRaw)
-        .toList(growable: false);
+    final decoded = <T>[];
+    for (final raw in filters.whereType<Map<String, dynamic>>()) {
+      try {
+        decoded.add(fromRaw(raw));
+      } catch (error, stackTrace) {
+        developer.log(
+          'Skipping invalid saved filter ${raw['id'] ?? '<unknown>'}',
+          name: 'GraphQLSavedFilterRepository',
+          error: error,
+          stackTrace: stackTrace,
+        );
+      }
+    }
+    return List.unmodifiable(decoded);
   }
 
   Future<T> save<T>({

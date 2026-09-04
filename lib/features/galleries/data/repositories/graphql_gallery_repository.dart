@@ -48,11 +48,14 @@ class GraphQLGalleryRepository {
     final inputFilter = Input$GalleryFilterType(
       id: mapIntCriterion(galleryFilter?.id),
       title: mapStringCriterion(galleryFilter?.title),
+      code: mapStringCriterion(galleryFilter?.code),
       details: mapStringCriterion(galleryFilter?.details),
+      photographer: mapStringCriterion(galleryFilter?.photographer),
       checksum: mapStringCriterion(galleryFilter?.checksum),
       path: mapStringCriterion(galleryFilter?.path),
+      parent_folder: mapHierarchicalMultiCriterion(galleryFilter?.parentFolder),
       file_count: mapIntCriterion(galleryFilter?.fileCount),
-      is_missing: galleryFilter?.isMissing?.toString(),
+      is_missing: galleryFilter?.isMissing,
       is_zip: galleryFilter?.isZip,
       rating100: mapIntCriterion(galleryFilter?.rating100),
       organized: galleryFilter?.organized,
@@ -96,6 +99,9 @@ class GraphQLGalleryRepository {
       date: mapDateCriterion(galleryFilter?.date),
       created_at: mapTimestampCriterion(galleryFilter?.createdAt),
       updated_at: mapTimestampCriterion(galleryFilter?.updatedAt),
+      custom_fields: mapCustomFieldCriteria(
+        galleryFilter?.customFields ?? const [],
+      ),
     );
 
     final result = await _client.query$FindGalleries(

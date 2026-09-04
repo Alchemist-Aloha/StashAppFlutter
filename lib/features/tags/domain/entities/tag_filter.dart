@@ -27,6 +27,8 @@ abstract class TagFilter with _$TagFilter {
     IntCriterion? childCount,
     DateCriterion? createdAt,
     DateCriterion? updatedAt,
+    StashIdCriterion? stashIdEndpoint,
+    @Default(<CustomFieldCriterion>[]) List<CustomFieldCriterion> customFields,
   }) = _TagFilter;
 
   factory TagFilter.empty() => const TagFilter();

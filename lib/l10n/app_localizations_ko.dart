@@ -3272,4 +3272,58 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String get settings_config_plaintext_label =>
       '자격 증명은 내보낸 파일에 읽을 수 있는 텍스트로 저장됩니다.';
+
+  @override
+  String get scenes_field_production_date => '제작일';
+
+  @override
+  String get sort_o_count_all => 'O 카운터(하위 스튜디오 포함)';
+
+  @override
+  String get sort_performers_count_all => '출연자 수(하위 스튜디오 포함)';
+
+  @override
+  String get sort_scene_marker_count => '영상 마커 수';
+
+  @override
+  String get sort_sub_group_description => '하위 그룹 설명';
+
+  @override
+  String get sort_sub_group_order => '하위 그룹 순서';
+
+  @override
+  String get sort_scene_id => '영상 ID';
+
+  @override
+  String get sort_scenes_updated_at => '영상 수정 날짜';
+
+  @override
+  String get filter_ids => 'ID(쉼표로 구분)';
+
+  @override
+  String get filter_excluded_ids => '제외 ID(쉼표로 구분)';
+
+  @override
+  String get filter_depth => '계층 깊이';
+
+  @override
+  String get filter_distance => '거리';
+
+  @override
+  String get filter_endpoint => '엔드포인트';
+
+  @override
+  String get filter_custom_fields => '사용자 지정 필드';
+
+  @override
+  String get filter_field => '필드';
+
+  @override
+  String get filter_values => '값(쉼표로 구분)';
+
+  @override
+  String get filter_folder => '폴더';
+
+  @override
+  String get filter_photographer => '사진가';
 }

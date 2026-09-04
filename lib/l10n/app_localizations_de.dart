@@ -3390,4 +3390,59 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get settings_config_plaintext_label =>
       'Anmeldedaten werden in der exportierten Datei als lesbarer Text gespeichert.';
+
+  @override
+  String get scenes_field_production_date => 'Produktionsdatum';
+
+  @override
+  String get sort_o_count_all => 'O-Zähler (einschließlich Tochterstudios)';
+
+  @override
+  String get sort_performers_count_all =>
+      'Darstelleranzahl (einschließlich Tochterstudios)';
+
+  @override
+  String get sort_scene_marker_count => 'Szenenmarkeranzahl';
+
+  @override
+  String get sort_sub_group_description => 'Untergruppenbeschreibung';
+
+  @override
+  String get sort_sub_group_order => 'Untergruppenreihenfolge';
+
+  @override
+  String get sort_scene_id => 'Szenen-ID';
+
+  @override
+  String get sort_scenes_updated_at => 'Szene aktualisiert am';
+
+  @override
+  String get filter_ids => 'IDs (kommagetrennt)';
+
+  @override
+  String get filter_excluded_ids => 'Ausgeschlossene IDs (kommagetrennt)';
+
+  @override
+  String get filter_depth => 'Hierarchietiefe';
+
+  @override
+  String get filter_distance => 'Distanz';
+
+  @override
+  String get filter_endpoint => 'Endpunkt';
+
+  @override
+  String get filter_custom_fields => 'Benutzerdefinierte Felder';
+
+  @override
+  String get filter_field => 'Feld';
+
+  @override
+  String get filter_values => 'Werte (kommagetrennt)';
+
+  @override
+  String get filter_folder => 'Ordner';
+
+  @override
+  String get filter_photographer => 'Fotograf';
 }

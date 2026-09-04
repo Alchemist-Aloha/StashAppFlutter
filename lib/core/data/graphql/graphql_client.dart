@@ -16,6 +16,9 @@ part 'graphql_client.g.dart';
 
 const graphqlRequestTimeout = Duration(seconds: 60);
 
+/// The normalized cache store used by the active GraphQL client.
+final graphqlCacheStoreProvider = Provider<Store>((ref) => InMemoryStore());
+
 Uri _withGraphqlPathIfMissing(Uri uri) {
   final path = uri.path.trim();
   if (path.isEmpty || path == '/') {
@@ -171,7 +174,7 @@ class GraphqlClient extends _$GraphqlClient {
 
     return GraphQLClient(
       link: httpLink,
-      cache: env.isTestMode ? GraphQLCache() : GraphQLCache(store: HiveStore()),
+      cache: GraphQLCache(store: ref.watch(graphqlCacheStoreProvider)),
       queryRequestTimeout: graphqlRequestTimeout,
     );
   }

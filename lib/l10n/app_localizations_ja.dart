@@ -3275,4 +3275,58 @@ class AppLocalizationsJa extends AppLocalizations {
   @override
   String get settings_config_plaintext_label =>
       '認証情報はエクスポートしたファイルに読み取り可能なテキストとして保存されます。';
+
+  @override
+  String get scenes_field_production_date => '制作日';
+
+  @override
+  String get sort_o_count_all => 'Oカウンター（子スタジオを含む）';
+
+  @override
+  String get sort_performers_count_all => '出演者数（子スタジオを含む）';
+
+  @override
+  String get sort_scene_marker_count => 'シーンマーカー数';
+
+  @override
+  String get sort_sub_group_description => 'サブグループの説明';
+
+  @override
+  String get sort_sub_group_order => 'サブグループの順序';
+
+  @override
+  String get sort_scene_id => 'シーンID';
+
+  @override
+  String get sort_scenes_updated_at => 'シーン更新日時';
+
+  @override
+  String get filter_ids => 'ID（カンマ区切り）';
+
+  @override
+  String get filter_excluded_ids => '除外ID（カンマ区切り）';
+
+  @override
+  String get filter_depth => '階層の深さ';
+
+  @override
+  String get filter_distance => '距離';
+
+  @override
+  String get filter_endpoint => 'エンドポイント';
+
+  @override
+  String get filter_custom_fields => 'カスタムフィールド';
+
+  @override
+  String get filter_field => 'フィールド';
+
+  @override
+  String get filter_values => '値（カンマ区切り）';
+
+  @override
+  String get filter_folder => 'フォルダー';
+
+  @override
+  String get filter_photographer => '写真家';
 }

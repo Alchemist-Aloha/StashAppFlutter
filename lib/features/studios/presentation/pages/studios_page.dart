@@ -32,6 +32,13 @@ enum _StudioSortOption {
   imageCount,
   sceneCount,
   childCount,
+  oCounter,
+  oCounterAll,
+  performerCount,
+  performerCountAll,
+  markerCount,
+  createdAt,
+  updatedAt,
 }
 
 class StudiosPage extends ConsumerStatefulWidget {
@@ -77,6 +84,13 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
       _StudioSortOption.imageCount => 'images_count',
       _StudioSortOption.sceneCount => 'scenes_count',
       _StudioSortOption.childCount => 'child_count',
+      _StudioSortOption.oCounter => 'o_counter',
+      _StudioSortOption.oCounterAll => 'o_counter_all',
+      _StudioSortOption.performerCount => 'performer_count',
+      _StudioSortOption.performerCountAll => 'performer_count_all',
+      _StudioSortOption.markerCount => 'scene_markers_count',
+      _StudioSortOption.createdAt => 'created_at',
+      _StudioSortOption.updatedAt => 'updated_at',
     };
 
     ref
@@ -97,6 +111,13 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
       'images_count' || 'image_count' => _StudioSortOption.imageCount,
       'scenes_count' => _StudioSortOption.sceneCount,
       'child_count' => _StudioSortOption.childCount,
+      'o_counter' => _StudioSortOption.oCounter,
+      'o_counter_all' => _StudioSortOption.oCounterAll,
+      'performer_count' => _StudioSortOption.performerCount,
+      'performer_count_all' => _StudioSortOption.performerCountAll,
+      'scene_markers_count' => _StudioSortOption.markerCount,
+      'created_at' => _StudioSortOption.createdAt,
+      'updated_at' => _StudioSortOption.updatedAt,
       _ => _StudioSortOption.name,
     };
   }
@@ -125,6 +146,20 @@ class _StudiosPageState extends ConsumerState<StudiosPage> {
         return context.l10n.sort_scene_count;
       case _StudioSortOption.childCount:
         return context.l10n.sort_child_count;
+      case _StudioSortOption.oCounter:
+        return context.l10n.sort_o_count;
+      case _StudioSortOption.oCounterAll:
+        return context.l10n.sort_o_count_all;
+      case _StudioSortOption.performerCount:
+        return context.l10n.sort_performers_count;
+      case _StudioSortOption.performerCountAll:
+        return context.l10n.sort_performers_count_all;
+      case _StudioSortOption.markerCount:
+        return context.l10n.sort_scene_marker_count;
+      case _StudioSortOption.createdAt:
+        return context.l10n.sort_created_at;
+      case _StudioSortOption.updatedAt:
+        return context.l10n.sort_updated_at;
     }
   }
 

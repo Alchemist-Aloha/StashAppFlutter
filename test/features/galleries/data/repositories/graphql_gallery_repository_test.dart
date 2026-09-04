@@ -127,6 +127,13 @@ void main() {
 
       await repository.findGalleries(
         galleryFilter: const GalleryFilter(
+          code: StringCriterion(value: 'GAL-1'),
+          photographer: StringCriterion(value: 'Alice'),
+          parentFolder: HierarchicalMultiCriterion(value: ['folder-1']),
+          isMissing: 'rating',
+          customFields: [
+            CustomFieldCriterion(field: 'source', value: ['archive']),
+          ],
           performers: MultiCriterion(value: ['performer-1']),
         ),
       );
@@ -145,6 +152,13 @@ void main() {
           'modifier': 'INCLUDES',
         },
       );
+      final filter =
+          request.variables['gallery_filter'] as Map<String, dynamic>;
+      expect(filter['code']['value'], 'GAL-1');
+      expect(filter['photographer']['value'], 'Alice');
+      expect(filter['parent_folder']['value'], ['folder-1']);
+      expect(filter['is_missing'], 'rating');
+      expect(filter['custom_fields'].single['field'], 'source');
       expect(
         ((request.variables['gallery_filter'] as Map<String, dynamic>)
                 .cast<String, dynamic>()['performers']

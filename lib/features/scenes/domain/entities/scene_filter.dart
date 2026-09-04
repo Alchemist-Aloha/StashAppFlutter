@@ -8,12 +8,15 @@ part 'scene_filter.g.dart';
 abstract class SceneFilter with _$SceneFilter {
   const factory SceneFilter({
     String? searchQuery,
+    StringCriterion? title,
     IntCriterion? rating100,
     HierarchicalMultiCriterion? studios,
     MultiCriterion? performers,
     HierarchicalMultiCriterion? tags,
     bool? organized,
     DateCriterion? date,
+    DateCriterion? productionDate,
+    HierarchicalMultiCriterion? folder,
     MultiCriterion? resolutions,
     MultiCriterion? orientations,
     IntCriterion? duration,
@@ -30,7 +33,7 @@ abstract class SceneFilter with _$SceneFilter {
     StringCriterion? checksum,
     StringCriterion? phash,
     bool? hasMarkers,
-    bool? isMissing,
+    String? isMissing,
     IntCriterion? fileCount,
     IntCriterion? playCount,
     DateCriterion? createdAt,
@@ -39,7 +42,8 @@ abstract class SceneFilter with _$SceneFilter {
     StringCriterion? code,
     StringCriterion? details,
     StringCriterion? director,
-    StringCriterion? phashDistance,
+    PhashCriterion? phashDistance,
+    bool? performerFavorite,
     StringCriterion? path,
     StringCriterion? url,
     StringCriterion? captions,
@@ -49,10 +53,12 @@ abstract class SceneFilter with _$SceneFilter {
     IntCriterion? tagCount,
     IntCriterion? performerCount,
     IntCriterion? stashIdCount,
+    StashIdCriterion? stashIdEndpoint,
     HierarchicalMultiCriterion? groups,
     MultiCriterion? galleries,
     HierarchicalMultiCriterion? performerTags,
     MultiCriterion? duplicated,
+    @Default(<CustomFieldCriterion>[]) List<CustomFieldCriterion> customFields,
   }) = _SceneFilter;
 
   factory SceneFilter.empty() => const SceneFilter();

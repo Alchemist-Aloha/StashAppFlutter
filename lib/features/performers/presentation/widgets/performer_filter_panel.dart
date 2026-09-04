@@ -346,11 +346,49 @@ class _PerformerFilterPanelState extends ConsumerState<PerformerFilterPanel> {
             () => _tempFilter = _tempFilter.copyWith(ignoreAutoTag: val),
           ),
         ),
-        _buildBooleanFilter(
-          'Is Missing',
-          _tempFilter.isMissing,
-          (val) => setState(
-            () => _tempFilter = _tempFilter.copyWith(isMissing: val),
+        MissingFieldCriterionInput(
+          value: _tempFilter.isMissing,
+          fields: const [
+            'url',
+            'ethnicity',
+            'country',
+            'hair_color',
+            'eye_color',
+            'height',
+            'weight',
+            'measurements',
+            'fake_tits',
+            'penis_length',
+            'circumcised',
+            'career_start',
+            'career_end',
+            'tattoos',
+            'piercings',
+            'aliases',
+            'gender',
+            'birthdate',
+            'death_date',
+            'disambiguation',
+            'tags',
+            'image',
+            'details',
+            'rating',
+            'stash_id',
+          ],
+          onChanged: (value) => setState(
+            () => _tempFilter = _tempFilter.copyWith(isMissing: value),
+          ),
+        ),
+        StashIdCriterionInput(
+          value: _tempFilter.stashIdEndpoint,
+          onChanged: (value) => setState(
+            () => _tempFilter = _tempFilter.copyWith(stashIdEndpoint: value),
+          ),
+        ),
+        CustomFieldsCriterionInput(
+          value: _tempFilter.customFields,
+          onChanged: (value) => setState(
+            () => _tempFilter = _tempFilter.copyWith(customFields: value),
           ),
         ),
         IntCriterionInput(

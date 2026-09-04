@@ -1,7 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:graphql/client.dart';
+import 'package:stash_app_flutter/core/domain/entities/criterion.dart';
 import 'package:stash_app_flutter/core/domain/entities/scraped/scraped_scene.dart';
 import 'package:stash_app_flutter/features/scenes/data/repositories/graphql_scene_repository.dart';
+import 'package:stash_app_flutter/features/scenes/domain/entities/scene_filter.dart';
 
 void main() {
   group('GraphQLSceneRepository', () {
@@ -56,9 +58,49 @@ void main() {
         mutationData: const {'__typename': 'Mutation'},
       );
 
-      final scenes = await GraphQLSceneRepository(client).findScenes();
+      final scenes = await GraphQLSceneRepository(client).findScenes(
+        sceneFilter: const SceneFilter(
+          phashDistance: PhashCriterion(value: 'abc123', distance: 4),
+          tags: HierarchicalMultiCriterion(
+            value: ['tag-1'],
+            excludes: ['tag-2'],
+            depth: 2,
+          ),
+          title: StringCriterion(value: 'Example'),
+          productionDate: DateCriterion(value: '2026-09-01'),
+          folder: HierarchicalMultiCriterion(value: ['folder-1']),
+          performerFavorite: true,
+          isMissing: 'studio',
+          stashIdEndpoint: StashIdCriterion(
+            endpoint: 'https://stashdb.org/graphql',
+            stashId: 'stash-1',
+          ),
+          customFields: [
+            CustomFieldCriterion(field: 'source', value: ['archive']),
+          ],
+        ),
+      );
 
       expect(scenes.single.performerBirthdates, ['2000-12-31']);
+      expect(client.lastQueryVariables?['scene_filter']['phash_distance'], {
+        'value': 'abc123',
+        'modifier': 'EQUALS',
+        'distance': 4,
+      });
+      expect(client.lastQueryVariables?['scene_filter']['tags'], {
+        'value': ['tag-1'],
+        'modifier': 'INCLUDES',
+        'depth': 2,
+        'excludes': ['tag-2'],
+      });
+      final filter = client.lastQueryVariables?['scene_filter'];
+      expect(filter['title']['value'], 'Example');
+      expect(filter['production_date']['value'], '2026-09-01');
+      expect(filter['files_filter']['parent_folder']['value'], ['folder-1']);
+      expect(filter['performer_favorite'], isTrue);
+      expect(filter['is_missing'], 'studio');
+      expect(filter['stash_id_endpoint']['stash_id'], 'stash-1');
+      expect(filter['custom_fields'].single['field'], 'source');
     });
 
     test(

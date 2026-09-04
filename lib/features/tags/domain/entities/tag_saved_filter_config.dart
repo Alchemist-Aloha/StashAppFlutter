@@ -24,9 +24,7 @@ class TagSavedFilterConfig extends SavedFilterConfig<TagFilter> {
       emptyFilter: TagFilter.empty(),
       fromJson: TagFilter.fromJson,
       serverToLocalKeys: _serverToLocalKeys,
-      normalizeValue: (localKey, value) => localKey == 'favorite'
-          ? savedFilterReadBooleanCriterionValue(value)
-          : value,
+      criterionTypes: _criterionTypes,
     );
 
     return TagSavedFilterConfig(
@@ -53,6 +51,7 @@ class TagSavedFilterConfig extends SavedFilterConfig<TagFilter> {
       objectFilter: savedFilterToServerObjectFilter(
         localJson: filter.toJson(),
         localToServerKeys: _localToServerKeys,
+        criterionTypes: _criterionTypes,
       ),
     );
   }
@@ -72,9 +71,21 @@ class TagSavedFilterConfig extends SavedFilterConfig<TagFilter> {
     'childCount': 'child_count',
     'createdAt': 'created_at',
     'updatedAt': 'updated_at',
+    'stashIdEndpoint': 'stash_id_endpoint',
+    'customFields': 'custom_fields',
   };
 
   static final _serverToLocalKeys = {
     for (final entry in _localToServerKeys.entries) entry.value: entry.key,
+  };
+
+  static const _criterionTypes = {
+    'favorite': SavedFilterCriterionType.boolean,
+    'ignoreAutoTag': SavedFilterCriterionType.boolean,
+    'isMissingField': SavedFilterCriterionType.stringValue,
+    'parents': SavedFilterCriterionType.hierarchical,
+    'children': SavedFilterCriterionType.hierarchical,
+    'stashIdEndpoint': SavedFilterCriterionType.stashId,
+    'customFields': SavedFilterCriterionType.customFields,
   };
 }

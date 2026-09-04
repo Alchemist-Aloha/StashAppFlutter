@@ -25,7 +25,7 @@ class SceneMarkerSavedFilterConfig
       emptyFilter: const SceneMarkerFilter(),
       fromJson: SceneMarkerFilter.fromJson,
       serverToLocalKeys: _serverToLocalKeys,
-      normalizeValue: _normalizeServerValue,
+      criterionTypes: _criterionTypes,
     );
 
     return SceneMarkerSavedFilterConfig(
@@ -61,39 +61,9 @@ class SceneMarkerSavedFilterConfig
       objectFilter: savedFilterToServerObjectFilter(
         localJson: filter.toJson(),
         localToServerKeys: _localToServerKeys,
+        criterionTypes: _criterionTypes,
       ),
     );
-  }
-
-  static Object? _normalizeServerValue(String localKey, Object? value) {
-    if (_multiValueFields.contains(localKey)) {
-      return _normalizeMultiCriterionValue(value);
-    }
-    return value;
-  }
-
-  static Object? _normalizeMultiCriterionValue(Object? value) {
-    Object? rawValue;
-    if (value is Map) {
-      rawValue = value['value'];
-    } else {
-      rawValue = value;
-    }
-
-    final normalizedValue = switch (rawValue) {
-      null => <String>[],
-      List() => rawValue.map((item) => item.toString()).toList(),
-      _ => <String>[rawValue.toString()],
-    };
-
-    if (value is Map) {
-      return {
-        for (final entry in value.entries) entry.key.toString(): entry.value,
-        'value': normalizedValue,
-      };
-    }
-
-    return {'value': normalizedValue};
   }
 
   static const _localToServerKeys = {
@@ -109,10 +79,10 @@ class SceneMarkerSavedFilterConfig
     for (final entry in _localToServerKeys.entries) entry.value: entry.key,
   };
 
-  static const _multiValueFields = {
-    'tags',
-    'sceneTags',
-    'performers',
-    'scenes',
+  static const _criterionTypes = {
+    'tags': SavedFilterCriterionType.hierarchical,
+    'sceneTags': SavedFilterCriterionType.hierarchical,
+    'performers': SavedFilterCriterionType.labeledWithExclusions,
+    'scenes': SavedFilterCriterionType.labeled,
   };
 }

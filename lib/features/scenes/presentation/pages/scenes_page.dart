@@ -31,7 +31,9 @@ import '../widgets/scene_saved_filter_dialog.dart';
 import '../../../../core/presentation/widgets/grid_utils.dart';
 
 enum _SceneSortField {
+  organized,
   date,
+  productionDate,
   rating,
   playCount,
   title,
@@ -134,7 +136,9 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
       final sortConfig = ref.read(sceneSortProvider);
       setState(() {
         _sortField = switch (sortConfig.sort) {
+          'organized' => _SceneSortField.organized,
           'date' => _SceneSortField.date,
+          'production_date' => _SceneSortField.productionDate,
           'rating' => _SceneSortField.rating,
           'play_count' => _SceneSortField.playCount,
           'title' => _SceneSortField.title,
@@ -192,7 +196,9 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
 
   String _sortKeyForField(_SceneSortField field) {
     return switch (field) {
+      _SceneSortField.organized => 'organized',
       _SceneSortField.date => 'date',
+      _SceneSortField.productionDate => 'production_date',
       _SceneSortField.rating => 'rating',
       _SceneSortField.playCount => 'play_count',
       _SceneSortField.title => 'title',
@@ -226,7 +232,9 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
 
   _SceneSortField _sortFieldForKey(String? sort) {
     return switch (sort) {
+      'organized' => _SceneSortField.organized,
       'date' => _SceneSortField.date,
+      'production_date' => _SceneSortField.productionDate,
       'rating' => _SceneSortField.rating,
       'play_count' => _SceneSortField.playCount,
       'title' => _SceneSortField.title,
@@ -356,7 +364,10 @@ class _ScenesPageState extends ConsumerState<ScenesPage> {
   /// Formats a [_SceneSortField] enum value for display in the UI.
   String _sortFieldLabel(_SceneSortField field) {
     return switch (field) {
+      _SceneSortField.organized => context.l10n.common_organized,
       _SceneSortField.date => context.l10n.common_date,
+      _SceneSortField.productionDate =>
+        context.l10n.scenes_field_production_date,
       _SceneSortField.rating => context.l10n.common_rating,
       _SceneSortField.playCount => context.l10n.performers_play_count,
       _SceneSortField.title => context.l10n.common_title,

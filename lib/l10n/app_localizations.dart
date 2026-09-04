@@ -6023,6 +6023,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Credentials are stored as readable text in the exported file.'**
   String get settings_config_plaintext_label;
+
+  /// No description provided for @scenes_field_production_date.
+  ///
+  /// In en, this message translates to:
+  /// **'Production Date'**
+  String get scenes_field_production_date;
+
+  /// No description provided for @sort_o_count_all.
+  ///
+  /// In en, this message translates to:
+  /// **'O-Counter (including subsidiaries)'**
+  String get sort_o_count_all;
+
+  /// No description provided for @sort_performers_count_all.
+  ///
+  /// In en, this message translates to:
+  /// **'Performer Count (including subsidiaries)'**
+  String get sort_performers_count_all;
+
+  /// No description provided for @sort_scene_marker_count.
+  ///
+  /// In en, this message translates to:
+  /// **'Scene Marker Count'**
+  String get sort_scene_marker_count;
+
+  /// No description provided for @sort_sub_group_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Sub-Group Description'**
+  String get sort_sub_group_description;
+
+  /// No description provided for @sort_sub_group_order.
+  ///
+  /// In en, this message translates to:
+  /// **'Sub-Group Order'**
+  String get sort_sub_group_order;
+
+  /// No description provided for @sort_scene_id.
+  ///
+  /// In en, this message translates to:
+  /// **'Scene ID'**
+  String get sort_scene_id;
+
+  /// No description provided for @sort_scenes_updated_at.
+  ///
+  /// In en, this message translates to:
+  /// **'Scene Updated At'**
+  String get sort_scenes_updated_at;
+
+  /// No description provided for @filter_ids.
+  ///
+  /// In en, this message translates to:
+  /// **'IDs (comma-separated)'**
+  String get filter_ids;
+
+  /// No description provided for @filter_excluded_ids.
+  ///
+  /// In en, this message translates to:
+  /// **'Excluded IDs (comma-separated)'**
+  String get filter_excluded_ids;
+
+  /// No description provided for @filter_depth.
+  ///
+  /// In en, this message translates to:
+  /// **'Hierarchy Depth'**
+  String get filter_depth;
+
+  /// No description provided for @filter_distance.
+  ///
+  /// In en, this message translates to:
+  /// **'Distance'**
+  String get filter_distance;
+
+  /// No description provided for @filter_endpoint.
+  ///
+  /// In en, this message translates to:
+  /// **'Endpoint'**
+  String get filter_endpoint;
+
+  /// No description provided for @filter_custom_fields.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom Fields'**
+  String get filter_custom_fields;
+
+  /// No description provided for @filter_field.
+  ///
+  /// In en, this message translates to:
+  /// **'Field'**
+  String get filter_field;
+
+  /// No description provided for @filter_values.
+  ///
+  /// In en, this message translates to:
+  /// **'Values (comma-separated)'**
+  String get filter_values;
+
+  /// No description provided for @filter_folder.
+  ///
+  /// In en, this message translates to:
+  /// **'Folder'**
+  String get filter_folder;
+
+  /// No description provided for @filter_photographer.
+  ///
+  /// In en, this message translates to:
+  /// **'Photographer'**
+  String get filter_photographer;
 }
 
 class _AppLocalizationsDelegate

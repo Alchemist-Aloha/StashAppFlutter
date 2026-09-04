@@ -3344,4 +3344,59 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get settings_config_plaintext_label =>
       'Credentials are stored as readable text in the exported file.';
+
+  @override
+  String get scenes_field_production_date => 'Production Date';
+
+  @override
+  String get sort_o_count_all => 'O-Counter (including subsidiaries)';
+
+  @override
+  String get sort_performers_count_all =>
+      'Performer Count (including subsidiaries)';
+
+  @override
+  String get sort_scene_marker_count => 'Scene Marker Count';
+
+  @override
+  String get sort_sub_group_description => 'Sub-Group Description';
+
+  @override
+  String get sort_sub_group_order => 'Sub-Group Order';
+
+  @override
+  String get sort_scene_id => 'Scene ID';
+
+  @override
+  String get sort_scenes_updated_at => 'Scene Updated At';
+
+  @override
+  String get filter_ids => 'IDs (comma-separated)';
+
+  @override
+  String get filter_excluded_ids => 'Excluded IDs (comma-separated)';
+
+  @override
+  String get filter_depth => 'Hierarchy Depth';
+
+  @override
+  String get filter_distance => 'Distance';
+
+  @override
+  String get filter_endpoint => 'Endpoint';
+
+  @override
+  String get filter_custom_fields => 'Custom Fields';
+
+  @override
+  String get filter_field => 'Field';
+
+  @override
+  String get filter_values => 'Values (comma-separated)';
+
+  @override
+  String get filter_folder => 'Folder';
+
+  @override
+  String get filter_photographer => 'Photographer';
 }

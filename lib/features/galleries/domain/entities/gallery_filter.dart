@@ -10,11 +10,14 @@ abstract class GalleryFilter with _$GalleryFilter {
     String? searchQuery,
     IntCriterion? id,
     StringCriterion? title,
+    StringCriterion? code,
     StringCriterion? details,
+    StringCriterion? photographer,
     StringCriterion? checksum,
     StringCriterion? path,
+    HierarchicalMultiCriterion? parentFolder,
     IntCriterion? fileCount,
-    bool? isMissing,
+    String? isMissing,
     bool? isZip,
     IntCriterion? rating100,
     bool? organized,
@@ -34,6 +37,7 @@ abstract class GalleryFilter with _$GalleryFilter {
     DateCriterion? date,
     DateCriterion? createdAt,
     DateCriterion? updatedAt,
+    @Default(<CustomFieldCriterion>[]) List<CustomFieldCriterion> customFields,
   }) = _GalleryFilter;
 
   factory GalleryFilter.empty() => const GalleryFilter();

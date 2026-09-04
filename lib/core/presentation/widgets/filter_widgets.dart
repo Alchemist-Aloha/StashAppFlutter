@@ -54,6 +54,12 @@ bool _usesSecondaryValue(CriterionModifier modifier) {
       modifier == CriterionModifier.notBetween;
 }
 
+Object _parseCustomFieldValue(String value) {
+  if (value == 'true') return true;
+  if (value == 'false') return false;
+  return int.tryParse(value) ?? double.tryParse(value) ?? value;
+}
+
 String _criterionModifierLabel(
   BuildContext context,
   CriterionModifier modifier,
@@ -110,6 +116,37 @@ class FilterSection extends StatelessWidget {
         horizontal: context.dimensions.spacingMedium,
       ),
       children: children,
+    );
+  }
+}
+
+/// Selects the field whose value must be missing.
+class MissingFieldCriterionInput extends StatelessWidget {
+  const MissingFieldCriterionInput({
+    required this.value,
+    required this.fields,
+    required this.onChanged,
+    super.key,
+  });
+
+  final String? value;
+  final List<String> fields;
+  final ValueChanged<String?> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButtonFormField<String?>(
+      initialValue: value,
+      decoration: InputDecoration(labelText: context.l10n.auto_missing_field),
+      items: [
+        DropdownMenuItem<String?>(
+          value: null,
+          child: Text(context.l10n.common_none),
+        ),
+        for (final field in fields)
+          DropdownMenuItem<String?>(value: field, child: Text(field)),
+      ],
+      onChanged: onChanged,
     );
   }
 }
@@ -537,6 +574,381 @@ class DateCriterionInput extends StatelessWidget {
                 ),
               ],
             ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Edits a hierarchical criterion when the server exposes IDs without a picker.
+class HierarchicalIdCriterionInput extends StatelessWidget {
+  const HierarchicalIdCriterionInput({
+    required this.label,
+    required this.value,
+    required this.onChanged,
+    super.key,
+  });
+
+  final String label;
+  final HierarchicalMultiCriterion? value;
+  final ValueChanged<HierarchicalMultiCriterion?> onChanged;
+
+  List<String> _ids(String text) => text
+      .split(',')
+      .map((item) => item.trim())
+      .where((item) => item.isNotEmpty)
+      .toList(growable: false);
+
+  @override
+  Widget build(BuildContext context) {
+    final modifier = value?.modifier ?? CriterionModifier.includes;
+    final enabled = !_isNullaryModifier(modifier);
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: context.dimensions.spacingSmall),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: context.textTheme.labelLarge),
+          DropdownButton<CriterionModifier>(
+            isExpanded: true,
+            value: modifier,
+            items: _buildModifierItems(context, _selectionCriterionModifiers),
+            onChanged: (next) {
+              if (next == null) return;
+              onChanged(
+                HierarchicalMultiCriterion(
+                  value: value?.value ?? const [],
+                  excludes: value?.excludes ?? const [],
+                  depth: value?.depth ?? 0,
+                  modifier: next,
+                ),
+              );
+            },
+          ),
+          if (enabled) ...[
+            TextFormField(
+              initialValue: value?.value.join(', '),
+              decoration: InputDecoration(labelText: context.l10n.filter_ids),
+              onChanged: (text) => onChanged(
+                HierarchicalMultiCriterion(
+                  value: _ids(text),
+                  excludes: value?.excludes ?? const [],
+                  depth: value?.depth ?? 0,
+                  modifier: modifier,
+                ),
+              ),
+            ),
+            TextFormField(
+              initialValue: value?.excludes.join(', '),
+              decoration: InputDecoration(
+                labelText: context.l10n.filter_excluded_ids,
+              ),
+              onChanged: (text) => onChanged(
+                HierarchicalMultiCriterion(
+                  value: value?.value ?? const [],
+                  excludes: _ids(text),
+                  depth: value?.depth ?? 0,
+                  modifier: modifier,
+                ),
+              ),
+            ),
+            TextFormField(
+              initialValue: value?.depth.toString() ?? '0',
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(labelText: context.l10n.filter_depth),
+              onChanged: (text) => onChanged(
+                HierarchicalMultiCriterion(
+                  value: value?.value ?? const [],
+                  excludes: value?.excludes ?? const [],
+                  depth: int.tryParse(text) ?? 0,
+                  modifier: modifier,
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Edits an official Stash pHash-distance criterion.
+class PhashCriterionInput extends StatelessWidget {
+  const PhashCriterionInput({
+    required this.label,
+    required this.value,
+    required this.onChanged,
+    super.key,
+  });
+
+  final String label;
+  final PhashCriterion? value;
+  final ValueChanged<PhashCriterion?> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final modifier = value?.modifier ?? CriterionModifier.equals;
+    final enabled = !_isNullaryModifier(modifier);
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: context.dimensions.spacingSmall),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: context.textTheme.labelLarge),
+          DropdownButton<CriterionModifier>(
+            isExpanded: true,
+            value: modifier,
+            items: _buildModifierItems(context, const [
+              CriterionModifier.equals,
+              CriterionModifier.notEquals,
+              CriterionModifier.isNull,
+              CriterionModifier.notNull,
+            ]),
+            onChanged: (next) {
+              if (next != null) {
+                onChanged(
+                  PhashCriterion(
+                    value: value?.value ?? '',
+                    distance: value?.distance,
+                    modifier: next,
+                  ),
+                );
+              }
+            },
+          ),
+          if (enabled)
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    initialValue: value?.value,
+                    decoration: InputDecoration(
+                      labelText: context.l10n.filter_value,
+                    ),
+                    onChanged: (text) => onChanged(
+                      PhashCriterion(
+                        value: text,
+                        distance: value?.distance,
+                        modifier: modifier,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: context.dimensions.spacingSmall),
+                Expanded(
+                  child: TextFormField(
+                    initialValue: value?.distance?.toString(),
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      labelText: context.l10n.filter_distance,
+                    ),
+                    onChanged: (text) => onChanged(
+                      PhashCriterion(
+                        value: value?.value ?? '',
+                        distance: int.tryParse(text),
+                        modifier: modifier,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Edits a Stash-box endpoint and Stash ID criterion.
+class StashIdCriterionInput extends StatelessWidget {
+  const StashIdCriterionInput({
+    required this.value,
+    required this.onChanged,
+    super.key,
+  });
+
+  final StashIdCriterion? value;
+  final ValueChanged<StashIdCriterion?> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final modifier = value?.modifier ?? CriterionModifier.equals;
+    final enabled = !_isNullaryModifier(modifier);
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: context.dimensions.spacingSmall),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            context.l10n.common_stash_id,
+            style: context.textTheme.labelLarge,
+          ),
+          DropdownButton<CriterionModifier>(
+            isExpanded: true,
+            value: modifier,
+            items: _buildModifierItems(context, const [
+              CriterionModifier.equals,
+              CriterionModifier.notEquals,
+              CriterionModifier.isNull,
+              CriterionModifier.notNull,
+            ]),
+            onChanged: (next) {
+              if (next != null) {
+                onChanged(
+                  StashIdCriterion(
+                    endpoint: value?.endpoint ?? '',
+                    stashId: value?.stashId ?? '',
+                    modifier: next,
+                  ),
+                );
+              }
+            },
+          ),
+          if (enabled) ...[
+            TextFormField(
+              initialValue: value?.endpoint,
+              decoration: InputDecoration(
+                labelText: context.l10n.filter_endpoint,
+              ),
+              onChanged: (text) => onChanged(
+                StashIdCriterion(
+                  endpoint: text,
+                  stashId: value?.stashId ?? '',
+                  modifier: modifier,
+                ),
+              ),
+            ),
+            TextFormField(
+              initialValue: value?.stashId,
+              decoration: InputDecoration(
+                labelText: context.l10n.common_stash_id,
+              ),
+              onChanged: (text) => onChanged(
+                StashIdCriterion(
+                  endpoint: value?.endpoint ?? '',
+                  stashId: text,
+                  modifier: modifier,
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Edits the list of official Stash custom-field criteria.
+class CustomFieldsCriterionInput extends StatelessWidget {
+  const CustomFieldsCriterionInput({
+    required this.value,
+    required this.onChanged,
+    super.key,
+  });
+
+  final List<CustomFieldCriterion> value;
+  final ValueChanged<List<CustomFieldCriterion>> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: context.dimensions.spacingSmall),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  context.l10n.filter_custom_fields,
+                  style: context.textTheme.labelLarge,
+                ),
+              ),
+              IconButton(
+                tooltip: context.l10n.common_add,
+                onPressed: () => onChanged([
+                  ...value,
+                  const CustomFieldCriterion(field: ''),
+                ]),
+                icon: const Icon(Icons.add_circle_outline),
+              ),
+            ],
+          ),
+          for (var index = 0; index < value.length; index++)
+            _CustomFieldCriterionRow(
+              key: ValueKey('custom-field-$index-${value[index].field}'),
+              value: value[index],
+              onChanged: (next) {
+                final updated = [...value];
+                updated[index] = next;
+                onChanged(updated);
+              },
+              onRemove: () => onChanged([...value]..removeAt(index)),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CustomFieldCriterionRow extends StatelessWidget {
+  const _CustomFieldCriterionRow({
+    required this.value,
+    required this.onChanged,
+    required this.onRemove,
+    super.key,
+  });
+
+  final CustomFieldCriterion value;
+  final ValueChanged<CustomFieldCriterion> onChanged;
+  final VoidCallback onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: context.dimensions.spacingSmall),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: TextFormField(
+                  initialValue: value.field,
+                  decoration: InputDecoration(
+                    labelText: context.l10n.filter_field,
+                  ),
+                  onChanged: (text) => onChanged(value.copyWith(field: text)),
+                ),
+              ),
+              IconButton(
+                tooltip: context.l10n.common_remove,
+                onPressed: onRemove,
+                icon: const Icon(Icons.remove_circle_outline),
+              ),
+            ],
+          ),
+          TextFormField(
+            initialValue: value.value.join(', '),
+            decoration: InputDecoration(labelText: context.l10n.filter_values),
+            onChanged: (text) => onChanged(
+              value.copyWith(
+                value: text
+                    .split(',')
+                    .map((item) => item.trim())
+                    .where((item) => item.isNotEmpty)
+                    .map<Object>(_parseCustomFieldValue)
+                    .toList(growable: false),
+              ),
+            ),
+          ),
+          DropdownButtonFormField<CriterionModifier>(
+            initialValue: value.modifier,
+            isExpanded: true,
+            items: _buildModifierItems(context, _stringCriterionModifiers),
+            onChanged: (next) {
+              if (next != null) onChanged(value.copyWith(modifier: next));
+            },
           ),
         ],
       ),

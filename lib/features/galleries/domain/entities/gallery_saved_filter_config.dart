@@ -24,7 +24,7 @@ class GallerySavedFilterConfig extends SavedFilterConfig<GalleryFilter> {
       emptyFilter: GalleryFilter.empty(),
       fromJson: GalleryFilter.fromJson,
       serverToLocalKeys: _serverToLocalKeys,
-      normalizeValue: _normalizeServerValue,
+      criterionTypes: _criterionTypes,
     );
 
     return GallerySavedFilterConfig(
@@ -51,17 +51,9 @@ class GallerySavedFilterConfig extends SavedFilterConfig<GalleryFilter> {
       objectFilter: savedFilterToServerObjectFilter(
         localJson: filter.toJson(),
         localToServerKeys: _localToServerKeys,
+        criterionTypes: _criterionTypes,
       ),
     );
-  }
-
-  static Object? _normalizeServerValue(String localKey, Object? value) {
-    if (_booleanFields.contains(localKey)) {
-      return savedFilterReadBooleanCriterionValue(value) ??
-          savedFilterSkipValue;
-    }
-    if (localKey == 'isMissing') return savedFilterSkipValue;
-    return value;
   }
 
   static const _localToServerKeys = {
@@ -78,17 +70,26 @@ class GallerySavedFilterConfig extends SavedFilterConfig<GalleryFilter> {
     'imageCount': 'image_count',
     'createdAt': 'created_at',
     'updatedAt': 'updated_at',
+    'parentFolder': 'parent_folder',
+    'customFields': 'custom_fields',
   };
 
   static final _serverToLocalKeys = {
     for (final entry in _localToServerKeys.entries) entry.value: entry.key,
   };
 
-  static const _booleanFields = {
-    'organized',
-    'isMissing',
-    'isZip',
-    'hasChapters',
-    'performerFavorite',
+  static const _criterionTypes = {
+    'organized': SavedFilterCriterionType.boolean,
+    'isZip': SavedFilterCriterionType.boolean,
+    'hasChapters': SavedFilterCriterionType.boolean,
+    'performerFavorite': SavedFilterCriterionType.boolean,
+    'isMissing': SavedFilterCriterionType.stringValue,
+    'scenes': SavedFilterCriterionType.labeled,
+    'studios': SavedFilterCriterionType.hierarchical,
+    'tags': SavedFilterCriterionType.hierarchical,
+    'performerTags': SavedFilterCriterionType.hierarchical,
+    'performers': SavedFilterCriterionType.labeledWithExclusions,
+    'parentFolder': SavedFilterCriterionType.hierarchical,
+    'customFields': SavedFilterCriterionType.customFields,
   };
 }

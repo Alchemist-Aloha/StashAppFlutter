@@ -11,7 +11,7 @@ abstract class PerformerFilter with _$PerformerFilter {
     bool? favorite,
     MultiCriterion? gender,
     String? circumcised,
-    bool? isMissing,
+    String? isMissing,
     HierarchicalMultiCriterion? tags,
     HierarchicalMultiCriterion? groups,
     HierarchicalMultiCriterion? studios,
@@ -48,6 +48,8 @@ abstract class PerformerFilter with _$PerformerFilter {
     DateCriterion? careerEnd,
     DateCriterion? createdAt,
     DateCriterion? updatedAt,
+    StashIdCriterion? stashIdEndpoint,
+    @Default(<CustomFieldCriterion>[]) List<CustomFieldCriterion> customFields,
   }) = _PerformerFilter;
 
   factory PerformerFilter.empty() => const PerformerFilter();

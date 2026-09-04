@@ -30,11 +30,17 @@ void main() {
     expect(input['find_filter']['q'], 'beat');
     expect(input['find_filter']['sort'], 'seconds');
     expect(input['find_filter']['direction'], 'ASC');
-    expect(objectFilter['tags']['value'], ['tag-1']);
-    expect(objectFilter['scene_tags']['value'], ['scene-tag-1']);
-    expect(objectFilter['scenes']['value'], ['scene-1']);
-    expect(objectFilter['duration']['value'], 30);
-    expect(objectFilter['scene_date']['value'], '2024-06-01');
+    expect(objectFilter['tags']['value']['items'], [
+      {'id': 'tag-1', 'label': 'tag-1'},
+    ]);
+    expect(objectFilter['scene_tags']['value']['items'], [
+      {'id': 'scene-tag-1', 'label': 'scene-tag-1'},
+    ]);
+    expect(objectFilter['scenes']['value'], [
+      {'id': 'scene-1', 'label': 'scene-1'},
+    ]);
+    expect(objectFilter['duration']['value']['value'], 30);
+    expect(objectFilter['scene_date']['value']['value'], '2024-06-01');
   });
 
   test('scene marker saved filter loads server keys into local filter', () {
@@ -48,10 +54,19 @@ void main() {
       },
       objectFilter: {
         'scene_tags': {
-          'value': ['scene-tag-1'],
+          'value': {
+            'items': [
+              {'id': 'scene-tag-1', 'label': 'Scene tag'},
+            ],
+            'excluded': <Object?>[],
+            'depth': 1,
+          },
           'modifier': 'INCLUDES',
         },
-        'scene_updated_at': {'value': '2024-06-01', 'modifier': 'GREATER_THAN'},
+        'scene_updated_at': {
+          'value': {'value': '2024-06-01'},
+          'modifier': 'GREATER_THAN',
+        },
       },
     );
 
@@ -60,6 +75,7 @@ void main() {
     expect(config.sort, 'scene_updated_at');
     expect(config.descending, isTrue);
     expect(config.filter.sceneTags?.value, ['scene-tag-1']);
+    expect(config.filter.sceneTags?.depth, 1);
     expect(config.filter.sceneUpdatedAt?.value, '2024-06-01');
     expect(
       config.filter.sceneUpdatedAt?.modifier,

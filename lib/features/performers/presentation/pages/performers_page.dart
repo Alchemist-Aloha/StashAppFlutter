@@ -44,6 +44,7 @@ enum _PerformerSortOption {
   oCounter,
   lastOAt,
   createdAt,
+  updatedAt,
 }
 
 class PerformersPage extends ConsumerStatefulWidget {
@@ -100,6 +101,7 @@ class _PerformersPageState extends ConsumerState<PerformersPage> {
       _PerformerSortOption.oCounter => 'o_counter',
       _PerformerSortOption.lastOAt => 'last_o_at',
       _PerformerSortOption.createdAt => 'created_at',
+      _PerformerSortOption.updatedAt => 'updated_at',
     };
 
     ref
@@ -131,6 +133,7 @@ class _PerformersPageState extends ConsumerState<PerformersPage> {
       'o_counter' => _PerformerSortOption.oCounter,
       'last_o_at' => _PerformerSortOption.lastOAt,
       'created_at' => _PerformerSortOption.createdAt,
+      'updated_at' => _PerformerSortOption.updatedAt,
       _ => _PerformerSortOption.name,
     };
   }
@@ -181,6 +184,8 @@ class _PerformersPageState extends ConsumerState<PerformersPage> {
         return context.l10n.sort_last_o_at;
       case _PerformerSortOption.createdAt:
         return context.l10n.sort_created_at;
+      case _PerformerSortOption.updatedAt:
+        return context.l10n.sort_updated_at;
     }
   }
 
