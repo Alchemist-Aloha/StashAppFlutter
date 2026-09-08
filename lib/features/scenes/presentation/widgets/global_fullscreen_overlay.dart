@@ -7,7 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 
 import '../providers/video_player_provider.dart';
-import '../providers/fullscreen_controller.dart';
+import '../providers/player_view_mode.dart';
 import '../providers/scene_list_provider.dart';
 import 'player_surface.dart';
 import '../../../../core/utils/app_log_store.dart';

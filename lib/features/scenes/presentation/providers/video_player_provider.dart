@@ -16,7 +16,6 @@ import 'scene_details_provider.dart';
 import 'scene_list_provider.dart';
 import '../../data/repositories/stream_resolver.dart';
 import '../../data/repositories/stream_prewarmer.dart';
-import 'fullscreen_controller.dart';
 import 'playback_activity_tracker.dart';
 import 'playback_session_controller.dart';
 import 'player_view_mode.dart';
@@ -378,8 +377,6 @@ class PlayerState extends _$PlayerState with WidgetsBindingObserver {
   late final PlaybackSessionController _sessionController;
   final PlaybackStartupRecovery _startupRecovery =
       const PlaybackStartupRecovery();
-  final FullscreenController _fullscreenController =
-      const FullscreenController();
   final QueuePlaybackCoordinator _queuePlaybackCoordinator =
       const QueuePlaybackCoordinator();
   bool? _fullscreenBeforePip;
@@ -498,20 +495,15 @@ class PlayerState extends _$PlayerState with WidgetsBindingObserver {
       _viewModeBeforePip = null;
 
       if (restoreFullscreen != null && restoreViewMode != null) {
-        final runtime = _fullscreenController.syncFromLegacy(
-          isFullScreen: restoreFullscreen,
-          viewModeName: restoreViewMode.name,
-        );
         state = state.copyWith(
           isInPipMode: false,
-          isFullScreen: runtime.isFullScreen,
-          viewMode: PlayerViewMode.values.firstWhere(
-            (e) => e.name == runtime.viewModeName,
-            orElse: () => runtime.isFullScreen
-                ? PlayerViewMode.fullscreen
-                : PlayerViewMode.inline,
-          ),
-          fullscreenPhase: runtime.fullscreenPhase,
+          isFullScreen: restoreFullscreen,
+          viewMode: restoreViewMode,
+          fullscreenPhase: restoreViewMode == PlayerViewMode.tiktok
+              ? FullscreenPhase.tiktok
+              : restoreFullscreen
+              ? FullscreenPhase.fullscreen
+              : FullscreenPhase.inline,
         );
         return;
       }
@@ -811,13 +803,13 @@ class PlayerState extends _$PlayerState with WidgetsBindingObserver {
       'PlayerState setFullScreen: $value',
       source: 'player_provider',
     );
-    final runtime = _fullscreenController.syncFromLegacy(
-      isFullScreen: value,
-      viewModeName: state.viewMode.name,
-    );
     state = state.copyWith(
-      isFullScreen: runtime.isFullScreen,
-      fullscreenPhase: runtime.fullscreenPhase,
+      isFullScreen: value,
+      fullscreenPhase: state.viewMode == PlayerViewMode.tiktok
+          ? FullscreenPhase.tiktok
+          : value
+          ? FullscreenPhase.fullscreen
+          : FullscreenPhase.inline,
     );
   }
 
@@ -826,67 +818,56 @@ class PlayerState extends _$PlayerState with WidgetsBindingObserver {
       'PlayerState setViewMode: $mode',
       source: 'player_provider',
     );
-    final runtime = _fullscreenController.syncFromLegacy(
-      isFullScreen: state.isFullScreen,
-      viewModeName: mode.name,
-    );
     state = state.copyWith(
       viewMode: mode,
-      fullscreenPhase: runtime.fullscreenPhase,
+      fullscreenPhase: mode == PlayerViewMode.tiktok
+          ? FullscreenPhase.tiktok
+          : state.isFullScreen
+          ? FullscreenPhase.fullscreen
+          : FullscreenPhase.inline,
     );
   }
 
   void requestEnterFullscreen() {
-    final runtime = _fullscreenController.requestEnterFullscreen(
-      viewModeName: state.viewMode.name,
-    );
     state = state.copyWith(
-      isFullScreen: runtime.isFullScreen,
-      viewMode: PlayerViewMode.values.firstWhere(
-        (e) => e.name == runtime.viewModeName,
-        orElse: () => PlayerViewMode.fullscreen,
-      ),
-      fullscreenPhase: runtime.fullscreenPhase,
+      isFullScreen: true,
+      viewMode: state.viewMode == PlayerViewMode.tiktok
+          ? PlayerViewMode.tiktok
+          : PlayerViewMode.fullscreen,
+      fullscreenPhase: FullscreenPhase.entering,
     );
   }
 
   void requestExitFullscreen() {
-    final runtime = _fullscreenController.requestExitFullscreen();
     state = state.copyWith(
-      isFullScreen: runtime.isFullScreen,
-      viewMode: PlayerViewMode.values.firstWhere(
-        (mode) => mode.name == runtime.viewModeName,
-        orElse: () => PlayerViewMode.fullscreen,
-      ),
-      fullscreenPhase: runtime.fullscreenPhase,
+      isFullScreen: true,
+      viewMode: PlayerViewMode.fullscreen,
+      fullscreenPhase: FullscreenPhase.exiting,
     );
   }
 
   void markFullscreenEntered() {
-    final runtime = _fullscreenController.markEntered(
-      viewModeName: state.viewMode.name,
-    );
     state = state.copyWith(
-      isFullScreen: runtime.isFullScreen,
-      fullscreenPhase: runtime.fullscreenPhase,
+      isFullScreen: true,
+      fullscreenPhase: state.viewMode == PlayerViewMode.tiktok
+          ? FullscreenPhase.tiktok
+          : FullscreenPhase.fullscreen,
     );
   }
 
   void markFullscreenExited() {
-    final runtime = _fullscreenController.markExited();
     state = state.copyWith(
-      isFullScreen: runtime.isFullScreen,
+      isFullScreen: false,
       viewMode: PlayerViewMode.inline,
-      fullscreenPhase: runtime.fullscreenPhase,
+      fullscreenPhase: FullscreenPhase.inline,
     );
   }
 
   void markFullscreenExitFailed() {
-    final runtime = _fullscreenController.restoreAfterFailedExit();
     state = state.copyWith(
-      isFullScreen: runtime.isFullScreen,
+      isFullScreen: true,
       viewMode: PlayerViewMode.fullscreen,
-      fullscreenPhase: runtime.fullscreenPhase,
+      fullscreenPhase: FullscreenPhase.fullscreen,
     );
   }
 
