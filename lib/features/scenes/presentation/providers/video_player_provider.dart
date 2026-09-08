@@ -172,9 +172,6 @@ class GlobalPlayerState {
   final PlayerViewMode viewMode;
   final FullscreenPhase fullscreenPhase;
 
-  /// Flag to ignore redundant triggers during navigation.
-  final bool isTransitioning;
-
   /// Intent for coordinated navigation triggered by player state changes.
   final NavigationIntent? navigationIntent;
 
@@ -212,13 +209,8 @@ class GlobalPlayerState {
     this.subtitleTextAlignment = 'center',
     this.viewMode = PlayerViewMode.inline,
     this.fullscreenPhase = FullscreenPhase.inline,
-    this.isTransitioning = false,
     this.navigationIntent,
   });
-
-  /// User preference: whether to automatically play the next scene when current ends.
-  /// (Deprecated: Use [playEndBehavior] instead)
-  bool get autoplayNext => playEndBehavior == VideoEndBehavior.next;
 
   /// Creates a copy of the state with updated fields.
   /// Use [clearActive] to explicitly reset the active scene and controller.
@@ -240,7 +232,6 @@ class GlobalPlayerState {
     bool? prewarmSucceeded,
     int? prewarmLatencyMs,
     VideoEndBehavior? playEndBehavior,
-    bool? autoplayNext,
     bool? showVideoDebugInfo,
     bool? useDoubleTapSeek,
     bool? enableBackgroundPlayback,
@@ -257,7 +248,6 @@ class GlobalPlayerState {
     String? subtitleTextAlignment,
     PlayerViewMode? viewMode,
     FullscreenPhase? fullscreenPhase,
-    bool? isTransitioning,
     NavigationIntent? navigationIntent,
     bool clearActive = false,
     bool clearSubtitle = false,
@@ -292,11 +282,7 @@ class GlobalPlayerState {
       prewarmLatencyMs: clearActive
           ? null
           : (prewarmLatencyMs ?? this.prewarmLatencyMs),
-      playEndBehavior:
-          playEndBehavior ??
-          (autoplayNext != null
-              ? (autoplayNext ? VideoEndBehavior.next : VideoEndBehavior.stop)
-              : this.playEndBehavior),
+      playEndBehavior: playEndBehavior ?? this.playEndBehavior,
       showVideoDebugInfo: showVideoDebugInfo ?? this.showVideoDebugInfo,
       useDoubleTapSeek: useDoubleTapSeek ?? this.useDoubleTapSeek,
       enableBackgroundPlayback:
@@ -324,7 +310,6 @@ class GlobalPlayerState {
           subtitleTextAlignment ?? this.subtitleTextAlignment,
       viewMode: viewMode ?? this.viewMode,
       fullscreenPhase: fullscreenPhase ?? this.fullscreenPhase,
-      isTransitioning: isTransitioning ?? this.isTransitioning,
       navigationIntent: clearNavigation
           ? null
           : (navigationIntent ?? this.navigationIntent),
@@ -646,10 +631,6 @@ class PlayerState extends _$PlayerState with WidgetsBindingObserver {
     }
   }
 
-  void setAutoplayNext(bool value) {
-    setPlayEndBehavior(value ? VideoEndBehavior.next : VideoEndBehavior.stop);
-  }
-
   void setPlayEndBehavior(VideoEndBehavior behavior) {
     state = state.copyWith(playEndBehavior: behavior);
     unawaited(_settingsStore.savePlayEndBehaviorName(behavior.name));
@@ -784,18 +765,6 @@ class PlayerState extends _$PlayerState with WidgetsBindingObserver {
         AppLogStore.instance.add('Failed to switch track: $e');
       }
     }
-  }
-
-  void setPrewarmResult({
-    required bool attempted,
-    required bool succeeded,
-    int? latencyMs,
-  }) {
-    state = state.copyWith(
-      prewarmAttempted: attempted,
-      prewarmSucceeded: succeeded,
-      prewarmLatencyMs: latencyMs,
-    );
   }
 
   void setFullScreen(bool value) {
@@ -1580,18 +1549,6 @@ class PlayerState extends _$PlayerState with WidgetsBindingObserver {
           ? AudioProcessingState.buffering
           : AudioProcessingState.ready,
     );
-  }
-
-  void seekRelative(Duration delta) {
-    final player = state.player;
-    if (player == null) return;
-
-    final current = player.state.position;
-    final duration = player.state.duration;
-    var target = current + delta;
-    if (target < Duration.zero) target = Duration.zero;
-    if (target > duration) target = duration;
-    player.seek(target);
   }
 
   void stop({bool dismissNotification = true}) {
