@@ -452,10 +452,6 @@
   "settings_develop_log_viewer_subtitle": "アプリ内ログをリアルタイムで表示します。",
   "settings_develop_logs_copied": "ログをクリップボードにコピーしました",
   "settings_develop_no_logs": "まだログはありません。アプリを操作してログを取得してください。",
-  "settings_develop_web_overrides": "Webオーバーライド",
-  "settings_develop_web_overrides_subtitle": "Webプラットフォーム向けの高度なフラグ",
-  "settings_develop_web_auth": "Webでのパスワードログインを許可",
-  "settings_develop_web_auth_subtitle": "ネイティブ限定の制限を上書きし、Flutter Webでユーザー名 + パスワード認証を強制表示します。",
   "@settings_support_update_to": {
     "placeholders": {
       "version": {
@@ -663,8 +659,6 @@
   "scenes_phash_failed": "Phashの生成に失敗しました: {error}",
   "details_failed_update_studio": "スタジオの更新に失敗しました: {error}",
   "scenes_filter_saved": "フィルター設定をデフォルトとして保存しました",
-  "settings_develop_proxy_auth": "プロキシ認証モードを有効にする",
-  "settings_develop_proxy_auth_subtitle": "Authentikなどのプロキシの背後にある認証不要のバックエンドで使用するために、高度なBasic認証およびBearerトークン方式を有効にします。",
   "settings_server_auth_basic": "Basic認証",
   "settings_server_auth_bearer": "Bearerトークン",
   "settings_server_auth_basic_desc": "'Authorization: Basic <base64(user:pass)>' ヘッダーを送信します。",

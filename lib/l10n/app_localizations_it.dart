@@ -1885,29 +1885,6 @@ class AppLocalizationsIt extends AppLocalizations {
       'Ancora nessun log. Interagisci con l\'app per acquisire i log.';
 
   @override
-  String get settings_develop_web_overrides => 'Override Web';
-
-  @override
-  String get settings_develop_web_overrides_subtitle =>
-      'Flag avanzati per la piattaforma web';
-
-  @override
-  String get settings_develop_web_auth =>
-      'Consenti Accesso con Password su Web';
-
-  @override
-  String get settings_develop_web_auth_subtitle =>
-      'Ignora la restrizione solo-nativa e forza la visibilità del metodo di autenticazione Nome utente + Password su Flutter Web.';
-
-  @override
-  String get settings_develop_proxy_auth =>
-      'Abilita modalità di autenticazione proxy';
-
-  @override
-  String get settings_develop_proxy_auth_subtitle =>
-      'Abilita i metodi avanzati Basic Auth e Bearer Token per l\'uso con backend senza autenticazione dietro proxy come Authentik.';
-
-  @override
   String get settings_server_auth_basic => 'Autenticazione di base';
 
   @override

@@ -1895,29 +1895,6 @@ class AppLocalizationsEs extends AppLocalizations {
       'No hay registros todavía. Interactúa con la app para capturar registros.';
 
   @override
-  String get settings_develop_web_overrides => 'Anulaciones web';
-
-  @override
-  String get settings_develop_web_overrides_subtitle =>
-      'Indicadores avanzados para la plataforma web';
-
-  @override
-  String get settings_develop_web_auth =>
-      'Permitir inicio de sesión con contraseña en la web';
-
-  @override
-  String get settings_develop_web_auth_subtitle =>
-      'Anula la restricción solo nativa y fuerza a que el método de autenticación Usuario + Contraseña sea visible en Flutter Web.';
-
-  @override
-  String get settings_develop_proxy_auth =>
-      'Habilitar modos de autenticación de proxy';
-
-  @override
-  String get settings_develop_proxy_auth_subtitle =>
-      'Habilite los métodos avanzados de Basic Auth y Bearer Token para su uso con backends sin autenticación detrás de proxies como Authentik.';
-
-  @override
   String get settings_server_auth_basic => 'Autenticación básica';
 
   @override

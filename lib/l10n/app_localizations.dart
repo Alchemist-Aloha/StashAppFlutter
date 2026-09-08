@@ -3462,42 +3462,6 @@ abstract class AppLocalizations {
   /// **'No logs yet. Interact with the app to capture logs.'**
   String get settings_develop_no_logs;
 
-  /// No description provided for @settings_develop_web_overrides.
-  ///
-  /// In en, this message translates to:
-  /// **'Web Overrides'**
-  String get settings_develop_web_overrides;
-
-  /// No description provided for @settings_develop_web_overrides_subtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Advanced flags for web platform'**
-  String get settings_develop_web_overrides_subtitle;
-
-  /// No description provided for @settings_develop_web_auth.
-  ///
-  /// In en, this message translates to:
-  /// **'Allow Password Login on Web'**
-  String get settings_develop_web_auth;
-
-  /// No description provided for @settings_develop_web_auth_subtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Overrides the native-only restriction and forces the Username + Password auth method to be visible on Flutter Web.'**
-  String get settings_develop_web_auth_subtitle;
-
-  /// No description provided for @settings_develop_proxy_auth.
-  ///
-  /// In en, this message translates to:
-  /// **'Enable Proxy Auth Modes'**
-  String get settings_develop_proxy_auth;
-
-  /// No description provided for @settings_develop_proxy_auth_subtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Enable advanced Basic Auth and Bearer Token methods for use with auth-free backends behind proxies like Authentik.'**
-  String get settings_develop_proxy_auth_subtitle;
-
   /// No description provided for @settings_server_auth_basic.
   ///
   /// In en, this message translates to:

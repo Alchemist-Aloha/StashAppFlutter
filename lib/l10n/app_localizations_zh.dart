@@ -1772,26 +1772,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settings_develop_no_logs => '尚无日志。与应用交互以捕获日志。';
 
   @override
-  String get settings_develop_web_overrides => 'Web 覆盖';
-
-  @override
-  String get settings_develop_web_overrides_subtitle => 'Web 平台的高级标志';
-
-  @override
-  String get settings_develop_web_auth => '允许在 Web 上使用密码登录';
-
-  @override
-  String get settings_develop_web_auth_subtitle =>
-      '覆盖仅限原生的限制，并强制用户名 + 密码身份验证方式在 Flutter Web 上可见。';
-
-  @override
-  String get settings_develop_proxy_auth => '启用代理认证模式';
-
-  @override
-  String get settings_develop_proxy_auth_subtitle =>
-      '启用高级 Basic Auth 和 Bearer Token 方法，以便在 Authentik 等代理背后的无认证后端中使用。';
-
-  @override
   String get settings_server_auth_basic => '基础认证';
 
   @override
@@ -5059,26 +5039,6 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String get settings_develop_no_logs => '尚无日志。与应用交互以捕获日志。';
-
-  @override
-  String get settings_develop_web_overrides => 'Web 覆盖';
-
-  @override
-  String get settings_develop_web_overrides_subtitle => 'Web 平台的高级标志';
-
-  @override
-  String get settings_develop_web_auth => '允许在 Web 上使用密码登录';
-
-  @override
-  String get settings_develop_web_auth_subtitle =>
-      '覆盖仅限原生的限制，并强制用户名 + 密码身份验证方式在 Flutter Web 上可见。';
-
-  @override
-  String get settings_develop_proxy_auth => '启用代理认证模式';
-
-  @override
-  String get settings_develop_proxy_auth_subtitle =>
-      '启用高级 Basic Auth 和 Bearer Token 方法，以便在 Authentik 等代理背后的无认证后端中使用。';
 
   @override
   String get settings_server_auth_basic => '基础认证';
@@ -8352,26 +8312,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get settings_develop_no_logs => '尚無日誌。與應用互動以捕捉日誌。';
-
-  @override
-  String get settings_develop_web_overrides => '網頁覆寫';
-
-  @override
-  String get settings_develop_web_overrides_subtitle => '網頁平台的進階旗標';
-
-  @override
-  String get settings_develop_web_auth => '允許在網頁上使用密碼登入';
-
-  @override
-  String get settings_develop_web_auth_subtitle =>
-      '覆寫僅限原生的限制，並強制「使用者名稱 + 密碼」驗證方式在 Flutter Web 上可見。';
-
-  @override
-  String get settings_develop_proxy_auth => '啟用代理認證模式';
-
-  @override
-  String get settings_develop_proxy_auth_subtitle =>
-      '啟用進階 Basic Auth 和 Bearer Token 方法，以便在 Authentik 等代理背後的無認證後端中使用。';
 
   @override
   String get settings_server_auth_basic => '基礎認證';

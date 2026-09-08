@@ -464,10 +464,6 @@
   "settings_develop_log_viewer_subtitle": "Live-Ansicht der In-App-Logs öffnen.",
   "settings_develop_logs_copied": "Logs in die Zwischenablage kopiert",
   "settings_develop_no_logs": "Noch keine Logs. Interagiere mit der App, um Logs zu erfassen.",
-  "settings_develop_web_overrides": "Web-Overrides",
-  "settings_develop_web_overrides_subtitle": "Erweiterte Flags für die Web-Plattform",
-  "settings_develop_web_auth": "Passwort-Login im Web erlauben",
-  "settings_develop_web_auth_subtitle": "Hebt die Native-only-Beschränkung auf und erzwingt die Sichtbarkeit der Benutzername + Passwort-Authentifizierungsmethode in Flutter Web.",
   "@settings_support_update_to": {
     "placeholders": {
       "version": {
@@ -684,8 +680,6 @@
     }
   },
   "scenes_filter_saved": "Filtereinstellungen als Standard gespeichert",
-  "settings_develop_proxy_auth": "Proxy-Authentifizierungsmodi aktivieren",
-  "settings_develop_proxy_auth_subtitle": "Aktivieren Sie erweiterte Basic-Auth- und Bearer-Token-Methoden für die Verwendung mit authentifizierungsfreien Backends hinter Proxys wie Authentik.",
   "settings_server_auth_basic": "Basic Auth",
   "settings_server_auth_bearer": "Bearer-Token",
   "settings_server_auth_basic_desc": "Sendet den Header 'Authorization: Basic <base64(user:pass)>'.",

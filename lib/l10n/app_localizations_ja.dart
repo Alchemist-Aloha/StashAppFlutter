@@ -1797,26 +1797,6 @@ class AppLocalizationsJa extends AppLocalizations {
   String get settings_develop_no_logs => 'まだログはありません。アプリを操作してログを取得してください。';
 
   @override
-  String get settings_develop_web_overrides => 'Webオーバーライド';
-
-  @override
-  String get settings_develop_web_overrides_subtitle => 'Webプラットフォーム向けの高度なフラグ';
-
-  @override
-  String get settings_develop_web_auth => 'Webでのパスワードログインを許可';
-
-  @override
-  String get settings_develop_web_auth_subtitle =>
-      'ネイティブ限定の制限を上書きし、Flutter Webでユーザー名 + パスワード認証を強制表示します。';
-
-  @override
-  String get settings_develop_proxy_auth => 'プロキシ認証モードを有効にする';
-
-  @override
-  String get settings_develop_proxy_auth_subtitle =>
-      'Authentikなどのプロキシの背後にある認証不要のバックエンドで使用するために、高度なBasic認証およびBearerトークン方式を有効にします。';
-
-  @override
   String get settings_server_auth_basic => 'Basic認証';
 
   @override

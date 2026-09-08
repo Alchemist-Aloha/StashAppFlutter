@@ -1871,28 +1871,6 @@ class AppLocalizationsRu extends AppLocalizations {
       'Журналы отсутствуют. Взаимодействуйте с приложением, чтобы собрать логи.';
 
   @override
-  String get settings_develop_web_overrides => 'Переопределения для Web';
-
-  @override
-  String get settings_develop_web_overrides_subtitle =>
-      'Расширенные флаги для веб-платформы';
-
-  @override
-  String get settings_develop_web_auth => 'Разрешить вход по паролю в Web';
-
-  @override
-  String get settings_develop_web_auth_subtitle =>
-      'Переопределяет ограничение «только для нативных приложений» и делает видимым метод аутентификации по имени пользователя и паролю во Flutter Web.';
-
-  @override
-  String get settings_develop_proxy_auth =>
-      'Включить режимы аутентификации через прокси';
-
-  @override
-  String get settings_develop_proxy_auth_subtitle =>
-      'Включите расширенные методы Basic Auth и Bearer Token для использования с бэкендами без аутентификации за прокси-серверами, такими как Authentik.';
-
-  @override
   String get settings_server_auth_basic => 'Базовая аутентификация';
 
   @override

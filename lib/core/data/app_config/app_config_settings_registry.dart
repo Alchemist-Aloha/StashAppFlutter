@@ -137,8 +137,6 @@ final class AppConfigSettingsRegistry {
     _bool('feed_start_random'),
     _bool('video_resume_play_position'),
     _bool('show_video_debug_info'),
-    _bool('allow_web_password_login'),
-    _bool('enable_proxy_auth_modes'),
     _bool('enable_debug_logging'),
     _bool('app_lock_enabled'),
     _int('app_lock_background_seconds', min: 0, max: 86400),

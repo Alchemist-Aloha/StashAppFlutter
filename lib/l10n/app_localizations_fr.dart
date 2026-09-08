@@ -1887,29 +1887,6 @@ class AppLocalizationsFr extends AppLocalizations {
       'Pas encore de journaux. Interagissez avec l\'application pour capturer des journaux.';
 
   @override
-  String get settings_develop_web_overrides => 'Surcharges Web';
-
-  @override
-  String get settings_develop_web_overrides_subtitle =>
-      'Drapeaux avancés pour la plateforme Web';
-
-  @override
-  String get settings_develop_web_auth =>
-      'Autoriser la connexion par mot de passe sur le Web';
-
-  @override
-  String get settings_develop_web_auth_subtitle =>
-      'Surcharge la restriction native uniquement et force la visibilité de la méthode d\'authentification Utilisateur + Mot de passe sur Flutter Web.';
-
-  @override
-  String get settings_develop_proxy_auth =>
-      'Activer les modes d\'authentification proxy';
-
-  @override
-  String get settings_develop_proxy_auth_subtitle =>
-      'Activez les méthodes avancées Basic Auth et Bearer Token pour une utilisation avec des backends sans authentification derrière des proxys comme Authentik.';
-
-  @override
   String get settings_server_auth_basic => 'Authentification de base';
 
   @override

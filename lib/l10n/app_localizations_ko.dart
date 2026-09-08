@@ -1795,26 +1795,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get settings_develop_no_logs => '아직 로그가 없습니다. 앱과 상호작용하여 로그를 캡처하세요.';
 
   @override
-  String get settings_develop_web_overrides => '웹 재정의';
-
-  @override
-  String get settings_develop_web_overrides_subtitle => '웹 플랫폼용 고급 플래그';
-
-  @override
-  String get settings_develop_web_auth => '웹에서 비밀번호 로그인 허용';
-
-  @override
-  String get settings_develop_web_auth_subtitle =>
-      '네이티브 전용 제한을 무시하고 Flutter 웹에서 사용자 이름 + 비밀번호 인증 방식을 강제로 표시합니다.';
-
-  @override
-  String get settings_develop_proxy_auth => '프록시 인증 모드 활성화';
-
-  @override
-  String get settings_develop_proxy_auth_subtitle =>
-      'Authentik과 같은 프록시 뒤의 인증 없는 백엔드에서 사용하기 위해 고급 Basic Auth 및 Bearer Token 방식을 활성화합니다.';
-
-  @override
   String get settings_server_auth_basic => '기본 인증';
 
   @override

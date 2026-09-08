@@ -1875,28 +1875,6 @@ class AppLocalizationsDe extends AppLocalizations {
       'Noch keine Logs. Interagiere mit der App, um Logs zu erfassen.';
 
   @override
-  String get settings_develop_web_overrides => 'Web-Overrides';
-
-  @override
-  String get settings_develop_web_overrides_subtitle =>
-      'Erweiterte Flags für die Web-Plattform';
-
-  @override
-  String get settings_develop_web_auth => 'Passwort-Login im Web erlauben';
-
-  @override
-  String get settings_develop_web_auth_subtitle =>
-      'Hebt die Native-only-Beschränkung auf und erzwingt die Sichtbarkeit der Benutzername + Passwort-Authentifizierungsmethode in Flutter Web.';
-
-  @override
-  String get settings_develop_proxy_auth =>
-      'Proxy-Authentifizierungsmodi aktivieren';
-
-  @override
-  String get settings_develop_proxy_auth_subtitle =>
-      'Aktivieren Sie erweiterte Basic-Auth- und Bearer-Token-Methoden für die Verwendung mit authentifizierungsfreien Backends hinter Proxys wie Authentik.';
-
-  @override
   String get settings_server_auth_basic => 'Basic Auth';
 
   @override
