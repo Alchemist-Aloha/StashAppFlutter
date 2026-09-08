@@ -362,8 +362,6 @@ class PlayerState extends _$PlayerState with WidgetsBindingObserver {
   late final PlaybackSessionController _sessionController;
   final PlaybackStartupRecovery _startupRecovery =
       const PlaybackStartupRecovery();
-  final QueuePlaybackCoordinator _queuePlaybackCoordinator =
-      const QueuePlaybackCoordinator();
   bool? _fullscreenBeforePip;
   PlayerViewMode? _viewModeBeforePip;
   bool _pipRequestInFlight = false;
@@ -1803,9 +1801,9 @@ class PlayerState extends _$PlayerState with WidgetsBindingObserver {
     _isTransitioning = true;
     try {
       final queueNotifier = ref.read(playbackQueueProvider.notifier);
-      final target = _queuePlaybackCoordinator.findTarget(
+      final target = findQueuePlaybackTarget(
         queueState: queueNotifier.state,
-        direction: QueueAdvanceDirection.next,
+        delta: 1,
         activeSceneId: state.activeScene?.id,
       );
       if (target == null) return false;
@@ -1854,9 +1852,9 @@ class PlayerState extends _$PlayerState with WidgetsBindingObserver {
     _isTransitioning = true;
     try {
       final queueNotifier = ref.read(playbackQueueProvider.notifier);
-      final target = _queuePlaybackCoordinator.findTarget(
+      final target = findQueuePlaybackTarget(
         queueState: queueNotifier.state,
-        direction: QueueAdvanceDirection.previous,
+        delta: -1,
         activeSceneId: state.activeScene?.id,
       );
       if (target == null) return;
