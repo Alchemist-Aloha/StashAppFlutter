@@ -239,8 +239,8 @@ class _TiktokScenesViewState extends ConsumerState<TiktokScenesView> {
 
   Future<void> _initializeController(Scene scene) async {
     try {
-      final resolver = ref.read(streamResolverProvider.notifier);
-      final choice = await resolver.resolvePreferredStream(scene);
+      final resolver = ref.read(streamResolverProvider);
+      final choice = await resolver(scene);
       if (choice == null) return;
 
       final headers = ref.read(mediaPlaybackHeadersProvider);
@@ -704,8 +704,8 @@ class _TiktokSceneItemState extends ConsumerState<TiktokSceneItem> {
         source: 'TiktokScenesView',
       );
 
-      final resolver = ref.read(streamResolverProvider.notifier);
-      final choice = await resolver.resolvePreferredStream(widget.scene);
+      final resolver = ref.read(streamResolverProvider);
+      final choice = await resolver(widget.scene);
 
       await playerNotifier.attachController(
         widget.scene,

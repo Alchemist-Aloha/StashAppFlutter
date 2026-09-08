@@ -396,8 +396,8 @@ class _SceneDetailsPageState extends ConsumerState<SceneDetailsPage> {
     );
 
     try {
-      final resolver = ref.read(streamResolverProvider.notifier);
-      final choice = await resolver.resolvePreferredStream(scene);
+      final resolver = ref.read(streamResolverProvider);
+      final choice = await resolver(scene);
       final videoUrl = choice?.url ?? scene.paths.stream;
 
       if (videoUrl == null || videoUrl.isEmpty) {

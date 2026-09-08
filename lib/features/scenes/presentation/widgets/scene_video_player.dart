@@ -191,9 +191,9 @@ class _SceneVideoPlayerState extends ConsumerState<SceneVideoPlayer> {
     setState(() => _isStarting = true);
     try {
       if (!mounted) return;
-      final resolver = ref.read(streamResolverProvider.notifier);
+      final resolver = ref.read(streamResolverProvider);
 
-      final choice = await resolver.resolvePreferredStream(widget.scene);
+      final choice = await resolver(widget.scene);
       if (choice != null && mounted) {
         final mediaHeaders = ref.read(mediaPlaybackHeadersProvider);
         final castStateBeforeStart = ref.read(castServiceProvider);

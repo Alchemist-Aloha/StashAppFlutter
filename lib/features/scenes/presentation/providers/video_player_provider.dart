@@ -950,7 +950,7 @@ class PlayerState extends _$PlayerState with WidgetsBindingObserver {
     }
 
     final prewarmer = ref.read(streamPrewarmerProvider.notifier);
-    final resolver = ref.read(streamResolverProvider.notifier);
+    final resolver = ref.read(streamResolverProvider);
     final mediaHeaders = ref.read(mediaPlaybackHeadersProvider);
 
     // Cancel any active prewarms for scenes that are no longer in our current "next N" window.
@@ -960,7 +960,7 @@ class PlayerState extends _$PlayerState with WidgetsBindingObserver {
     for (final scene in nextScenes) {
       unawaited(() async {
         // Resolve URL (hits cache if already resolved)
-        final choice = await resolver.resolvePreferredStream(scene);
+        final choice = await resolver(scene);
         if (choice != null) {
           // Perform network-level prewarming
           await prewarmer.prewarm(scene, choice.url, headers: mediaHeaders);
@@ -1853,8 +1853,8 @@ class PlayerState extends _$PlayerState with WidgetsBindingObserver {
       );
       if (target == null) return false;
 
-      final resolver = ref.read(streamResolverProvider.notifier);
-      final choice = await resolver.resolvePreferredStream(target.scene);
+      final resolver = ref.read(streamResolverProvider);
+      final choice = await resolver(target.scene);
       if (choice == null) return false;
 
       final mediaHeaders = ref.read(mediaPlaybackHeadersProvider);
@@ -1904,8 +1904,8 @@ class PlayerState extends _$PlayerState with WidgetsBindingObserver {
       );
       if (target == null) return;
 
-      final resolver = ref.read(streamResolverProvider.notifier);
-      final choice = await resolver.resolvePreferredStream(target.scene);
+      final resolver = ref.read(streamResolverProvider);
+      final choice = await resolver(target.scene);
       if (choice == null) return;
 
       final mediaHeaders = ref.read(mediaPlaybackHeadersProvider);
