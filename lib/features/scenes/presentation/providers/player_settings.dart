@@ -31,44 +31,6 @@ class PlayerSettings {
     this.resumePlayPosition = true,
   });
 
-  PlayerSettings copyWith({
-    String? playEndBehaviorName,
-    bool? showVideoDebugInfo,
-    bool? useDoubleTapSeek,
-    bool? enableBackgroundPlayback,
-    bool? enableNativePip,
-    bool? videoGravityOrientation,
-    bool? useActualSceneVideoInMiniPlayer,
-    String? defaultSubtitleLanguage,
-    double? subtitleFontSize,
-    double? subtitlePositionBottomRatio,
-    String? subtitleTextAlignment,
-    bool? feedStartRandom,
-    bool? resumePlayPosition,
-  }) {
-    return PlayerSettings(
-      playEndBehaviorName: playEndBehaviorName ?? this.playEndBehaviorName,
-      showVideoDebugInfo: showVideoDebugInfo ?? this.showVideoDebugInfo,
-      useDoubleTapSeek: useDoubleTapSeek ?? this.useDoubleTapSeek,
-      enableBackgroundPlayback:
-          enableBackgroundPlayback ?? this.enableBackgroundPlayback,
-      enableNativePip: enableNativePip ?? this.enableNativePip,
-      videoGravityOrientation:
-          videoGravityOrientation ?? this.videoGravityOrientation,
-      useActualSceneVideoInMiniPlayer:
-          useActualSceneVideoInMiniPlayer ??
-          this.useActualSceneVideoInMiniPlayer,
-      defaultSubtitleLanguage:
-          defaultSubtitleLanguage ?? this.defaultSubtitleLanguage,
-      subtitleFontSize: subtitleFontSize ?? this.subtitleFontSize,
-      subtitlePositionBottomRatio:
-          subtitlePositionBottomRatio ?? this.subtitlePositionBottomRatio,
-      subtitleTextAlignment:
-          subtitleTextAlignment ?? this.subtitleTextAlignment,
-      feedStartRandom: feedStartRandom ?? this.feedStartRandom,
-      resumePlayPosition: resumePlayPosition ?? this.resumePlayPosition,
-    );
-  }
 }
 
 class PlayerSettingsStore {
