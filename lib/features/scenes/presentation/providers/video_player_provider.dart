@@ -59,17 +59,6 @@ String? resolveSceneSubtitleUrl({
   return appendApiKey(uri.replace(queryParameters: query).toString(), apiKey);
 }
 
-class NavigationAction {
-  final String path;
-  final bool isReplacement;
-  NavigationAction(this.path, {this.isReplacement = false});
-}
-
-class NavigationIntent {
-  final List<NavigationAction> actions;
-  NavigationIntent(this.actions);
-}
-
 /// Represents the global state of the video player.
 ///
 /// This state is shared across the entire application, allowing the mini-player,
@@ -172,8 +161,8 @@ class GlobalPlayerState {
   final PlayerViewMode viewMode;
   final FullscreenPhase fullscreenPhase;
 
-  /// Intent for coordinated navigation triggered by player state changes.
-  final NavigationIntent? navigationIntent;
+  /// Replacement route requested by a player-driven scene transition.
+  final String? navigationReplacementPath;
 
   GlobalPlayerState({
     this.activeScene,
@@ -209,7 +198,7 @@ class GlobalPlayerState {
     this.subtitleTextAlignment = 'center',
     this.viewMode = PlayerViewMode.inline,
     this.fullscreenPhase = FullscreenPhase.inline,
-    this.navigationIntent,
+    this.navigationReplacementPath,
   });
 
   /// Creates a copy of the state with updated fields.
@@ -248,10 +237,10 @@ class GlobalPlayerState {
     String? subtitleTextAlignment,
     PlayerViewMode? viewMode,
     FullscreenPhase? fullscreenPhase,
-    NavigationIntent? navigationIntent,
+    String? navigationReplacementPath,
     bool clearActive = false,
     bool clearSubtitle = false,
-    bool clearNavigation = false,
+    bool clearNavigationReplacement = false,
   }) {
     return GlobalPlayerState(
       activeScene: clearActive ? null : (activeScene ?? this.activeScene),
@@ -310,9 +299,9 @@ class GlobalPlayerState {
           subtitleTextAlignment ?? this.subtitleTextAlignment,
       viewMode: viewMode ?? this.viewMode,
       fullscreenPhase: fullscreenPhase ?? this.fullscreenPhase,
-      navigationIntent: clearNavigation
+      navigationReplacementPath: clearNavigationReplacement
           ? null
-          : (navigationIntent ?? this.navigationIntent),
+          : (navigationReplacementPath ?? this.navigationReplacementPath),
     );
   }
 }
@@ -866,11 +855,12 @@ class PlayerState extends _$PlayerState with WidgetsBindingObserver {
     }
   }
 
-  void _navigate(List<NavigationAction> actions) {
-    state = state.copyWith(navigationIntent: NavigationIntent(actions));
-    // Immediately clear intent so it's not re-processed on next state update
+  void _replaceRoute(String path) {
+    state = state.copyWith(navigationReplacementPath: path);
     Future.microtask(() {
-      if (ref.mounted) state = state.copyWith(clearNavigation: true);
+      if (ref.mounted) {
+        state = state.copyWith(clearNavigationReplacement: true);
+      }
     });
   }
 
@@ -1827,12 +1817,7 @@ class PlayerState extends _$PlayerState with WidgetsBindingObserver {
         // Trigger navigation synchronization so background details match active scene.
         // Skip for TikTok mode as it handles its own navigation via PageView.
         if (state.viewMode != PlayerViewMode.tiktok) {
-          _navigate([
-            NavigationAction(
-              '/scenes/scene/${target.scene.id}',
-              isReplacement: true,
-            ),
-          ]);
+          _replaceRoute('/scenes/scene/${target.scene.id}');
         }
         return true;
       }
@@ -1878,12 +1863,7 @@ class PlayerState extends _$PlayerState with WidgetsBindingObserver {
         // Trigger navigation synchronization.
         // Skip for TikTok mode as it handles its own navigation via PageView.
         if (state.viewMode != PlayerViewMode.tiktok) {
-          _navigate([
-            NavigationAction(
-              '/scenes/scene/${target.scene.id}',
-              isReplacement: true,
-            ),
-          ]);
+          _replaceRoute('/scenes/scene/${target.scene.id}');
         }
       }
     } finally {
